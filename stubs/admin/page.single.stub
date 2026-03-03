@@ -1,0 +1,17 @@
+<script setup lang="ts">
+import { Head } from '@inertiajs/vue3';
+import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+import PageHeader from '@/components/PageHeader.vue';
+</script>
+
+<template>
+    <AuthenticatedLayout :breadcrumbs="[{ label: '{{ model }}' }]">
+        <Head title="{{ model }}" />
+
+        <PageHeader title="{{ model }}" description="Manage {{ modelVariable }} settings." />
+
+        <div class="mt-6">
+            <!-- Add your content here -->
+        </div>
+    </AuthenticatedLayout>
+</template>

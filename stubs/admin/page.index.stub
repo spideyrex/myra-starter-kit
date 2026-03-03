@@ -1,0 +1,57 @@
+<script setup lang="ts">
+import { Head, Link } from '@inertiajs/vue3';
+import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+import DataTable from '@/components/DataTable.vue';
+import PageHeader from '@/components/PageHeader.vue';
+import { Button } from '@/components/ui/button';
+import { TextColumn, DateColumn } from '@/composables/useTableSchema';
+import { EditAction, DeleteAction } from '@/composables/useTableActions';
+import { usePermissions } from '@/composables/usePermissions';
+import type { PaginatedData } from '@/types';
+import { Plus } from 'lucide-vue-next';
+
+defineProps<{
+    {{ modelPluralVariable }}: PaginatedData<any>;
+    filters: Record<string, string>;
+}>();
+
+const { can } = usePermissions();
+
+const columns = [
+    TextColumn.make('name').sortable().searchable(),
+    DateColumn.make('created_at').sortable(),
+];
+
+const actions = [
+    EditAction.make('admin.{{ routePrefix }}.edit').permission('{{ permissionPrefix }}.edit'),
+    DeleteAction.make('admin.{{ routePrefix }}.destroy').permission('{{ permissionPrefix }}.delete'),
+];
+</script>
+
+<template>
+    <AuthenticatedLayout :breadcrumbs="[{ label: '{{ modelPlural }}' }]">
+        <Head title="{{ modelPlural }}" />
+
+        <PageHeader title="{{ modelPlural }}" description="Manage {{ modelPluralVariable }}.">
+            <template #actions>
+                <Button v-if="can('{{ permissionPrefix }}.create')" as-child>
+                    <Link :href="route('admin.{{ routePrefix }}.create')">
+                        <Plus class="mr-2 size-4" />
+                        Add {{ model }}
+                    </Link>
+                </Button>
+            </template>
+        </PageHeader>
+
+        <div class="mt-6">
+            <DataTable
+                :columns="columns"
+                :data="{{ modelPluralVariable }}"
+                :filters="filters"
+                :actions="actions"
+                route-name="admin.{{ routePrefix }}.index"
+                search-placeholder="Search {{ modelPluralVariable }}..."
+            />
+        </div>
+    </AuthenticatedLayout>
+</template>

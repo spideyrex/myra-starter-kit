@@ -1,0 +1,42 @@
+<script setup lang="ts">
+import { Head } from '@inertiajs/vue3';
+import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+import PageHeader from '@/components/PageHeader.vue';
+import { FormFields, ResourceForm } from '@/components/admin';
+import { useResourceForm } from '@/composables/useResourceForm';
+import { TextInput, Section } from '@/composables/useFormSchema';
+
+const props = defineProps<{
+    {{ modelVariable }}: {
+        id: number;
+        name: string;
+    };
+}>();
+
+const schema = [
+    Section.make('{{ model }} Details').schema([
+        TextInput.make('name').required(),
+    ]),
+];
+
+const { form, submit } = useResourceForm({
+    data: {
+        name: props.{{ modelVariable }}.name,
+    },
+    updateRoute: 'admin.{{ routePrefix }}.update',
+    updateRouteParams: props.{{ modelVariable }}.id,
+    confirm: { title: 'Update {{ model }}', description: 'Are you sure you want to save these changes?', confirmText: 'Save' },
+});
+</script>
+
+<template>
+    <AuthenticatedLayout :breadcrumbs="[{ label: '{{ modelPlural }}', href: route('admin.{{ routePrefix }}.index') }, { label: 'Edit' }]">
+        <Head :title="`Edit ${{{ modelVariable }}.name}`" />
+
+        <PageHeader :title="`Edit ${{{ modelVariable }}.name}`" description="Update {{ modelVariable }} details." />
+
+        <ResourceForm :processing="form.processing" submit-text="Update {{ model }}" :cancel-href="route('admin.{{ routePrefix }}.index')" @submit="submit">
+            <FormFields :schema="schema" :form="form" />
+        </ResourceForm>
+    </AuthenticatedLayout>
+</template>

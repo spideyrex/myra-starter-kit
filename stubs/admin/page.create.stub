@@ -1,0 +1,32 @@
+<script setup lang="ts">
+import { Head } from '@inertiajs/vue3';
+import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+import PageHeader from '@/components/PageHeader.vue';
+import { FormFields, ResourceForm } from '@/components/admin';
+import { useResourceForm } from '@/composables/useResourceForm';
+import { TextInput, Section } from '@/composables/useFormSchema';
+
+const schema = [
+    Section.make('{{ model }} Details').schema([
+        TextInput.make('name').required(),
+    ]),
+];
+
+const { form, submit } = useResourceForm({
+    data: { name: '' },
+    storeRoute: 'admin.{{ routePrefix }}.store',
+    confirm: { title: 'Create {{ model }}', description: 'Are you sure you want to create this {{ modelVariable }}?', confirmText: 'Create' },
+});
+</script>
+
+<template>
+    <AuthenticatedLayout :breadcrumbs="[{ label: '{{ modelPlural }}', href: route('admin.{{ routePrefix }}.index') }, { label: 'Create' }]">
+        <Head title="Create {{ model }}" />
+
+        <PageHeader title="Create {{ model }}" description="Add a new {{ modelVariable }}." />
+
+        <ResourceForm :processing="form.processing" submit-text="Create {{ model }}" :cancel-href="route('admin.{{ routePrefix }}.index')" @submit="submit">
+            <FormFields :schema="schema" :form="form" />
+        </ResourceForm>
+    </AuthenticatedLayout>
+</template>

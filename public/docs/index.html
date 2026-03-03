@@ -1,0 +1,3796 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Myra Framework Documentation</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/typescript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/php.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/xml.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/bash.min.js"></script>
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --bg: #ffffff;
+            --bg-sidebar: #f8fafc;
+            --bg-card: #f1f5f9;
+            --bg-code: #f4f6fa;
+            --bg-table-head: #f1f5f9;
+            --bg-table-row: #ffffff;
+            --bg-table-row-alt: #f8fafc;
+            --border: #e2e8f0;
+            --text: #334155;
+            --text-muted: #64748b;
+            --text-heading: #0f172a;
+            --accent: #1e3a5f;
+            --accent-light: #1e3a5f;
+            --accent-dim: rgba(30, 58, 95, 0.08);
+            --green: #16a34a;
+            --blue: #2563eb;
+            --orange: #d97706;
+            --red: #dc2626;
+            --sidebar-w: 280px;
+        }
+
+        html { font-size: 15px; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.7;
+            overflow-x: hidden;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            position: fixed; top: 0; left: 0; bottom: 0;
+            width: var(--sidebar-w);
+            background: var(--bg-sidebar);
+            border-right: 1px solid var(--border);
+            overflow-y: auto;
+            z-index: 40;
+            transition: transform 0.3s ease;
+            padding-bottom: 2rem;
+        }
+        .sidebar-brand {
+            padding: 1.5rem 1.25rem 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+        .sidebar-brand h1 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--text-heading);
+        }
+        .sidebar-brand p {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-top: 0.2rem;
+        }
+        .sidebar nav { padding: 1rem 0; }
+        .sidebar nav a {
+            display: block;
+            padding: 0.45rem 1.25rem;
+            font-size: 0.875rem;
+            color: var(--text-muted);
+            text-decoration: none;
+            border-left: 3px solid transparent;
+            transition: all 0.15s ease;
+        }
+        .sidebar nav a:hover {
+            color: var(--text-heading);
+            background: rgba(30, 58, 95, 0.05);
+        }
+        .sidebar nav a.active {
+            color: var(--accent-light);
+            border-left-color: var(--accent);
+            background: var(--accent-dim);
+        }
+        .sidebar nav .nav-group {
+            padding: 0.5rem 1.25rem 0.25rem;
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--text-muted);
+        }
+        .sidebar nav .nav-group:not(:first-child) { margin-top: 0.75rem; }
+
+        /* Main */
+        .main {
+            margin-left: var(--sidebar-w);
+            max-width: 900px;
+            padding: 2.5rem 3rem 6rem;
+        }
+
+        /* Mobile */
+        .hamburger {
+            display: none;
+            position: fixed; top: 1rem; left: 1rem;
+            z-index: 50;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 0.5rem;
+            cursor: pointer;
+            color: var(--text);
+        }
+        .hamburger svg { display: block; }
+        .overlay {
+            display: none;
+            position: fixed; inset: 0;
+            background: rgba(0,0,0,0.3);
+            z-index: 35;
+        }
+        @media (max-width: 768px) {
+            .sidebar { transform: translateX(-100%); }
+            .sidebar.open { transform: translateX(0); }
+            .overlay.open { display: block; }
+            .hamburger { display: block; }
+            .main { margin-left: 0; padding: 2rem 1.25rem 4rem; padding-top: 4rem; }
+        }
+
+        /* Typography */
+        h2 {
+            font-size: 1.75rem; font-weight: 700; color: var(--text-heading);
+            margin: 3rem 0 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+        h2:first-child { margin-top: 0; }
+        h3 {
+            font-size: 1.25rem; font-weight: 600; color: var(--text-heading);
+            margin: 2rem 0 0.75rem;
+        }
+        h4 {
+            font-size: 1.05rem; font-weight: 600; color: var(--text-heading);
+            margin: 1.5rem 0 0.5rem;
+        }
+        p { margin: 0.6rem 0; }
+        a { color: var(--accent-light); text-decoration: none; }
+        a:hover { text-decoration: underline; }
+        strong { color: var(--text-heading); }
+
+        /* Code */
+        code {
+            font-family: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', 'Consolas', monospace;
+            font-size: 0.85em;
+            background: #eef2f7;
+            padding: 0.15em 0.4em;
+            border-radius: 4px;
+            color: #1e3a5f;
+        }
+        pre {
+            margin: 1rem 0;
+            border-radius: 8px;
+            overflow-x: auto;
+            border: 1px solid var(--border);
+        }
+        pre code {
+            display: block;
+            padding: 1rem 1.25rem;
+            background: #f8fafc;
+            font-size: 0.82rem;
+            line-height: 1.6;
+            color: #1e293b;
+        }
+
+        /* Tables */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+            font-size: 0.875rem;
+        }
+        th {
+            text-align: left;
+            padding: 0.6rem 0.75rem;
+            background: var(--bg-table-head);
+            color: var(--text-heading);
+            font-weight: 600;
+            border-bottom: 1px solid var(--border);
+        }
+        td {
+            padding: 0.5rem 0.75rem;
+            border-bottom: 1px solid var(--border);
+        }
+        tr:nth-child(even) td { background: var(--bg-table-row-alt); }
+        td code { font-size: 0.8em; }
+
+        /* Badges */
+        .badge {
+            display: inline-block;
+            padding: 0.15em 0.5em;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        .badge-purple { background: var(--accent-dim); color: var(--accent); }
+        .badge-green { background: rgba(22,163,74,0.1); color: var(--green); }
+        .badge-blue { background: rgba(37,99,235,0.1); color: var(--blue); }
+        .badge-orange { background: rgba(217,119,6,0.1); color: var(--orange); }
+
+        /* Architecture diagram */
+        .arch-diagram {
+            margin: 1.5rem 0;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            overflow: hidden;
+            background: var(--bg-card);
+        }
+        .arch-layer {
+            padding: 1.25rem 1.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+        .arch-layer:last-child { border-bottom: none; }
+        .arch-layer-title {
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--text-muted);
+            margin-bottom: 0.75rem;
+        }
+        .arch-boxes {
+            display: flex;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .arch-box {
+            padding: 0.6rem 1rem;
+            border-radius: 8px;
+            font-size: 0.82rem;
+            font-weight: 500;
+            text-align: center;
+            min-width: 130px;
+        }
+        .arch-box.purple { background: rgba(30,58,95,0.08); color: var(--accent); border: 1px solid rgba(30,58,95,0.2); }
+        .arch-box.blue { background: rgba(37,99,235,0.08); color: var(--blue); border: 1px solid rgba(37,99,235,0.2); }
+        .arch-box.green { background: rgba(22,163,74,0.08); color: var(--green); border: 1px solid rgba(22,163,74,0.2); }
+        .arch-box.orange { background: rgba(217,119,6,0.08); color: var(--orange); border: 1px solid rgba(217,119,6,0.2); }
+        .arch-connector {
+            display: flex;
+            justify-content: center;
+            padding: 0.25rem 0;
+            color: var(--text-muted);
+            font-size: 1.2rem;
+        }
+
+        /* Tech pills */
+        .tech-stack {
+            display: flex; flex-wrap: wrap; gap: 0.5rem;
+            margin: 1rem 0;
+        }
+        .tech-pill {
+            display: inline-flex; align-items: center; gap: 0.35rem;
+            padding: 0.35rem 0.75rem;
+            border-radius: 99px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            border: 1px solid var(--border);
+            background: var(--bg-card);
+            color: var(--text);
+        }
+
+        /* File tree */
+        .file-tree {
+            background: #f8fafc;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1rem 1.25rem;
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            font-size: 0.8rem;
+            line-height: 1.7;
+            overflow-x: auto;
+            color: var(--text);
+            margin: 1rem 0;
+            white-space: pre;
+        }
+        .file-tree .dir { color: #2563eb; }
+        .file-tree .file { color: #334155; }
+        .file-tree .comment { color: #94a3b8; }
+
+        /* Callout */
+        .callout {
+            border-left: 3px solid var(--accent);
+            background: rgba(30, 58, 95, 0.05);
+            padding: 0.75rem 1rem;
+            border-radius: 0 8px 8px 0;
+            margin: 1rem 0;
+            font-size: 0.9rem;
+        }
+        .callout-title {
+            font-weight: 600;
+            font-size: 0.82rem;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            margin-bottom: 0.35rem;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+        .callout-tip {
+            border-left-color: var(--green);
+            background: rgba(22, 163, 74, 0.06);
+        }
+        .callout-tip .callout-title { color: var(--green); }
+        .callout-warning {
+            border-left-color: var(--orange);
+            background: rgba(217, 119, 6, 0.06);
+        }
+        .callout-warning .callout-title { color: var(--orange); }
+        .callout-danger {
+            border-left-color: var(--red);
+            background: rgba(220, 38, 38, 0.06);
+        }
+        .callout-danger .callout-title { color: var(--red); }
+        .callout-info {
+            border-left-color: var(--blue);
+            background: rgba(37, 99, 235, 0.06);
+        }
+        .callout-info .callout-title { color: var(--blue); }
+
+        /* Version badge */
+        .version-badge {
+            display: inline-block;
+            padding: 0.15em 0.5em;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            background: rgba(22,163,74,0.1);
+            color: var(--green);
+            vertical-align: middle;
+            margin-left: 0.5rem;
+        }
+
+        /* Step list */
+        .step-list {
+            counter-reset: step;
+            list-style: none;
+            padding-left: 0;
+            margin: 1rem 0;
+        }
+        .step-list li {
+            counter-increment: step;
+            position: relative;
+            padding-left: 2.5rem;
+            margin-bottom: 1.25rem;
+        }
+        .step-list li::before {
+            content: counter(step);
+            position: absolute;
+            left: 0;
+            top: 0.1rem;
+            width: 1.75rem;
+            height: 1.75rem;
+            border-radius: 50%;
+            background: var(--accent-dim);
+            color: var(--accent);
+            font-size: 0.8rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .step-list li strong { color: var(--text-heading); display: block; margin-bottom: 0.15rem; }
+
+        /* Prop required marker */
+        .required-marker {
+            color: var(--red);
+            font-weight: 600;
+            font-size: 0.75rem;
+        }
+
+        /* Inline list */
+        ul.inline-list {
+            padding-left: 1.25rem;
+            margin: 0.5rem 0;
+        }
+        ul.inline-list li { margin-bottom: 0.25rem; }
+
+        /* Section divider */
+        .section-divider {
+            margin: 3rem 0;
+            border: none;
+            border-top: 1px solid var(--border);
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+        /* Scroll offset for anchors */
+        section[id] { scroll-margin-top: 1.5rem; }
+        h3[id] { scroll-margin-top: 1.5rem; }
+    </style>
+</head>
+<body>
+
+<!-- Hamburger -->
+<button class="hamburger" onclick="toggleSidebar()" aria-label="Toggle navigation">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+</button>
+
+<!-- Overlay -->
+<div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
+
+<!-- Sidebar -->
+<aside class="sidebar" id="sidebar">
+    <div class="sidebar-brand">
+        <h1>Myra Framework</h1>
+        <p>Laravel + Inertia + Vue 3</p>
+    </div>
+    <nav>
+        <div class="nav-group">Overview</div>
+        <a href="#overview">Introduction</a>
+        <a href="#installation">Installation</a>
+        <a href="#architecture">Architecture</a>
+        <a href="#tech-stack">Tech Stack</a>
+        <a href="#file-structure">File Structure</a>
+
+        <div class="nav-group">Guides</div>
+        <a href="#getting-started">Getting Started</a>
+        <a href="#after-scaffolding">After Scaffolding</a>
+        <a href="#page-patterns">Page Patterns</a>
+
+        <div class="nav-group">Frontend</div>
+        <a href="#form-builder">Form Builder</a>
+        <a href="#field-types">Field Types</a>
+        <a href="#form-layouts">Form Layouts</a>
+        <a href="#shared-methods">Shared Methods</a>
+        <a href="#rendering">Rendering</a>
+        <a href="#table-builder">Table Builder</a>
+        <a href="#table-columns">Table Columns</a>
+        <a href="#table-filters">Table Filters</a>
+        <a href="#table-actions">Table Actions</a>
+
+        <div class="nav-group">Components</div>
+        <a href="#admin-components">Admin Components</a>
+        <a href="#shared-components">Shared Components</a>
+
+        <div class="nav-group">Composables</div>
+        <a href="#composables">Overview</a>
+        <a href="#useResourceForm">useResourceForm</a>
+        <a href="#useConfirmAction">useConfirmAction</a>
+        <a href="#useConfirm">useConfirm</a>
+        <a href="#usePermissions">usePermissions</a>
+        <a href="#useFlashToasts">useFlashToasts</a>
+
+        <div class="nav-group">Notifications</div>
+        <a href="#notifications-overview">Overview</a>
+        <a href="#notification-types">Notification Types</a>
+        <a href="#notification-bell">NotificationBell</a>
+        <a href="#notification-detail-dialog">NotificationDetailDialog</a>
+        <a href="#notification-preferences">Preferences</a>
+        <a href="#admin-notifications">Admin Management</a>
+
+        <div class="nav-group">Authentication</div>
+        <a href="#auth-overview">Overview</a>
+        <a href="#auth-pages">Auth Pages</a>
+        <a href="#two-factor-auth">Two-Factor Auth</a>
+
+        <div class="nav-group">Layouts</div>
+        <a href="#authenticated-layout">AuthenticatedLayout</a>
+        <a href="#guest-layout">GuestLayout</a>
+        <a href="#sidebar-navigation">Sidebar Navigation</a>
+        <a href="#breadcrumbs">Breadcrumbs</a>
+
+        <div class="nav-group">Admin Modules</div>
+        <a href="#module-users">Users</a>
+        <a href="#module-roles">Roles &amp; Permissions</a>
+        <a href="#module-settings">Settings</a>
+        <a href="#module-email">Email System</a>
+        <a href="#module-backups">Backups</a>
+        <a href="#module-api-tokens">API Tokens</a>
+        <a href="#module-system-health">System Health</a>
+        <a href="#module-activity-log">Activity Log</a>
+        <a href="#module-media">Media Manager</a>
+        <a href="#module-notifications">Notifications</a>
+
+        <div class="nav-group">Backend</div>
+        <a href="#app-install">App Install</a>
+        <a href="#scaffold-commands">Scaffold Commands</a>
+        <a href="#php-backend">PHP Backend</a>
+        <a href="#searchable-query">SearchableQuery Trait</a>
+        <a href="#route-conventions">Route Conventions</a>
+        <a href="#middleware">Middleware</a>
+
+        <div class="nav-group">Reference</div>
+        <a href="#type-definitions">Type Definitions</a>
+    </nav>
+</aside>
+
+<!-- Main content -->
+<main class="main">
+
+<!-- ============================================================ -->
+<!-- SECTION 1: OVERVIEW -->
+<!-- ============================================================ -->
+<section id="overview">
+    <h2>Myra Framework Documentation <span class="version-badge">v1.0</span></h2>
+    <p>A Myra Framework built on Laravel + Inertia.js + Vue 3 (TypeScript) with shadcn-vue components. Schema-driven forms, reusable UI components, and Artisan scaffolding for rapid admin panel development.</p>
+
+    <h4>Key Features</h4>
+    <ul class="inline-list">
+        <li><strong>Schema-Driven Forms</strong> &mdash; Define forms with a fluent TypeScript API instead of verbose templates</li>
+        <li><strong>Schema-Driven Tables</strong> &mdash; Declarative column definitions with auto-rendering (badges, dates, booleans, images)</li>
+        <li><strong>Artisan Scaffolding</strong> &mdash; Generate full CRUD resources or single pages with one command</li>
+        <li><strong>Notification System</strong> &mdash; In-app notifications with bell dropdown, detail dialogs, preferences, and admin management</li>
+        <li><strong>Authentication</strong> &mdash; Login, registration, password reset, email verification, and two-factor authentication</li>
+        <li><strong>Role-Based Access Control</strong> &mdash; Spatie permissions with <code>usePermissions</code> composable for frontend checks</li>
+        <li><strong>Built-in Admin Modules</strong> &mdash; Users, roles, settings, email logs, backups, API tokens, system health, activity log, media manager</li>
+        <li><strong>Dark Mode</strong> &mdash; Full dark/light theme support with persistent user preference</li>
+    </ul>
+
+    <div class="callout callout-tip">
+        <div class="callout-title">&#9889; Quick Start</div>
+        Install Myra into a fresh Laravel project with <code>composer require myra/framework && php artisan myra:install</code>. Then scaffold new admin modules with <code>php artisan myra:resource ModelName</code>. See <a href="#installation">Installation</a> and <a href="#getting-started">Getting Started</a>.
+    </div>
+</section>
+
+<section id="installation">
+    <h2>Installation</h2>
+    <p>Myra is installed as a Composer package. The <code>myra:install</code> command copies all files into your project (starter-kit pattern) so you own the code and can customize everything.</p>
+
+    <h3>Requirements</h3>
+    <ul>
+        <li>PHP 8.2+</li>
+        <li>Laravel 11 or 12 (fresh installation recommended)</li>
+        <li>Node.js 18+</li>
+        <li>A database (MySQL, PostgreSQL, or SQLite)</li>
+    </ul>
+
+    <h3>Step 1: Create a Fresh Laravel Project</h3>
+    <pre><code class="language-bash">laravel new my-app
+cd my-app</code></pre>
+
+    <h3>Step 2: Configure Your Database</h3>
+    <p>Update your <code>.env</code> file with your database credentials:</p>
+    <pre><code class="language-bash"># MySQL / PostgreSQL
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=myra
+DB_USERNAME=root
+DB_PASSWORD=
+
+# Or use SQLite for a quick start (no config needed)
+DB_CONNECTION=sqlite</code></pre>
+
+    <h3>Step 3: Install Myra Framework</h3>
+    <pre><code class="language-bash">composer require myra/framework
+php artisan myra:install</code></pre>
+
+    <p>The install command handles everything automatically:</p>
+    <table>
+        <thead><tr><th>Step</th><th>What it does</th></tr></thead>
+        <tbody>
+            <tr><td>Composer dependencies</td><td>Installs Inertia, Sanctum, Ziggy, Spatie packages, Google2FA, QR codes</td></tr>
+            <tr><td>Application files</td><td>Publishes controllers, models, services, middleware, DTOs, traits, and settings classes</td></tr>
+            <tr><td>Frontend resources</td><td>Publishes Vue components, pages, layouts, composables, and TypeScript types</td></tr>
+            <tr><td>Routes</td><td>Publishes <code>web.php</code> and <code>auth.php</code> with all admin and auth routes</td></tr>
+            <tr><td>Database</td><td>Publishes migrations and seeders, runs <code>migrate</code>, seeds roles/permissions/settings/email templates</td></tr>
+            <tr><td>Configuration</td><td>Publishes <code>config/myra.php</code>, <code>vite.config.ts</code>, <code>tsconfig.json</code>, <code>components.json</code></td></tr>
+            <tr><td>Node dependencies</td><td>Updates <code>package.json</code>, installs npm packages, builds frontend assets</td></tr>
+            <tr><td>Scaffold stubs</td><td>Publishes stub templates to <code>stubs/admin/</code> for <code>myra:resource</code> and <code>myra:page</code> commands</td></tr>
+        </tbody>
+    </table>
+
+    <h3>Step 4: Create Your First Admin User</h3>
+    <pre><code class="language-bash">php artisan tinker</code></pre>
+    <pre><code class="language-php">$user = \App\Models\User::create([
+    'name' => 'Admin',
+    'email' => 'admin@example.com',
+    'password' => bcrypt('password'),
+    'email_verified_at' => now(),
+]);
+
+$user->assignRole('super-admin');</code></pre>
+
+    <h3>Step 5: Start the Dev Server</h3>
+    <pre><code class="language-bash">composer dev</code></pre>
+    <p>This starts the Laravel server, queue worker, log watcher, and Vite dev server concurrently. Or run them separately:</p>
+    <pre><code class="language-bash"># Terminal 1
+php artisan serve
+
+# Terminal 2
+npm run dev</code></pre>
+
+    <h3>Step 6: Log In</h3>
+    <p>Visit <code>http://localhost:8000</code> and sign in with your admin credentials. You'll land on the admin dashboard with all modules ready to use.</p>
+
+    <h3>What's Included After Installation</h3>
+    <ul>
+        <li><strong>Dashboard</strong> &mdash; Stats overview with charts</li>
+        <li><strong>User Management</strong> &mdash; CRUD, bulk actions, CSV export, impersonation</li>
+        <li><strong>Roles &amp; Permissions</strong> &mdash; Full RBAC management</li>
+        <li><strong>Settings</strong> &mdash; General, SEO, appearance, social, maintenance</li>
+        <li><strong>Email System</strong> &mdash; Templates, logs, and SMTP configuration</li>
+        <li><strong>Media Library</strong> &mdash; File uploads with Spatie Media Library</li>
+        <li><strong>Activity Logging</strong> &mdash; Full audit trail</li>
+        <li><strong>System Health</strong> &mdash; Health check monitoring</li>
+        <li><strong>Backup Management</strong> &mdash; Create, download, and delete backups</li>
+        <li><strong>API Tokens</strong> &mdash; Personal access token management</li>
+        <li><strong>Two-Factor Authentication</strong> &mdash; TOTP with QR codes</li>
+        <li><strong>Notification System</strong> &mdash; In-app notifications with preferences</li>
+    </ul>
+
+    <h3>Default Roles</h3>
+    <p>The seeder creates five roles out of the box:</p>
+    <table>
+        <thead><tr><th>Role</th><th>Access Level</th></tr></thead>
+        <tbody>
+            <tr><td><code>super-admin</code></td><td>Full access (bypasses all permission checks via <code>Gate::before</code>)</td></tr>
+            <tr><td><code>admin</code></td><td>All permissions</td></tr>
+            <tr><td><code>manager</code></td><td>Users, roles, email, activity logs, media, notifications</td></tr>
+            <tr><td><code>editor</code></td><td>Media and email (read-only)</td></tr>
+            <tr><td><code>viewer</code></td><td>Users and media (read-only)</td></tr>
+        </tbody>
+    </table>
+
+    <h3>Install Options</h3>
+    <pre><code class="language-bash"># Overwrite existing files (useful when updating)
+php artisan myra:install --force
+
+# Use a specific Composer binary
+php artisan myra:install --composer=/path/to/composer.phar</code></pre>
+
+    <div class="callout callout-tip">
+        <div class="callout-title">&#9889; Starter Kit Pattern</div>
+        Myra follows the same pattern as Laravel Breeze &mdash; all files are copied into your project. You own the code and can modify anything. The <code>myra/framework</code> package is only needed for the install and scaffold commands.
+    </div>
+</section>
+
+<section id="architecture">
+    <h3>Architecture Overview</h3>
+    <div class="arch-diagram">
+        <div class="arch-layer">
+            <div class="arch-layer-title">Vue 3 Frontend</div>
+            <div class="arch-boxes">
+                <div class="arch-box purple">Form Builder<br><small>Schema API</small></div>
+                <div class="arch-box purple">Table Builder<br><small>Schema API</small></div>
+                <div class="arch-box purple">Components<br><small>Admin UI</small></div>
+                <div class="arch-box purple">Composables<br><small>Logic</small></div>
+            </div>
+        </div>
+        <div class="arch-connector">&#8595;</div>
+        <div class="arch-layer">
+            <div class="arch-layer-title">Bridge</div>
+            <div class="arch-boxes">
+                <div class="arch-box blue">Inertia.js Bridge</div>
+            </div>
+        </div>
+        <div class="arch-connector">&#8595;</div>
+        <div class="arch-layer">
+            <div class="arch-layer-title">Laravel Backend</div>
+            <div class="arch-boxes">
+                <div class="arch-box green">Controllers</div>
+                <div class="arch-box green">Services<br><small>SearchableQuery</small></div>
+                <div class="arch-box green">Eloquent Models</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="tech-stack">
+    <h3>Tech Stack</h3>
+    <div class="tech-stack">
+        <span class="tech-pill"><strong>Backend:</strong> Laravel</span>
+        <span class="tech-pill"><strong>Bridge:</strong> Inertia.js</span>
+        <span class="tech-pill"><strong>Frontend:</strong> Vue 3 (Composition API, TypeScript)</span>
+        <span class="tech-pill"><strong>UI:</strong> shadcn-vue</span>
+        <span class="tech-pill"><strong>Icons:</strong> lucide-vue-next</span>
+        <span class="tech-pill"><strong>CSS:</strong> Tailwind CSS v4 + oklch</span>
+        <span class="tech-pill"><strong>Toasts:</strong> vue-sonner</span>
+        <span class="tech-pill"><strong>Charts:</strong> vue-chartjs</span>
+    </div>
+</section>
+
+<section id="file-structure">
+    <h3>File Structure</h3>
+    <div class="file-tree"><span class="dir">app/</span>
+├── <span class="dir">Admin/Traits/</span>
+│   └── <span class="file">SearchableQuery.php</span>          <span class="comment"># Reusable search/sort/paginate trait</span>
+├── <span class="dir">Http/Controllers/</span>
+│   ├── <span class="dir">Admin/</span>                       <span class="comment"># Admin controllers</span>
+│   │   ├── <span class="file">AdminNotificationController.php</span>
+│   │   ├── <span class="file">UserController.php</span>
+│   │   ├── <span class="file">RoleController.php</span>
+│   │   └── <span class="file">...</span>
+│   ├── <span class="file">NotificationController.php</span>   <span class="comment"># User notification CRUD</span>
+│   └── <span class="file">NotificationPreferenceController.php</span>
+├── <span class="dir">Notifications/</span>
+│   ├── <span class="file">SystemNotification.php</span>       <span class="comment"># Database only</span>
+│   ├── <span class="file">UserActionNotification.php</span>   <span class="comment"># Database only</span>
+│   └── <span class="file">SecurityAlertNotification.php</span> <span class="comment"># Database + Mail</span>
+└── <span class="dir">Services/</span>                        <span class="comment"># Service layer</span>
+
+<span class="dir">resources/js/</span>
+├── <span class="dir">components/</span>
+│   ├── <span class="dir">admin/</span>                       <span class="comment"># Admin-specific components</span>
+│   │   ├── <span class="file">FormField.vue</span>            <span class="comment"># Single form field renderer</span>
+│   │   ├── <span class="file">FormFields.vue</span>           <span class="comment"># Schema-to-fields renderer</span>
+│   │   ├── <span class="file">ResourceForm.vue</span>         <span class="comment"># Card form wrapper</span>
+│   │   ├── <span class="file">SettingsCard.vue</span>         <span class="comment"># Settings page form card</span>
+│   │   ├── <span class="file">SimpleTable.vue</span>          <span class="comment"># Static table</span>
+│   │   ├── <span class="file">RowActions.vue</span>           <span class="comment"># Dropdown row actions</span>
+│   │   ├── <span class="file">DateCell.vue</span>             <span class="comment"># Date formatter</span>
+│   │   └── <span class="file">index.ts</span>                 <span class="comment"># Barrel exports</span>
+│   ├── <span class="dir">ui/</span>                          <span class="comment"># shadcn-vue primitives</span>
+│   ├── <span class="file">DataTable.vue</span>                <span class="comment"># Paginated, sortable, searchable table</span>
+│   ├── <span class="file">PageHeader.vue</span>               <span class="comment"># Page title + actions header</span>
+│   ├── <span class="file">StatusBadge.vue</span>              <span class="comment"># Status indicator badge</span>
+│   ├── <span class="file">EmptyState.vue</span>               <span class="comment"># Empty content placeholder</span>
+│   ├── <span class="file">LoadingButton.vue</span>            <span class="comment"># Button with spinner</span>
+│   ├── <span class="file">PasswordInput.vue</span>            <span class="comment"># Password with visibility toggle</span>
+│   ├── <span class="file">ConfirmDialog.vue</span>            <span class="comment"># Global confirm dialog</span>
+│   ├── <span class="file">StatCard.vue</span>                 <span class="comment"># Dashboard stat card</span>
+│   ├── <span class="file">NotificationBell.vue</span>         <span class="comment"># Notification header popover</span>
+│   └── <span class="file">NotificationDetailDialog.vue</span> <span class="comment"># Full notification modal</span>
+├── <span class="dir">composables/</span>
+│   ├── <span class="file">useFormSchema.ts</span>             <span class="comment"># Form builder API (fields + layouts)</span>
+│   ├── <span class="file">useTableSchema.ts</span>            <span class="comment"># Table column builder API</span>
+│   ├── <span class="file">useTableFilters.ts</span>           <span class="comment"># Table filter builder API</span>
+│   ├── <span class="file">useTableActions.ts</span>           <span class="comment"># Table action builder API</span>
+│   ├── <span class="file">useResourceForm.ts</span>           <span class="comment"># Form submission handler</span>
+│   ├── <span class="file">useConfirmAction.ts</span>          <span class="comment"># Delete/post confirmation</span>
+│   ├── <span class="file">useConfirm.ts</span>                <span class="comment"># Confirm dialog state</span>
+│   ├── <span class="file">usePermissions.ts</span>            <span class="comment"># Permission checking</span>
+│   └── <span class="file">useFlashToasts.ts</span>            <span class="comment"># Flash message toasts</span>
+├── <span class="dir">Layouts/</span>
+│   ├── <span class="file">AuthenticatedLayout.vue</span>      <span class="comment"># Main app layout (sidebar + header)</span>
+│   └── <span class="file">GuestLayout.vue</span>              <span class="comment"># Auth pages layout (split panel)</span>
+├── <span class="dir">types/</span>
+│   ├── <span class="file">index.d.ts</span>                   <span class="comment"># Core types (User, PaginatedData, etc.)</span>
+│   └── <span class="file">admin.d.ts</span>                   <span class="comment"># Admin types (RowAction, SelectOption, etc.)</span>
+├── <span class="dir">Pages/Auth/</span>                      <span class="comment"># Auth pages (Login, Register, etc.)</span>
+├── <span class="dir">Pages/Notifications/</span>             <span class="comment"># User notification pages</span>
+│   ├── <span class="file">Index.vue</span>                    <span class="comment"># All notifications list</span>
+│   └── <span class="file">Preferences.vue</span>              <span class="comment"># Notification preferences</span>
+├── <span class="dir">Pages/Errors/</span>                    <span class="comment"># Error pages (403, 404, 419, 500, 503)</span>
+└── <span class="dir">Pages/Admin/</span>                     <span class="comment"># Admin pages</span>
+    ├── <span class="dir">Users/</span>                       <span class="comment"># Index, Create, Edit</span>
+    ├── <span class="dir">Roles/</span>                       <span class="comment"># Index, Edit</span>
+    ├── <span class="dir">Permissions/</span>                 <span class="comment"># Index</span>
+    ├── <span class="dir">Settings/</span>                    <span class="comment"># Index</span>
+    ├── <span class="dir">Email/</span>                       <span class="comment"># Log, Settings, Templates/</span>
+    ├── <span class="dir">Notifications/</span>               <span class="comment"># Index, Create</span>
+    ├── <span class="dir">Backups/</span>                     <span class="comment"># Index</span>
+    ├── <span class="dir">ApiTokens/</span>                   <span class="comment"># Index</span>
+    ├── <span class="dir">ActivityLog/</span>                 <span class="comment"># Index</span>
+    ├── <span class="dir">Media/</span>                       <span class="comment"># Index</span>
+    └── <span class="file">SystemHealth.vue</span>
+
+<span class="dir">stubs/admin/</span>                         <span class="comment"># Artisan command templates</span>
+├── <span class="file">controller.resource.stub</span>
+├── <span class="file">controller.page.stub</span>
+├── <span class="file">service.stub</span>
+├── <span class="file">page.index.stub</span>
+├── <span class="file">page.create.stub</span>
+├── <span class="file">page.edit.stub</span>
+└── <span class="file">page.single.stub</span></div>
+</section>
+
+<hr class="section-divider">
+
+<!-- ============================================================ -->
+<!-- SECTION 2: GETTING STARTED -->
+<!-- ============================================================ -->
+<section id="getting-started">
+    <h2>Getting Started</h2>
+
+    <h3>Creating a New CRUD Resource</h3>
+    <p>The fastest way to add a new admin module is the scaffold command:</p>
+    <pre><code class="language-bash">php artisan myra:resource Product</code></pre>
+    <p>This generates 5 files:</p>
+    <table>
+        <thead><tr><th>File</th><th>Purpose</th></tr></thead>
+        <tbody>
+            <tr><td><code>app/Http/Controllers/Admin/ProductController.php</code></td><td>CRUD controller with injected service</td></tr>
+            <tr><td><code>app/Services/ProductService.php</code></td><td>Service with search, create, update, delete</td></tr>
+            <tr><td><code>resources/js/Pages/Admin/Products/Index.vue</code></td><td>List page with DataTable</td></tr>
+            <tr><td><code>resources/js/Pages/Admin/Products/Create.vue</code></td><td>Create form with FormFields</td></tr>
+            <tr><td><code>resources/js/Pages/Admin/Products/Edit.vue</code></td><td>Edit form with pre-filled data</td></tr>
+        </tbody>
+    </table>
+    <p>The command also prints route definitions to paste into <code>routes/web.php</code>:</p>
+    <pre><code class="language-php">// Products
+Route::get('/products', [ProductController::class, 'index'])-&gt;middleware('permission:products.view')-&gt;name('products.index');
+Route::get('/products/create', [ProductController::class, 'create'])-&gt;middleware('permission:products.create')-&gt;name('products.create');
+Route::post('/products', [ProductController::class, 'store'])-&gt;middleware('permission:products.create')-&gt;name('products.store');
+Route::get('/products/{product}/edit', [ProductController::class, 'edit'])-&gt;middleware('permission:products.edit')-&gt;name('products.edit');
+Route::put('/products/{product}', [ProductController::class, 'update'])-&gt;middleware('permission:products.edit')-&gt;name('products.update');
+Route::delete('/products/{product}', [ProductController::class, 'destroy'])-&gt;middleware('permission:products.delete')-&gt;name('products.destroy');</code></pre>
+
+    <h3>Creating a Single Page</h3>
+    <p>For non-CRUD pages (dashboards, analytics, settings):</p>
+    <pre><code class="language-bash">php artisan myra:page Analytics</code></pre>
+    <p>This generates 2 files:</p>
+    <table>
+        <thead><tr><th>File</th><th>Purpose</th></tr></thead>
+        <tbody>
+            <tr><td><code>app/Http/Controllers/Admin/AnalyticsController.php</code></td><td>Controller with <code>index()</code> method</td></tr>
+            <tr><td><code>resources/js/Pages/Admin/Analytics/Index.vue</code></td><td>Basic page with PageHeader</td></tr>
+        </tbody>
+    </table>
+</section>
+
+<section id="after-scaffolding">
+    <h3>After Scaffolding</h3>
+
+    <h4>1. Add the routes</h4>
+    <p>Paste the printed route snippet into <code>routes/web.php</code> inside your admin route group.</p>
+
+    <h4>2. Create the model (if needed)</h4>
+    <pre><code class="language-bash">php artisan make:model Product -m</code></pre>
+
+    <h4>3. Customize the form schema</h4>
+    <p>Open the generated Create/Edit pages and modify the schema:</p>
+    <pre><code class="language-typescript">const schema = [
+    TextInput.make('name').required(),
+    TextInput.make('sku').required().placeholder('PRD-001'),
+    TextInput.make('price').numeric().required(),
+    Textarea.make('description').colSpan(2),
+    Select.make('category').options({
+        electronics: 'Electronics',
+        clothing: 'Clothing',
+        books: 'Books',
+    }),
+    Toggle.make('is_active').label('Active'),
+];</code></pre>
+
+    <h4>4. Update the controller validation</h4>
+    <pre><code class="language-php">$validated = $request-&gt;validate([
+    'name' =&gt; 'required|string|max:255',
+    'sku' =&gt; 'required|string|unique:products,sku',
+    'price' =&gt; 'required|numeric|min:0',
+    'description' =&gt; 'nullable|string',
+    'category' =&gt; 'required|in:electronics,clothing,books',
+    'is_active' =&gt; 'boolean',
+]);</code></pre>
+
+    <h4>5. Update the service</h4>
+    <pre><code class="language-php">public function list(Request $request): LengthAwarePaginator
+{
+    return $this-&gt;applySearchAndPaginate(
+        Product::query()
+            -&gt;when($request-&gt;category, fn ($q, $cat) =&gt; $q-&gt;where('category', $cat)),
+        $request,
+        searchable: ['name', 'sku', 'description'],
+    );
+}</code></pre>
+
+    <h4>6. Customize the Index page columns</h4>
+    <p>Use the Table Builder API for declarative column definitions:</p>
+    <pre><code class="language-typescript">import { TextColumn, BadgeColumn, DateColumn, BooleanColumn } from '@/composables/useTableSchema';
+import { EditAction, DeleteAction } from '@/composables/useTableActions';
+
+const columns = [
+    TextColumn.make('name').sortable().searchable(),
+    TextColumn.make('sku').sortable(),
+    TextColumn.make('price').sortable().money('USD'),
+    TextColumn.make('category'),
+    BooleanColumn.make('is_active').label('Active'),
+    DateColumn.make('created_at').sortable(),
+];
+
+const actions = [
+    EditAction.make('admin.products.edit'),
+    DeleteAction.make('admin.products.destroy'),
+];</code></pre>
+    <pre><code class="language-xml">&lt;DataTable :columns="columns" :data="products" :actions="actions" route-name="admin.products.index" /&gt;</code></pre>
+    <p>No template slots needed &mdash; columns auto-render based on type.</p>
+
+    <div class="callout callout-tip">
+        <div class="callout-title">&#9889; Schema vs Manual Slots</div>
+        You can always override auto-rendering by providing a <code>#cell-{key}</code> slot. The schema builder is a convenience &mdash; slots still work when you need full control over a cell's output.
+    </div>
+</section>
+
+<section id="page-patterns">
+    <h3>Typical Page Patterns</h3>
+
+    <h4>CRUD Resource Page</h4>
+    <div class="file-tree">Controller (index/create/store/edit/update/destroy)
+└── Service (list/create/update/delete + SearchableQuery)
+    └── 3 Vue Pages
+        ├── Index.vue  → DataTable + RowActions
+        ├── Create.vue → ResourceForm + FormFields
+        └── Edit.vue   → ResourceForm + FormFields</div>
+
+    <h4>Settings Page</h4>
+    <div class="file-tree">Controller (index/update)
+└── Vue Page
+    └── SettingsCard + FormFields (per section)</div>
+
+    <h4>Dashboard / Analytics Page</h4>
+    <div class="file-tree">Controller (index)
+└── Vue Page
+    └── StatCard + DataTable/Charts</div>
+</section>
+
+<hr class="section-divider">
+
+<!-- ============================================================ -->
+<!-- SECTION 3: FORM BUILDER -->
+<!-- ============================================================ -->
+<section id="form-builder">
+    <h2>Form Builder API</h2>
+    <p>The form builder provides a fluent API for defining form fields as TypeScript objects instead of verbose template markup.</p>
+
+    <h3>Quick Comparison</h3>
+    <p><strong>Before (template-heavy):</strong></p>
+    <pre><code class="language-xml">&lt;FormField label="Name" name="name" v-model="form.name" required :error="form.errors.name" /&gt;
+&lt;FormField label="Email" name="email" v-model="form.email" type="email" required :error="form.errors.email" /&gt;
+&lt;FormField label="Password" name="password" v-model="form.password" type="password" :error="form.errors.password" /&gt;
+&lt;FormField label="Role" name="role" v-model="form.role" type="select" :options="[...]" :error="form.errors.role" /&gt;</code></pre>
+    <p><strong>After (schema-driven):</strong></p>
+    <pre><code class="language-typescript">const schema = [
+    TextInput.make('name').required(),
+    TextInput.make('email').email().required(),
+    TextInput.make('password').password(),
+    Select.make('role').options([...]),
+];</code></pre>
+    <pre><code class="language-xml">&lt;FormFields :schema="schema" :form="form" /&gt;</code></pre>
+
+    <h3>Imports</h3>
+    <pre><code class="language-typescript">// Field types
+import { TextInput, Select, Textarea, Toggle, Checkbox,
+         DatePicker, DateTimePicker, Radio, ColorPicker,
+         Hidden, FileUpload, RichEditor } from '@/composables/useFormSchema';
+
+// Layout types
+import { Section, Grid, Tabs, Tab, Fieldset, Flex, Wizard, WizardStep, Callout } from '@/composables/useFormSchema';
+
+// Renderer
+import { FormFields } from '@/components/admin';</code></pre>
+</section>
+
+<section id="field-types">
+    <h3>Field Types</h3>
+
+    <h4>TextInput</h4>
+    <p>Standard text input with type modifiers.</p>
+    <pre><code class="language-typescript">TextInput.make('name')                          // text input
+TextInput.make('email').email()                 // email input
+TextInput.make('password').password()           // password input with eye toggle
+TextInput.make('price').numeric()               // number input
+TextInput.make('quantity').integer()             // number input (alias)
+TextInput.make('phone').tel()                   // tel input
+TextInput.make('website').url()                 // url input</code></pre>
+
+    <h4>Select</h4>
+    <p>Dropdown select field. Supports two option formats.</p>
+    <pre><code class="language-typescript">// Array format
+Select.make('role').options([
+    { label: 'Admin', value: 'admin' },
+    { label: 'Editor', value: 'editor' },
+    { label: 'Viewer', value: 'viewer' },
+])
+
+// Record shorthand
+Select.make('status').options({
+    active: 'Active',
+    suspended: 'Suspended',
+    pending: 'Pending',
+})
+
+// With placeholder
+Select.make('category').placeholder('Select a category').options({...})</code></pre>
+
+    <h4>Textarea</h4>
+    <p>Multi-line text input.</p>
+    <pre><code class="language-typescript">Textarea.make('description')
+Textarea.make('notes').rows(6)                  // custom row count
+Textarea.make('bio').colSpan(2)                 // full-width in 2-col grid</code></pre>
+
+    <h4>Toggle</h4>
+    <p>Switch/toggle for boolean values.</p>
+    <pre><code class="language-typescript">Toggle.make('is_active').label('Active')
+Toggle.make('notifications').label('Enable notifications')</code></pre>
+
+    <h4>Checkbox</h4>
+    <p>Checkbox for boolean values.</p>
+    <pre><code class="language-typescript">Checkbox.make('agree_terms').label('I agree to the terms')
+Checkbox.make('subscribe').label('Subscribe to newsletter')</code></pre>
+
+    <h4>DatePicker</h4>
+    <p>Native date input.</p>
+    <pre><code class="language-typescript">DatePicker.make('birth_date')
+DatePicker.make('start_date').minDate('2024-01-01').maxDate('2026-12-31')</code></pre>
+
+    <h4>DateTimePicker</h4>
+    <p>Native datetime-local input.</p>
+    <pre><code class="language-typescript">DateTimePicker.make('scheduled_at')
+DateTimePicker.make('event_start').minDate('2024-01-01T00:00')</code></pre>
+
+    <h4>Radio</h4>
+    <p>Radio button group. Supports same option formats as Select.</p>
+    <pre><code class="language-typescript">Radio.make('theme').options({ light: 'Light', dark: 'Dark', system: 'System' })
+Radio.make('priority').options({ low: 'Low', medium: 'Medium', high: 'High' }).inline()</code></pre>
+
+    <h4>ColorPicker</h4>
+    <p>Native color input with hex text field.</p>
+    <pre><code class="language-typescript">ColorPicker.make('accent_color')
+ColorPicker.make('brand_color').label('Brand Color')</code></pre>
+
+    <h4>Hidden</h4>
+    <p>Hidden input for passing data without rendering a visible field.</p>
+    <pre><code class="language-typescript">Hidden.make('parent_id')
+Hidden.make('type')</code></pre>
+
+    <h4>FileUpload</h4>
+    <div class="callout callout-warning">
+        <div class="callout-title">&#9888; Server-Side Validation Required</div>
+        The <code>maxSize</code> and <code>accept</code> constraints are client-side hints only. Always validate file uploads in your Laravel controller with <code>'file|max:2048|mimes:jpg,png'</code>.
+    </div>
+    <p>Styled file input with optional constraints.</p>
+    <pre><code class="language-typescript">FileUpload.make('document')
+FileUpload.make('avatar').image().maxSize(2)             // images only, max 2MB
+FileUpload.make('attachments').multiple().accept('.pdf,.doc,.docx').maxSize(10)</code></pre>
+
+    <h4>RichEditor</h4>
+    <p>Enhanced textarea for rich content (renders as <code>&lt;textarea&gt;</code> with larger default rows).</p>
+    <pre><code class="language-typescript">RichEditor.make('content')
+RichEditor.make('body').rows(12)</code></pre>
+</section>
+
+<section id="shared-methods">
+    <h3>Shared Methods</h3>
+    <p>All field types inherit these methods from <code>BaseField</code>:</p>
+    <table>
+        <thead><tr><th>Method</th><th>Description</th><th>Example</th></tr></thead>
+        <tbody>
+            <tr><td><code>.label(text)</code></td><td>Set explicit label</td><td><code>.label('Full Name')</code></td></tr>
+            <tr><td><code>.required()</code></td><td>Mark as required (shows asterisk)</td><td><code>.required()</code></td></tr>
+            <tr><td><code>.hint(text)</code></td><td>Helper text below field</td><td><code>.hint('Min 8 characters')</code></td></tr>
+            <tr><td><code>.placeholder(text)</code></td><td>Input placeholder text</td><td><code>.placeholder('Enter name')</code></td></tr>
+            <tr><td><code>.disabled()</code></td><td>Disable the field</td><td><code>.disabled()</code></td></tr>
+            <tr><td><code>.colSpan(n)</code></td><td>Grid column span</td><td><code>.colSpan(2)</code></td></tr>
+        </tbody>
+    </table>
+
+    <h4>Auto-derived Labels</h4>
+    <p>If <code>.label()</code> is not called, the label is derived from the field name:</p>
+    <table>
+        <thead><tr><th>Name</th><th>Auto Label</th></tr></thead>
+        <tbody>
+            <tr><td><code>name</code></td><td>Name</td></tr>
+            <tr><td><code>email</code></td><td>Email</td></tr>
+            <tr><td><code>mail_host</code></td><td>Mail Host</td></tr>
+            <tr><td><code>first_name</code></td><td>First Name</td></tr>
+            <tr><td><code>created_at</code></td><td>Created At</td></tr>
+        </tbody>
+    </table>
+
+    <h4>Column Spanning</h4>
+    <p>In a 2-column grid (default for ResourceForm), use <code>.colSpan(2)</code> for full-width fields:</p>
+    <pre><code class="language-typescript">const schema = [
+    TextInput.make('first_name'),               // left column
+    TextInput.make('last_name'),                // right column
+    Textarea.make('bio').colSpan(2),            // full width
+    TextInput.make('city'),                     // left column
+    TextInput.make('country'),                  // right column
+];</code></pre>
+</section>
+
+<section id="rendering">
+    <h3>Rendering</h3>
+
+    <h4>FormFields Component</h4>
+    <p>The <code>&lt;FormFields&gt;</code> component renders a schema array, binding <code>v-model</code> and errors automatically:</p>
+    <pre><code class="language-xml">&lt;script setup lang="ts"&gt;
+import { FormFields, ResourceForm } from '@/components/admin';
+import { useResourceForm } from '@/composables/useResourceForm';
+import { TextInput, Select } from '@/composables/useFormSchema';
+
+const schema = [
+    TextInput.make('name').required(),
+    TextInput.make('email').email().required(),
+    Select.make('status').options({ active: 'Active', inactive: 'Inactive' }),
+];
+
+const { form, submit } = useResourceForm({
+    data: { name: '', email: '', status: 'active' },
+    storeRoute: 'admin.items.store',
+});
+&lt;/script&gt;
+
+&lt;template&gt;
+    &lt;ResourceForm :processing="form.processing" @submit="submit"&gt;
+        &lt;FormFields :schema="schema" :form="form" /&gt;
+    &lt;/ResourceForm&gt;
+&lt;/template&gt;</code></pre>
+
+    <h4>Mixed Usage</h4>
+    <p>Combine <code>&lt;FormFields&gt;</code> with manual <code>&lt;FormField&gt;</code> tags for custom inputs:</p>
+    <pre><code class="language-xml">&lt;ResourceForm :processing="form.processing" @submit="submit"&gt;
+    &lt;FormFields :schema="schema" :form="form" /&gt;
+
+    &lt;template #after-fields&gt;
+        &lt;FormField label="Avatar" name="avatar"&gt;
+            &lt;input type="file" @change="handleUpload" /&gt;
+        &lt;/FormField&gt;
+    &lt;/template&gt;
+&lt;/ResourceForm&gt;</code></pre>
+
+    <h4>Dynamic Schemas</h4>
+    <pre><code class="language-typescript">const props = defineProps&lt;{ roles: string[] }&gt;();
+
+const schema = [
+    TextInput.make('name').required(),
+    TextInput.make('email').email().required(),
+    Select.make('role')
+        .placeholder('Select role')
+        .options(props.roles.map(r =&gt; ({ label: r, value: r }))),
+];</code></pre>
+
+    <h4>Conditional Fields</h4>
+    <pre><code class="language-typescript">const isAdmin = computed(() =&gt; form.role === 'admin');
+
+const schema = computed(() =&gt; [
+    TextInput.make('name').required(),
+    Select.make('role').options({ admin: 'Admin', user: 'User' }),
+    ...(isAdmin.value ? [
+        TextInput.make('admin_code').required().hint('Required for admin accounts'),
+    ] : []),
+]);</code></pre>
+
+    <h4>Settings Page Pattern</h4>
+    <pre><code class="language-typescript">const generalSchema = [
+    TextInput.make('site_name'),
+    TextInput.make('admin_email').email(),
+];
+
+const seoSchema = [
+    TextInput.make('meta_title'),
+    Textarea.make('meta_description'),
+    TextInput.make('meta_keywords'),
+];</code></pre>
+    <pre><code class="language-xml">&lt;SettingsCard title="General" :processing="generalForm.processing" @submit="save('general', generalForm)"&gt;
+    &lt;FormFields :schema="generalSchema" :form="generalForm" /&gt;
+&lt;/SettingsCard&gt;
+
+&lt;SettingsCard title="SEO" :processing="seoForm.processing" :columns="1" @submit="save('seo', seoForm)"&gt;
+    &lt;FormFields :schema="seoSchema" :form="seoForm" /&gt;
+&lt;/SettingsCard&gt;</code></pre>
+
+    <h4>Internal API</h4>
+    <p>Each field instance exposes:</p>
+    <table>
+        <thead><tr><th>Property/Method</th><th>Description</th></tr></thead>
+        <tbody>
+            <tr><td><code>.name</code></td><td>The field name string</td></tr>
+            <tr><td><code>.colStyle</code></td><td>CSS <code>grid-column: span N</code> string or undefined</td></tr>
+            <tr><td><code>.toProps()</code></td><td>Returns a <code>FieldSchema</code> object for <code>&lt;FormField&gt;</code> binding</td></tr>
+        </tbody>
+    </table>
+    <pre><code class="language-typescript">interface FieldSchema {
+    name: string;
+    label: string;
+    type: 'text' | 'email' | 'password' | 'number' | 'textarea' | 'select'
+        | 'switch' | 'checkbox' | 'tel' | 'url' | 'date' | 'datetime-local'
+        | 'radio' | 'color' | 'hidden' | 'file' | 'richtext';
+    required: boolean;
+    hint?: string;
+    placeholder?: string;
+    disabled: boolean;
+    colSpan?: number;
+    options?: SelectOption[];
+    rows?: number;
+    minDate?: string;
+    maxDate?: string;
+    inline?: boolean;
+    accept?: string;
+    multiple?: boolean;
+    maxSize?: number;
+}</code></pre>
+</section>
+
+<hr class="section-divider">
+
+<!-- ============================================================ -->
+<!-- SECTION 3b: FORM LAYOUTS -->
+<!-- ============================================================ -->
+<section id="form-layouts">
+    <h2>Form Layouts</h2>
+    <p>Layout classes wrap fields in visual groupings. They are not field types &mdash; they contain nested schema arrays.</p>
+
+    <h3>Section</h3>
+    <p>Wraps fields in a <code>&lt;Card&gt;</code> with title and description.</p>
+    <pre><code class="language-typescript">import { Section, TextInput, Toggle } from '@/composables/useFormSchema';
+
+const schema = [
+    Section.make('Personal Info').schema([
+        TextInput.make('name').required(),
+        TextInput.make('email').email().required(),
+    ]),
+    Section.make('Preferences').columns(1).collapsible().schema([
+        Toggle.make('notifications'),
+        Toggle.make('newsletter'),
+    ]),
+];</code></pre>
+
+    <table>
+        <thead><tr><th>Method</th><th>Description</th></tr></thead>
+        <tbody>
+            <tr><td><code>.description(text)</code></td><td>Card description text</td></tr>
+            <tr><td><code>.schema(fields)</code></td><td>Nested field/layout array</td></tr>
+            <tr><td><code>.columns(n)</code></td><td>Grid columns (default: 2)</td></tr>
+            <tr><td><code>.collapsible()</code></td><td>Make section collapsible</td></tr>
+            <tr><td><code>.collapsed()</code></td><td>Start collapsed</td></tr>
+            <tr><td><code>.icon(component)</code></td><td>Icon next to title</td></tr>
+        </tbody>
+    </table>
+
+    <h3>Grid</h3>
+    <p>Nested grid for fine-grained column control.</p>
+    <pre><code class="language-typescript">Grid.make(3).schema([
+    TextInput.make('city'),
+    TextInput.make('state'),
+    TextInput.make('zip'),
+])</code></pre>
+
+    <h3>Tabs</h3>
+    <p>Tab panels for organizing large forms.</p>
+    <pre><code class="language-typescript">Tabs.make([
+    Tab.make('General').schema([
+        TextInput.make('name').required(),
+    ]),
+    Tab.make('Settings').icon(Settings).schema([
+        Toggle.make('is_active'),
+    ]),
+])</code></pre>
+
+    <h3>Fieldset</h3>
+    <p>Bordered group with legend.</p>
+    <pre><code class="language-typescript">Fieldset.make('Address').columns(2).schema([
+    TextInput.make('street').colSpan(2),
+    TextInput.make('city'),
+    TextInput.make('state'),
+])</code></pre>
+
+    <h3>Flex</h3>
+    <p>Flexbox container for inline or stacked field arrangements without grid constraints.</p>
+    <pre><code class="language-typescript">// Horizontal row (default)
+Flex.make().direction('row').gap(4).schema([
+    TextInput.make('first_name'),
+    TextInput.make('last_name'),
+])
+
+// Column direction
+Flex.make().direction('col').gap(2).schema([
+    TextInput.make('address_line_1'),
+    TextInput.make('address_line_2'),
+])
+
+// With alignment
+Flex.make().justify('between').align('center').schema([
+    TextInput.make('search'),
+    Toggle.make('case_sensitive'),
+])</code></pre>
+
+    <table>
+        <thead><tr><th>Method</th><th>Description</th></tr></thead>
+        <tbody>
+            <tr><td><code>.direction(d)</code></td><td><code>'row'</code> (default) or <code>'col'</code></td></tr>
+            <tr><td><code>.gap(n)</code></td><td>Gap between items (default: 4)</td></tr>
+            <tr><td><code>.justify(j)</code></td><td><code>'start'</code>, <code>'end'</code>, <code>'center'</code>, <code>'between'</code>, <code>'around'</code></td></tr>
+            <tr><td><code>.align(a)</code></td><td><code>'start'</code>, <code>'end'</code>, <code>'center'</code>, <code>'stretch'</code></td></tr>
+            <tr><td><code>.schema(fields)</code></td><td>Nested field/layout array</td></tr>
+        </tbody>
+    </table>
+
+    <h3>Wizard</h3>
+    <p>Multi-step form with a step indicator bar, previous/next navigation, and per-step content.</p>
+    <pre><code class="language-typescript">Wizard.make([
+    WizardStep.make('Personal Info').icon(User).schema([
+        TextInput.make('name').required(),
+        TextInput.make('email').email().required(),
+    ]),
+    WizardStep.make('Account').icon(Shield).schema([
+        TextInput.make('password').password().required(),
+        Select.make('role').options({ admin: 'Admin', user: 'User' }),
+    ]),
+    WizardStep.make('Review').icon(CheckCircle).description('Review your information').schema([
+        // summary fields
+    ]),
+])</code></pre>
+
+    <h4>WizardStep Methods</h4>
+    <table>
+        <thead><tr><th>Method</th><th>Description</th></tr></thead>
+        <tbody>
+            <tr><td><code>.description(text)</code></td><td>Subtitle shown below the step label</td></tr>
+            <tr><td><code>.icon(component)</code></td><td>Lucide icon shown in the step circle when active</td></tr>
+            <tr><td><code>.schema(fields)</code></td><td>Fields displayed when this step is active</td></tr>
+        </tbody>
+    </table>
+
+    <h3>Callout</h3>
+    <p>Colored alert banner with an icon, title, and description. Optionally embeds fields inside.</p>
+    <pre><code class="language-typescript">// Warning callout
+Callout.make('Important Notice')
+    .description('This action cannot be undone.')
+    .warning()
+
+// Info callout with custom icon
+Callout.make('Tip')
+    .description('You can use keyboard shortcuts to speed up your workflow.')
+    .info()
+    .icon(Lightbulb)
+
+// Callout with nested fields
+Callout.make('Advanced Settings')
+    .description('Only modify these if you know what you are doing.')
+    .warning()
+    .schema([
+        Toggle.make('debug_mode').label('Enable Debug Mode'),
+    ])</code></pre>
+
+    <table>
+        <thead><tr><th>Method</th><th>Description</th></tr></thead>
+        <tbody>
+            <tr><td><code>.description(text)</code></td><td>Callout body text</td></tr>
+            <tr><td><code>.variant(v)</code></td><td><code>'info'</code>, <code>'warning'</code>, <code>'success'</code>, <code>'danger'</code></td></tr>
+            <tr><td><code>.icon(component)</code></td><td>Override default variant icon</td></tr>
+            <tr><td><code>.schema(fields)</code></td><td>Optional nested fields below the callout</td></tr>
+            <tr><td><code>.info()</code></td><td>Shorthand for <code>.variant('info')</code></td></tr>
+            <tr><td><code>.warning()</code></td><td>Shorthand for <code>.variant('warning')</code></td></tr>
+            <tr><td><code>.success()</code></td><td>Shorthand for <code>.variant('success')</code></td></tr>
+            <tr><td><code>.danger()</code></td><td>Shorthand for <code>.variant('danger')</code></td></tr>
+        </tbody>
+    </table>
+</section>
+
+<hr class="section-divider">
+
+<!-- ============================================================ -->
+<!-- SECTION 3c: TABLE BUILDER -->
+<!-- ============================================================ -->
+<section id="table-builder">
+    <h2>Table Builder API</h2>
+    <p>The table builder provides a fluent API for defining DataTable columns, filters, and actions as TypeScript objects instead of verbose template slots.</p>
+
+    <h3>Before vs After</h3>
+    <pre><code class="language-typescript">// BEFORE: manual slots needed
+const columns: Column[] = [
+    { key: 'name', label: 'Name', sortable: true },
+    { key: 'status', label: 'Status' },
+    { key: 'created_at', label: 'Created', sortable: true },
+];
+// + template slots for StatusBadge, DateCell, RowActions...
+
+// AFTER: declarative, zero slots needed
+import { TextColumn, BadgeColumn, DateColumn } from '@/composables/useTableSchema';
+import { EditAction, DeleteAction } from '@/composables/useTableActions';
+
+const columns = [
+    TextColumn.make('name').sortable().searchable(),
+    BadgeColumn.make('status').colors({ active: 'default', suspended: 'destructive' }),
+    DateColumn.make('created_at').sortable(),
+];
+
+const actions = [
+    EditAction.make('admin.products.edit'),
+    DeleteAction.make('admin.products.destroy'),
+];</code></pre>
+</section>
+
+<section id="table-columns">
+    <h3>Column Types</h3>
+    <table>
+        <thead><tr><th>Class</th><th>Auto-renders</th><th>Key methods</th></tr></thead>
+        <tbody>
+            <tr><td><code>TextColumn</code></td><td>Plain text</td><td><code>.sortable()</code>, <code>.searchable()</code>, <code>.limit(n)</code>, <code>.url(fn)</code>, <code>.copyable()</code>, <code>.money(currency)</code>, <code>.numeric(decimals)</code>, <code>.description(fn)</code></td></tr>
+            <tr><td><code>BadgeColumn</code></td><td><code>&lt;StatusBadge&gt;</code> or <code>&lt;Badge&gt;</code></td><td><code>.colors({ value: variant })</code></td></tr>
+            <tr><td><code>DateColumn</code></td><td><code>&lt;DateCell&gt;</code></td><td><code>.format('date'|'datetime'|'relative')</code>, <code>.sortable()</code></td></tr>
+            <tr><td><code>BooleanColumn</code></td><td>Check/X icons</td><td><code>.trueIcon(icon)</code>, <code>.falseIcon(icon)</code>, <code>.trueColor()</code>, <code>.falseColor()</code></td></tr>
+            <tr><td><code>ImageColumn</code></td><td><code>&lt;img&gt;</code> tag</td><td><code>.circular()</code>, <code>.size(n)</code>, <code>.defaultUrl(url)</code></td></tr>
+            <tr><td><code>IconColumn</code></td><td>Lucide icon</td><td><code>.icon(fn)</code>, <code>.color(fn)</code></td></tr>
+            <tr><td><code>ToggleColumn</code></td><td><code>&lt;Switch&gt;</code></td><td><code>.onUpdate(fn)</code> &mdash; inline editable boolean</td></tr>
+        </tbody>
+    </table>
+
+    <h4>Shared Column Methods</h4>
+    <table>
+        <thead><tr><th>Method</th><th>Description</th></tr></thead>
+        <tbody>
+            <tr><td><code>.label(text)</code></td><td>Override auto-derived label</td></tr>
+            <tr><td><code>.sortable()</code></td><td>Enable server-side sorting</td></tr>
+            <tr><td><code>.searchable()</code></td><td>Mark as searchable</td></tr>
+            <tr><td><code>.hidden()</code></td><td>Hide the column</td></tr>
+            <tr><td><code>.visible(bool)</code></td><td>Conditional visibility</td></tr>
+            <tr><td><code>.alignEnd()</code></td><td>Right-align the column</td></tr>
+            <tr><td><code>.extraClass(cls)</code></td><td>Add CSS class</td></tr>
+            <tr><td><code>.tooltip(text)</code></td><td>Add tooltip text</td></tr>
+            <tr><td><code>.toggleable()</code></td><td>User can show/hide this column</td></tr>
+            <tr><td><code>.grow()</code></td><td>Column takes available space</td></tr>
+        </tbody>
+    </table>
+</section>
+
+<section id="table-filters">
+    <h3>Table Filters</h3>
+    <p>Filters render in a collapsible toolbar above the table. Clicking the <strong>Filters</strong> button reveals filter controls; active filter count is shown as a badge. Values are passed to the backend as query params via Inertia.</p>
+
+    <table>
+        <thead><tr><th>Class</th><th>Renders</th><th>Own Methods</th></tr></thead>
+        <tbody>
+            <tr><td><code>SelectFilter</code></td><td><code>&lt;Select&gt;</code> dropdown</td><td><code>.options(obj|arr)</code>, <code>.placeholder()</code>, <code>.multiple()</code></td></tr>
+            <tr><td><code>TernaryFilter</code></td><td>3-state select (All / Yes / No)</td><td><code>.trueLabel()</code>, <code>.falseLabel()</code></td></tr>
+            <tr><td><code>Filter</code></td><td><code>&lt;Checkbox&gt;</code></td><td><code>.query(paramName)</code></td></tr>
+        </tbody>
+    </table>
+
+    <p><strong>Shared methods</strong> (available on all filter types):</p>
+    <table>
+        <thead><tr><th>Method</th><th>Description</th></tr></thead>
+        <tbody>
+            <tr><td><code>.make(name)</code></td><td>Static factory. The <code>name</code> becomes the URL query param.</td></tr>
+            <tr><td><code>.label(text)</code></td><td>Display label above the filter control. Defaults to humanized <code>name</code>.</td></tr>
+        </tbody>
+    </table>
+
+    <pre><code class="language-typescript">import { SelectFilter, TernaryFilter, Filter } from '@/composables/useTableFilters';
+
+const tableFilters = [
+    // Dropdown with predefined options (accepts Record or Array)
+    SelectFilter.make('status')
+        .label('Filter by Status')
+        .options({ active: 'Active', suspended: 'Suspended', pending: 'Pending' })
+        .placeholder('All Statuses'),
+
+    // 3-state select: All / Verified / Not Verified
+    TernaryFilter.make('email_verified')
+        .label('Email Verified')
+        .trueLabel('Verified')
+        .falseLabel('Not Verified'),
+
+    // Simple checkbox toggle
+    Filter.make('trashed').label('Show Deleted Only'),
+];</code></pre>
+
+    <h4>Wiring to the Backend</h4>
+    <p>Pass the <code>:table-filters</code> prop to <code>&lt;DataTable&gt;</code> and return the filter values from the controller via the <code>filters</code> prop:</p>
+    <pre><code class="language-xml">&lt;DataTable
+    :columns="columns"
+    :data="users"
+    :filters="filters"
+    :table-filters="tableFilters"
+    route-name="admin.users.index"
+/&gt;</code></pre>
+    <pre><code class="language-php">// Controller
+public function index(Request $request): Response
+{
+    $users = User::query()
+        ->when($request->search, fn ($q, $s) => $q->where('name', 'like', "%{$s}%"))
+        ->when($request->status, fn ($q, $v) => $q->where('status', $v))
+        ->when($request->email_verified, function ($q, $v) {
+            $v === '1' ? $q->whereNotNull('email_verified_at') : $q->whereNull('email_verified_at');
+        })
+        ->paginate(15)->withQueryString();
+
+    return Inertia::render('Admin/Users/Index', [
+        'users' => UserResource::collection($users),
+        'filters' => $request->only(['search', 'status', 'email_verified']),
+    ]);
+}</code></pre>
+
+    <div class="callout callout-info">
+        <div class="callout-title">&#8505; URL Persistence</div>
+        Filter values are stored in URL query params (<code>?status=active&amp;email_verified=1</code>), so they persist across page refreshes and browser history navigation. A <strong>Clear filters</strong> button appears when any filter is active.
+    </div>
+</section>
+
+<section id="table-actions">
+    <h3>Table Actions</h3>
+    <p>Row actions are rendered automatically in a dropdown menu. No need for manual <code>RowActions</code> or slot templates.</p>
+
+    <div class="callout callout-info">
+        <div class="callout-title">&#8505; Permission-Aware</div>
+        Actions with a <code>.permission()</code> are automatically hidden if the current user lacks that permission. No need for manual <code>v-if</code> checks.
+    </div>
+
+    <table>
+        <thead><tr><th>Class</th><th>Behavior</th></tr></thead>
+        <tbody>
+            <tr><td><code>EditAction.make(routeName)</code></td><td>Pencil icon + navigates to route</td></tr>
+            <tr><td><code>ViewAction.make(routeName)</code></td><td>Eye icon + navigates to route</td></tr>
+            <tr><td><code>DeleteAction.make(routeName)</code></td><td>Trash icon + confirms + deletes</td></tr>
+            <tr><td><code>Action.make(label)</code></td><td>Custom action with <code>.icon()</code>, <code>.url(fn)</code>, <code>.action(fn)</code>, <code>.permission()</code>, <code>.destructive()</code></td></tr>
+            <tr><td><code>BulkAction.make(label)</code></td><td>Bulk action with <code>.action(fn)</code>, <code>.requiresConfirmation()</code>, <code>.destructive()</code></td></tr>
+        </tbody>
+    </table>
+
+    <pre><code class="language-typescript">import { EditAction, DeleteAction, BulkAction } from '@/composables/useTableActions';
+
+const actions = [
+    EditAction.make('admin.products.edit').permission('products.edit'),
+    DeleteAction.make('admin.products.destroy').permission('products.delete'),
+];
+
+const bulkActions = [
+    BulkAction.make('Delete')
+        .icon(Trash2)
+        .destructive()
+        .action((ids) => router.post(route('admin.products.bulk-action'), { ids, action: 'delete' })),
+];</code></pre>
+</section>
+
+<hr class="section-divider">
+
+<!-- ============================================================ -->
+<!-- SECTION 4: COMPONENTS -->
+<!-- ============================================================ -->
+<section id="admin-components">
+    <h2>Components Reference</h2>
+    <p>All reusable Vue components in the Myra Framework.</p>
+
+    <h3>Admin Components</h3>
+    <p>Imported from <code>@/components/admin</code>:</p>
+    <pre><code class="language-typescript">import { FormField, FormFields, ResourceForm, SettingsCard, SimpleTable, RowActions, DateCell } from '@/components/admin';</code></pre>
+
+    <h4 id="comp-formfield">FormField</h4>
+    <p>Renders a single form field with label, input, error, and hint. Automatically selects the correct input component based on <code>type</code>.</p>
+    <table>
+        <thead><tr><th>Prop</th><th>Type</th><th>Default</th><th>Description</th></tr></thead>
+        <tbody>
+            <tr><td><code>label</code></td><td><code>string</code></td><td>required</td><td>Field label text</td></tr>
+            <tr><td><code>name</code></td><td><code>string</code></td><td>required</td><td>Field name (used for ID generation)</td></tr>
+            <tr><td><code>type</code></td><td><code>string</code></td><td><code>'text'</code></td><td>Input type (see below)</td></tr>
+            <tr><td><code>error</code></td><td><code>string</code></td><td>&mdash;</td><td>Validation error message</td></tr>
+            <tr><td><code>required</code></td><td><code>boolean</code></td><td><code>false</code></td><td>Shows red asterisk next to label</td></tr>
+            <tr><td><code>hint</code></td><td><code>string</code></td><td>&mdash;</td><td>Helper text below input</td></tr>
+            <tr><td><code>placeholder</code></td><td><code>string</code></td><td>&mdash;</td><td>Input placeholder</td></tr>
+            <tr><td><code>options</code></td><td><code>SelectOption[]</code></td><td>&mdash;</td><td>Options for select type</td></tr>
+            <tr><td><code>disabled</code></td><td><code>boolean</code></td><td><code>false</code></td><td>Disable the input</td></tr>
+            <tr><td><code>rows</code></td><td><code>number</code></td><td>&mdash;</td><td>Row count for textarea/richtext type</td></tr>
+            <tr><td><code>minDate</code></td><td><code>string</code></td><td>&mdash;</td><td>Min date for date/datetime-local</td></tr>
+            <tr><td><code>maxDate</code></td><td><code>string</code></td><td>&mdash;</td><td>Max date for date/datetime-local</td></tr>
+            <tr><td><code>inline</code></td><td><code>boolean</code></td><td><code>false</code></td><td>Inline layout for radio buttons</td></tr>
+            <tr><td><code>accept</code></td><td><code>string</code></td><td>&mdash;</td><td>Accepted file types for file input</td></tr>
+            <tr><td><code>multiple</code></td><td><code>boolean</code></td><td><code>false</code></td><td>Allow multiple files</td></tr>
+            <tr><td><code>maxSize</code></td><td><code>number</code></td><td>&mdash;</td><td>Max file size in MB</td></tr>
+        </tbody>
+    </table>
+    <p><strong>Supported Types:</strong></p>
+    <table>
+        <thead><tr><th>Type</th><th>Renders</th></tr></thead>
+        <tbody>
+            <tr><td><code>text</code></td><td><code>&lt;Input&gt;</code></td></tr>
+            <tr><td><code>email</code></td><td><code>&lt;Input type="email"&gt;</code></td></tr>
+            <tr><td><code>number</code></td><td><code>&lt;Input type="number"&gt;</code></td></tr>
+            <tr><td><code>tel</code></td><td><code>&lt;Input type="tel"&gt;</code></td></tr>
+            <tr><td><code>url</code></td><td><code>&lt;Input type="url"&gt;</code></td></tr>
+            <tr><td><code>password</code></td><td><code>&lt;PasswordInput&gt;</code> (with eye toggle)</td></tr>
+            <tr><td><code>textarea</code></td><td><code>&lt;Textarea&gt;</code></td></tr>
+            <tr><td><code>select</code></td><td><code>&lt;Select&gt;</code> dropdown</td></tr>
+            <tr><td><code>switch</code></td><td><code>&lt;Switch&gt;</code> toggle</td></tr>
+            <tr><td><code>checkbox</code></td><td><code>&lt;Checkbox&gt;</code></td></tr>
+            <tr><td><code>date</code></td><td><code>&lt;Input type="date"&gt;</code></td></tr>
+            <tr><td><code>datetime-local</code></td><td><code>&lt;Input type="datetime-local"&gt;</code></td></tr>
+            <tr><td><code>radio</code></td><td>Radio button group</td></tr>
+            <tr><td><code>color</code></td><td>Color picker + hex input</td></tr>
+            <tr><td><code>hidden</code></td><td><code>&lt;input type="hidden"&gt;</code> (no visible element)</td></tr>
+            <tr><td><code>file</code></td><td>Styled file input</td></tr>
+            <tr><td><code>richtext</code></td><td><code>&lt;Textarea&gt;</code> (6 default rows)</td></tr>
+        </tbody>
+    </table>
+    <p><strong>Slots:</strong> Default &mdash; custom input component (replaces the auto-rendered input)</p>
+    <pre><code class="language-xml">&lt;!-- Standard usage --&gt;
+&lt;FormField label="Name" name="name" v-model="form.name" required :error="form.errors.name" /&gt;
+
+&lt;!-- With custom input --&gt;
+&lt;FormField label="Color" name="color"&gt;
+    &lt;input type="color" v-model="form.color" /&gt;
+&lt;/FormField&gt;</code></pre>
+
+    <h4 id="comp-formfields">FormFields</h4>
+    <p>Renders an array of field schemas into <code>&lt;FormField&gt;</code> instances. Supports layout items (Section, Grid, Tabs, Fieldset, Flex, Wizard, Callout) alongside regular fields, rendering them recursively. No wrapper element (fragment rendering).</p>
+    <table>
+        <thead><tr><th>Prop</th><th>Type</th><th>Description</th></tr></thead>
+        <tbody>
+            <tr><td><code>schema</code></td><td><code>SchemaItem[]</code></td><td>Array of field schemas and/or layout items from the form builder</td></tr>
+            <tr><td><code>form</code></td><td><code>object</code></td><td>Inertia form instance (with <code>.errors</code> property)</td></tr>
+        </tbody>
+    </table>
+
+    <h4 id="comp-resourceform">ResourceForm</h4>
+    <p>Card-wrapped form layout for create/edit pages. Provides a responsive grid, submit button, and cancel link.</p>
+    <table>
+        <thead><tr><th>Prop</th><th>Type</th><th>Default</th><th>Description</th></tr></thead>
+        <tbody>
+            <tr><td><code>processing</code></td><td><code>boolean</code></td><td><code>false</code></td><td>Shows loading spinner on submit button</td></tr>
+            <tr><td><code>submitText</code></td><td><code>string</code></td><td><code>'Save'</code></td><td>Submit button label</td></tr>
+            <tr><td><code>cancelHref</code></td><td><code>string</code></td><td>&mdash;</td><td>URL for cancel button (hidden if not set)</td></tr>
+            <tr><td><code>maxWidth</code></td><td><code>string</code></td><td><code>'max-w-2xl'</code></td><td>Tailwind max-width class</td></tr>
+            <tr><td><code>columns</code></td><td><code>1 | 2 | 3</code></td><td><code>2</code></td><td>Grid column count</td></tr>
+        </tbody>
+    </table>
+    <p><strong>Slots:</strong></p>
+    <table>
+        <thead><tr><th>Slot</th><th>Description</th></tr></thead>
+        <tbody>
+            <tr><td><code>header</code></td><td>Content before the field grid</td></tr>
+            <tr><td>default</td><td>Form fields (rendered inside grid)</td></tr>
+            <tr><td><code>after-fields</code></td><td>Content after the field grid (outside grid)</td></tr>
+            <tr><td><code>actions</code></td><td>Custom action buttons (replaces default submit/cancel)</td></tr>
+        </tbody>
+    </table>
+    <pre><code class="language-xml">&lt;ResourceForm
+    :processing="form.processing"
+    submit-text="Create Product"
+    :cancel-href="route('admin.products.index')"
+    @submit="submit"
+&gt;
+    &lt;FormFields :schema="schema" :form="form" /&gt;
+&lt;/ResourceForm&gt;</code></pre>
+
+    <h4 id="comp-settingscard">SettingsCard</h4>
+    <p>Form card for settings pages. Similar to ResourceForm but with a title/description header.</p>
+    <table>
+        <thead><tr><th>Prop</th><th>Type</th><th>Default</th><th>Description</th></tr></thead>
+        <tbody>
+            <tr><td><code>title</code></td><td><code>string</code></td><td>required</td><td>Card title</td></tr>
+            <tr><td><code>description</code></td><td><code>string</code></td><td>&mdash;</td><td>Card description</td></tr>
+            <tr><td><code>processing</code></td><td><code>boolean</code></td><td><code>false</code></td><td>Shows loading on submit</td></tr>
+            <tr><td><code>submitText</code></td><td><code>string</code></td><td><code>'Save'</code></td><td>Submit button label</td></tr>
+            <tr><td><code>columns</code></td><td><code>1 | 2</code></td><td><code>2</code></td><td>Grid column count</td></tr>
+        </tbody>
+    </table>
+    <pre><code class="language-xml">&lt;SettingsCard
+    title="General Settings"
+    description="Basic configuration."
+    :processing="form.processing"
+    @submit="saveSettings"
+&gt;
+    &lt;FormFields :schema="schema" :form="form" /&gt;
+&lt;/SettingsCard&gt;</code></pre>
+
+    <h4 id="comp-simpletable">SimpleTable</h4>
+    <p>Static (non-paginated) table for small datasets. Shows EmptyState when no items.</p>
+    <table>
+        <thead><tr><th>Prop</th><th>Type</th><th>Default</th><th>Description</th></tr></thead>
+        <tbody>
+            <tr><td><code>columns</code></td><td><code>SimpleTableColumn[]</code></td><td>required</td><td>Column definitions</td></tr>
+            <tr><td><code>items</code></td><td><code>any[]</code></td><td>required</td><td>Row data</td></tr>
+            <tr><td><code>rowKey</code></td><td><code>string</code></td><td><code>'id'</code></td><td>Unique key property</td></tr>
+            <tr><td><code>emptyTitle</code></td><td><code>string</code></td><td><code>'No results found'</code></td><td>Empty state title</td></tr>
+            <tr><td><code>emptyDescription</code></td><td><code>string</code></td><td>&mdash;</td><td>Empty state description</td></tr>
+            <tr><td><code>emptyIcon</code></td><td><code>Component</code></td><td>&mdash;</td><td>Empty state icon</td></tr>
+        </tbody>
+    </table>
+    <pre><code class="language-xml">&lt;SimpleTable :columns="columns" :items="tokens"&gt;
+    &lt;template #cell-last_used_at="{ value }"&gt;
+        &lt;DateCell :value="value" format="relative" /&gt;
+    &lt;/template&gt;
+    &lt;template #actions="{ row }"&gt;
+        &lt;Button variant="destructive" size="sm" @click="revoke(row.id)"&gt;Revoke&lt;/Button&gt;
+    &lt;/template&gt;
+&lt;/SimpleTable&gt;</code></pre>
+
+    <h4 id="comp-rowactions">RowActions</h4>
+    <p>Dropdown menu for table row actions. Automatically hides actions the user lacks permission for.</p>
+    <table>
+        <thead><tr><th>Property</th><th>Type</th><th>Description</th></tr></thead>
+        <tbody>
+            <tr><td><code>label</code></td><td><code>string</code></td><td>Action label text</td></tr>
+            <tr><td><code>icon</code></td><td><code>Component</code></td><td>Lucide icon component</td></tr>
+            <tr><td><code>permission</code></td><td><code>string</code></td><td>Required permission (hidden if user lacks it)</td></tr>
+            <tr><td><code>href</code></td><td><code>string</code></td><td>Navigation URL (renders as Link)</td></tr>
+            <tr><td><code>onClick</code></td><td><code>() =&gt; void</code></td><td>Click handler (renders as button)</td></tr>
+            <tr><td><code>destructive</code></td><td><code>boolean</code></td><td>Red text styling</td></tr>
+            <tr><td><code>separator</code></td><td><code>boolean</code></td><td>Show separator line above this action</td></tr>
+            <tr><td><code>show</code></td><td><code>boolean</code></td><td>Explicit visibility control (default: true)</td></tr>
+        </tbody>
+    </table>
+    <pre><code class="language-xml">&lt;RowActions :actions="[
+    { label: 'Edit', icon: Pencil, href: route('admin.products.edit', row.id), permission: 'products.edit' },
+    { label: 'Delete', icon: Trash2, permission: 'products.delete', destructive: true, separator: true,
+      onClick: () =&gt; confirmDelete('admin.products.destroy', row.id) },
+]" /&gt;</code></pre>
+
+    <h4 id="comp-datecell">DateCell</h4>
+    <p>Formats and displays dates.</p>
+    <table>
+        <thead><tr><th>Prop</th><th>Type</th><th>Default</th><th>Description</th></tr></thead>
+        <tbody>
+            <tr><td><code>value</code></td><td><code>string | null</code></td><td>required</td><td>ISO date string</td></tr>
+            <tr><td><code>format</code></td><td><code>'date' | 'datetime' | 'relative'</code></td><td><code>'date'</code></td><td>Display format</td></tr>
+        </tbody>
+    </table>
+    <table>
+        <thead><tr><th>Format</th><th>Output</th></tr></thead>
+        <tbody>
+            <tr><td><code>date</code></td><td>3/1/2026</td></tr>
+            <tr><td><code>datetime</code></td><td>3/1/2026, 2:30:00 PM</td></tr>
+            <tr><td><code>relative</code></td><td>Just now, 5m ago, 2h ago, 3d ago</td></tr>
+        </tbody>
+    </table>
+</section>
+
+<section id="shared-components">
+    <h3>Shared Components</h3>
+    <p>Imported directly from <code>@/components/</code>:</p>
+
+    <h4 id="comp-datatable">DataTable</h4>
+    <p>Full-featured paginated table with search, sorting, selection, and custom cells. Accepts both legacy <code>Column[]</code> and schema-based <code>BaseColumn[]</code> for backwards compatibility.</p>
+    <table>
+        <thead><tr><th>Prop</th><th>Type</th><th>Default</th><th>Description</th></tr></thead>
+        <tbody>
+            <tr><td><code>columns</code></td><td><code>(Column | BaseColumn)[]</code></td><td>required</td><td>Column definitions (legacy or schema-based)</td></tr>
+            <tr><td><code>data</code></td><td><code>PaginatedData&lt;any&gt;</code></td><td>required</td><td>Paginated data from backend</td></tr>
+            <tr><td><code>searchable</code></td><td><code>boolean</code></td><td><code>true</code></td><td>Show search input</td></tr>
+            <tr><td><code>searchPlaceholder</code></td><td><code>string</code></td><td><code>'Search...'</code></td><td>Search input placeholder</td></tr>
+            <tr><td><code>selectable</code></td><td><code>boolean</code></td><td><code>false</code></td><td>Show row checkboxes</td></tr>
+            <tr><td><code>loading</code></td><td><code>boolean</code></td><td><code>false</code></td><td>Show loading skeleton</td></tr>
+            <tr><td><code>filters</code></td><td><code>Record&lt;string, string&gt;</code></td><td>&mdash;</td><td>Current filter values (server-side)</td></tr>
+            <tr><td><code>tableFilters</code></td><td><code>BaseFilter[]</code></td><td>&mdash;</td><td>Schema-based filter definitions (rendered in toolbar)</td></tr>
+            <tr><td><code>actions</code></td><td><code>(Action | EditAction | ...)[]</code></td><td>&mdash;</td><td>Row actions (auto-renders RowActions dropdown)</td></tr>
+            <tr><td><code>bulkActions</code></td><td><code>BulkAction[]</code></td><td>&mdash;</td><td>Bulk actions (shown when rows selected)</td></tr>
+            <tr><td><code>routeName</code></td><td><code>string</code></td><td>required</td><td>Route name for pagination/search</td></tr>
+            <tr><td><code>routeParams</code></td><td><code>Record&lt;string, any&gt;</code></td><td>&mdash;</td><td>Additional route params</td></tr>
+        </tbody>
+    </table>
+    <p><strong>Slots:</strong> Slots override auto-rendering when present.</p>
+    <table>
+        <thead><tr><th>Slot</th><th>Context</th><th>Description</th></tr></thead>
+        <tbody>
+            <tr><td><code>toolbar</code></td><td><code>{ selectedIds }</code></td><td>Toolbar area (bulk actions)</td></tr>
+            <tr><td><code>cell-{key}</code></td><td><code>{ row, value }</code></td><td>Custom cell rendering (overrides auto-render)</td></tr>
+            <tr><td><code>expanded-row</code></td><td><code>{ row }</code></td><td>Expandable row content</td></tr>
+            <tr><td><code>actions</code></td><td><code>{ row }</code></td><td>Row actions column (overrides auto-render)</td></tr>
+            <tr><td><code>empty</code></td><td>&mdash;</td><td>Custom empty state</td></tr>
+        </tbody>
+    </table>
+    <p><strong>Schema-based usage (recommended):</strong></p>
+    <pre><code class="language-typescript">import { TextColumn, BadgeColumn, DateColumn } from '@/composables/useTableSchema';
+import { EditAction, DeleteAction } from '@/composables/useTableActions';
+import { SelectFilter } from '@/composables/useTableFilters';
+
+const columns = [
+    TextColumn.make('name').sortable().searchable(),
+    TextColumn.make('price').sortable().money('USD'),
+    BadgeColumn.make('status').colors({ active: 'default', suspended: 'destructive' }),
+    DateColumn.make('created_at').sortable(),
+];
+const actions = [EditAction.make('admin.products.edit'), DeleteAction.make('admin.products.destroy')];
+const tableFilters = [SelectFilter.make('status').options({ active: 'Active', suspended: 'Suspended' })];</code></pre>
+    <pre><code class="language-xml">&lt;DataTable :columns="columns" :data="products" :actions="actions" :table-filters="tableFilters"
+    route-name="admin.products.index" /&gt;</code></pre>
+    <div class="callout callout-danger">
+        <div class="callout-title">&#9888; PaginatedData Format Required</div>
+        The <code>data</code> prop must follow the <code>PaginatedData&lt;T&gt;</code> structure with nested <code>data</code>, <code>meta</code>, and <code>links</code> keys. Laravel's default <code>paginate()</code> returns a flat structure &mdash; if using raw paginators, you must manually construct the nested format. See <a href="#type-definitions">Type Definitions</a> for the exact interface.
+    </div>
+
+    <p><strong>Legacy slot-based usage (still supported):</strong></p>
+    <pre><code class="language-xml">&lt;DataTable
+    :columns="columns"
+    :data="products"
+    :filters="filters"
+    :selectable="true"
+    route-name="admin.products.index"
+&gt;
+    &lt;template #cell-price="{ value }"&gt;
+        ${{ Number(value).toFixed(2) }}
+    &lt;/template&gt;
+
+    &lt;template #cell-status="{ value }"&gt;
+        &lt;StatusBadge :status="value" /&gt;
+    &lt;/template&gt;
+
+    &lt;template #actions="{ row }"&gt;
+        &lt;RowActions :actions="[...]" /&gt;
+    &lt;/template&gt;
+&lt;/DataTable&gt;</code></pre>
+
+    <h4 id="comp-pageheader">PageHeader</h4>
+    <p>Page title bar with optional description and action buttons.</p>
+    <table>
+        <thead><tr><th>Prop</th><th>Type</th><th>Description</th></tr></thead>
+        <tbody>
+            <tr><td><code>title</code></td><td><code>string</code></td><td>Page title</td></tr>
+            <tr><td><code>description</code></td><td><code>string</code></td><td>Page description</td></tr>
+        </tbody>
+    </table>
+    <p><strong>Slots:</strong> <code>badge</code> &mdash; Badge next to title. <code>actions</code> &mdash; Action buttons aligned right.</p>
+    <pre><code class="language-xml">&lt;PageHeader title="Products" description="Manage your product catalog."&gt;
+    &lt;template #actions&gt;
+        &lt;Button as-child&gt;
+            &lt;Link :href="route('admin.products.create')"&gt;
+                &lt;Plus class="mr-2 size-4" /&gt; Add Product
+            &lt;/Link&gt;
+        &lt;/Button&gt;
+    &lt;/template&gt;
+&lt;/PageHeader&gt;</code></pre>
+
+    <h4 id="comp-statusbadge">StatusBadge</h4>
+    <p>Colored badge for status values.</p>
+    <table>
+        <thead><tr><th>Statuses</th><th>Variant</th></tr></thead>
+        <tbody>
+            <tr><td><code>active</code>, <code>success</code>, <code>sent</code></td><td>default (green)</td></tr>
+            <tr><td><code>suspended</code>, <code>failed</code>, <code>error</code></td><td>destructive (red)</td></tr>
+            <tr><td><code>pending</code>, <code>queued</code></td><td>secondary (gray)</td></tr>
+            <tr><td>other</td><td>outline</td></tr>
+        </tbody>
+    </table>
+
+    <h4 id="comp-emptystate">EmptyState</h4>
+    <p>Centered empty content placeholder with icon, title, and optional action.</p>
+    <table>
+        <thead><tr><th>Prop</th><th>Type</th><th>Default</th><th>Description</th></tr></thead>
+        <tbody>
+            <tr><td><code>title</code></td><td><code>string</code></td><td><code>'No results found'</code></td><td>Title text</td></tr>
+            <tr><td><code>description</code></td><td><code>string</code></td><td>&mdash;</td><td>Description text</td></tr>
+            <tr><td><code>icon</code></td><td><code>Component</code></td><td><code>InboxIcon</code></td><td>Lucide icon</td></tr>
+        </tbody>
+    </table>
+    <p><strong>Slots:</strong> <code>action</code> &mdash; Action button/content</p>
+
+    <h4 id="comp-loadingbutton">LoadingButton</h4>
+    <p>Button with built-in loading spinner. Replaces the <code>&lt;Button :disabled="form.processing"&gt;</code> pattern.</p>
+    <table>
+        <thead><tr><th>Prop</th><th>Type</th><th>Default</th><th>Description</th></tr></thead>
+        <tbody>
+            <tr><td><code>loading</code></td><td><code>boolean</code></td><td><code>false</code></td><td>Show spinner and disable</td></tr>
+            <tr><td><code>variant</code></td><td><code>string</code></td><td><code>'default'</code></td><td>Button variant</td></tr>
+            <tr><td><code>size</code></td><td><code>string</code></td><td><code>'default'</code></td><td>Button size</td></tr>
+            <tr><td><code>type</code></td><td><code>string</code></td><td><code>'submit'</code></td><td>Button type</td></tr>
+            <tr><td><code>disabled</code></td><td><code>boolean</code></td><td><code>false</code></td><td>Disable button</td></tr>
+        </tbody>
+    </table>
+    <pre><code class="language-xml">&lt;LoadingButton :loading="form.processing"&gt;Save&lt;/LoadingButton&gt;
+&lt;LoadingButton :loading="form.processing" variant="destructive"&gt;Delete&lt;/LoadingButton&gt;</code></pre>
+
+    <h4 id="comp-passwordinput">PasswordInput</h4>
+    <p>Password input with visibility toggle (eye/eye-off icon).</p>
+    <table>
+        <thead><tr><th>Prop</th><th>Type</th><th>Description</th></tr></thead>
+        <tbody>
+            <tr><td><code>modelValue</code></td><td><code>string</code></td><td>Input value (v-model)</td></tr>
+            <tr><td><code>id</code></td><td><code>string</code></td><td>Input ID</td></tr>
+            <tr><td><code>placeholder</code></td><td><code>string</code></td><td>Placeholder text</td></tr>
+            <tr><td><code>autocomplete</code></td><td><code>string</code></td><td>Autocomplete attribute</td></tr>
+            <tr><td><code>required</code></td><td><code>boolean</code></td><td>Required attribute</td></tr>
+            <tr><td><code>autofocus</code></td><td><code>boolean</code></td><td>Autofocus attribute</td></tr>
+        </tbody>
+    </table>
+
+    <h4 id="comp-confirmdialog">ConfirmDialog</h4>
+    <p>Global confirmation dialog. Renders automatically &mdash; just include it once in your layout. Controlled via the <code>useConfirm</code> composable.</p>
+    <pre><code class="language-xml">&lt;ConfirmDialog /&gt;</code></pre>
+
+    <h4 id="comp-statcard">StatCard</h4>
+    <p>Dashboard statistic card with optional trend indicator.</p>
+    <table>
+        <thead><tr><th>Prop</th><th>Type</th><th>Description</th></tr></thead>
+        <tbody>
+            <tr><td><code>title</code></td><td><code>string</code></td><td>Stat title</td></tr>
+            <tr><td><code>value</code></td><td><code>string | number</code></td><td>Stat value</td></tr>
+            <tr><td><code>description</code></td><td><code>string</code></td><td>Additional context</td></tr>
+            <tr><td><code>icon</code></td><td><code>Component</code></td><td>Lucide icon</td></tr>
+            <tr><td><code>trend</code></td><td><code>{ value: number, isPositive: boolean }</code></td><td>Trend indicator</td></tr>
+        </tbody>
+    </table>
+    <pre><code class="language-xml">&lt;StatCard
+    title="Total Revenue"
+    value="$12,345"
+    description="Last 30 days"
+    :icon="DollarSign"
+    :trend="{ value: 12.5, isPositive: true }"
+/&gt;</code></pre>
+
+    <h4 id="comp-notificationbell">NotificationBell</h4>
+    <p>Notification dropdown popover with animated unread count badge. Clicking a notification opens a <a href="#notification-detail-dialog">NotificationDetailDialog</a> with full content. Reads <code>unreadNotificationsCount</code> and <code>recentNotifications</code> from Inertia shared page props.</p>
+    <table>
+        <thead><tr><th>Feature</th><th>Description</th></tr></thead>
+        <tbody>
+            <tr><td>Unread badge</td><td>Animated ping badge showing count (max "9+")</td></tr>
+            <tr><td>Type icons</td><td>System (Monitor), User Action (UserCheck), Security Alert (ShieldAlert)</td></tr>
+            <tr><td>Clickable items</td><td>Each notification opens a <code>NotificationDetailDialog</code> modal</td></tr>
+            <tr><td>Mark all read</td><td>Button to mark all notifications as read via <code>POST /notifications/mark-all-read</code></td></tr>
+            <tr><td>View all link</td><td>Links to <code>/notifications</code> full page</td></tr>
+            <tr><td>Empty state</td><td>Shows inbox icon with "No notifications" when empty</td></tr>
+        </tbody>
+    </table>
+    <pre><code class="language-xml">&lt;!-- Typically placed in the AuthenticatedLayout header --&gt;
+&lt;NotificationBell /&gt;</code></pre>
+    <div class="callout callout-info">
+        <div class="callout-title">&#8505; Required Page Props</div>
+        The bell reads <code>unreadNotificationsCount</code> (number) and <code>recentNotifications</code> (Notification[]) from Inertia shared props. These must be shared from the backend middleware (e.g., <code>HandleInertiaRequests</code>).
+    </div>
+
+    <h4 id="comp-notificationdetaildialog">NotificationDetailDialog</h4>
+    <p>Reusable modal dialog for viewing full notification content with proper formatting. Handles both flat data format (from admin views) and nested <code>data</code> format (from user notifications).</p>
+    <table>
+        <thead><tr><th>Prop</th><th>Type</th><th>Default</th><th>Description</th></tr></thead>
+        <tbody>
+            <tr><td><code>open</code></td><td><code>boolean</code></td><td><code>false</code></td><td>Dialog open state (v-model)</td></tr>
+            <tr><td><code>notification</code></td><td><code>NotificationData | null</code></td><td><code>null</code></td><td>Notification to display</td></tr>
+            <tr><td><code>showRecipient</code></td><td><code>boolean</code></td><td><code>false</code></td><td>Show recipient info (admin view)</td></tr>
+        </tbody>
+    </table>
+    <p><strong>Features:</strong></p>
+    <ul class="inline-list">
+        <li>Type icon and badge (System / User Action / Security Alert)</li>
+        <li>Full message body with <code>whitespace-pre-wrap</code> for proper formatting</li>
+        <li>Metadata section: timestamp, recipient (admin view), performed by, IP address</li>
+        <li>"Mark as Read" button for unread notifications</li>
+        <li>"View Details" button linking to action URL if present</li>
+        <li>Scrollable content for long messages via <code>DialogScrollContent</code></li>
+    </ul>
+    <pre><code class="language-xml">&lt;!-- User-facing (NotificationBell, Notifications/Index) --&gt;
+&lt;NotificationDetailDialog
+    v-model:open="dialogOpen"
+    :notification="selectedNotification"
+/&gt;
+
+&lt;!-- Admin-facing (shows recipient name/email) --&gt;
+&lt;NotificationDetailDialog
+    v-model:open="dialogOpen"
+    :notification="selectedNotification"
+    :show-recipient="true"
+/&gt;</code></pre>
+    <p><strong>NotificationData Interface:</strong></p>
+    <pre><code class="language-typescript">interface NotificationData {
+    id: string;
+    title?: string;
+    message?: string;
+    type?: string;                    // 'system' | 'user_action' | 'security_alert'
+    action_url?: string | null;
+    read_at?: string | null;
+    created_at?: string;
+    data?: Record&lt;string, any&gt;;       // nested format (from user notifications)
+    user_name?: string;               // flat format (from admin views)
+    user_email?: string;
+    performed_by?: string;
+    ip_address?: string;
+}</code></pre>
+    <div class="callout callout-tip">
+        <div class="callout-title">&#9889; Dual Format Support</div>
+        The dialog automatically resolves fields from either the top-level properties (admin flat format) or the nested <code>data</code> object (user notification format), so it works in both admin and user contexts without any transformation.
+    </div>
+
+    <h4 id="comp-impersonation-banner">Impersonation Banner</h4>
+    <p>A fixed yellow warning banner that appears at the top of the admin layout when an administrator is impersonating another user. Built directly into <code>AuthenticatedLayout.vue</code>.</p>
+    <p><strong>Features:</strong></p>
+    <ul class="inline-list">
+        <li>Displays "You are impersonating <strong>{user name}</strong>" with a warning icon</li>
+        <li>"Stop Impersonating" button that POSTs to <code>admin.stop-impersonate</code></li>
+        <li>Conditionally rendered based on <code>page.props.impersonating</code></li>
+        <li>Impersonator name shared via <code>page.props.impersonatorName</code></li>
+    </ul>
+    <p><strong>Shared Props:</strong> <code>impersonating</code> (boolean), <code>impersonatorName</code> (string|null) &mdash; set in <code>HandleInertiaRequests.php</code></p>
+
+    <h4 id="comp-command-palette">Command Palette (Cmd+K)</h4>
+    <p>Global command palette for quick navigation across all admin pages. Built into <code>AuthenticatedLayout.vue</code> using the existing <code>CommandDialog</code> shadcn-vue component.</p>
+    <p><strong>Keyboard Shortcut:</strong> <kbd>Cmd+K</kbd> (macOS) / <kbd>Ctrl+K</kbd> (Windows/Linux)</p>
+    <p><strong>Features:</strong></p>
+    <ul class="inline-list">
+        <li>All sidebar navigation items grouped by section (permission-filtered)</li>
+        <li>Quick actions: Profile, Toggle Dark Mode, Log Out</li>
+        <li>Fuzzy search across all commands</li>
+        <li>Selecting a command navigates via <code>router.visit()</code></li>
+    </ul>
+    <p><strong>Components used:</strong> <code>CommandDialog</code>, <code>CommandInput</code>, <code>CommandList</code>, <code>CommandEmpty</code>, <code>CommandGroup</code>, <code>CommandItem</code>, <code>CommandSeparator</code></p>
+</section>
+
+<hr class="section-divider">
+
+<!-- ============================================================ -->
+<!-- SECTION 5: COMPOSABLES -->
+<!-- ============================================================ -->
+<section id="composables">
+    <h2>Composables Reference</h2>
+    <p>All Vue composables used in the Myra Framework.</p>
+
+    <h4>useFormSchema</h4>
+    <p>Form builder API for defining field schemas and layouts with a fluent, chainable syntax.</p>
+    <p><strong>File:</strong> <code>resources/js/composables/useFormSchema.ts</code></p>
+    <p><strong>Field exports:</strong> <code>TextInput</code>, <code>Select</code>, <code>Textarea</code>, <code>Toggle</code>, <code>Checkbox</code>, <code>DatePicker</code>, <code>DateTimePicker</code>, <code>Radio</code>, <code>ColorPicker</code>, <code>Hidden</code>, <code>FileUpload</code>, <code>RichEditor</code></p>
+    <p><strong>Layout exports:</strong> <code>Section</code>, <code>Grid</code>, <code>Tabs</code>, <code>Tab</code>, <code>Fieldset</code>, <code>Flex</code>, <code>Wizard</code>, <code>WizardStep</code>, <code>Callout</code></p>
+    <p><strong>Type exports:</strong> <code>FieldSchema</code>, <code>LayoutSchema</code>, <code>SchemaItem</code>, <code>BaseField</code></p>
+    <p>See <a href="#form-builder">Form Builder</a> and <a href="#form-layouts">Form Layouts</a> for full documentation.</p>
+
+    <h4>useTableSchema</h4>
+    <p>Table column builder API for defining DataTable columns with a fluent, chainable syntax.</p>
+    <p><strong>File:</strong> <code>resources/js/composables/useTableSchema.ts</code></p>
+    <p><strong>Exports:</strong> <code>TextColumn</code>, <code>BadgeColumn</code>, <code>DateColumn</code>, <code>BooleanColumn</code>, <code>ImageColumn</code>, <code>IconColumn</code>, <code>ToggleColumn</code>, <code>BaseColumn</code></p>
+    <p>See <a href="#table-columns">Table Columns</a> for full documentation.</p>
+
+    <h4>useTableFilters</h4>
+    <p>Table filter builder API for defining DataTable filters.</p>
+    <p><strong>File:</strong> <code>resources/js/composables/useTableFilters.ts</code></p>
+    <p><strong>Exports:</strong> <code>SelectFilter</code>, <code>TernaryFilter</code>, <code>Filter</code>, <code>BaseFilter</code></p>
+    <p>See <a href="#table-filters">Table Filters</a> for full documentation.</p>
+
+    <h4>useTableActions</h4>
+    <p>Table action builder API for defining row actions and bulk actions.</p>
+    <p><strong>File:</strong> <code>resources/js/composables/useTableActions.ts</code></p>
+    <p><strong>Exports:</strong> <code>Action</code>, <code>EditAction</code>, <code>ViewAction</code>, <code>DeleteAction</code>, <code>ActionGroup</code>, <code>BulkAction</code></p>
+    <p>See <a href="#table-actions">Table Actions</a> for full documentation.</p>
+</section>
+
+<section id="useResourceForm">
+    <h3>useResourceForm</h3>
+    <p>Handles form submission with optional confirmation dialogs. Wraps Inertia's <code>useForm</code>.</p>
+    <p><strong>File:</strong> <code>resources/js/composables/useResourceForm.ts</code></p>
+    <pre><code class="language-typescript">import { useResourceForm } from '@/composables/useResourceForm';</code></pre>
+
+    <h4>Signature</h4>
+    <pre><code class="language-typescript">function useResourceForm&lt;T extends Record&lt;string, any&gt;&gt;(
+    options: ResourceFormOptions&lt;T&gt;
+): { form: InertiaForm&lt;T&gt;; submit: () =&gt; Promise&lt;void&gt; }</code></pre>
+
+    <h4>Options</h4>
+    <table>
+        <thead><tr><th>Property</th><th>Type</th><th>Description</th></tr></thead>
+        <tbody>
+            <tr><td><code>data</code></td><td><code>T</code></td><td>Initial form data</td></tr>
+            <tr><td><code>storeRoute</code></td><td><code>string</code></td><td>Route name for <code>POST</code> (create)</td></tr>
+            <tr><td><code>storeRouteParams</code></td><td><code>any</code></td><td>Route params for store</td></tr>
+            <tr><td><code>updateRoute</code></td><td><code>string</code></td><td>Route name for <code>PUT</code> (update)</td></tr>
+            <tr><td><code>updateRouteParams</code></td><td><code>any</code></td><td>Route params for update</td></tr>
+            <tr><td><code>confirm</code></td><td><code>ConfirmOptions</code></td><td>Optional confirmation dialog config</td></tr>
+        </tbody>
+    </table>
+
+    <h4>ConfirmOptions</h4>
+    <table>
+        <thead><tr><th>Property</th><th>Type</th><th>Default</th><th>Description</th></tr></thead>
+        <tbody>
+            <tr><td><code>title</code></td><td><code>string</code></td><td>required</td><td>Dialog title</td></tr>
+            <tr><td><code>description</code></td><td><code>string</code></td><td>&mdash;</td><td>Dialog body text</td></tr>
+            <tr><td><code>confirmText</code></td><td><code>string</code></td><td><code>'Confirm'</code></td><td>Confirm button text</td></tr>
+            <tr><td><code>variant</code></td><td><code>'default' | 'destructive'</code></td><td><code>'default'</code></td><td>Dialog style</td></tr>
+        </tbody>
+    </table>
+
+    <h4>Usage</h4>
+    <pre><code class="language-typescript">// Create
+const { form, submit } = useResourceForm({
+    data: { name: '', email: '' },
+    storeRoute: 'admin.users.store',
+    confirm: { title: 'Create User', confirmText: 'Create' },
+});
+
+// Update
+const { form, submit } = useResourceForm({
+    data: { name: props.user.name, email: props.user.email },
+    updateRoute: 'admin.users.update',
+    updateRouteParams: props.user.id,
+    confirm: { title: 'Update User', confirmText: 'Save' },
+});</code></pre>
+</section>
+
+<section id="useConfirmAction">
+    <h3>useConfirmAction</h3>
+    <p>Provides pre-built confirmation methods for delete and post actions. Used in list pages with row actions.</p>
+    <p><strong>File:</strong> <code>resources/js/composables/useConfirmAction.ts</code></p>
+    <table>
+        <thead><tr><th>Method</th><th>Description</th></tr></thead>
+        <tbody>
+            <tr><td><code>confirmDelete(routeName, routeParams, options?)</code></td><td>Shows destructive dialog, calls <code>router.delete()</code></td></tr>
+            <tr><td><code>confirmPost(routeName, routeParams, data?, options?)</code></td><td>Shows dialog, calls <code>router.post()</code></td></tr>
+        </tbody>
+    </table>
+    <pre><code class="language-typescript">const { confirmDelete, confirmPost } = useConfirmAction();
+
+// In RowActions
+onClick: () =&gt; confirmDelete('admin.products.destroy', row.id, {
+    title: 'Delete Product',
+    description: 'This action cannot be undone.',
+})
+
+// Custom post action
+onClick: () =&gt; confirmPost('admin.products.archive', row.id, {}, {
+    title: 'Archive Product',
+    confirmText: 'Archive',
+})</code></pre>
+</section>
+
+<section id="useConfirm">
+    <h3>useConfirm</h3>
+    <p>Low-level composable for the global confirmation dialog. Used internally by <code>useResourceForm</code> and <code>useConfirmAction</code>. Use this when you need custom confirmation flows.</p>
+    <p><strong>File:</strong> <code>resources/js/composables/useConfirm.ts</code></p>
+    <table>
+        <thead><tr><th>Property</th><th>Type</th><th>Description</th></tr></thead>
+        <tbody>
+            <tr><td><code>confirm(options)</code></td><td><code>(opts) =&gt; Promise&lt;boolean&gt;</code></td><td>Show dialog, returns true/false</td></tr>
+            <tr><td><code>isOpen</code></td><td><code>Ref&lt;boolean&gt;</code></td><td>Dialog open state</td></tr>
+            <tr><td><code>title</code></td><td><code>Ref&lt;string&gt;</code></td><td>Current dialog title</td></tr>
+            <tr><td><code>description</code></td><td><code>Ref&lt;string&gt;</code></td><td>Current dialog description</td></tr>
+            <tr><td><code>confirmText</code></td><td><code>Ref&lt;string&gt;</code></td><td>Current confirm button text</td></tr>
+            <tr><td><code>cancelText</code></td><td><code>Ref&lt;string&gt;</code></td><td>Current cancel button text</td></tr>
+            <tr><td><code>variant</code></td><td><code>Ref&lt;string&gt;</code></td><td>Current variant</td></tr>
+            <tr><td><code>handleConfirm()</code></td><td><code>() =&gt; void</code></td><td>Resolve promise with true</td></tr>
+            <tr><td><code>handleCancel()</code></td><td><code>() =&gt; void</code></td><td>Resolve promise with false</td></tr>
+        </tbody>
+    </table>
+    <pre><code class="language-typescript">const { confirm } = useConfirm();
+
+async function doSomething() {
+    const confirmed = await confirm({
+        title: 'Are you sure?',
+        description: 'This will do something important.',
+        confirmText: 'Yes, do it',
+        variant: 'destructive',
+    });
+
+    if (confirmed) {
+        // proceed
+    }
+}</code></pre>
+</section>
+
+<section id="usePermissions">
+    <h3>usePermissions</h3>
+    <p>Check user permissions and roles. Reads from Inertia page props (<code>auth.user.roles</code>, <code>auth.user.permissions</code>).</p>
+    <p><strong>File:</strong> <code>resources/js/composables/usePermissions.ts</code></p>
+    <table>
+        <thead><tr><th>Property</th><th>Type</th><th>Description</th></tr></thead>
+        <tbody>
+            <tr><td><code>can(permission)</code></td><td><code>(p: string) =&gt; boolean</code></td><td>True if user has permission or is super-admin</td></tr>
+            <tr><td><code>hasRole(role)</code></td><td><code>(r: string) =&gt; boolean</code></td><td>True if user has the role</td></tr>
+            <tr><td><code>isSuperAdmin</code></td><td><code>ComputedRef&lt;boolean&gt;</code></td><td>True if user has 'super-admin' role</td></tr>
+            <tr><td><code>roles</code></td><td><code>ComputedRef&lt;string[]&gt;</code></td><td>User's roles</td></tr>
+            <tr><td><code>permissions</code></td><td><code>ComputedRef&lt;string[]&gt;</code></td><td>User's permissions</td></tr>
+        </tbody>
+    </table>
+    <pre><code class="language-typescript">const { can, hasRole, isSuperAdmin } = usePermissions();
+
+// In template
+&lt;Button v-if="can('products.create')"&gt;Add Product&lt;/Button&gt;
+
+// In RowActions
+{ label: 'Edit', permission: 'products.edit', ... }  // auto-checked by RowActions
+
+// In script
+if (hasRole('admin')) { ... }</code></pre>
+</section>
+
+<section id="useFlashToasts">
+    <h3>useFlashToasts</h3>
+    <p>Converts Inertia flash messages (<code>success</code>, <code>error</code>, <code>warning</code>, <code>info</code>) into vue-sonner toasts. Called once in each layout component.</p>
+    <p><strong>File:</strong> <code>resources/js/composables/useFlashToasts.ts</code></p>
+    <p>Called in <code>AuthenticatedLayout.vue</code> and <code>GuestLayout.vue</code>:</p>
+    <pre><code class="language-typescript">useFlashToasts();</code></pre>
+    <p>Automatically watches for flash messages in Inertia page props and shows appropriate toasts. No configuration needed.</p>
+</section>
+
+<hr class="section-divider">
+
+<!-- ============================================================ -->
+<!-- SECTION: NOTIFICATIONS -->
+<!-- ============================================================ -->
+<section id="notifications-overview">
+    <h2>Notification System</h2>
+    <p>A complete in-app notification system with real-time bell dropdown, detail dialogs, user preferences, and admin management. Notifications are stored in the database using Laravel's built-in notification system.</p>
+
+    <div class="arch-diagram">
+        <div class="arch-layer">
+            <div class="arch-layer-title">Frontend Components</div>
+            <div class="arch-boxes">
+                <div class="arch-box purple">NotificationBell<br><small>Header Popover</small></div>
+                <div class="arch-box purple">NotificationDetailDialog<br><small>Full Content Modal</small></div>
+                <div class="arch-box purple">Notifications/Index<br><small>Full Page List</small></div>
+                <div class="arch-box purple">Preferences<br><small>User Settings</small></div>
+            </div>
+        </div>
+        <div class="arch-connector">&#8595;</div>
+        <div class="arch-layer">
+            <div class="arch-layer-title">Backend</div>
+            <div class="arch-boxes">
+                <div class="arch-box green">NotificationController<br><small>User CRUD</small></div>
+                <div class="arch-box green">PreferenceController<br><small>User Prefs</small></div>
+                <div class="arch-box green">AdminNotificationController<br><small>Admin Send/Log</small></div>
+            </div>
+        </div>
+        <div class="arch-connector">&#8595;</div>
+        <div class="arch-layer">
+            <div class="arch-layer-title">Notification Classes</div>
+            <div class="arch-boxes">
+                <div class="arch-box orange">SystemNotification<br><small>Database only</small></div>
+                <div class="arch-box orange">UserActionNotification<br><small>Database only</small></div>
+                <div class="arch-box orange">SecurityAlertNotification<br><small>Database + Mail</small></div>
+            </div>
+        </div>
+    </div>
+
+    <h3>User Routes</h3>
+    <table>
+        <thead><tr><th>Method</th><th>URI</th><th>Route Name</th><th>Description</th></tr></thead>
+        <tbody>
+            <tr><td><code>GET</code></td><td><code>/notifications</code></td><td><code>notifications.index</code></td><td>View all notifications (paginated)</td></tr>
+            <tr><td><code>PATCH</code></td><td><code>/notifications/{id}/read</code></td><td><code>notifications.mark-read</code></td><td>Mark single notification as read</td></tr>
+            <tr><td><code>POST</code></td><td><code>/notifications/mark-all-read</code></td><td><code>notifications.mark-all-read</code></td><td>Mark all notifications as read</td></tr>
+            <tr><td><code>GET</code></td><td><code>/notifications/preferences</code></td><td><code>notifications.preferences</code></td><td>View notification preferences</td></tr>
+            <tr><td><code>PUT</code></td><td><code>/notifications/preferences</code></td><td><code>notifications.preferences.update</code></td><td>Update notification preferences</td></tr>
+        </tbody>
+    </table>
+</section>
+
+<section id="notification-types">
+    <h3>Notification Types</h3>
+    <p>Three notification classes are available, each stored in <code>app/Notifications/</code>:</p>
+
+    <h4>SystemNotification</h4>
+    <p>General system announcements. Delivered via <strong>database</strong> channel only.</p>
+    <pre><code class="language-php">use App\Notifications\SystemNotification;
+
+$user->notify(new SystemNotification(
+    title: 'System Update',
+    message: 'The platform will undergo maintenance tonight.',
+    actionUrl: 'https://status.example.com',    // optional
+));</code></pre>
+    <p><strong>Data stored:</strong></p>
+    <pre><code class="language-php">[
+    'title' => 'System Update',
+    'message' => 'The platform will undergo maintenance tonight.',
+    'action_url' => 'https://status.example.com',
+    'type' => 'system',
+]</code></pre>
+
+    <h4>UserActionNotification</h4>
+    <p>Notifications triggered by another user's action. Delivered via <strong>database</strong> channel only.</p>
+    <pre><code class="language-php">use App\Notifications\UserActionNotification;
+
+$user->notify(new UserActionNotification(
+    title: 'Role Updated',
+    message: 'Your role has been changed to Editor.',
+    actionUrl: '',                              // optional
+    performedBy: $admin->name,                  // optional
+));</code></pre>
+    <p><strong>Data stored:</strong></p>
+    <pre><code class="language-php">[
+    'title' => 'Role Updated',
+    'message' => 'Your role has been changed to Editor.',
+    'action_url' => '',
+    'performed_by' => 'Admin User',
+    'type' => 'user_action',
+]</code></pre>
+
+    <h4>SecurityAlertNotification</h4>
+    <p>Security-related alerts. Delivered via <strong>database + mail</strong> channels.</p>
+    <pre><code class="language-php">use App\Notifications\SecurityAlertNotification;
+
+$user->notify(new SecurityAlertNotification(
+    title: 'New Login Detected',
+    message: 'A new login was detected from an unknown device.',
+    actionUrl: '/security/sessions',            // optional
+    ipAddress: $request->ip(),                  // optional
+));</code></pre>
+    <p><strong>Data stored:</strong></p>
+    <pre><code class="language-php">[
+    'title' => 'New Login Detected',
+    'message' => 'A new login was detected from an unknown device.',
+    'action_url' => '/security/sessions',
+    'ip_address' => '192.168.1.1',
+    'type' => 'security_alert',
+]</code></pre>
+
+    <div class="callout callout-warning">
+        <div class="callout-title">&#9888; Email Delivery</div>
+        Only <code>SecurityAlertNotification</code> sends emails by default. To add email delivery to other types, add <code>'mail'</code> to the <code>via()</code> method and implement <code>toMail()</code>.
+    </div>
+
+    <h4>Sending to Multiple Users (Bulk)</h4>
+    <pre><code class="language-php">use Illuminate\Support\Facades\Notification;
+
+// Send to all active users
+$users = User::where('status', 'active')->get();
+Notification::send($users, new SystemNotification(
+    title: 'New Feature',
+    message: 'Check out our new dashboard!',
+));</code></pre>
+</section>
+
+<section id="notification-bell">
+    <h3>NotificationBell Component</h3>
+    <p>The bell lives in the <code>AuthenticatedLayout</code> header and provides a quick-access popover for recent notifications. See <a href="#comp-notificationbell">Component Reference</a> for full props/features.</p>
+
+    <h4>How It Works</h4>
+    <ol class="step-list">
+        <li><strong>Badge Count</strong> &mdash; Reads <code>unreadNotificationsCount</code> from Inertia shared props. Shows animated ping badge when &gt; 0.</li>
+        <li><strong>Popover List</strong> &mdash; Displays up to 10 recent notifications with type-specific icons and unread indicators.</li>
+        <li><strong>Click to View</strong> &mdash; Clicking any notification closes the popover and opens a <code>NotificationDetailDialog</code> with full content.</li>
+        <li><strong>Mark All Read</strong> &mdash; Button at top of popover sends <code>POST /notifications/mark-all-read</code>.</li>
+        <li><strong>View All</strong> &mdash; Link at bottom navigates to <code>/notifications</code> full page.</li>
+    </ol>
+
+    <h4>Backend Setup (HandleInertiaRequests)</h4>
+    <p>Share notification data in your middleware:</p>
+    <pre><code class="language-php">// app/Http/Middleware/HandleInertiaRequests.php
+public function share(Request $request): array
+{
+    return [
+        ...parent::share($request),
+        'auth' => ['user' => $request->user() ? $request->user()->only(...) : null],
+        'unreadNotificationsCount' => $request->user()?->unreadNotifications()->count() ?? 0,
+        'recentNotifications' => $request->user()
+            ?->notifications()
+            ->latest()
+            ->take(10)
+            ->get() ?? [],
+    ];
+}</code></pre>
+</section>
+
+<section id="notification-detail-dialog">
+    <h3>NotificationDetailDialog</h3>
+    <p>A reusable modal for viewing the full content of any notification. See <a href="#comp-notificationdetaildialog">Component Reference</a> for full props and interface.</p>
+
+    <h4>Usage Pattern</h4>
+    <pre><code class="language-typescript">import { ref } from 'vue';
+import NotificationDetailDialog from '@/components/NotificationDetailDialog.vue';
+
+const dialogOpen = ref(false);
+const selectedNotification = ref(null);
+
+function openNotification(n) {
+    selectedNotification.value = n;
+    dialogOpen.value = true;
+}</code></pre>
+    <pre><code class="language-xml">&lt;!-- Make items clickable --&gt;
+&lt;Card v-for="n in notifications" @click="openNotification(n)" class="cursor-pointer"&gt;
+    ...
+&lt;/Card&gt;
+
+&lt;!-- Dialog (placed once, outside the loop) --&gt;
+&lt;NotificationDetailDialog
+    v-model:open="dialogOpen"
+    :notification="selectedNotification"
+/&gt;</code></pre>
+
+    <div class="callout callout-tip">
+        <div class="callout-title">&#9889; Type-Aware Display</div>
+        The dialog automatically shows different icons and colors based on the notification type: <strong>System</strong> (blue monitor), <strong>User Action</strong> (gray user-check), <strong>Security Alert</strong> (red shield). The metadata section adapts too &mdash; showing "Performed by" for user actions and "IP Address" for security alerts.
+    </div>
+</section>
+
+<section id="notification-preferences">
+    <h3>Notification Preferences</h3>
+    <p>Users can control which notification types they receive and through which channels. Preferences are managed at <code>/notifications/preferences</code>.</p>
+
+    <h4>Preference Types</h4>
+    <table>
+        <thead><tr><th>Type</th><th>Label</th><th>Channels</th></tr></thead>
+        <tbody>
+            <tr><td><code>system</code></td><td>System Notifications</td><td>Database</td></tr>
+            <tr><td><code>user_action</code></td><td>User Action Notifications</td><td>Database</td></tr>
+            <tr><td><code>security_alert</code></td><td>Security Alerts</td><td>Database, Email</td></tr>
+        </tbody>
+    </table>
+
+    <h4>Database Schema</h4>
+    <pre><code class="language-php">Schema::create('notification_preferences', function (Blueprint $table) {
+    $table->id();
+    $table->foreignId('user_id')->constrained()->cascadeOnDelete();
+    $table->string('type');                  // system, user_action, security_alert
+    $table->boolean('email')->default(true);
+    $table->boolean('database')->default(true);
+    $table->timestamps();
+    $table->unique(['user_id', 'type']);
+});</code></pre>
+
+    <h4>Backend Controller</h4>
+    <pre><code class="language-php">// NotificationPreferenceController@update
+$validated = $request->validate([
+    'preferences' => 'required|array',
+    'preferences.*.type' => 'required|in:system,user_action,security_alert',
+    'preferences.*.email' => 'boolean',
+    'preferences.*.database' => 'boolean',
+]);
+
+foreach ($validated['preferences'] as $pref) {
+    DB::table('notification_preferences')->updateOrInsert(
+        ['user_id' => $request->user()->id, 'type' => $pref['type']],
+        ['email' => $pref['email'] ?? true, 'database' => $pref['database'] ?? true]
+    );
+}</code></pre>
+</section>
+
+<section id="admin-notifications">
+    <h3>Admin Notification Management</h3>
+    <p>Admins can view all sent notifications and compose new ones from the admin panel.</p>
+
+    <h4>Admin Routes</h4>
+    <table>
+        <thead><tr><th>Method</th><th>URI</th><th>Permission</th><th>Description</th></tr></thead>
+        <tbody>
+            <tr><td><code>GET</code></td><td><code>/admin/notifications</code></td><td><code>notifications.view</code></td><td>Notification log (DataTable)</td></tr>
+            <tr><td><code>GET</code></td><td><code>/admin/notifications/create</code></td><td><code>notifications.create</code></td><td>Compose notification form</td></tr>
+            <tr><td><code>POST</code></td><td><code>/admin/notifications</code></td><td><code>notifications.create</code></td><td>Send notification</td></tr>
+        </tbody>
+    </table>
+
+    <h4>Notification Log (Index)</h4>
+    <p>The admin notification log shows all notifications sent to any user, with search, type filtering, and status filtering.</p>
+    <table>
+        <thead><tr><th>Column</th><th>Description</th></tr></thead>
+        <tbody>
+            <tr><td>Type</td><td>Badge: System (default), User Action (secondary), Security Alert (destructive)</td></tr>
+            <tr><td>Title</td><td>Clickable &mdash; opens <code>NotificationDetailDialog</code> with <code>showRecipient</code></td></tr>
+            <tr><td>Recipient</td><td>User name + email</td></tr>
+            <tr><td>Status</td><td>Read / Unread badge</td></tr>
+            <tr><td>Sent At</td><td>Relative date (DateCell)</td></tr>
+        </tbody>
+    </table>
+
+    <h4>Compose &amp; Send (Create)</h4>
+    <p>The compose page allows admins to send notifications to all users or specific users.</p>
+    <table>
+        <thead><tr><th>Field</th><th>Type</th><th>Description</th></tr></thead>
+        <tbody>
+            <tr><td>Notification Type</td><td>Select</td><td>System, User Action, or Security Alert</td></tr>
+            <tr><td>Target</td><td>Radio</td><td>"All Users (Blast)" or "Specific Users"</td></tr>
+            <tr><td>Users</td><td>Multi-select</td><td>Searchable user picker with chips (visible when target = specific)</td></tr>
+            <tr><td>Title</td><td>Text</td><td>Notification title (max 255 chars)</td></tr>
+            <tr><td>Message</td><td>Textarea</td><td>Notification body (max 1000 chars)</td></tr>
+            <tr><td>Action URL</td><td>URL</td><td>Optional link attached to notification</td></tr>
+        </tbody>
+    </table>
+
+    <div class="callout callout-info">
+        <div class="callout-title">&#8505; Backend Validation</div>
+        The store endpoint validates: <code>type</code> (required, in: system/user_action/security_alert), <code>target</code> (required, in: all/specific), <code>user_ids</code> (required if specific), <code>title</code> (required, max:255), <code>message</code> (required, max:1000), <code>action_url</code> (nullable, url).
+    </div>
+
+    <h4>Controller Example</h4>
+    <pre><code class="language-php">// AdminNotificationController@store
+$notification = match ($validated['type']) {
+    'system' => new SystemNotification(
+        title: $validated['title'],
+        message: $validated['message'],
+        actionUrl: $validated['action_url'] ?? '',
+    ),
+    'user_action' => new UserActionNotification(
+        title: $validated['title'],
+        message: $validated['message'],
+        actionUrl: $validated['action_url'] ?? '',
+        performedBy: $request->user()->name,
+    ),
+    'security_alert' => new SecurityAlertNotification(
+        title: $validated['title'],
+        message: $validated['message'],
+        actionUrl: $validated['action_url'] ?? '',
+    ),
+};
+
+$recipients = $validated['target'] === 'all'
+    ? User::where('status', 'active')->get()
+    : User::whereIn('id', $validated['user_ids'])->get();
+
+Notification::send($recipients, $notification);</code></pre>
+</section>
+
+<hr class="section-divider">
+
+<!-- ============================================================ -->
+<!-- SECTION: AUTHENTICATION -->
+<!-- ============================================================ -->
+<section id="auth-overview">
+    <h2>Authentication</h2>
+    <p>The framework includes a complete authentication system with login, registration, password reset, email verification, and two-factor authentication. All auth pages use the <a href="#guest-layout">GuestLayout</a> with a split-panel design.</p>
+
+    <h4>Auth Pages</h4>
+    <table>
+        <thead><tr><th>Page</th><th>Route</th><th>Description</th></tr></thead>
+        <tbody>
+            <tr><td><code>Login.vue</code></td><td><code>/login</code></td><td>Email/password login with "Remember me" option</td></tr>
+            <tr><td><code>Register.vue</code></td><td><code>/register</code></td><td>User registration form (name, email, password, confirm password)</td></tr>
+            <tr><td><code>ForgotPassword.vue</code></td><td><code>/forgot-password</code></td><td>Send password reset link via email</td></tr>
+            <tr><td><code>ResetPassword.vue</code></td><td><code>/reset-password/{token}</code></td><td>Set new password with token</td></tr>
+            <tr><td><code>VerifyEmail.vue</code></td><td><code>/verify-email</code></td><td>Email verification prompt with resend option</td></tr>
+            <tr><td><code>ConfirmPassword.vue</code></td><td><code>/confirm-password</code></td><td>Re-enter password for sensitive actions</td></tr>
+            <tr><td><code>TwoFactorChallenge.vue</code></td><td><code>/two-factor-challenge</code></td><td>Enter 2FA code or recovery code</td></tr>
+        </tbody>
+    </table>
+    <p><strong>Location:</strong> <code>resources/js/Pages/Auth/</code></p>
+</section>
+
+<section id="auth-pages">
+    <h3>Auth Page Components</h3>
+
+    <h4>Login Page</h4>
+    <p>Standard email/password form with remember-me checkbox, link to forgot password, and link to register page.</p>
+    <pre><code class="language-xml">&lt;!-- Uses PasswordInput component for eye toggle --&gt;
+&lt;PasswordInput v-model="form.password" id="password" autocomplete="current-password" required /&gt;
+
+&lt;!-- Uses LoadingButton for submission --&gt;
+&lt;LoadingButton :loading="form.processing" class="w-full"&gt;Sign In&lt;/LoadingButton&gt;</code></pre>
+
+    <h4>Register Page</h4>
+    <p>Registration form with name, email, password, and password confirmation. Uses <code>PasswordInput</code> for both password fields.</p>
+
+    <h4>Password Reset Flow</h4>
+    <ol class="step-list">
+        <li><strong>Request Reset</strong> &mdash; User enters email on <code>ForgotPassword.vue</code>. Laravel sends reset link.</li>
+        <li><strong>Reset Password</strong> &mdash; User clicks email link, lands on <code>ResetPassword.vue</code> with token. Enters new password.</li>
+        <li><strong>Redirect</strong> &mdash; After successful reset, user is redirected to login with success flash.</li>
+    </ol>
+</section>
+
+<section id="two-factor-auth">
+    <h3>Two-Factor Authentication</h3>
+    <p>The <code>TwoFactorChallenge.vue</code> page handles TOTP (time-based one-time password) verification after login.</p>
+
+    <h4>Challenge Flow</h4>
+    <ol class="step-list">
+        <li><strong>Login</strong> &mdash; User logs in with email/password. If 2FA is enabled, redirected to challenge page.</li>
+        <li><strong>Enter Code</strong> &mdash; User enters 6-digit code from their authenticator app.</li>
+        <li><strong>Recovery Code</strong> &mdash; Alternatively, user can switch to recovery code input for backup access.</li>
+        <li><strong>Verification</strong> &mdash; On success, user is redirected to the intended destination.</li>
+    </ol>
+
+    <div class="callout callout-tip">
+        <div class="callout-title">&#9889; Recovery Codes</div>
+        Recovery codes are single-use backup codes generated when 2FA is first enabled. Each code can only be used once. Users should store them securely.
+    </div>
+</section>
+
+<hr class="section-divider">
+
+<!-- ============================================================ -->
+<!-- SECTION: LAYOUTS -->
+<!-- ============================================================ -->
+<section id="authenticated-layout">
+    <h2>Layouts</h2>
+    <p>Two layout components wrap all pages: <code>AuthenticatedLayout</code> for logged-in users and <code>GuestLayout</code> for auth pages.</p>
+
+    <h3>AuthenticatedLayout</h3>
+    <p>Main application layout with collapsible sidebar, header with notification bell and user menu, and breadcrumb navigation.</p>
+    <p><strong>File:</strong> <code>resources/js/Layouts/AuthenticatedLayout.vue</code></p>
+
+    <h4>Structure</h4>
+    <div class="file-tree">AuthenticatedLayout
+├── <span class="dir">Sidebar</span>
+│   ├── <span class="file">Brand/Logo</span>
+│   ├── <span class="dir">Navigation Groups</span>
+│   │   ├── <span class="file">Main</span> (Dashboard)
+│   │   ├── <span class="file">User Management</span> (Users, Roles, Permissions)
+│   │   ├── <span class="file">Content</span> (Media Manager)
+│   │   ├── <span class="file">Email</span> (Templates, Log, Settings)
+│   │   └── <span class="file">System</span> (Settings, Activity Log, Backups, Health, API Tokens, Notifications)
+│   └── <span class="file">Collapse Toggle</span>
+├── <span class="dir">Header</span>
+│   ├── <span class="file">Breadcrumbs</span>
+│   ├── <span class="file">NotificationBell</span>
+│   ├── <span class="file">Theme Toggle</span> (Dark/Light)
+│   └── <span class="file">User Avatar Dropdown</span> (Profile, Logout)
+├── <span class="file">Flash Toasts</span> (via useFlashToasts)
+├── <span class="file">ConfirmDialog</span> (global)
+└── <span class="dir">Main Content</span> (slot)</div>
+
+    <h4>Props</h4>
+    <table>
+        <thead><tr><th>Prop</th><th>Type</th><th>Description</th></tr></thead>
+        <tbody>
+            <tr><td><code>breadcrumbs</code></td><td><code>BreadcrumbItem[]</code></td><td>Breadcrumb trail (see <a href="#breadcrumbs">Breadcrumbs</a>)</td></tr>
+        </tbody>
+    </table>
+    <pre><code class="language-xml">&lt;AuthenticatedLayout :breadcrumbs="[
+    { label: 'User Management' },
+    { label: 'Users', href: route('admin.users.index') },
+    { label: 'Create' },
+]"&gt;
+    &lt;Head title="Create User" /&gt;
+    &lt;!-- page content --&gt;
+&lt;/AuthenticatedLayout&gt;</code></pre>
+
+    <h4>Permission-Based Navigation</h4>
+    <p>Each nav item has an optional <code>permission</code> field. Items are only shown if the user has the required permission (checked via <code>usePermissions</code>).</p>
+    <pre><code class="language-typescript">// Sidebar nav item structure
+{
+    title: 'Users',
+    href: route('admin.users.index'),
+    icon: Users,
+    permission: 'users.view',    // hidden if user lacks this permission
+}</code></pre>
+</section>
+
+<section id="guest-layout">
+    <h3>GuestLayout</h3>
+    <p>Split-panel layout for authentication pages. Left panel shows branding, right panel shows the auth form.</p>
+    <p><strong>File:</strong> <code>resources/js/Layouts/GuestLayout.vue</code></p>
+
+    <h4>Structure</h4>
+    <div class="file-tree">GuestLayout
+├── <span class="dir">Left Panel</span> (hidden on mobile)
+│   ├── <span class="file">Brand Logo / Site Name</span>
+│   └── <span class="file">Inspirational Quote</span>
+├── <span class="dir">Right Panel</span>
+│   ├── <span class="file">Mobile Logo</span> (visible only on small screens)
+│   └── <span class="dir">Card</span>
+│       └── <span class="file">Content Slot</span> (auth form)
+├── <span class="file">Flash Toasts</span> (via useFlashToasts)
+└── <span class="file">Toaster</span> (vue-sonner)</div>
+
+    <pre><code class="language-xml">&lt;GuestLayout&gt;
+    &lt;Head title="Login" /&gt;
+    &lt;form @submit.prevent="submit"&gt;
+        &lt;!-- login form fields --&gt;
+    &lt;/form&gt;
+&lt;/GuestLayout&gt;</code></pre>
+</section>
+
+<section id="sidebar-navigation">
+    <h3>Sidebar Navigation</h3>
+    <p>The sidebar is built with shadcn-vue sidebar components and organized into navigation groups.</p>
+
+    <h4>Navigation Groups</h4>
+    <table>
+        <thead><tr><th>Group</th><th>Items</th><th>Permission(s)</th></tr></thead>
+        <tbody>
+            <tr><td><strong>Main</strong></td><td>Dashboard</td><td>&mdash; (always visible)</td></tr>
+            <tr><td><strong>User Management</strong></td><td>Users, Roles, Permissions</td><td>users.view, roles.view, permissions.view</td></tr>
+            <tr><td><strong>Content</strong></td><td>Media Manager</td><td>media.view</td></tr>
+            <tr><td><strong>Email</strong></td><td>Templates, Email Log, Email Settings</td><td>email.view, settings.view</td></tr>
+            <tr><td><strong>System</strong></td><td>General Settings, Activity Log, Backups, System Health, API Tokens, Notifications</td><td>settings.view, activity-log.view, backups.view, system-health.view, api-tokens.view, notifications.view</td></tr>
+        </tbody>
+    </table>
+
+    <h4>Adding a New Nav Item</h4>
+    <p>To add a new page to the sidebar, add an entry to the appropriate group in <code>AuthenticatedLayout.vue</code>:</p>
+    <pre><code class="language-typescript">// In the navigation groups array
+{
+    title: 'Products',
+    href: route('admin.products.index'),
+    icon: Package,                  // from lucide-vue-next
+    permission: 'products.view',    // required permission
+}</code></pre>
+    <div class="callout callout-tip">
+        <div class="callout-title">&#9889; Auto-Hide</div>
+        Nav items with a <code>permission</code> field are automatically hidden if the current user lacks that permission. No <code>v-if</code> needed.
+    </div>
+</section>
+
+<section id="breadcrumbs">
+    <h3>Breadcrumbs</h3>
+    <p>Breadcrumbs are passed as a prop to <code>AuthenticatedLayout</code> and rendered in the header.</p>
+    <pre><code class="language-typescript">interface BreadcrumbItem {
+    label: string;     // Display text
+    href?: string;     // Optional link (last item is typically not linked)
+}</code></pre>
+
+    <h4>Examples</h4>
+    <pre><code class="language-xml">&lt;!-- Simple --&gt;
+&lt;AuthenticatedLayout :breadcrumbs="[{ label: 'Dashboard' }]"&gt;
+
+&lt;!-- Nested --&gt;
+&lt;AuthenticatedLayout :breadcrumbs="[
+    { label: 'User Management' },
+    { label: 'Users', href: route('admin.users.index') },
+    { label: 'Edit User' },
+]"&gt;
+
+&lt;!-- System section --&gt;
+&lt;AuthenticatedLayout :breadcrumbs="[
+    { label: 'System' },
+    { label: 'Notifications' },
+]"&gt;</code></pre>
+
+    <div class="callout callout-info">
+        <div class="callout-title">&#8505; Convention</div>
+        The first breadcrumb is typically the section name (not linked), middle items link to their index pages, and the last item is the current page (not linked).
+    </div>
+</section>
+
+<hr class="section-divider">
+
+<!-- ============================================================ -->
+<!-- SECTION: ADMIN MODULES -->
+<!-- ============================================================ -->
+<section id="module-users">
+    <h2>Admin Modules</h2>
+    <p>Pre-built admin modules covering common application needs. Each module follows the standard controller/service/page pattern.</p>
+
+    <h3>User Management</h3>
+    <p>Full CRUD for user accounts with role assignment, status management, and search.</p>
+    <p><strong>Location:</strong> <code>Pages/Admin/Users/</code> &mdash; <strong>Permissions:</strong> <code>users.view</code>, <code>users.create</code>, <code>users.edit</code>, <code>users.delete</code></p>
+
+    <h4>Pages</h4>
+    <table>
+        <thead><tr><th>Page</th><th>Route</th><th>Description</th></tr></thead>
+        <tbody>
+            <tr><td><code>Index.vue</code></td><td><code>/admin/users</code></td><td>DataTable with name, email, status, roles, created date</td></tr>
+            <tr><td><code>Create.vue</code></td><td><code>/admin/users/create</code></td><td>Form: name, email, password, role assignment, status</td></tr>
+            <tr><td><code>Edit.vue</code></td><td><code>/admin/users/{id}/edit</code></td><td>Edit form with optional password change</td></tr>
+        </tbody>
+    </table>
+
+    <h4>Features</h4>
+    <ul class="inline-list">
+        <li>Search by name or email</li>
+        <li>Sort by name, email, status, or created date</li>
+        <li>Selectable rows with bulk actions (activate, suspend, delete)</li>
+        <li>Role assignment via multi-select on create/edit</li>
+        <li>Status badge with color coding (active=green, suspended=red, pending=gray)</li>
+        <li>Export CSV</li>
+        <li>Impersonate user</li>
+        <li>Delete with confirmation dialog</li>
+    </ul>
+
+    <h4>Table Filters</h4>
+    <p>The Users index includes built-in table filters accessible via the Filters toolbar button:</p>
+    <ul class="inline-list">
+        <li><strong>Status</strong> &mdash; Filter by Active, Suspended, or Pending</li>
+        <li><strong>Role</strong> &mdash; Filter by any assigned role (dynamically populated from available roles)</li>
+    </ul>
+</section>
+
+<section id="module-roles">
+    <h3>Roles &amp; Permissions</h3>
+    <p>Manage roles and their associated permissions using Spatie's permission package.</p>
+    <p><strong>Location:</strong> <code>Pages/Admin/Roles/</code> &amp; <code>Pages/Admin/Permissions/</code></p>
+
+    <h4>Roles Pages</h4>
+    <table>
+        <thead><tr><th>Page</th><th>Route</th><th>Description</th></tr></thead>
+        <tbody>
+            <tr><td><code>Index.vue</code></td><td><code>/admin/roles</code></td><td>DataTable: role name, permission count, user count</td></tr>
+            <tr><td><code>Edit.vue</code></td><td><code>/admin/roles/{id}/edit</code></td><td>Edit role name and toggle permissions</td></tr>
+        </tbody>
+    </table>
+
+    <h4>Permissions Page</h4>
+    <table>
+        <thead><tr><th>Page</th><th>Route</th><th>Description</th></tr></thead>
+        <tbody>
+            <tr><td><code>Index.vue</code></td><td><code>/admin/permissions</code></td><td>View all permissions grouped by resource</td></tr>
+        </tbody>
+    </table>
+
+    <h4>Permission Naming Convention</h4>
+    <pre><code class="language-php">// Pattern: {resource}.{action}
+'users.view', 'users.create', 'users.edit', 'users.delete',
+'roles.view', 'roles.edit',
+'permissions.view',
+'settings.view', 'settings.edit',
+'email.view',
+'backups.view', 'backups.create', 'backups.delete',
+'api-tokens.view', 'api-tokens.create', 'api-tokens.delete',
+'system-health.view',
+'activity-log.view',
+'media.view', 'media.upload', 'media.delete',
+'notifications.view', 'notifications.create',</code></pre>
+</section>
+
+<section id="module-settings">
+    <h3>Site Settings</h3>
+    <p>Grouped settings page using <code>SettingsCard</code> components with schema-driven forms.</p>
+    <p><strong>Location:</strong> <code>Pages/Admin/Settings/Index.vue</code> &mdash; <strong>Route:</strong> <code>/admin/settings</code></p>
+
+    <h4>Settings Groups</h4>
+    <p>Each settings group is a separate <code>SettingsCard</code> with its own form and schema:</p>
+    <pre><code class="language-xml">&lt;SettingsCard title="General" description="Basic site configuration." :processing="generalForm.processing" @submit="save('general', generalForm)"&gt;
+    &lt;FormFields :schema="generalSchema" :form="generalForm" /&gt;
+&lt;/SettingsCard&gt;
+
+&lt;SettingsCard title="SEO" :processing="seoForm.processing" :columns="1" @submit="save('seo', seoForm)"&gt;
+    &lt;FormFields :schema="seoSchema" :form="seoForm" /&gt;
+&lt;/SettingsCard&gt;</code></pre>
+
+    <div class="callout callout-tip">
+        <div class="callout-title">&#9889; Independent Forms</div>
+        Each settings card has its own Inertia form instance, so saving one section doesn't affect others. Only the changed section submits.
+    </div>
+</section>
+
+<section id="module-email">
+    <h3>Email System</h3>
+    <p>Email template management, email log viewer, and SMTP configuration.</p>
+    <p><strong>Location:</strong> <code>Pages/Admin/Email/</code> &mdash; <strong>Permissions:</strong> <code>email.view</code>, <code>settings.view</code></p>
+
+    <h4>Pages</h4>
+    <table>
+        <thead><tr><th>Page</th><th>Route</th><th>Description</th></tr></thead>
+        <tbody>
+            <tr><td><code>Templates/Index.vue</code></td><td><code>/admin/email/templates</code></td><td>List email templates</td></tr>
+            <tr><td><code>Templates/Edit.vue</code></td><td><code>/admin/email/templates/{id}/edit</code></td><td>Edit template content</td></tr>
+            <tr><td><code>Log.vue</code></td><td><code>/admin/email/log</code></td><td>DataTable of sent emails with status badges</td></tr>
+            <tr><td><code>Settings.vue</code></td><td><code>/admin/email/settings</code></td><td>SMTP configuration (host, port, encryption, credentials)</td></tr>
+        </tbody>
+    </table>
+
+    <h4>Email Log Columns</h4>
+    <p>To (sortable), Subject (sortable), Template, Status (sortable, badge), Sent At (sortable)</p>
+
+    <h4>Table Filters</h4>
+    <p>The Email Log includes a status filter accessible via the Filters toolbar button:</p>
+    <ul class="inline-list">
+        <li><strong>Status</strong> &mdash; Filter by email delivery status (dynamically populated from existing statuses)</li>
+    </ul>
+</section>
+
+<section id="module-backups">
+    <h3>Backups</h3>
+    <p>Database and file backup management using Spatie's backup package.</p>
+    <p><strong>Location:</strong> <code>Pages/Admin/Backups/Index.vue</code> &mdash; <strong>Permissions:</strong> <code>backups.view</code>, <code>backups.create</code>, <code>backups.delete</code></p>
+
+    <h4>Features</h4>
+    <ul class="inline-list">
+        <li>View list of existing backups with size and creation date</li>
+        <li>Create new backup (triggers Artisan command)</li>
+        <li>Download backup files</li>
+        <li>Delete old backups with confirmation</li>
+    </ul>
+</section>
+
+<section id="module-api-tokens">
+    <h3>API Tokens</h3>
+    <p>Manage API tokens for programmatic access.</p>
+    <p><strong>Location:</strong> <code>Pages/Admin/ApiTokens/Index.vue</code> &mdash; <strong>Permissions:</strong> <code>api-tokens.view</code>, <code>api-tokens.create</code>, <code>api-tokens.delete</code></p>
+
+    <h4>Features</h4>
+    <ul class="inline-list">
+        <li>Generate new tokens with a name and optional expiration</li>
+        <li>View existing tokens with last-used date</li>
+        <li>Revoke tokens with confirmation</li>
+        <li>Token value shown once on creation (not stored in plain text)</li>
+    </ul>
+
+    <div class="callout callout-danger">
+        <div class="callout-title">&#9888; Security</div>
+        API tokens are only displayed once when created. They are stored as hashed values and cannot be retrieved later. Users must copy the token immediately.
+    </div>
+</section>
+
+<section id="module-system-health">
+    <h3>System Health</h3>
+    <p>Dashboard showing server information and health check results, powered by <code>spatie/laravel-health</code>.</p>
+    <p><strong>Location:</strong> <code>Pages/Admin/SystemHealth.vue</code> &mdash; <strong>Permission:</strong> <code>system-health.view</code></p>
+
+    <h4>System Information Panel</h4>
+    <ul class="inline-list">
+        <li>PHP version</li>
+        <li>Laravel version</li>
+        <li>Server software</li>
+        <li>Database driver and size (MB)</li>
+        <li>Disk free space (GB)</li>
+        <li>Memory usage (MB)</li>
+        <li>Cache, session, and queue driver configuration</li>
+        <li>Environment and debug mode</li>
+        <li>Timezone</li>
+    </ul>
+
+    <h4>Health Checks Panel</h4>
+    <p>Runs registered Spatie Health checks on page load and displays each with a status indicator (green pulse for OK, red for failed).</p>
+    <ul class="inline-list">
+        <li>Database connectivity</li>
+        <li>Cache health</li>
+        <li>Disk space usage</li>
+        <li>Environment configuration (<code>App\Health\EnvCheck</code>)</li>
+    </ul>
+
+    <h4>Environment Health Check</h4>
+    <p>Custom Spatie Health check (<code>app/Health/EnvCheck.php</code>) that validates critical environment variables:</p>
+    <table>
+        <thead><tr><th>Check</th><th>Severity</th><th>Condition</th></tr></thead>
+        <tbody>
+            <tr><td><code>APP_KEY</code></td><td>Failed</td><td>Key is not set</td></tr>
+            <tr><td><code>APP_DEBUG</code></td><td>Failed</td><td><code>true</code> in production</td></tr>
+            <tr><td><code>APP_URL</code></td><td>Warning</td><td><code>http://localhost</code> in production</td></tr>
+            <tr><td><code>MAIL_MAILER</code></td><td>Warning</td><td><code>log</code> in production</td></tr>
+        </tbody>
+    </table>
+</section>
+
+<section id="module-activity-log">
+    <h3>Activity Log</h3>
+    <p>Audit trail of model changes across the application, powered by <code>spatie/laravel-activitylog</code>.</p>
+    <p><strong>Location:</strong> <code>Pages/Admin/ActivityLog/Index.vue</code> &mdash; <strong>Permission:</strong> <code>activity-log.view</code></p>
+
+    <h4>Columns</h4>
+    <table>
+        <thead><tr><th>Column</th><th>Description</th></tr></thead>
+        <tbody>
+            <tr><td><code>description</code></td><td>Action description (sortable, searchable)</td></tr>
+            <tr><td><code>causer_name</code></td><td>User who performed the action (or "System")</td></tr>
+            <tr><td><code>subject_type</code></td><td>Affected model (e.g., User, Role)</td></tr>
+            <tr><td><code>event</code></td><td>Event type badge (created, updated, deleted)</td></tr>
+            <tr><td><code>created_at</code></td><td>Timestamp (sortable)</td></tr>
+        </tbody>
+    </table>
+
+    <h4>Features</h4>
+    <ul class="inline-list">
+        <li>Search by description or subject type</li>
+        <li>Expandable rows showing before/after property changes</li>
+        <li>Highlights changed values in green in the "After" panel</li>
+    </ul>
+
+    <h4>Table Filters</h4>
+    <p>The Activity Log includes a log name filter accessible via the Filters toolbar button:</p>
+    <ul class="inline-list">
+        <li><strong>Log Name</strong> &mdash; Filter by log channel (dynamically populated from distinct <code>log_name</code> values)</li>
+    </ul>
+</section>
+
+<section id="module-media">
+    <h3>Media Manager</h3>
+    <p>File upload and management interface.</p>
+    <p><strong>Location:</strong> <code>Pages/Admin/Media/Index.vue</code> &mdash; <strong>Permissions:</strong> <code>media.view</code>, <code>media.upload</code>, <code>media.delete</code></p>
+
+    <h4>Features</h4>
+    <ul class="inline-list">
+        <li>Grid and list view for uploaded files</li>
+        <li>Drag-and-drop file upload</li>
+        <li>Image preview with thumbnails</li>
+        <li>Copy URL to clipboard</li>
+        <li>Delete files with confirmation</li>
+        <li>Search and filter by file type</li>
+    </ul>
+</section>
+
+<section id="module-notifications">
+    <h3>Notifications (Admin)</h3>
+    <p>Admin interface for viewing all sent notifications and sending new ones to users.</p>
+    <p><strong>Location:</strong> <code>Pages/Admin/Notifications/</code> &mdash; <strong>Permissions:</strong> <code>notifications.view</code>, <code>notifications.create</code></p>
+
+    <h4>Pages</h4>
+    <table>
+        <thead><tr><th>Page</th><th>Route</th><th>Description</th></tr></thead>
+        <tbody>
+            <tr><td><code>Index.vue</code></td><td><code>/admin/notifications</code></td><td>DataTable of all user notifications with search, type/status badges</td></tr>
+            <tr><td><code>Create.vue</code></td><td><code>/admin/notifications/create</code></td><td>Send notification form with user picker</td></tr>
+        </tbody>
+    </table>
+
+    <h4>Index Columns</h4>
+    <table>
+        <thead><tr><th>Column</th><th>Description</th></tr></thead>
+        <tbody>
+            <tr><td><code>type</code></td><td>Badge: system (default), user_action (secondary), security_alert (destructive)</td></tr>
+            <tr><td><code>title</code></td><td>Clickable &mdash; opens detail dialog with full message</td></tr>
+            <tr><td><code>user_name</code></td><td>Recipient name and email</td></tr>
+            <tr><td><code>read_at</code></td><td>Status badge: Read / Unread</td></tr>
+            <tr><td><code>created_at</code></td><td>Relative timestamp</td></tr>
+        </tbody>
+    </table>
+
+    <h4>Send Notification Form</h4>
+    <ul class="inline-list">
+        <li>Notification type: System, User Action, Security Alert</li>
+        <li>Target: All Users (blast) or Specific Users (multi-select picker)</li>
+        <li>Title, message, and optional action URL</li>
+        <li>Confirmation dialog before sending</li>
+    </ul>
+
+    <h4>Table Filters</h4>
+    <p>The Notification Log includes built-in table filters accessible via the Filters toolbar button:</p>
+    <ul class="inline-list">
+        <li><strong>Type</strong> &mdash; Filter by System, User Action, or Security Alert</li>
+        <li><strong>Read Status</strong> &mdash; Filter by Read or Unread</li>
+    </ul>
+</section>
+
+<hr class="section-divider">
+
+<!-- ============================================================ -->
+<!-- SECTION 6: SCAFFOLD COMMANDS -->
+<!-- ============================================================ -->
+<section id="app-install">
+    <h2>App Install Command</h2>
+    <p>One-command setup for new developers. Runs migrations, seeders, and creates the initial admin account.</p>
+    <pre><code class="language-bash">php artisan app:install</code></pre>
+
+    <h3>Steps</h3>
+    <ol style="padding-left: 1.25rem;">
+        <li>Checks if the application is already installed (settings table has data)</li>
+        <li>Validates environment variables (APP_KEY, APP_URL, DB_CONNECTION)</li>
+        <li>Runs <code>migrate --force</code></li>
+        <li>Seeds roles &amp; permissions (<code>RoleAndPermissionSeeder</code>)</li>
+        <li>Seeds application settings (<code>SettingsSeeder</code>)</li>
+        <li>Seeds email templates (<code>EmailTemplateSeeder</code>)</li>
+        <li>Prompts for admin name, email, and password</li>
+        <li>Creates admin user with <code>super-admin</code> role</li>
+    </ol>
+
+    <h3>Idempotent Behavior</h3>
+    <ul class="inline-list">
+        <li>Seeders use <code>firstOrCreate</code> / <code>updateOrInsert</code> &mdash; safe to re-run</li>
+        <li>If the admin email already exists, assigns <code>super-admin</code> role instead of creating a duplicate</li>
+        <li>Prompts for confirmation if already installed</li>
+    </ul>
+
+    <p><strong>File:</strong> <code>app/Console/Commands/AppInstallCommand.php</code></p>
+</section>
+
+<section id="scaffold-commands">
+    <h2>Scaffold Commands</h2>
+    <p>Artisan commands for generating admin resources and pages.</p>
+
+    <h3>myra:resource</h3>
+    <p>Generates a full CRUD resource with controller, service, and 3 Vue pages.</p>
+    <pre><code class="language-bash">php artisan myra:resource {Name}</code></pre>
+
+    <h4>Example</h4>
+    <pre><code class="language-bash">php artisan myra:resource Product</code></pre>
+
+    <h4>Generated Files</h4>
+    <table>
+        <thead><tr><th>File</th><th>Description</th></tr></thead>
+        <tbody>
+            <tr><td><code>app/Http/Controllers/Admin/ProductController.php</code></td><td>CRUD controller with constructor-injected <code>ProductService</code></td></tr>
+            <tr><td><code>app/Services/ProductService.php</code></td><td>Service with <code>SearchableQuery</code> trait for list/create/update/delete</td></tr>
+            <tr><td><code>resources/js/Pages/Admin/Products/Index.vue</code></td><td>DataTable with schema-based columns and actions (no manual slots)</td></tr>
+            <tr><td><code>resources/js/Pages/Admin/Products/Create.vue</code></td><td>ResourceForm with Section layout and FormFields</td></tr>
+            <tr><td><code>resources/js/Pages/Admin/Products/Edit.vue</code></td><td>ResourceForm with Section layout and pre-filled data</td></tr>
+        </tbody>
+    </table>
+    <p>The command prints route definitions and <strong>skips files that already exist</strong> (prints a warning). Creates directories automatically if they don't exist.</p>
+
+    <h3>myra:page</h3>
+    <p>Generates a single admin page (for dashboards, analytics, settings).</p>
+    <pre><code class="language-bash">php artisan myra:page {Name}</code></pre>
+
+    <h4>Generated Files</h4>
+    <table>
+        <thead><tr><th>File</th><th>Description</th></tr></thead>
+        <tbody>
+            <tr><td><code>app/Http/Controllers/Admin/AnalyticsController.php</code></td><td>Controller with <code>index()</code> method</td></tr>
+            <tr><td><code>resources/js/Pages/Admin/Analytics/Index.vue</code></td><td>Basic page with PageHeader</td></tr>
+        </tbody>
+    </table>
+
+    <h3>Variable Substitutions</h3>
+    <p>Both commands use stub templates with placeholder replacement:</p>
+    <table>
+        <thead><tr><th>Placeholder</th><th>Example (for <code>Product</code>)</th><th>Description</th></tr></thead>
+        <tbody>
+            <tr><td><code>{{ model }}</code></td><td><code>Product</code></td><td>PascalCase singular</td></tr>
+            <tr><td><code>{{ modelVariable }}</code></td><td><code>product</code></td><td>camelCase singular</td></tr>
+            <tr><td><code>{{ modelPlural }}</code></td><td><code>Products</code></td><td>PascalCase plural</td></tr>
+            <tr><td><code>{{ modelPluralVariable }}</code></td><td><code>products</code></td><td>camelCase plural</td></tr>
+            <tr><td><code>{{ routePrefix }}</code></td><td><code>products</code></td><td>kebab-case plural</td></tr>
+            <tr><td><code>{{ permissionPrefix }}</code></td><td><code>products</code></td><td>kebab-case plural</td></tr>
+        </tbody>
+    </table>
+
+    <h4>Pluralization Examples</h4>
+    <table>
+        <thead><tr><th>Input</th><th>Plural</th><th>Route Prefix</th></tr></thead>
+        <tbody>
+            <tr><td><code>Product</code></td><td><code>Products</code></td><td><code>products</code></td></tr>
+            <tr><td><code>Category</code></td><td><code>Categories</code></td><td><code>categories</code></td></tr>
+            <tr><td><code>Person</code></td><td><code>People</code></td><td><code>people</code></td></tr>
+            <tr><td><code>BlogPost</code></td><td><code>BlogPosts</code></td><td><code>blog-posts</code></td></tr>
+        </tbody>
+    </table>
+    <p>Laravel's <code>Str::plural()</code> and <code>Str::kebab()</code> handle pluralization and casing.</p>
+
+    <div class="callout callout-tip">
+        <div class="callout-title">&#9889; CamelCase Input</div>
+        Always pass the model name in PascalCase (e.g., <code>BlogPost</code>, not <code>blog-post</code>). The command handles all casing transformations automatically.
+    </div>
+
+    <h3>Stub Files</h3>
+    <p>All templates are in <code>stubs/admin/</code>:</p>
+    <table>
+        <thead><tr><th>Stub</th><th>Used by</th><th>Description</th></tr></thead>
+        <tbody>
+            <tr><td><code>controller.resource.stub</code></td><td><code>myra:resource</code></td><td>CRUD controller</td></tr>
+            <tr><td><code>service.stub</code></td><td><code>myra:resource</code></td><td>Service with SearchableQuery</td></tr>
+            <tr><td><code>page.index.stub</code></td><td><code>myra:resource</code></td><td>DataTable with column/action builders</td></tr>
+            <tr><td><code>page.create.stub</code></td><td><code>myra:resource</code></td><td>Create form with Section layout</td></tr>
+            <tr><td><code>page.edit.stub</code></td><td><code>myra:resource</code></td><td>Edit form with Section layout</td></tr>
+            <tr><td><code>controller.page.stub</code></td><td><code>myra:page</code></td><td>Single-action controller</td></tr>
+            <tr><td><code>page.single.stub</code></td><td><code>myra:page</code></td><td>Basic page template</td></tr>
+        </tbody>
+    </table>
+
+    <h3>Post-Scaffold Checklist</h3>
+    <div class="callout">
+        <strong>After running <code>myra:resource</code>:</strong>
+        <ol style="margin-top: 0.5rem; padding-left: 1.25rem;">
+            <li>Add routes &mdash; Paste the printed routes into <code>routes/web.php</code></li>
+            <li>Create model &mdash; <code>php artisan make:model {Name} -m</code></li>
+            <li>Run migration &mdash; <code>php artisan migrate</code></li>
+            <li>Update validation &mdash; Edit the controller's <code>store()</code> and <code>update()</code> rules</li>
+            <li>Customize form schema &mdash; Edit Create.vue and Edit.vue schemas</li>
+            <li>Customize table columns &mdash; Edit Index.vue column definitions</li>
+            <li>Add searchable columns &mdash; Edit the service's <code>list()</code> method</li>
+            <li>Create permissions &mdash; Add permissions via seeder or admin UI</li>
+            <li>Add sidebar navigation &mdash; Add the menu item to the sidebar config</li>
+        </ol>
+    </div>
+</section>
+
+<hr class="section-divider">
+
+<!-- ============================================================ -->
+<!-- SECTION 7: PHP BACKEND -->
+<!-- ============================================================ -->
+<section id="php-backend">
+    <h2>PHP Backend</h2>
+    <p>Server-side patterns used by the Myra Framework.</p>
+
+    <h3>Controller Pattern</h3>
+    <p>Admin controllers follow a consistent structure with constructor-injected services.</p>
+    <p><strong>Location:</strong> <code>app/Http/Controllers/Admin/</code></p>
+    <pre><code class="language-php">&lt;?php
+
+namespace App\Http\Controllers\Admin;
+
+use App\Http\Controllers\Controller;
+use App\Models\Product;
+use App\Services\ProductService;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
+use Inertia\Inertia;
+use Inertia\Response;
+
+class ProductController extends Controller
+{
+    public function __construct(private readonly ProductService $productService) {}
+
+    public function index(Request $request): Response
+    {
+        return Inertia::render('Admin/Products/Index', [
+            'products' =&gt; $this-&gt;productService-&gt;list($request),
+            'filters' =&gt; $request-&gt;only(['search', 'sort', 'direction']),
+        ]);
+    }
+
+    public function create(): Response
+    {
+        return Inertia::render('Admin/Products/Create');
+    }
+
+    public function store(Request $request): RedirectResponse
+    {
+        $validated = $request-&gt;validate([
+            'name' =&gt; 'required|string|max:255',
+        ]);
+
+        $this-&gt;productService-&gt;create($validated);
+
+        return redirect()-&gt;route('admin.products.index')
+            -&gt;with('success', 'Product created successfully.');
+    }
+
+    public function edit(Product $product): Response
+    {
+        return Inertia::render('Admin/Products/Edit', [
+            'product' =&gt; $product,
+        ]);
+    }
+
+    public function update(Request $request, Product $product): RedirectResponse
+    {
+        $validated = $request-&gt;validate([
+            'name' =&gt; 'required|string|max:255',
+        ]);
+
+        $this-&gt;productService-&gt;update($product, $validated);
+
+        return redirect()-&gt;route('admin.products.index')
+            -&gt;with('success', 'Product updated successfully.');
+    }
+
+    public function destroy(Product $product): RedirectResponse
+    {
+        $this-&gt;productService-&gt;delete($product);
+
+        return redirect()-&gt;route('admin.products.index')
+            -&gt;with('success', 'Product deleted successfully.');
+    }
+}</code></pre>
+
+    <h4>Key Conventions</h4>
+    <ul style="padding-left: 1.25rem; margin: 0.5rem 0;">
+        <li>Constructor injection for services (<code>private readonly</code>)</li>
+        <li>Return <code>Inertia::render()</code> for page responses</li>
+        <li>Return <code>redirect()-&gt;route()-&gt;with('success', ...)</code> for mutations</li>
+        <li>Pass <code>filters</code> to index pages for DataTable search/sort state</li>
+        <li>Use Laravel route model binding for edit/update/destroy</li>
+    </ul>
+
+    <h3>Service Pattern</h3>
+    <p>Services encapsulate business logic and use the <code>SearchableQuery</code> trait for list operations.</p>
+    <p><strong>Location:</strong> <code>app/Services/</code></p>
+    <pre><code class="language-php">&lt;?php
+
+namespace App\Services;
+
+use App\Admin\Traits\SearchableQuery;
+use App\Models\Product;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Http\Request;
+
+class ProductService
+{
+    use SearchableQuery;
+
+    public function list(Request $request): LengthAwarePaginator
+    {
+        return $this-&gt;applySearchAndPaginate(
+            Product::query(),
+            $request,
+            searchable: ['name'],
+        );
+    }
+
+    public function create(array $data): Product
+    {
+        return Product::create($data);
+    }
+
+    public function update(Product $product, array $data): Product
+    {
+        $product-&gt;update($data);
+        return $product-&gt;fresh();
+    }
+
+    public function delete(Product $product): void
+    {
+        $product-&gt;delete();
+    }
+}</code></pre>
+
+    <h4>Advanced List Example</h4>
+    <pre><code class="language-php">public function list(Request $request): LengthAwarePaginator
+{
+    return $this-&gt;applySearchAndPaginate(
+        Product::query()
+            -&gt;with(['category', 'tags'])
+            -&gt;when($request-&gt;category, fn ($q, $cat) =&gt; $q-&gt;where('category_id', $cat))
+            -&gt;when($request-&gt;status, fn ($q, $status) =&gt; $q-&gt;where('status', $status))
+            -&gt;when($request-&gt;min_price, fn ($q, $min) =&gt; $q-&gt;where('price', '&gt;=', $min)),
+        $request,
+        searchable: ['name', 'sku', 'description'],
+        defaultSort: 'name',
+        defaultDir: 'asc',
+        perPage: 25,
+    );
+}</code></pre>
+</section>
+
+<section id="searchable-query">
+    <h3>SearchableQuery Trait</h3>
+    <p>Reusable trait that applies search, sort, and pagination to Eloquent queries.</p>
+    <p><strong>Location:</strong> <code>app/Admin/Traits/SearchableQuery.php</code></p>
+
+    <h4>Method Signature</h4>
+    <pre><code class="language-php">public function applySearchAndPaginate(
+    Builder $query,
+    Request $request,
+    array $searchable = [],
+    string $defaultSort = 'created_at',
+    string $defaultDir = 'desc',
+    int $perPage = 15,
+): LengthAwarePaginator</code></pre>
+
+    <h4>Parameters</h4>
+    <table>
+        <thead><tr><th>Parameter</th><th>Type</th><th>Default</th><th>Description</th></tr></thead>
+        <tbody>
+            <tr><td><code>$query</code></td><td><code>Builder</code></td><td>required</td><td>Eloquent query builder</td></tr>
+            <tr><td><code>$request</code></td><td><code>Request</code></td><td>required</td><td>HTTP request (reads <code>search</code>, <code>sort</code>, <code>direction</code>, <code>per_page</code>)</td></tr>
+            <tr><td><code>$searchable</code></td><td><code>array</code></td><td><code>[]</code></td><td>Columns to search with <code>LIKE %query%</code></td></tr>
+            <tr><td><code>$defaultSort</code></td><td><code>string</code></td><td><code>'created_at'</code></td><td>Default sort column</td></tr>
+            <tr><td><code>$defaultDir</code></td><td><code>string</code></td><td><code>'desc'</code></td><td>Default sort direction</td></tr>
+            <tr><td><code>$perPage</code></td><td><code>int</code></td><td><code>15</code></td><td>Items per page</td></tr>
+        </tbody>
+    </table>
+
+    <h4>How It Works</h4>
+    <ol style="padding-left: 1.25rem; margin: 0.5rem 0;">
+        <li><strong>Search:</strong> If <code>$request-&gt;search</code> exists and <code>$searchable</code> is not empty, applies <code>WHERE (col1 LIKE %search% OR col2 LIKE %search% OR ...)</code></li>
+        <li><strong>Sort:</strong> If <code>$request-&gt;sort</code> exists, applies <code>ORDER BY {sort} {direction}</code>. Otherwise uses defaults.</li>
+        <li><strong>Paginate:</strong> Calls <code>-&gt;paginate($perPage)-&gt;withQueryString()</code> to preserve query params in pagination links</li>
+    </ol>
+
+    <h4>Request Query Parameters</h4>
+    <p>The trait reads these from the request (sent automatically by the DataTable component):</p>
+    <table>
+        <thead><tr><th>Parameter</th><th>Description</th><th>Example</th></tr></thead>
+        <tbody>
+            <tr><td><code>search</code></td><td>Search query string</td><td><code>?search=widget</code></td></tr>
+            <tr><td><code>sort</code></td><td>Column to sort by</td><td><code>?sort=name</code></td></tr>
+            <tr><td><code>direction</code></td><td>Sort direction (<code>asc</code> or <code>desc</code>)</td><td><code>?direction=asc</code></td></tr>
+            <tr><td><code>per_page</code></td><td>Items per page override</td><td><code>?per_page=25</code></td></tr>
+        </tbody>
+    </table>
+</section>
+
+<section id="route-conventions">
+    <h3>Route Conventions</h3>
+    <p>Admin routes use a consistent pattern with permission middleware:</p>
+    <pre><code class="language-php">// routes/web.php
+
+Route::middleware(['auth', 'verified'])-&gt;prefix('admin')-&gt;name('admin.')-&gt;group(function () {
+
+    // CRUD Resource
+    Route::get('/products', [ProductController::class, 'index'])-&gt;middleware('permission:products.view')-&gt;name('products.index');
+    Route::get('/products/create', [ProductController::class, 'create'])-&gt;middleware('permission:products.create')-&gt;name('products.create');
+    Route::post('/products', [ProductController::class, 'store'])-&gt;middleware('permission:products.create')-&gt;name('products.store');
+    Route::get('/products/{product}/edit', [ProductController::class, 'edit'])-&gt;middleware('permission:products.edit')-&gt;name('products.edit');
+    Route::put('/products/{product}', [ProductController::class, 'update'])-&gt;middleware('permission:products.edit')-&gt;name('products.update');
+    Route::delete('/products/{product}', [ProductController::class, 'destroy'])-&gt;middleware('permission:products.delete')-&gt;name('products.destroy');
+
+    // Single Page
+    Route::get('/analytics', [AnalyticsController::class, 'index'])-&gt;name('analytics.index');
+});</code></pre>
+
+    <h4>Permission Naming</h4>
+    <p>Permissions follow the pattern <code>{resource}.{action}</code>:</p>
+    <table>
+        <thead><tr><th>Permission</th><th>Purpose</th></tr></thead>
+        <tbody>
+            <tr><td><code>products.view</code></td><td>View product list</td></tr>
+            <tr><td><code>products.create</code></td><td>Create new products</td></tr>
+            <tr><td><code>products.edit</code></td><td>Edit existing products</td></tr>
+            <tr><td><code>products.delete</code></td><td>Delete products</td></tr>
+        </tbody>
+    </table>
+
+    <h3>Flash Messages</h3>
+    <p>Controllers flash success/error messages that are automatically shown as toasts via <code>useFlashToasts</code>:</p>
+    <pre><code class="language-php">// Success (green toast)
+return redirect()-&gt;route('...')-&gt;with('success', 'Product created successfully.');
+
+// Error (red toast)
+return redirect()-&gt;back()-&gt;with('error', 'Something went wrong.');
+
+// Warning (yellow toast)
+return redirect()-&gt;back()-&gt;with('warning', 'Product is low on stock.');
+
+// Info (blue toast)
+return redirect()-&gt;back()-&gt;with('info', 'Product was archived.');</code></pre>
+</section>
+
+<section id="middleware">
+    <h3>Middleware</h3>
+    <p>Key middleware used in the Myra Framework.</p>
+
+    <h4>HandleInertiaRequests</h4>
+    <p>Shares global data with all Inertia pages:</p>
+    <pre><code class="language-php">// app/Http/Middleware/HandleInertiaRequests.php
+public function share(Request $request): array
+{
+    return [
+        ...parent::share($request),
+        'auth' =&gt; [
+            'user' =&gt; $request-&gt;user() ? [
+                ...$request-&gt;user()-&gt;only('id', 'name', 'email', 'avatar', 'status'),
+                'roles' =&gt; $request-&gt;user()-&gt;getRoleNames(),
+                'permissions' =&gt; $request-&gt;user()-&gt;getAllPermissions()-&gt;pluck('name'),
+            ] : null,
+        ],
+        'flash' =&gt; [
+            'success' =&gt; fn () =&gt; $request-&gt;session()-&gt;get('success'),
+            'error' =&gt; fn () =&gt; $request-&gt;session()-&gt;get('error'),
+            'warning' =&gt; fn () =&gt; $request-&gt;session()-&gt;get('warning'),
+            'info' =&gt; fn () =&gt; $request-&gt;session()-&gt;get('info'),
+        ],
+        'unreadNotificationsCount' =&gt; fn () =&gt; $request-&gt;user()?-&gt;unreadNotifications()-&gt;count() ?? 0,
+        'recentNotifications' =&gt; fn () =&gt; $request-&gt;user()
+            ?-&gt;notifications()-&gt;latest()-&gt;take(10)-&gt;get() ?? [],
+        'siteSettings' =&gt; fn () =&gt; cache()-&gt;remember('site-settings', 300, fn () =&gt; [...]),
+    ];
+}</code></pre>
+
+    <div class="callout callout-tip">
+        <div class="callout-title">&#9889; Lazy Evaluation</div>
+        Wrapping shared data in closures (<code>fn () =&gt;</code>) ensures the data is only queried when actually used by the page. This prevents unnecessary database queries on every request.
+    </div>
+
+    <h4>Permission Middleware</h4>
+    <p>Uses Spatie's <code>permission</code> middleware to protect routes:</p>
+    <pre><code class="language-php">// Applied per route
+Route::get('/users', [UserController::class, 'index'])
+    -&gt;middleware('permission:users.view');
+
+// Users without the permission get a 403 Forbidden response</code></pre>
+
+    <h4>Route Middleware Stack</h4>
+    <table>
+        <thead><tr><th>Middleware</th><th>Purpose</th></tr></thead>
+        <tbody>
+            <tr><td><code>auth</code></td><td>Require authentication</td></tr>
+            <tr><td><code>verified</code></td><td>Require email verification</td></tr>
+            <tr><td><code>permission:{name}</code></td><td>Require specific permission (Spatie)</td></tr>
+        </tbody>
+    </table>
+    <pre><code class="language-php">// Typical admin route group
+Route::middleware(['auth', 'verified'])
+    -&gt;prefix('admin')
+    -&gt;name('admin.')
+    -&gt;group(function () {
+        // Routes with individual permission middleware
+    });</code></pre>
+</section>
+
+<hr class="section-divider">
+
+<!-- ============================================================ -->
+<!-- SECTION 8: TYPE DEFINITIONS -->
+<!-- ============================================================ -->
+<section id="type-definitions">
+    <h2>Type Definitions</h2>
+    <p>TypeScript interfaces and types used throughout the Myra Framework.</p>
+
+    <h3>Core Types</h3>
+    <p><strong>File:</strong> <code>resources/js/types/index.d.ts</code></p>
+
+    <h4>User</h4>
+    <pre><code class="language-typescript">interface User {
+    id: number;
+    name: string;
+    email: string;
+    email_verified_at?: string;
+    phone?: string;
+    avatar?: string;
+    status: 'active' | 'suspended' | 'pending';
+    roles: string[];
+    permissions: string[];
+    created_at: string;
+    updated_at: string;
+}</code></pre>
+
+    <h4>PaginatedData</h4>
+    <p>Matches Laravel's <code>LengthAwarePaginator</code> JSON structure. Used by <code>DataTable</code>.</p>
+    <pre><code class="language-typescript">interface PaginatedData&lt;T&gt; {
+    data: T[];
+    links: {
+        first: string;
+        last: string;
+        prev: string | null;
+        next: string | null;
+    };
+    meta: {
+        current_page: number;
+        from: number;
+        last_page: number;
+        links: Array&lt;{
+            url: string | null;
+            label: string;
+            active: boolean;
+        }&gt;;
+        path: string;
+        per_page: number;
+        to: number;
+        total: number;
+    };
+}</code></pre>
+
+    <h4>PageProps</h4>
+    <p>Inertia shared page props. Extended by page-specific props.</p>
+    <pre><code class="language-typescript">type PageProps&lt;T extends Record&lt;string, unknown&gt; = Record&lt;string, unknown&gt;&gt; = T &amp; {
+    auth: { user: User };
+    flash?: {
+        success?: string;
+        error?: string;
+        warning?: string;
+        info?: string;
+    };
+    unreadNotificationsCount?: number;
+    siteSettings?: SiteSettings;
+};</code></pre>
+
+    <h4>Other Core Types</h4>
+    <pre><code class="language-typescript">interface Role {
+    id: number;
+    name: string;
+    guard_name: string;
+    permissions: Permission[];
+    users_count?: number;
+    created_at: string;
+    updated_at: string;
+}
+
+interface Permission {
+    id: number;
+    name: string;
+    guard_name: string;
+    group?: string;
+    created_at: string;
+    updated_at: string;
+}
+
+interface Notification {
+    id: string;
+    type: string;
+    data: Record&lt;string, unknown&gt;;
+    read_at: string | null;
+    created_at: string;
+}
+
+interface SiteSettings {
+    site_name: string;
+    site_description: string;
+    site_logo?: string;
+    maintenance_mode: boolean;
+}
+
+interface BreadcrumbItem {
+    label: string;
+    href?: string;
+}
+
+interface NavItem {
+    title: string;
+    href?: string;
+    icon?: string;
+    permission?: string;
+    children?: NavItem[];
+}</code></pre>
+
+    <h3>Admin Types</h3>
+    <p><strong>File:</strong> <code>resources/js/types/admin.d.ts</code></p>
+
+    <h4>FieldSchema</h4>
+    <pre><code class="language-typescript">interface FieldSchema {
+    name: string;
+    label: string;
+    type: 'text' | 'email' | 'password' | 'number' | 'textarea'
+        | 'select' | 'switch' | 'checkbox' | 'tel' | 'url'
+        | 'date' | 'datetime-local' | 'radio' | 'color'
+        | 'hidden' | 'file' | 'richtext';
+    required: boolean;
+    hint?: string;
+    placeholder?: string;
+    disabled: boolean;
+    colSpan?: number;
+    options?: SelectOption[];
+    rows?: number;
+    minDate?: string;
+    maxDate?: string;
+    inline?: boolean;
+    accept?: string;
+    multiple?: boolean;
+    maxSize?: number;
+}</code></pre>
+
+    <h4>SelectOption</h4>
+    <pre><code class="language-typescript">interface SelectOption {
+    label: string;
+    value: string;
+}</code></pre>
+
+    <h4>RowAction</h4>
+    <pre><code class="language-typescript">interface RowAction {
+    label: string;
+    icon?: Component;       // Lucide icon component
+    permission?: string;    // Required permission
+    href?: string;          // Navigation URL
+    onClick?: () =&gt; void;   // Click handler
+    destructive?: boolean;  // Red text styling
+    separator?: boolean;    // Separator line above
+    show?: boolean;         // Explicit visibility (default: true)
+}</code></pre>
+
+    <h4>SimpleTableColumn</h4>
+    <pre><code class="language-typescript">interface SimpleTableColumn {
+    key: string;
+    label: string;
+    class?: string;
+}</code></pre>
+
+    <h4>FormFieldProps</h4>
+    <pre><code class="language-typescript">interface FormFieldProps {
+    label: string;
+    name: string;
+    error?: string;
+    required?: boolean;
+    hint?: string;
+}</code></pre>
+
+    <h4>Column (DataTable &mdash; Legacy)</h4>
+    <pre><code class="language-typescript">interface Column {
+    key: string;
+    label: string;
+    sortable?: boolean;
+    class?: string;
+}</code></pre>
+    <p><strong>Import:</strong></p>
+    <pre><code class="language-typescript">import type { Column } from '@/components/DataTable.vue';</code></pre>
+
+    <h3>Schema Types</h3>
+    <p>Types produced by the Table Builder and Form Layout APIs.</p>
+
+    <h4>ColumnSchema</h4>
+    <p>Discriminated union of column types produced by the table builder classes.</p>
+    <pre><code class="language-typescript">interface ColumnSchemaBase {
+    key: string;
+    label: string;
+    type: string;
+    sortable: boolean;
+    searchable: boolean;
+    hidden: boolean;
+    alignRight: boolean;
+    class?: string;
+    tooltip?: string;
+    toggleable: boolean;
+    grow: boolean;
+}
+
+type ColumnSchema =
+    | TextColumnSchema      // type: 'text' + limit, url, copyable, money, numeric, description, prefix, suffix, wrap, formatFn, defaultValue
+    | BadgeColumnSchema     // type: 'badge' + colors map
+    | DateColumnSchema      // type: 'date' + format ('date'|'datetime'|'relative')
+    | BooleanColumnSchema   // type: 'boolean' + trueIcon, falseIcon, trueColor, falseColor
+    | ImageColumnSchema     // type: 'image' + circular, size, defaultUrl
+    | IconColumnSchema      // type: 'icon' + iconFn, colorFn
+    | ToggleColumnSchema;   // type: 'toggle' + onUpdateFn</code></pre>
+
+    <h4>FilterSchema</h4>
+    <pre><code class="language-typescript">type FilterSchema =
+    | SelectFilterSchema    // type: 'select' + options, placeholder, multiple
+    | TernaryFilterSchema   // type: 'ternary' + trueLabel, falseLabel
+    | CheckboxFilterSchema; // type: 'checkbox' + query param name</code></pre>
+
+    <h4>ActionSchema</h4>
+    <pre><code class="language-typescript">interface ActionSchema {
+    label: string;
+    icon?: Component;
+    urlFn?: (row: any) =&gt; string;
+    actionFn?: (row: any) =&gt; void;
+    requiresConfirmation: boolean;
+    confirmTitle?: string;
+    confirmDescription?: string;
+    permission?: string;
+    destructive: boolean;
+    separator: boolean;
+    deleteRouteName?: string;
+}</code></pre>
+
+    <h4>BulkActionSchema</h4>
+    <pre><code class="language-typescript">interface BulkActionSchema {
+    label: string;
+    actionFn?: (ids: number[]) =&gt; void;
+    requiresConfirmation: boolean;
+    deselectAfter: boolean;
+    icon?: Component;
+    permission?: string;
+    destructive: boolean;
+}</code></pre>
+
+    <h4>LayoutSchema</h4>
+    <p>Used by form layout classes (Section, Grid, Tabs, Fieldset, Flex, Wizard, Callout).</p>
+    <pre><code class="language-typescript">interface LayoutSchema {
+    layoutType: 'section' | 'grid' | 'tabs' | 'tab' | 'fieldset' | 'flex' | 'wizard' | 'wizard-step' | 'callout';
+    label?: string;
+    description?: string;
+    columns?: number;
+    collapsible?: boolean;
+    collapsed?: boolean;
+    icon?: Component;
+    badge?: string;
+    schema: SchemaItem[];
+    variant?: 'info' | 'warning' | 'success' | 'danger';  // Callout
+    direction?: 'row' | 'col';                             // Flex
+    gap?: number;                                          // Flex
+    justify?: string;                                      // Flex
+    align?: string;                                        // Flex
+    stepDescription?: string;                              // WizardStep
+}
+
+type SchemaItem = BaseField | LayoutItem; // Field or layout wrapper</code></pre>
+</section>
+
+<hr class="section-divider">
+
+<!-- ============================================================ -->
+<!-- SECTION: ADDITIONAL REFERENCE -->
+<!-- ============================================================ -->
+<section id="error-pages">
+    <h2>Additional Reference</h2>
+
+    <h3>Error Pages</h3>
+    <p>Custom styled error pages that match the application's design system.</p>
+    <p><strong>Location:</strong> <code>resources/js/Pages/Errors/</code></p>
+    <table>
+        <thead><tr><th>Page</th><th>HTTP Status</th><th>Description</th></tr></thead>
+        <tbody>
+            <tr><td><code>403.vue</code></td><td>Forbidden</td><td>Shown when user lacks permission to access a resource</td></tr>
+            <tr><td><code>404.vue</code></td><td>Not Found</td><td>Shown when a page or resource doesn't exist</td></tr>
+            <tr><td><code>419.vue</code></td><td>Page Expired</td><td>Shown when CSRF token has expired</td></tr>
+            <tr><td><code>500.vue</code></td><td>Server Error</td><td>Shown on unhandled server exceptions</td></tr>
+            <tr><td><code>503.vue</code></td><td>Service Unavailable</td><td>Shown during maintenance mode</td></tr>
+        </tbody>
+    </table>
+</section>
+
+<section id="dark-mode">
+    <h3>Dark Mode</h3>
+    <p>The application supports full dark/light theme switching with persistent user preference.</p>
+
+    <h4>How It Works</h4>
+    <ul class="inline-list">
+        <li>Theme preference stored in <code>localStorage</code> (key: <code>theme</code>)</li>
+        <li>Toggle button in the <code>AuthenticatedLayout</code> header</li>
+        <li>CSS uses Tailwind's dark mode with <code>class</code> strategy (<code>.dark</code> on <code>&lt;html&gt;</code>)</li>
+        <li>All custom colors use oklch and CSS variables that adapt to the theme</li>
+    </ul>
+
+    <h4>Tailwind CSS v4 Theme</h4>
+    <p>Colors are defined in a <code>@theme inline</code> block using oklch values. Custom semantic tokens like <code>success</code>, <code>warning</code>, and <code>destructive</code> are added alongside the default theme.</p>
+    <pre><code class="language-css">/* Example: custom success/warning tokens */
+--color-success: oklch(0.65 0.2 145);
+--color-warning: oklch(0.75 0.18 75);</code></pre>
+
+    <div class="callout callout-info">
+        <div class="callout-title">&#8505; oklch Colors</div>
+        The project uses oklch (Oklab Lightness Chroma Hue) color space for perceptually uniform color manipulation. This ensures consistent brightness across different hues, making the UI accessible in both light and dark modes.
+    </div>
+</section>
+
+<section id="conventions-summary">
+    <h3>Project Conventions Summary</h3>
+    <table>
+        <thead><tr><th>Convention</th><th>Pattern</th></tr></thead>
+        <tbody>
+            <tr><td>Button with loading state</td><td>Use <code>&lt;LoadingButton&gt;</code> instead of <code>&lt;Button :disabled="form.processing"&gt;</code></td></tr>
+            <tr><td>Password fields</td><td>Use <code>&lt;PasswordInput&gt;</code> instead of <code>&lt;Input type="password"&gt;</code></td></tr>
+            <tr><td>Success alerts</td><td>Use <code>border-success/30 bg-success/10 text-success</code> (not <code>text-green-600</code>)</td></tr>
+            <tr><td>Page transitions</td><td>Use <code>animate-fade-in-up</code> class for page entrance</td></tr>
+            <tr><td>Card stagger animation</td><td>Use <code>animate-stagger-{1-4}</code> for sequential card entrance</td></tr>
+            <tr><td>Pagination links</td><td>Use safe text decoding (no <code>v-html</code>) to prevent XSS</td></tr>
+            <tr><td>Form schemas</td><td>Prefer schema-driven <code>FormFields</code> over manual <code>FormField</code> tags</td></tr>
+            <tr><td>Table columns</td><td>Prefer schema-based columns over manual <code>#cell-*</code> slots</td></tr>
+            <tr><td>Flash messages</td><td>Use <code>-&gt;with('success', ...)</code> in controllers, <code>useFlashToasts</code> handles display</td></tr>
+            <tr><td>Permissions</td><td>Use <code>{resource}.{action}</code> naming (e.g., <code>users.view</code>)</td></tr>
+        </tbody>
+    </table>
+</section>
+
+</main>
+
+<script>
+// Sidebar toggle
+function toggleSidebar() {
+    document.getElementById('sidebar').classList.toggle('open');
+    document.getElementById('overlay').classList.toggle('open');
+}
+
+// Close sidebar on link click (mobile)
+document.querySelectorAll('.sidebar nav a').forEach(link => {
+    link.addEventListener('click', () => {
+        if (window.innerWidth <= 768) {
+            document.getElementById('sidebar').classList.remove('open');
+            document.getElementById('overlay').classList.remove('open');
+        }
+    });
+});
+
+// Active nav tracking on scroll
+const sections = document.querySelectorAll('section[id], h3[id]');
+const navLinks = document.querySelectorAll('.sidebar nav a');
+
+function updateActiveNav() {
+    let current = '';
+    const scrollY = window.scrollY + 100;
+
+    sections.forEach(section => {
+        if (section.offsetTop <= scrollY) {
+            current = section.getAttribute('id');
+        }
+    });
+
+    navLinks.forEach(link => {
+        link.classList.remove('active');
+        if (link.getAttribute('href') === '#' + current) {
+            link.classList.add('active');
+        }
+    });
+}
+
+window.addEventListener('scroll', updateActiveNav, { passive: true });
+updateActiveNav();
+
+// Highlight.js
+hljs.highlightAll();
+</script>
+</body>
+</html>

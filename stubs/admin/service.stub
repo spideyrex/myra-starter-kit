@@ -1,0 +1,39 @@
+<?php
+
+namespace App\Services;
+
+use App\Admin\Traits\SearchableQuery;
+use App\Models\{{ model }};
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Http\Request;
+
+class {{ model }}Service
+{
+    use SearchableQuery;
+
+    public function list(Request $request): LengthAwarePaginator
+    {
+        return $this->applySearchAndPaginate(
+            {{ model }}::query(),
+            $request,
+            searchable: ['name'],
+        );
+    }
+
+    public function create(array $data): {{ model }}
+    {
+        return {{ model }}::create($data);
+    }
+
+    public function update({{ model }} ${{ modelVariable }}, array $data): {{ model }}
+    {
+        ${{ modelVariable }}->update($data);
+
+        return ${{ modelVariable }}->fresh();
+    }
+
+    public function delete({{ model }} ${{ modelVariable }}): void
+    {
+        ${{ modelVariable }}->delete();
+    }
+}

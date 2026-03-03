@@ -1,0 +1,65 @@
+<?php
+
+namespace App\Http\Controllers\Admin;
+
+use App\Http\Controllers\Controller;
+use App\Models\{{ model }};
+use App\Services\{{ model }}Service;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
+use Inertia\Inertia;
+use Inertia\Response;
+
+class {{ model }}Controller extends Controller
+{
+    public function __construct(private readonly {{ model }}Service ${{ modelVariable }}Service) {}
+
+    public function index(Request $request): Response
+    {
+        return Inertia::render('Admin/{{ modelPlural }}/Index', [
+            '{{ modelPluralVariable }}' => $this->{{ modelVariable }}Service->list($request),
+            'filters' => $request->only(['search', 'sort', 'direction']),
+        ]);
+    }
+
+    public function create(): Response
+    {
+        return Inertia::render('Admin/{{ modelPlural }}/Create');
+    }
+
+    public function store(Request $request): RedirectResponse
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+        ]);
+
+        $this->{{ modelVariable }}Service->create($validated);
+
+        return redirect()->route('admin.{{ routePrefix }}.index')->with('success', '{{ model }} created successfully.');
+    }
+
+    public function edit({{ model }} ${{ modelVariable }}): Response
+    {
+        return Inertia::render('Admin/{{ modelPlural }}/Edit', [
+            '{{ modelVariable }}' => ${{ modelVariable }},
+        ]);
+    }
+
+    public function update(Request $request, {{ model }} ${{ modelVariable }}): RedirectResponse
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+        ]);
+
+        $this->{{ modelVariable }}Service->update(${{ modelVariable }}, $validated);
+
+        return redirect()->route('admin.{{ routePrefix }}.index')->with('success', '{{ model }} updated successfully.');
+    }
+
+    public function destroy({{ model }} ${{ modelVariable }}): RedirectResponse
+    {
+        $this->{{ modelVariable }}Service->delete(${{ modelVariable }});
+
+        return redirect()->route('admin.{{ routePrefix }}.index')->with('success', '{{ model }} deleted successfully.');
+    }
+}

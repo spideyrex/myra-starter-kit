@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Myra Framework Documentation</title>
+    <title>Myra Starter Kit Documentation</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/typescript.min.js"></script>
@@ -423,7 +423,7 @@
 <!-- Sidebar -->
 <aside class="sidebar" id="sidebar">
     <div class="sidebar-brand">
-        <h1>Myra Framework</h1>
+        <h1>Myra Starter Kit</h1>
         <p>Laravel + Inertia + Vue 3</p>
     </div>
     <nav>
@@ -513,8 +513,8 @@
 <!-- SECTION 1: OVERVIEW -->
 <!-- ============================================================ -->
 <section id="overview">
-    <h2>Myra Framework Documentation <span class="version-badge">v1.0</span></h2>
-    <p>A Myra Framework built on Laravel + Inertia.js + Vue 3 (TypeScript) with shadcn-vue components. Schema-driven forms, reusable UI components, and Artisan scaffolding for rapid admin panel development.</p>
+    <h2>Myra Starter Kit Documentation <span class="version-badge">v1.0</span></h2>
+    <p>A production-ready starter kit built on Laravel + Inertia.js + Vue 3 (TypeScript) with shadcn-vue components. Schema-driven forms, reusable UI components, and Artisan scaffolding for rapid admin panel development.</p>
 
     <h4>Key Features</h4>
     <ul class="inline-list">
@@ -530,13 +530,13 @@
 
     <div class="callout callout-tip">
         <div class="callout-title">&#9889; Quick Start</div>
-        Install Myra into a fresh Laravel project with <code>composer require myra/framework && php artisan myra:install</code>. Then scaffold new admin modules with <code>php artisan myra:resource ModelName</code>. See <a href="#installation">Installation</a> and <a href="#getting-started">Getting Started</a>.
+        Create a new project with <code>composer create-project myra/starter-kit my-project</code>. Then scaffold new admin modules with <code>php artisan myra:resource ModelName</code>. See <a href="#installation">Installation</a> and <a href="#getting-started">Getting Started</a>.
     </div>
 </section>
 
 <section id="installation">
     <h2>Installation</h2>
-    <p>Myra is installed as a Composer package. The <code>myra:install</code> command copies all files into your project (starter-kit pattern) so you own the code and can customize everything.</p>
+    <p>Myra Starter Kit is installed via Composer's <code>create-project</code> command. All files are included in your project so you own the code and can customize everything.</p>
 
     <h3>Requirements</h3>
     <ul>
@@ -546,8 +546,8 @@
         <li>A database (MySQL, PostgreSQL, or SQLite)</li>
     </ul>
 
-    <h3>Step 1: Create a Fresh Laravel Project</h3>
-    <pre><code class="language-bash">laravel new my-app
+    <h3>Step 1: Create a New Myra Project</h3>
+    <pre><code class="language-bash">composer create-project myra/starter-kit my-app
 cd my-app</code></pre>
 
     <h3>Step 2: Configure Your Database</h3>
@@ -563,37 +563,21 @@ DB_PASSWORD=
 # Or use SQLite for a quick start (no config needed)
 DB_CONNECTION=sqlite</code></pre>
 
-    <h3>Step 3: Install Myra Framework</h3>
-    <pre><code class="language-bash">composer require myra/framework
-php artisan myra:install</code></pre>
+    <h3>Step 3: Run the Installer</h3>
+    <pre><code class="language-bash">php artisan app:install</code></pre>
 
     <p>The install command handles everything automatically:</p>
     <table>
         <thead><tr><th>Step</th><th>What it does</th></tr></thead>
         <tbody>
-            <tr><td>Composer dependencies</td><td>Installs Inertia, Sanctum, Ziggy, Spatie packages, Google2FA, QR codes</td></tr>
-            <tr><td>Application files</td><td>Publishes controllers, models, services, middleware, DTOs, traits, and settings classes</td></tr>
-            <tr><td>Frontend resources</td><td>Publishes Vue components, pages, layouts, composables, and TypeScript types</td></tr>
-            <tr><td>Routes</td><td>Publishes <code>web.php</code> and <code>auth.php</code> with all admin and auth routes</td></tr>
-            <tr><td>Database</td><td>Publishes migrations and seeders, runs <code>migrate</code>, seeds roles/permissions/settings/email templates</td></tr>
-            <tr><td>Configuration</td><td>Publishes <code>config/myra.php</code>, <code>vite.config.ts</code>, <code>tsconfig.json</code>, <code>components.json</code></td></tr>
-            <tr><td>Node dependencies</td><td>Updates <code>package.json</code>, installs npm packages, builds frontend assets</td></tr>
-            <tr><td>Scaffold stubs</td><td>Publishes stub templates to <code>stubs/admin/</code> for <code>myra:resource</code> and <code>myra:page</code> commands</td></tr>
+            <tr><td>Database</td><td>Runs migrations and seeds roles, permissions, settings, and email templates</td></tr>
+            <tr><td>Admin user</td><td>Prompts you to create a super-admin user</td></tr>
+            <tr><td>Environment</td><td>Validates required <code>.env</code> variables</td></tr>
+            <tr><td>Frontend</td><td>Installs npm packages and builds assets</td></tr>
         </tbody>
     </table>
 
-    <h3>Step 4: Create Your First Admin User</h3>
-    <pre><code class="language-bash">php artisan tinker</code></pre>
-    <pre><code class="language-php">$user = \App\Models\User::create([
-    'name' => 'Admin',
-    'email' => 'admin@example.com',
-    'password' => bcrypt('password'),
-    'email_verified_at' => now(),
-]);
-
-$user->assignRole('super-admin');</code></pre>
-
-    <h3>Step 5: Start the Dev Server</h3>
+    <h3>Step 4: Start the Dev Server</h3>
     <pre><code class="language-bash">composer dev</code></pre>
     <p>This starts the Laravel server, queue worker, log watcher, and Vite dev server concurrently. Or run them separately:</p>
     <pre><code class="language-bash"># Terminal 1
@@ -643,7 +627,7 @@ php artisan myra:install --composer=/path/to/composer.phar</code></pre>
 
     <div class="callout callout-tip">
         <div class="callout-title">&#9889; Starter Kit Pattern</div>
-        Myra follows the same pattern as Laravel Breeze &mdash; all files are copied into your project. You own the code and can modify anything. The <code>myra/framework</code> package is only needed for the install and scaffold commands.
+        Myra follows the same pattern as Laravel Breeze &mdash; all files are included in your project. You own the code and can modify anything. The <code>myra/framework</code> package provides the scaffold commands (<code>myra:resource</code>, <code>myra:page</code>).
     </div>
 </section>
 
@@ -1531,7 +1515,7 @@ const bulkActions = [
 <!-- ============================================================ -->
 <section id="admin-components">
     <h2>Components Reference</h2>
-    <p>All reusable Vue components in the Myra Framework.</p>
+    <p>All reusable Vue components in the Myra Starter Kit.</p>
 
     <h3>Admin Components</h3>
     <p>Imported from <code>@/components/admin</code>:</p>
@@ -1990,7 +1974,7 @@ const tableFilters = [SelectFilter.make('status').options({ active: 'Active', su
 <!-- ============================================================ -->
 <section id="composables">
     <h2>Composables Reference</h2>
-    <p>All Vue composables used in the Myra Framework.</p>
+    <p>All Vue composables used in the Myra Starter Kit.</p>
 
     <h4>useFormSchema</h4>
     <p>Form builder API for defining field schemas and layouts with a fluent, chainable syntax.</p>
@@ -3112,7 +3096,7 @@ Notification::send($recipients, $notification);</code></pre>
 <!-- ============================================================ -->
 <section id="php-backend">
     <h2>PHP Backend</h2>
-    <p>Server-side patterns used by the Myra Framework.</p>
+    <p>Server-side patterns used by the Myra Starter Kit.</p>
 
     <h3>Controller Pattern</h3>
     <p>Admin controllers follow a consistent structure with constructor-injected services.</p>
@@ -3351,7 +3335,7 @@ return redirect()-&gt;back()-&gt;with('info', 'Product was archived.');</code></
 
 <section id="middleware">
     <h3>Middleware</h3>
-    <p>Key middleware used in the Myra Framework.</p>
+    <p>Key middleware used in the Myra Starter Kit.</p>
 
     <h4>HandleInertiaRequests</h4>
     <p>Shares global data with all Inertia pages:</p>
@@ -3418,7 +3402,7 @@ Route::middleware(['auth', 'verified'])
 <!-- ============================================================ -->
 <section id="type-definitions">
     <h2>Type Definitions</h2>
-    <p>TypeScript interfaces and types used throughout the Myra Framework.</p>
+    <p>TypeScript interfaces and types used throughout the Myra Starter Kit.</p>
 
     <h3>Core Types</h3>
     <p><strong>File:</strong> <code>resources/js/types/index.d.ts</code></p>

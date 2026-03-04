@@ -2039,6 +2039,10 @@ const tableFilters = [SelectFilter.make('status').options({ active: 'Active', su
 
     <h4 id="comp-command-palette">Command Palette (Cmd+K)</h4>
     <p>Global command palette for quick navigation across all admin pages. Built into <code>AuthenticatedLayout.vue</code> using the existing <code>CommandDialog</code> shadcn-vue component.</p>
+    <div class="screenshot">
+        <img src="screenshots/command-palette.png" alt="Command Palette" loading="lazy">
+        <div class="screenshot-caption">Command palette with grouped navigation items and fuzzy search</div>
+    </div>
     <p><strong>Keyboard Shortcut:</strong> <kbd>Cmd+K</kbd> (macOS) / <kbd>Ctrl+K</kbd> (Windows/Linux)</p>
     <p><strong>Features:</strong></p>
     <ul class="inline-list">
@@ -2569,6 +2573,10 @@ Notification::send($recipients, $notification);</code></pre>
 
     <h4>Login Page</h4>
     <p>Standard email/password form with remember-me checkbox, link to forgot password, and link to register page.</p>
+    <div class="screenshot">
+        <img src="screenshots/login.png" alt="Login Page" loading="lazy">
+        <div class="screenshot-caption">Login page with split-panel branding layout</div>
+    </div>
     <pre><code class="language-xml">&lt;!-- Uses PasswordInput component for eye toggle --&gt;
 &lt;PasswordInput v-model="form.password" id="password" autocomplete="current-password" required /&gt;
 
@@ -2577,8 +2585,16 @@ Notification::send($recipients, $notification);</code></pre>
 
     <h4>Register Page</h4>
     <p>Registration form with name, email, password, and password confirmation. Uses <code>PasswordInput</code> for both password fields.</p>
+    <div class="screenshot">
+        <img src="screenshots/register.png" alt="Register Page" loading="lazy">
+        <div class="screenshot-caption">Registration page with name, email, password, and confirm password fields</div>
+    </div>
 
     <h4>Password Reset Flow</h4>
+    <div class="screenshot">
+        <img src="screenshots/forgot-password.png" alt="Forgot Password" loading="lazy">
+        <div class="screenshot-caption">Forgot password page with email input to request a reset link</div>
+    </div>
     <ol class="step-list">
         <li><strong>Request Reset</strong> &mdash; User enters email on <code>ForgotPassword.vue</code>. Laravel sends reset link.</li>
         <li><strong>Reset Password</strong> &mdash; User clicks email link, lands on <code>ResetPassword.vue</code> with token. Enters new password.</li>
@@ -2616,6 +2632,10 @@ Notification::send($recipients, $notification);</code></pre>
     <h3>AuthenticatedLayout</h3>
     <p>Main application layout with collapsible sidebar, header with notification bell and user menu, and breadcrumb navigation.</p>
     <p><strong>File:</strong> <code>resources/js/Layouts/AuthenticatedLayout.vue</code></p>
+    <div class="screenshot">
+        <img src="screenshots/dashboard.png" alt="Authenticated Layout" loading="lazy">
+        <div class="screenshot-caption">AuthenticatedLayout with sidebar navigation, header, notification bell, and dashboard content</div>
+    </div>
 
     <h4>Structure</h4>
     <div class="file-tree">AuthenticatedLayout
@@ -2668,6 +2688,10 @@ Notification::send($recipients, $notification);</code></pre>
     <h3>GuestLayout</h3>
     <p>Split-panel layout for authentication pages. Left panel shows branding, right panel shows the auth form.</p>
     <p><strong>File:</strong> <code>resources/js/Layouts/GuestLayout.vue</code></p>
+    <div class="screenshot">
+        <img src="screenshots/login.png" alt="Guest Layout" loading="lazy">
+        <div class="screenshot-caption">GuestLayout with dark branded left panel and form card on the right</div>
+    </div>
 
     <h4>Structure</h4>
     <div class="file-tree">GuestLayout
@@ -2763,6 +2787,14 @@ Notification::send($recipients, $notification);</code></pre>
     <h3>User Management</h3>
     <p>Full CRUD for user accounts with role assignment, status management, and search.</p>
     <p><strong>Location:</strong> <code>Pages/Admin/Users/</code> &mdash; <strong>Permissions:</strong> <code>users.view</code>, <code>users.create</code>, <code>users.edit</code>, <code>users.delete</code></p>
+    <div class="screenshot">
+        <img src="screenshots/users.png" alt="User Management" loading="lazy">
+        <div class="screenshot-caption">Users list with sortable columns, role badges, status toggles, and filters</div>
+    </div>
+    <div class="screenshot">
+        <img src="screenshots/user-create.png" alt="Create User" loading="lazy">
+        <div class="screenshot-caption">Create user form with role assignment and status selection</div>
+    </div>
 
     <h4>Pages</h4>
     <table>
@@ -2800,6 +2832,10 @@ Notification::send($recipients, $notification);</code></pre>
     <p><strong>Location:</strong> <code>Pages/Admin/Roles/</code> &amp; <code>Pages/Admin/Permissions/</code></p>
 
     <h4>Roles Pages</h4>
+    <div class="screenshot">
+        <img src="screenshots/roles.png" alt="Roles List" loading="lazy">
+        <div class="screenshot-caption">Roles list with permission count and user count</div>
+    </div>
     <table>
         <thead><tr><th>Page</th><th>Route</th><th>Description</th></tr></thead>
         <tbody>
@@ -2807,8 +2843,16 @@ Notification::send($recipients, $notification);</code></pre>
             <tr><td><code>Edit.vue</code></td><td><code>/admin/roles/{id}/edit</code></td><td>Edit role name and toggle permissions</td></tr>
         </tbody>
     </table>
+    <div class="screenshot">
+        <img src="screenshots/role-edit.png" alt="Edit Role Permissions" loading="lazy">
+        <div class="screenshot-caption">Role edit page with grouped permission checkboxes and Select All / Deselect All</div>
+    </div>
 
     <h4>Permissions Page</h4>
+    <div class="screenshot">
+        <img src="screenshots/permissions.png" alt="Permissions" loading="lazy">
+        <div class="screenshot-caption">All permissions grouped by resource</div>
+    </div>
     <table>
         <thead><tr><th>Page</th><th>Route</th><th>Description</th></tr></thead>
         <tbody>
@@ -2835,6 +2879,10 @@ Notification::send($recipients, $notification);</code></pre>
     <h3>Site Settings</h3>
     <p>Grouped settings page using <code>SettingsCard</code> components with schema-driven forms.</p>
     <p><strong>Location:</strong> <code>Pages/Admin/Settings/Index.vue</code> &mdash; <strong>Route:</strong> <code>/admin/settings</code></p>
+    <div class="screenshot">
+        <img src="screenshots/settings.png" alt="Settings Page" loading="lazy">
+        <div class="screenshot-caption">Settings page with General, SEO, Appearance, Social, and Maintenance tabs</div>
+    </div>
 
     <h4>Settings Groups</h4>
     <p>Each settings group is a separate <code>SettingsCard</code> with its own form and schema:</p>
@@ -2856,6 +2904,18 @@ Notification::send($recipients, $notification);</code></pre>
     <h3>Email System</h3>
     <p>Email template management, email log viewer, and SMTP configuration.</p>
     <p><strong>Location:</strong> <code>Pages/Admin/Email/</code> &mdash; <strong>Permissions:</strong> <code>email.view</code>, <code>settings.view</code></p>
+    <div class="screenshot">
+        <img src="screenshots/email-templates.png" alt="Email Templates" loading="lazy">
+        <div class="screenshot-caption">Email templates list</div>
+    </div>
+    <div class="screenshot">
+        <img src="screenshots/email-log.png" alt="Email Log" loading="lazy">
+        <div class="screenshot-caption">Email log with status badges and delivery tracking</div>
+    </div>
+    <div class="screenshot">
+        <img src="screenshots/email-settings.png" alt="Email Settings" loading="lazy">
+        <div class="screenshot-caption">SMTP configuration with host, port, encryption, and credentials</div>
+    </div>
 
     <h4>Pages</h4>
     <table>
@@ -2882,6 +2942,10 @@ Notification::send($recipients, $notification);</code></pre>
     <h3>Backups</h3>
     <p>Database and file backup management using Spatie's backup package.</p>
     <p><strong>Location:</strong> <code>Pages/Admin/Backups/Index.vue</code> &mdash; <strong>Permissions:</strong> <code>backups.view</code>, <code>backups.create</code>, <code>backups.delete</code></p>
+    <div class="screenshot">
+        <img src="screenshots/backups.png" alt="Backups" loading="lazy">
+        <div class="screenshot-caption">Backup management with create, download, and delete actions</div>
+    </div>
 
     <h4>Features</h4>
     <ul class="inline-list">
@@ -2896,6 +2960,10 @@ Notification::send($recipients, $notification);</code></pre>
     <h3>API Tokens</h3>
     <p>Manage API tokens for programmatic access.</p>
     <p><strong>Location:</strong> <code>Pages/Admin/ApiTokens/Index.vue</code> &mdash; <strong>Permissions:</strong> <code>api-tokens.view</code>, <code>api-tokens.create</code>, <code>api-tokens.delete</code></p>
+    <div class="screenshot">
+        <img src="screenshots/api-tokens.png" alt="API Tokens" loading="lazy">
+        <div class="screenshot-caption">API token management with generation and revocation</div>
+    </div>
 
     <h4>Features</h4>
     <ul class="inline-list">
@@ -2915,6 +2983,10 @@ Notification::send($recipients, $notification);</code></pre>
     <h3>System Health</h3>
     <p>Dashboard showing server information and health check results, powered by <code>spatie/laravel-health</code>.</p>
     <p><strong>Location:</strong> <code>Pages/Admin/SystemHealth.vue</code> &mdash; <strong>Permission:</strong> <code>system-health.view</code></p>
+    <div class="screenshot">
+        <img src="screenshots/system-health.png" alt="System Health" loading="lazy">
+        <div class="screenshot-caption">System information panel with PHP, Laravel, server details and health check indicators</div>
+    </div>
 
     <h4>System Information Panel</h4>
     <ul class="inline-list">
@@ -2955,6 +3027,10 @@ Notification::send($recipients, $notification);</code></pre>
     <h3>Activity Log</h3>
     <p>Audit trail of model changes across the application, powered by <code>spatie/laravel-activitylog</code>.</p>
     <p><strong>Location:</strong> <code>Pages/Admin/ActivityLog/Index.vue</code> &mdash; <strong>Permission:</strong> <code>activity-log.view</code></p>
+    <div class="screenshot">
+        <img src="screenshots/activity-log.png" alt="Activity Log" loading="lazy">
+        <div class="screenshot-caption">Activity log with searchable audit trail and event type badges</div>
+    </div>
 
     <h4>Columns</h4>
     <table>
@@ -2986,6 +3062,10 @@ Notification::send($recipients, $notification);</code></pre>
     <h3>Media Manager</h3>
     <p>File upload and management interface.</p>
     <p><strong>Location:</strong> <code>Pages/Admin/Media/Index.vue</code> &mdash; <strong>Permissions:</strong> <code>media.view</code>, <code>media.upload</code>, <code>media.delete</code></p>
+    <div class="screenshot">
+        <img src="screenshots/media.png" alt="Media Manager" loading="lazy">
+        <div class="screenshot-caption">Media manager with file uploads and organization</div>
+    </div>
 
     <h4>Features</h4>
     <ul class="inline-list">
@@ -3002,6 +3082,14 @@ Notification::send($recipients, $notification);</code></pre>
     <h3>Notifications (Admin)</h3>
     <p>Admin interface for viewing all sent notifications and sending new ones to users.</p>
     <p><strong>Location:</strong> <code>Pages/Admin/Notifications/</code> &mdash; <strong>Permissions:</strong> <code>notifications.view</code>, <code>notifications.create</code></p>
+    <div class="screenshot">
+        <img src="screenshots/notifications.png" alt="Notifications Admin" loading="lazy">
+        <div class="screenshot-caption">Notification management with type and status badges</div>
+    </div>
+    <div class="screenshot">
+        <img src="screenshots/notification-create.png" alt="Send Notification" loading="lazy">
+        <div class="screenshot-caption">Compose and send notification form with user picker</div>
+    </div>
 
     <h4>Pages</h4>
     <table>

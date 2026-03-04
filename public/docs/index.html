@@ -408,6 +408,27 @@
         /* Scroll offset for anchors */
         section[id] { scroll-margin-top: 1.5rem; }
         h3[id] { scroll-margin-top: 1.5rem; }
+
+        /* Screenshots */
+        .screenshot {
+            margin: 1.25rem 0;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+        .screenshot img {
+            display: block;
+            width: 100%;
+            height: auto;
+        }
+        .screenshot-caption {
+            padding: 0.5rem 0.75rem;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            background: var(--bg-card);
+            border-top: 1px solid var(--border);
+        }
     </style>
 </head>
 <body>
@@ -527,6 +548,48 @@
         <li><strong>Built-in Admin Modules</strong> &mdash; Users, roles, settings, email logs, backups, API tokens, system health, activity log, media manager</li>
         <li><strong>Dark Mode</strong> &mdash; Full dark/light theme support with persistent user preference</li>
     </ul>
+
+    <h4>Screenshots</h4>
+
+    <div class="screenshot">
+        <img src="screenshots/login.png" alt="Login Page" loading="lazy">
+        <div class="screenshot-caption">Login page with split-panel branding layout</div>
+    </div>
+
+    <div class="screenshot">
+        <img src="screenshots/dashboard.png" alt="Dashboard" loading="lazy">
+        <div class="screenshot-caption">Dashboard with stat cards, user growth chart, and status distribution</div>
+    </div>
+
+    <div class="screenshot">
+        <img src="screenshots/users.png" alt="User Management" loading="lazy">
+        <div class="screenshot-caption">User management with sortable columns, role badges, status toggles, and filters</div>
+    </div>
+
+    <div class="screenshot">
+        <img src="screenshots/roles.png" alt="Roles & Permissions" loading="lazy">
+        <div class="screenshot-caption">Roles &amp; permissions management with Spatie RBAC</div>
+    </div>
+
+    <div class="screenshot">
+        <img src="screenshots/settings.png" alt="General Settings" loading="lazy">
+        <div class="screenshot-caption">Settings page with General, SEO, Appearance, Social, and Maintenance tabs</div>
+    </div>
+
+    <div class="screenshot">
+        <img src="screenshots/email-log.png" alt="Email Log" loading="lazy">
+        <div class="screenshot-caption">Email log with status tracking and filters</div>
+    </div>
+
+    <div class="screenshot">
+        <img src="screenshots/activity-log.png" alt="Activity Log" loading="lazy">
+        <div class="screenshot-caption">Activity log with full audit trail of user and system actions</div>
+    </div>
+
+    <div class="screenshot">
+        <img src="screenshots/media.png" alt="Media Manager" loading="lazy">
+        <div class="screenshot-caption">Media manager for file uploads and organization</div>
+    </div>
 
     <div class="callout callout-tip">
         <div class="callout-title">&#9889; Quick Start</div>

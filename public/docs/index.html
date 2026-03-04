@@ -566,18 +566,38 @@ DB_CONNECTION=sqlite</code></pre>
     <h3>Step 3: Run the Installer</h3>
     <pre><code class="language-bash">php artisan app:install</code></pre>
 
-    <p>The install command handles everything automatically:</p>
+    <p>The install command handles the following automatically:</p>
     <table>
         <thead><tr><th>Step</th><th>What it does</th></tr></thead>
         <tbody>
             <tr><td>Database</td><td>Runs migrations and seeds roles, permissions, settings, and email templates</td></tr>
-            <tr><td>Admin user</td><td>Prompts you to create a super-admin user</td></tr>
+            <tr><td>Admin user</td><td>Prompts you to create a super-admin user (interactive mode)</td></tr>
             <tr><td>Environment</td><td>Validates required <code>.env</code> variables</td></tr>
-            <tr><td>Frontend</td><td>Installs npm packages and builds assets</td></tr>
         </tbody>
     </table>
 
-    <h3>Step 4: Start the Dev Server</h3>
+    <div class="callout callout-warning">
+        <div class="callout-title">&#9888; Non-Interactive Mode</div>
+        If the interactive admin user prompt fails (e.g. in CI or non-interactive terminals), you can create the admin user manually via Tinker:
+        <pre><code class="language-bash">php artisan tinker --execute="
+\$user = \App\Models\User::create([
+    'name' => 'Admin',
+    'email' => 'admin@example.com',
+    'password' => bcrypt('password'),
+    'status' => 'active',
+    'email_verified_at' => now(),
+]);
+\$user->assignRole('super-admin');
+"</code></pre>
+    </div>
+
+    <h3>Step 4: Install Frontend Dependencies</h3>
+    <pre><code class="language-bash">npm install</code></pre>
+
+    <h3>Step 5: Build Frontend Assets</h3>
+    <pre><code class="language-bash">npm run build</code></pre>
+
+    <h3>Step 6: Start the Dev Server</h3>
     <pre><code class="language-bash">composer dev</code></pre>
     <p>This starts the Laravel server, queue worker, log watcher, and Vite dev server concurrently. Or run them separately:</p>
     <pre><code class="language-bash"># Terminal 1
@@ -586,7 +606,7 @@ php artisan serve
 # Terminal 2
 npm run dev</code></pre>
 
-    <h3>Step 6: Log In</h3>
+    <h3>Step 7: Log In</h3>
     <p>Visit <code>http://localhost:8000</code> and sign in with your admin credentials. You'll land on the admin dashboard with all modules ready to use.</p>
 
     <h3>What's Included After Installation</h3>

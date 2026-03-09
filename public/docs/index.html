@@ -543,6 +543,9 @@
         <a href="#route-conventions">Route Conventions</a>
         <a href="#middleware">Middleware</a>
 
+        <div class="nav-group">CMS</div>
+        <a href="#homepage-cms">Homepage CMS</a>
+
         <div class="nav-group">Reference</div>
         <a href="#type-definitions">Type Definitions</a>
     </nav>
@@ -5315,6 +5318,82 @@ class Project extends Model
     <p>The <code>&lt;TeamSwitcher&gt;</code> component renders in the header when <code>page.props.teams</code> has entries. It's a dropdown showing all teams with the current team checked.</p>
     <pre><code class="language-typescript">// Switching teams sends a POST to /teams/{team}/switch
 // The middleware EnsureTeamContext sets current_team_id if not yet set</code></pre>
+</section>
+
+<hr class="section-divider">
+
+<!-- ============================================================ -->
+<!-- SECTION: HOMEPAGE CMS -->
+<!-- ============================================================ -->
+<section id="homepage-cms">
+    <h2>Homepage CMS</h2>
+    <p>A fully settings-driven public marketing homepage inspired by modern SaaS landing pages. Every section is configurable from the Admin Settings panel — no code changes needed.</p>
+
+    <h3>Overview</h3>
+    <p>The root route (<code>/</code>) renders a public marketing homepage with the following sections:</p>
+    <ul class="inline-list">
+        <li><strong>Navbar</strong> — Sticky navigation with configurable links and CTA button</li>
+        <li><strong>Hero</strong> — Full-width banner with title, subtitle, CTA button, and optional background image</li>
+        <li><strong>Features</strong> — Grid of feature cards with icons, titles, and descriptions</li>
+        <li><strong>Testimonials</strong> — Customer quotes with author info and avatar initials</li>
+        <li><strong>Pricing</strong> — Pricing plan cards with feature lists and CTA buttons</li>
+        <li><strong>CTA Banner</strong> — Call-to-action section with primary-colored background</li>
+        <li><strong>Footer</strong> — Site info, configurable links, and copyright</li>
+    </ul>
+
+    <h3>Route Configuration</h3>
+    <p>The homepage is controlled by <code>HomepageController@index</code>:</p>
+    <ul class="inline-list">
+        <li>When <strong>enabled</strong>: <code>/</code> renders the marketing homepage (<code>Pages/Home.vue</code>)</li>
+        <li>When <strong>disabled</strong>: <code>/</code> redirects to the login page</li>
+        <li>Authenticated users see a "Dashboard" button instead of "Login/Register"</li>
+    </ul>
+
+    <h3>Settings Architecture</h3>
+    <p>All homepage content is stored in the <code>HomepageSettings</code> Spatie settings class (group: <code>homepage</code>). No additional database tables are needed.</p>
+    <table>
+        <thead><tr><th>Setting</th><th>Type</th><th>Description</th></tr></thead>
+        <tbody>
+            <tr><td><code>enabled</code></td><td>boolean</td><td>Show homepage or redirect to login</td></tr>
+            <tr><td><code>hero_title</code></td><td>string</td><td>Main hero heading</td></tr>
+            <tr><td><code>hero_subtitle</code></td><td>string</td><td>Supporting text under title</td></tr>
+            <tr><td><code>hero_cta_text</code></td><td>string</td><td>Hero CTA button label</td></tr>
+            <tr><td><code>hero_cta_url</code></td><td>string</td><td>Hero CTA button URL</td></tr>
+            <tr><td><code>hero_image_path</code></td><td>string?</td><td>Uploaded hero background image</td></tr>
+            <tr><td><code>features</code></td><td>array</td><td>List of {icon, title, description}</td></tr>
+            <tr><td><code>testimonials</code></td><td>array</td><td>List of {name, role, quote}</td></tr>
+            <tr><td><code>pricing_plans</code></td><td>array</td><td>List of {name, price, period, features, cta_text, cta_url, highlighted}</td></tr>
+            <tr><td><code>navbar_links</code></td><td>array</td><td>Navigation bar links {label, url}</td></tr>
+            <tr><td><code>footer_links</code></td><td>array</td><td>Footer links {label, url}</td></tr>
+        </tbody>
+    </table>
+
+    <h3>Admin Configuration</h3>
+    <p>Navigate to <strong>Admin > Settings > Homepage</strong> tab. The tab contains 8 configuration sections:</p>
+    <ol>
+        <li><strong>General</strong> — Enable/disable the homepage</li>
+        <li><strong>Hero Section</strong> — Title, subtitle, CTA button, and hero background image upload</li>
+        <li><strong>Navbar</strong> — CTA button text/URL and navigation links (repeater field)</li>
+        <li><strong>Features</strong> — Toggle visibility, section title/subtitle, and feature cards with icon selector (repeater field)</li>
+        <li><strong>Testimonials</strong> — Toggle visibility, section title/subtitle, and testimonial cards (repeater field)</li>
+        <li><strong>Pricing</strong> — Toggle visibility, section title/subtitle, and pricing plans with comma-separated features (repeater field)</li>
+        <li><strong>CTA Section</strong> — Toggle visibility, title, subtitle, and button configuration</li>
+        <li><strong>Footer</strong> — Footer text and configurable links (repeater field)</li>
+    </ol>
+
+    <h3>Available Icons</h3>
+    <p>Feature cards support the following Lucide icon names:</p>
+    <p><code>Zap</code>, <code>Shield</code>, <code>BarChart3</code>, <code>Users</code>, <code>Lock</code>, <code>Globe</code>, <code>Rocket</code>, <code>Heart</code>, <code>Star</code>, <code>Code</code>, <code>Database</code>, <code>Cloud</code>, <code>Settings</code>, <code>Mail</code>, <code>Bell</code>, <code>Search</code>, <code>Layers</code>, <code>Layout</code></p>
+
+    <h3>Key Files</h3>
+    <table>
+        <thead><tr><th>File</th><th>Purpose</th></tr></thead>
+        <tbody>
+            <tr><td><code>app/Settings/HomepageSettings.php</code></td><td>Spatie settings class (group: homepage)</td></tr>
+            <tr><td><code>app/Http/Controllers/HomepageController.php</code></td><td>Public homepage controller</td></tr>
+            <tr><td><code>resources/js/Pages/Home.vue</code></td><td>Marketing landing page component</td></tr>
+        </tbody>
+    </table>
 </section>
 
 <hr class="section-divider">

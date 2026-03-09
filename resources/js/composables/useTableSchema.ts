@@ -7,7 +7,7 @@ function humanize(name: string): string {
         .replace(/\b\w/g, c => c.toUpperCase());
 }
 
-export type ColumnType = 'text' | 'badge' | 'date' | 'boolean' | 'image' | 'icon' | 'toggle';
+export type ColumnType = 'text' | 'badge' | 'date' | 'boolean' | 'image' | 'icon' | 'toggle' | 'select' | 'textinput';
 
 export abstract class BaseColumn {
     protected _key: string;
@@ -21,6 +21,8 @@ export abstract class BaseColumn {
     protected _tooltip?: string;
     protected _toggleable = false;
     protected _grow = false;
+    protected _summarize?: 'sum' | 'average' | 'count' | 'range' | 'custom';
+    protected _summaryFn?: (values: any[]) => string | number;
 
     constructor(key: string) {
         this._key = key;
@@ -80,6 +82,12 @@ export abstract class BaseColumn {
         return this;
     }
 
+    summarize(type: 'sum' | 'average' | 'count' | 'range' | 'custom', fn?: (values: any[]) => string | number): this {
+        this._summarize = type;
+        if (fn) this._summaryFn = fn;
+        return this;
+    }
+
     toSchema(): ColumnSchema {
         return {
             key: this._key,
@@ -93,6 +101,8 @@ export abstract class BaseColumn {
             tooltip: this._tooltip,
             toggleable: this._toggleable,
             grow: this._grow,
+            summarize: this._summarize,
+            summaryFn: this._summaryFn,
         } as ColumnSchema;
     }
 }
@@ -359,6 +369,82 @@ export class ToggleColumn extends BaseColumn {
             ...super.toSchema(),
             type: 'toggle',
             onUpdateFn: this._onUpdateFn,
+        };
+    }
+}
+
+export class SelectColumn extends BaseColumn {
+    protected _type: ColumnType = 'select';
+    private _options: Array<{ label: string; value: string }> = [];
+    private _onUpdateFn?: (row: any, value: string) => void;
+    private _placeholder?: string;
+
+    static make(key: string): SelectColumn {
+        return new SelectColumn(key);
+    }
+
+    options(opts: Array<{ label: string; value: string }> | Record<string, string>): this {
+        if (Array.isArray(opts)) {
+            this._options = opts;
+        } else {
+            this._options = Object.entries(opts).map(([value, label]) => ({ label, value }));
+        }
+        return this;
+    }
+
+    onUpdate(fn: (row: any, value: string) => void): this {
+        this._onUpdateFn = fn;
+        return this;
+    }
+
+    placeholder(text: string): this {
+        this._placeholder = text;
+        return this;
+    }
+
+    toSchema(): ColumnSchema {
+        return {
+            ...super.toSchema(),
+            type: 'select',
+            options: this._options,
+            onUpdateFn: this._onUpdateFn,
+            placeholder: this._placeholder,
+        };
+    }
+}
+
+export class TextInputColumn extends BaseColumn {
+    protected _type: ColumnType = 'textinput';
+    private _onUpdateFn?: (row: any, value: string) => void;
+    private _placeholder?: string;
+    private _debounceMs = 500;
+
+    static make(key: string): TextInputColumn {
+        return new TextInputColumn(key);
+    }
+
+    onUpdate(fn: (row: any, value: string) => void): this {
+        this._onUpdateFn = fn;
+        return this;
+    }
+
+    placeholder(text: string): this {
+        this._placeholder = text;
+        return this;
+    }
+
+    debounce(ms: number): this {
+        this._debounceMs = ms;
+        return this;
+    }
+
+    toSchema(): ColumnSchema {
+        return {
+            ...super.toSchema(),
+            type: 'textinput',
+            onUpdateFn: this._onUpdateFn,
+            placeholder: this._placeholder,
+            debounceMs: this._debounceMs,
         };
     }
 }

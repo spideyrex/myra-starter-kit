@@ -6,7 +6,7 @@ function humanize(name: string): string {
         .replace(/\b\w/g, c => c.toUpperCase());
 }
 
-export type FilterType = 'select' | 'ternary' | 'checkbox';
+export type FilterType = 'select' | 'ternary' | 'checkbox' | 'date-range' | 'query-builder';
 
 export abstract class BaseFilter {
     protected _name: string;
@@ -27,7 +27,7 @@ export abstract class BaseFilter {
             name: this._name,
             label: this._label ?? humanize(this._name),
             type: this._type,
-        };
+        } as FilterSchema;
     }
 }
 
@@ -119,5 +119,62 @@ export class Filter extends BaseFilter {
             type: 'checkbox',
             query: this._query ?? this._name,
         };
+    }
+}
+
+export class DateRangeFilter extends BaseFilter {
+    protected _type: FilterType = 'date-range';
+    private _minDate?: string;
+    private _maxDate?: string;
+
+    static make(name: string): DateRangeFilter {
+        return new DateRangeFilter(name);
+    }
+
+    minDate(d: string): this {
+        this._minDate = d;
+        return this;
+    }
+
+    maxDate(d: string): this {
+        this._maxDate = d;
+        return this;
+    }
+
+    toSchema(): FilterSchema {
+        return {
+            ...super.toSchema(),
+            type: 'date-range',
+            minDate: this._minDate,
+            maxDate: this._maxDate,
+        } as FilterSchema;
+    }
+}
+
+export interface QueryBuilderField {
+    name: string;
+    label: string;
+    operators: string[];
+}
+
+export class QueryBuilderFilter extends BaseFilter {
+    protected _type: FilterType = 'query-builder';
+    private _fields: QueryBuilderField[] = [];
+
+    static make(name: string): QueryBuilderFilter {
+        return new QueryBuilderFilter(name);
+    }
+
+    fields(f: QueryBuilderField[]): this {
+        this._fields = f;
+        return this;
+    }
+
+    toSchema(): FilterSchema {
+        return {
+            ...super.toSchema(),
+            type: 'query-builder',
+            fields: this._fields,
+        } as FilterSchema;
     }
 }

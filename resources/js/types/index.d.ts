@@ -1,3 +1,9 @@
+export interface Team {
+    id: number;
+    name: string;
+    slug: string;
+}
+
 export interface User {
     id: number;
     name: string;
@@ -8,8 +14,12 @@ export interface User {
     status: 'active' | 'suspended' | 'pending';
     roles: string[];
     permissions: string[];
+    deleted_at?: string;
     created_at: string;
     updated_at: string;
+    current_team_id?: number;
+    current_team?: Team;
+    teams?: Team[];
 }
 
 export interface Role {
@@ -73,6 +83,16 @@ export interface SiteSettings {
     primary_color?: string;
 }
 
+export interface FirebaseConfig {
+    apiKey: string;
+    authDomain: string;
+    projectId: string;
+    storageBucket: string;
+    messagingSenderId: string;
+    appId: string;
+    vapidKey?: string;
+}
+
 export type PageProps<T extends Record<string, unknown> = Record<string, unknown>> = T & {
     auth: {
         user: User;
@@ -87,6 +107,9 @@ export type PageProps<T extends Record<string, unknown> = Record<string, unknown
     impersonating?: boolean;
     impersonatorName?: string;
     siteSettings?: SiteSettings;
+    firebaseConfig?: FirebaseConfig | null;
+    currentTeam?: Team;
+    teams?: Team[];
 };
 
 export interface BreadcrumbItem {

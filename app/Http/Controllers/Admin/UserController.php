@@ -26,7 +26,7 @@ class UserController extends Controller
         return Inertia::render('Admin/Users/Index', [
             'users' => UserResource::collection($this->userService->list($request)),
             'roles' => Role::pluck('name'),
-            'filters' => $request->only(['search', 'status', 'role', 'sort', 'direction']),
+            'filters' => $request->only(['search', 'status', 'role', 'sort', 'direction', 'trashed']),
         ]);
     }
 
@@ -75,22 +75,44 @@ class UserController extends Controller
         return redirect()->route('admin.users.index')->with('success', 'User deleted successfully.');
     }
 
+    public function restore(int $id): RedirectResponse
+    {
+        $this->userService->restore($id);
+
+        return back()->with('success', 'User restored successfully.');
+    }
+
+    public function forceDelete(int $id): RedirectResponse
+    {
+        $this->userService->forceDelete($id);
+
+        return back()->with('success', 'User permanently deleted.');
+    }
+
     public function bulkAction(Request $request): RedirectResponse
     {
         $request->validate([
             'ids' => 'required|array',
-            'ids.*' => 'exists:users,id',
-            'action' => 'required|in:delete,suspend,activate',
+            'ids.*' => 'integer',
+            'action' => 'required|in:delete,suspend,activate,restore,force_delete',
         ]);
 
-        $users = User::whereIn('id', $request->ids)->get();
-
-        foreach ($users as $user) {
-            match ($request->action) {
-                'delete' => $this->userService->delete($user),
-                'suspend' => $this->userService->suspend($user),
-                'activate' => $this->userService->activate($user),
-            };
+        if (in_array($request->action, ['restore', 'force_delete'])) {
+            foreach ($request->ids as $id) {
+                match ($request->action) {
+                    'restore' => $this->userService->restore($id),
+                    'force_delete' => $this->userService->forceDelete($id),
+                };
+            }
+        } else {
+            $users = User::whereIn('id', $request->ids)->get();
+            foreach ($users as $user) {
+                match ($request->action) {
+                    'delete' => $this->userService->delete($user),
+                    'suspend' => $this->userService->suspend($user),
+                    'activate' => $this->userService->activate($user),
+                };
+            }
         }
 
         return back()->with('success', 'Bulk action completed successfully.');

@@ -113,7 +113,7 @@ async function submit() {
 
                 <!-- Permissions section (hidden for super-admin) -->
                 <template v-if="!isSuperAdmin">
-                    <div class="flex items-center justify-between">
+                    <div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
                         <p class="text-sm text-muted-foreground">{{ selectedCount }} of {{ totalPermissions }} permissions selected</p>
                         <div class="flex gap-2">
                             <Button type="button" variant="outline" size="sm" @click="selectAll">Select All</Button>

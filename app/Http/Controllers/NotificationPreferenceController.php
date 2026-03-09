@@ -30,6 +30,7 @@ class NotificationPreferenceController extends Controller
                 'label' => $label,
                 'email' => $pref ? (bool) $pref->email : true,
                 'database' => $pref ? (bool) $pref->database : true,
+                'push' => $pref ? (bool) $pref->push : true,
             ];
         })->values()->all();
 
@@ -45,12 +46,13 @@ class NotificationPreferenceController extends Controller
             'preferences.*.type' => 'required|string',
             'preferences.*.email' => 'required|boolean',
             'preferences.*.database' => 'required|boolean',
+            'preferences.*.push' => 'required|boolean',
         ]);
 
         foreach ($request->preferences as $pref) {
             DB::table('notification_preferences')->updateOrInsert(
                 ['user_id' => $request->user()->id, 'type' => $pref['type']],
-                ['email' => $pref['email'], 'database' => $pref['database']],
+                ['email' => $pref['email'], 'database' => $pref['database'], 'push' => $pref['push']],
             );
         }
 

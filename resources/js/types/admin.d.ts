@@ -1,6 +1,7 @@
 import type { Component } from 'vue';
 
 export type { FieldSchema, LayoutSchema, SchemaItem } from '@/composables/useFormSchema';
+import type { ModalConfig } from '@/composables/useTableActions';
 
 export interface FormFieldProps {
     label: string;
@@ -46,6 +47,8 @@ export interface ColumnSchemaBase {
     tooltip?: string;
     toggleable: boolean;
     grow: boolean;
+    summarize?: 'sum' | 'average' | 'count' | 'range' | 'custom';
+    summaryFn?: (values: any[]) => string | number;
 }
 
 export interface TextColumnSchema extends ColumnSchemaBase {
@@ -99,6 +102,20 @@ export interface ToggleColumnSchema extends ColumnSchemaBase {
     onUpdateFn?: (row: any, value: boolean) => void;
 }
 
+export interface SelectColumnSchema extends ColumnSchemaBase {
+    type: 'select';
+    options: Array<{ label: string; value: string }>;
+    onUpdateFn?: (row: any, value: string) => void;
+    placeholder?: string;
+}
+
+export interface TextInputColumnSchema extends ColumnSchemaBase {
+    type: 'textinput';
+    onUpdateFn?: (row: any, value: string) => void;
+    placeholder?: string;
+    debounceMs: number;
+}
+
 export type ColumnSchema =
     | TextColumnSchema
     | BadgeColumnSchema
@@ -106,7 +123,9 @@ export type ColumnSchema =
     | BooleanColumnSchema
     | ImageColumnSchema
     | IconColumnSchema
-    | ToggleColumnSchema;
+    | ToggleColumnSchema
+    | SelectColumnSchema
+    | TextInputColumnSchema;
 
 // --- Table Filter Schema ---
 
@@ -134,7 +153,36 @@ export interface CheckboxFilterSchema extends FilterSchemaBase {
     query?: string;
 }
 
-export type FilterSchema = SelectFilterSchema | TernaryFilterSchema | CheckboxFilterSchema;
+export interface DateRangeFilterSchema extends FilterSchemaBase {
+    type: 'date-range';
+    minDate?: string;
+    maxDate?: string;
+}
+
+export interface QueryBuilderFieldDef {
+    name: string;
+    label: string;
+    operators: string[];
+}
+
+export interface QueryBuilderFilterSchema extends FilterSchemaBase {
+    type: 'query-builder';
+    fields: QueryBuilderFieldDef[];
+}
+
+export interface QueryRule {
+    field: string;
+    operator: string;
+    value: string;
+}
+
+export interface QueryGroup {
+    conjunction: 'and' | 'or';
+    rules: QueryRule[];
+    groups: QueryGroup[];
+}
+
+export type FilterSchema = SelectFilterSchema | TernaryFilterSchema | CheckboxFilterSchema | DateRangeFilterSchema | QueryBuilderFilterSchema;
 
 // --- Table Action Schema ---
 
@@ -153,6 +201,7 @@ export interface ActionSchema {
     visibleFn?: (row: any) => boolean;
     separator: boolean;
     deleteRouteName?: string;
+    modalConfig?: ModalConfig;
 }
 
 export interface BulkActionSchema {

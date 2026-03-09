@@ -5,3 +5,7 @@ export { default as SimpleTable } from './SimpleTable.vue';
 export { default as RowActions } from './RowActions.vue';
 export { default as SettingsCard } from './SettingsCard.vue';
 export { default as DateCell } from './DateCell.vue';
+export { default as InfolistEntries } from './InfolistEntries.vue';
+export { default as InfolistEntry } from './InfolistEntry.vue';
+export { default as RelationManager } from './RelationManager.vue';
+export { default as DashboardGrid } from './DashboardGrid.vue';

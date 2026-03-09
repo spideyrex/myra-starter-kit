@@ -105,6 +105,7 @@ class AdminNotificationController extends Controller
             'title' => ['required', 'string', 'max:255'],
             'message' => ['required', 'string', 'max:1000'],
             'action_url' => ['nullable', 'url', 'max:255'],
+            'send_push' => ['nullable', 'boolean'],
         ]);
 
         $recipients = $validated['target'] === 'all'
@@ -134,6 +135,8 @@ class AdminNotificationController extends Controller
             ),
         };
 
+        $notification->sendPush = $request->boolean('send_push');
+
         Notification::send($recipients, $notification);
 
         $count = $recipients->count();
@@ -141,5 +144,24 @@ class AdminNotificationController extends Controller
         return redirect()
             ->route('admin.notifications.index')
             ->with('success', "Notification sent to {$count} " . str('user')->plural($count) . '.');
+    }
+
+    public function bulkAction(Request $request): RedirectResponse
+    {
+        $request->validate([
+            'ids' => 'required|array',
+            'ids.*' => 'string',
+            'action' => 'required|in:mark_read,delete',
+        ]);
+
+        $notifications = DatabaseNotification::whereIn('id', $request->ids);
+
+        if ($request->action === 'mark_read') {
+            $notifications->whereNull('read_at')->update(['read_at' => now()]);
+            return back()->with('success', 'Selected notifications marked as read.');
+        }
+
+        $notifications->delete();
+        return back()->with('success', 'Selected notifications deleted.');
     }
 }

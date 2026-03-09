@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue';
-import { Head } from '@inertiajs/vue3';
+import { Head, router } from '@inertiajs/vue3';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import DataTable from '@/components/DataTable.vue';
 import type { Column } from '@/components/DataTable.vue';
@@ -10,8 +10,9 @@ import { Button } from '@/components/ui/button';
 import { TableRow, TableCell } from '@/components/ui/table';
 import { DateCell } from '@/components/admin';
 import { SelectFilter } from '@/composables/useTableFilters';
+import { BulkAction } from '@/composables/useTableActions';
 import type { PaginatedData } from '@/types';
-import { ChevronDown } from 'lucide-vue-next';
+import { ChevronDown, Download, Trash2 } from 'lucide-vue-next';
 
 const props = defineProps<{
     activities: PaginatedData<any>;
@@ -42,15 +43,30 @@ function toggleExpand(id: number) {
 function formatKey(key: string): string {
     return key.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
 }
+
+const bulkActions = [
+    BulkAction.make('Delete')
+        .action((ids) => router.post(route('admin.activity-logs.bulk-action'), { ids }))
+        .destructive()
+        .requiresConfirmation('Delete Activity Logs', 'Are you sure you want to delete the selected logs?')
+        .icon(Trash2),
+];
 </script>
 
 <template>
     <AuthenticatedLayout :breadcrumbs="[{ label: 'System' }, { label: 'Activity Log' }]">
         <Head title="Activity Log" />
-        <PageHeader title="Activity Log" description="View system activity and model changes." />
+        <PageHeader title="Activity Log" description="View system activity and model changes.">
+            <template #actions>
+                <Button variant="outline" as="a" :href="route('admin.activity-logs.export-csv')">
+                    <Download class="mr-2 size-4" />
+                    Export CSV
+                </Button>
+            </template>
+        </PageHeader>
 
         <div class="mt-6">
-            <DataTable :columns="columns" :data="activities" :filters="filters" :table-filters="tableFilters" route-name="admin.activity-logs.index" search-placeholder="Search activity...">
+            <DataTable :columns="columns" :data="activities" :filters="filters" :table-filters="tableFilters" :selectable="true" :bulk-actions="bulkActions" route-name="admin.activity-logs.index" search-placeholder="Search activity...">
                 <template #cell-event="{ value }">
                     <Badge variant="outline">{{ value || 'N/A' }}</Badge>
                 </template>

@@ -1,11 +1,20 @@
 import type { Component } from 'vue';
 import { Pencil, Trash2, Eye } from 'lucide-vue-next';
 import type { ActionSchema, BulkActionSchema } from '@/types/admin';
+import type { SchemaItem } from '@/composables/useFormSchema';
 
 function humanize(name: string): string {
     return name
         .replace(/[_-]/g, ' ')
         .replace(/\b\w/g, c => c.toUpperCase());
+}
+
+export interface ModalConfig {
+    schema: SchemaItem[];
+    routeName: string;
+    method?: 'post' | 'put' | 'patch';
+    defaultsFn?: (row: any) => Record<string, any>;
+    submitLabel?: string;
 }
 
 export class Action {
@@ -22,6 +31,7 @@ export class Action {
     protected _hiddenFn?: (row: any) => boolean;
     protected _visibleFn?: (row: any) => boolean;
     protected _separator = false;
+    protected _modalConfig?: ModalConfig;
 
     constructor(label: string) {
         this._label = label;
@@ -48,6 +58,11 @@ export class Action {
 
     action(fn: (row: any) => void): this {
         this._actionFn = fn;
+        return this;
+    }
+
+    modal(config: ModalConfig): this {
+        this._modalConfig = config;
         return this;
     }
 
@@ -98,6 +113,7 @@ export class Action {
             hiddenFn: this._hiddenFn,
             visibleFn: this._visibleFn,
             separator: this._separator,
+            modalConfig: this._modalConfig,
         };
     }
 }

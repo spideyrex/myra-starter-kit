@@ -5,10 +5,12 @@ import {
     BaseField,
     isLayoutItem,
     resolveLayout,
+    evaluateVisibility,
     type SchemaItem,
     type LayoutSchema,
     type FieldSchema,
     type FieldType,
+    type VisibilityCondition,
 } from '@/composables/useFormSchema';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -25,6 +27,8 @@ const props = defineProps<{
 
 interface ResolvedField extends FieldSchema {
     colStyle?: string;
+    visibleWhen?: VisibilityCondition;
+    hiddenWhen?: VisibilityCondition;
 }
 
 interface ResolvedItem {
@@ -53,6 +57,16 @@ function resolveItems(items: SchemaItem[]): ResolvedEntry[] {
 }
 
 const resolved = computed(() => resolveItems(props.schema));
+
+function isFieldVisible(field: ResolvedField): boolean {
+    if (field.visibleWhen) {
+        return evaluateVisibility(field.visibleWhen, props.form);
+    }
+    if (field.hiddenWhen) {
+        return !evaluateVisibility(field.hiddenWhen, props.form);
+    }
+    return true;
+}
 
 // Track collapsed state for collapsible sections
 const collapsedState = ref<Record<string, boolean>>({});
@@ -106,7 +120,7 @@ const calloutConfig: Record<string, { classes: string; icon: typeof Info }> = {
                         </CardHeader>
                         <CollapsibleContent>
                             <CardContent>
-                                <div class="grid gap-4" :style="`grid-template-columns: repeat(${entry.layout.columns || 2}, minmax(0, 1fr))`">
+                                <div class="form-grid grid gap-4" :style="`grid-template-columns: repeat(${entry.layout.columns || 2}, minmax(0, 1fr))`">
                                     <FormFields :schema="entry.layout.schema" :form="form" />
                                 </div>
                             </CardContent>
@@ -124,7 +138,7 @@ const calloutConfig: Record<string, { classes: string; icon: typeof Info }> = {
                         </div>
                     </CardHeader>
                     <CardContent>
-                        <div class="grid gap-4" :style="`grid-template-columns: repeat(${entry.layout.columns || 2}, minmax(0, 1fr))`">
+                        <div class="form-grid grid gap-4" :style="`grid-template-columns: repeat(${entry.layout.columns || 2}, minmax(0, 1fr))`">
                             <FormFields :schema="entry.layout.schema" :form="form" />
                         </div>
                     </CardContent>
@@ -159,7 +173,7 @@ const calloutConfig: Record<string, { classes: string; icon: typeof Info }> = {
                     :value="(tab as any).label || String(tabIndex)"
                     class="mt-4"
                 >
-                    <div class="grid gap-4" :style="`grid-template-columns: repeat(${(tab as any).columns || 2}, minmax(0, 1fr))`">
+                    <div class="form-grid grid gap-4" :style="`grid-template-columns: repeat(${(tab as any).columns || 2}, minmax(0, 1fr))`">
                         <FormFields :schema="(tab as any).schema || []" :form="form" />
                     </div>
                 </TabsContent>
@@ -170,7 +184,7 @@ const calloutConfig: Record<string, { classes: string; icon: typeof Info }> = {
         <template v-else-if="entry.isLayout && entry.layout.layoutType === 'fieldset'">
             <fieldset class="col-span-full rounded-lg border p-4">
                 <legend v-if="entry.layout.label" class="px-2 text-sm font-medium">{{ entry.layout.label }}</legend>
-                <div class="grid gap-4" :style="`grid-template-columns: repeat(${entry.layout.columns || 2}, minmax(0, 1fr))`">
+                <div class="form-grid grid gap-4" :style="`grid-template-columns: repeat(${entry.layout.columns || 2}, minmax(0, 1fr))`">
                     <FormFields :schema="entry.layout.schema" :form="form" />
                 </div>
             </fieldset>
@@ -195,28 +209,28 @@ const calloutConfig: Record<string, { classes: string; icon: typeof Info }> = {
         <template v-else-if="entry.isLayout && entry.layout.layoutType === 'wizard'">
             <div class="col-span-full space-y-6">
                 <!-- Step indicators -->
-                <div class="flex items-center">
+                <div class="flex items-center overflow-x-auto pb-2">
                     <template v-for="(step, si) in (entry.layout.schema as unknown as LayoutSchema[])" :key="si">
-                        <div class="flex flex-col items-center">
+                        <div class="flex shrink-0 flex-col items-center">
                             <div
-                                class="flex size-8 items-center justify-center rounded-full border-2 text-sm font-medium transition-colors"
+                                class="flex size-7 items-center justify-center rounded-full border-2 text-xs font-medium transition-colors sm:size-8 sm:text-sm"
                                 :class="si <= getWizardStep(index)
                                     ? 'border-primary bg-primary text-primary-foreground'
                                     : 'border-muted-foreground/30 text-muted-foreground'"
                             >
-                                <component :is="step.icon" v-if="step.icon && si <= getWizardStep(index)" class="size-4" />
+                                <component :is="step.icon" v-if="step.icon && si <= getWizardStep(index)" class="size-3.5 sm:size-4" />
                                 <span v-else>{{ si + 1 }}</span>
                             </div>
-                            <span class="mt-1 text-xs font-medium" :class="si <= getWizardStep(index) ? 'text-foreground' : 'text-muted-foreground'">
+                            <span class="mt-1 text-[10px] font-medium sm:text-xs" :class="si <= getWizardStep(index) ? 'text-foreground' : 'text-muted-foreground'">
                                 {{ step.label }}
                             </span>
-                            <span v-if="step.stepDescription" class="text-xs text-muted-foreground">{{ step.stepDescription }}</span>
+                            <span v-if="step.stepDescription" class="hidden text-xs text-muted-foreground sm:block">{{ step.stepDescription }}</span>
                         </div>
-                        <div v-if="si < (entry.layout.schema as unknown as LayoutSchema[]).length - 1" class="mx-2 h-px flex-1" :class="si < getWizardStep(index) ? 'bg-primary' : 'bg-border'" />
+                        <div v-if="si < (entry.layout.schema as unknown as LayoutSchema[]).length - 1" class="mx-1 h-px flex-1 sm:mx-2" :class="si < getWizardStep(index) ? 'bg-primary' : 'bg-border'" />
                     </template>
                 </div>
                 <!-- Current step content -->
-                <div class="grid gap-4" :style="`grid-template-columns: repeat(${((entry.layout.schema as unknown as LayoutSchema[])[getWizardStep(index)])?.columns || 2}, minmax(0, 1fr))`">
+                <div class="form-grid grid gap-4" :style="`grid-template-columns: repeat(${((entry.layout.schema as unknown as LayoutSchema[])[getWizardStep(index)])?.columns || 2}, minmax(0, 1fr))`">
                     <FormFields :schema="((entry.layout.schema as unknown as LayoutSchema[])[getWizardStep(index)])?.schema || []" :form="form" />
                 </div>
                 <!-- Navigation -->
@@ -242,7 +256,7 @@ const calloutConfig: Record<string, { classes: string; icon: typeof Info }> = {
                     <AlertTitle v-if="entry.layout.label">{{ entry.layout.label }}</AlertTitle>
                     <AlertDescription v-if="entry.layout.description">{{ entry.layout.description }}</AlertDescription>
                 </Alert>
-                <div v-if="entry.layout.schema && entry.layout.schema.length > 0" class="mt-3 grid gap-4" :style="`grid-template-columns: repeat(${entry.layout.columns || 2}, minmax(0, 1fr))`">
+                <div v-if="entry.layout.schema && entry.layout.schema.length > 0" class="form-grid mt-3 grid gap-4" :style="`grid-template-columns: repeat(${entry.layout.columns || 2}, minmax(0, 1fr))`">
                     <FormFields :schema="entry.layout.schema" :form="form" />
                 </div>
             </div>
@@ -251,6 +265,7 @@ const calloutConfig: Record<string, { classes: string; icon: typeof Info }> = {
         <!-- Regular field -->
         <template v-else-if="!entry.isLayout">
             <FormField
+                v-show="isFieldVisible(entry.field)"
                 v-bind="entry.field"
                 :model-value="form[entry.field.name]"
                 :error="form.errors[entry.field.name]"

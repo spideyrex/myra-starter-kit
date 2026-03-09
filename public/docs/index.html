@@ -533,6 +533,7 @@
         <a href="#module-activity-log">Activity Log</a>
         <a href="#module-media">Media Manager</a>
         <a href="#module-notifications">Notifications</a>
+        <a href="#module-firebase">Push Notifications (Firebase)</a>
 
         <div class="nav-group">Backend</div>
         <a href="#app-install">App Install</a>
@@ -3516,11 +3517,18 @@ function openNotification(n) {
     <table>
         <thead><tr><th>Type</th><th>Label</th><th>Channels</th></tr></thead>
         <tbody>
-            <tr><td><code>system</code></td><td>System Notifications</td><td>Database</td></tr>
-            <tr><td><code>user_action</code></td><td>User Action Notifications</td><td>Database</td></tr>
-            <tr><td><code>security_alert</code></td><td>Security Alerts</td><td>Database, Email</td></tr>
+            <tr><td><code>system</code></td><td>System Notifications</td><td>Database, Push</td></tr>
+            <tr><td><code>user_action</code></td><td>User Action Notifications</td><td>Database, Push</td></tr>
+            <tr><td><code>security_alert</code></td><td>Security Alerts</td><td>Database, Email, Push</td></tr>
         </tbody>
     </table>
+
+    <p>Each notification type has three channel toggles: <strong>Email</strong>, <strong>In-App</strong> (database), and <strong>Push</strong>. The Push toggle controls whether the user receives Firebase Cloud Messaging push notifications for that type.</p>
+
+    <div class="screenshot">
+        <img src="screenshots/notification-preferences.png" alt="Notification Preferences" loading="lazy">
+        <div class="screenshot-caption">Notification preferences with Email, In-App, and Push toggles per notification type</div>
+    </div>
 
     <h4>Database Schema</h4>
     <pre><code class="language-php">Schema::create('notification_preferences', function (Blueprint $table) {
@@ -3529,6 +3537,7 @@ function openNotification(n) {
     $table->string('type');                  // system, user_action, security_alert
     $table->boolean('email')->default(true);
     $table->boolean('database')->default(true);
+    $table->boolean('push')->default(true);  // Push notification preference
     $table->timestamps();
     $table->unique(['user_id', 'type']);
 });</code></pre>
@@ -3540,12 +3549,13 @@ $validated = $request->validate([
     'preferences.*.type' => 'required|in:system,user_action,security_alert',
     'preferences.*.email' => 'boolean',
     'preferences.*.database' => 'boolean',
+    'preferences.*.push' => 'boolean',
 ]);
 
 foreach ($validated['preferences'] as $pref) {
     DB::table('notification_preferences')->updateOrInsert(
         ['user_id' => $request->user()->id, 'type' => $pref['type']],
-        ['email' => $pref['email'] ?? true, 'database' => $pref['database'] ?? true]
+        ['email' => $pref['email'] ?? true, 'database' => $pref['database'] ?? true, 'push' => $pref['push'] ?? true]
     );
 }</code></pre>
 </section>
@@ -3588,12 +3598,13 @@ foreach ($validated['preferences'] as $pref) {
             <tr><td>Title</td><td>Text</td><td>Notification title (max 255 chars)</td></tr>
             <tr><td>Message</td><td>Textarea</td><td>Notification body (max 1000 chars)</td></tr>
             <tr><td>Action URL</td><td>URL</td><td>Optional link attached to notification</td></tr>
+            <tr><td>Send Push Notification</td><td>Switch</td><td>Also send as a push notification via Firebase Cloud Messaging</td></tr>
         </tbody>
     </table>
 
     <div class="callout callout-info">
         <div class="callout-title">&#8505; Backend Validation</div>
-        The store endpoint validates: <code>type</code> (required, in: system/user_action/security_alert), <code>target</code> (required, in: all/specific), <code>user_ids</code> (required if specific), <code>title</code> (required, max:255), <code>message</code> (required, max:1000), <code>action_url</code> (nullable, url).
+        The store endpoint validates: <code>type</code> (required, in: system/user_action/security_alert), <code>target</code> (required, in: all/specific), <code>user_ids</code> (required if specific), <code>title</code> (required, max:255), <code>message</code> (required, max:1000), <code>action_url</code> (nullable, url), <code>send_push</code> (nullable, boolean).
     </div>
 
     <h4>Controller Example</h4>
@@ -3616,6 +3627,9 @@ $notification = match ($validated['type']) {
         actionUrl: $validated['action_url'] ?? '',
     ),
 };
+
+// Opt-in push for this send
+$notification->sendPush = $request->boolean('send_push');
 
 $recipients = $validated['target'] === 'all'
     ? User::where('status', 'active')->get()
@@ -4198,6 +4212,7 @@ Notification::send($recipients, $notification);</code></pre>
         <li>Notification type: System, User Action, Security Alert</li>
         <li>Target: All Users (blast) or Specific Users (multi-select picker)</li>
         <li>Title, message, and optional action URL</li>
+        <li>Send Push Notification toggle (sends via Firebase Cloud Messaging when enabled)</li>
         <li>Confirmation dialog before sending</li>
     </ul>
 
@@ -4207,6 +4222,208 @@ Notification::send($recipients, $notification);</code></pre>
         <li><strong>Type</strong> &mdash; Filter by System, User Action, or Security Alert</li>
         <li><strong>Read Status</strong> &mdash; Filter by Read or Unread</li>
     </ul>
+</section>
+
+<section id="module-firebase">
+    <h3>Push Notifications (Firebase Cloud Messaging)</h3>
+    <p>Full Firebase Cloud Messaging integration for web push notifications. Managed entirely from the admin panel &mdash; no <code>.env</code> changes required for basic setup.</p>
+    <p><strong>Location:</strong> <code>Pages/Admin/Firebase/Settings.vue</code> &mdash; <strong>Permissions:</strong> <code>firebase.view</code>, <code>firebase.edit</code></p>
+
+    <div class="screenshot">
+        <img src="screenshots/firebase-settings.png" alt="Firebase Settings" loading="lazy">
+        <div class="screenshot-caption">Firebase settings page with status overview, service account upload, and web configuration</div>
+    </div>
+
+    <h4>Architecture Overview</h4>
+    <p>Push notifications flow through the existing Laravel notification system via a custom <code>FcmChannel</code>:</p>
+    <div class="arch-diagram">
+        <div class="arch-layer">
+            <div class="arch-layer-title">Admin Sends Notification (with Push toggle ON)</div>
+            <div class="arch-boxes">
+                <div class="arch-box" style="background: rgba(30,58,95,0.08); color: var(--accent);">AdminNotificationController</div>
+            </div>
+        </div>
+        <div class="arch-layer">
+            <div class="arch-layer-title">Laravel Notification Channels</div>
+            <div class="arch-boxes">
+                <div class="arch-box" style="background: rgba(37,99,235,0.1); color: var(--blue);">database</div>
+                <div class="arch-box" style="background: rgba(217,119,6,0.1); color: var(--orange);">mail</div>
+                <div class="arch-box" style="background: rgba(22,163,74,0.1); color: var(--green);">FcmChannel</div>
+            </div>
+        </div>
+        <div class="arch-layer">
+            <div class="arch-layer-title">Firebase Service</div>
+            <div class="arch-boxes">
+                <div class="arch-box" style="background: rgba(22,163,74,0.1); color: var(--green);">FirebaseService &rarr; kreait/firebase &rarr; FCM API</div>
+            </div>
+        </div>
+        <div class="arch-layer">
+            <div class="arch-layer-title">Browser</div>
+            <div class="arch-boxes">
+                <div class="arch-box" style="background: rgba(37,99,235,0.1); color: var(--blue);">firebase-messaging-sw.js</div>
+                <div class="arch-box" style="background: rgba(37,99,235,0.1); color: var(--blue);">useFirebaseMessaging</div>
+            </div>
+        </div>
+    </div>
+
+    <h4>Setup Steps</h4>
+    <ol style="padding-left: 1.25rem;">
+        <li>Navigate to <strong>Admin &gt; Push Notifications &gt; Firebase Settings</strong></li>
+        <li>Upload your Firebase service account JSON (from Firebase Console &gt; Project Settings &gt; Service Accounts)</li>
+        <li>Fill in the Web Configuration fields (API Key, Auth Domain, Project ID, etc. from Firebase Console &gt; General)</li>
+        <li>Enter the VAPID key (from Firebase Console &gt; Cloud Messaging &gt; Web Push certificates)</li>
+        <li>Toggle <strong>Enable Firebase Push Notifications</strong> on and save</li>
+        <li>Click <strong>Enable Push for This Browser</strong> in the Test section and accept the browser permission prompt</li>
+        <li>Click <strong>Send Test</strong> to verify the configuration</li>
+    </ol>
+
+    <div class="screenshot">
+        <img src="screenshots/firebase-test.png" alt="Firebase Test Push" loading="lazy">
+        <div class="screenshot-caption">Test push notification section with browser enable and send test controls</div>
+    </div>
+
+    <h4>Admin Routes</h4>
+    <table>
+        <thead><tr><th>Method</th><th>URI</th><th>Permission</th><th>Description</th></tr></thead>
+        <tbody>
+            <tr><td><code>GET</code></td><td><code>/admin/firebase-settings</code></td><td><code>firebase.view</code></td><td>Firebase settings page</td></tr>
+            <tr><td><code>PUT</code></td><td><code>/admin/firebase-settings</code></td><td><code>firebase.edit</code></td><td>Update Firebase settings</td></tr>
+            <tr><td><code>POST</code></td><td><code>/admin/firebase-settings/test</code></td><td><code>firebase.edit</code></td><td>Send test push notification</td></tr>
+        </tbody>
+    </table>
+
+    <h4>User-Facing Routes</h4>
+    <table>
+        <thead><tr><th>Method</th><th>URI</th><th>Description</th></tr></thead>
+        <tbody>
+            <tr><td><code>POST</code></td><td><code>/fcm-tokens</code></td><td>Register FCM token for current user</td></tr>
+            <tr><td><code>DELETE</code></td><td><code>/fcm-tokens</code></td><td>Unregister FCM token</td></tr>
+        </tbody>
+    </table>
+
+    <h4>Settings Page Cards</h4>
+    <table>
+        <thead><tr><th>Card</th><th>Description</th></tr></thead>
+        <tbody>
+            <tr><td><strong>Status</strong></td><td>Shows Firebase enabled/disabled, service account upload status, web config status, browser permission status</td></tr>
+            <tr><td><strong>Service Account</strong></td><td>File upload for the Firebase service account JSON. Validates required keys (<code>type</code>, <code>project_id</code>, <code>private_key</code>, <code>client_email</code>)</td></tr>
+            <tr><td><strong>Web Configuration</strong></td><td>Toggle + text inputs for all Firebase web SDK config keys (API Key, Auth Domain, Project ID, Storage Bucket, Messaging Sender ID, App ID, VAPID Key)</td></tr>
+            <tr><td><strong>Test Push</strong></td><td>"Enable Push for This Browser" button, auto-filled token input, Send Test button. Only visible when Firebase is enabled and service account is configured</td></tr>
+        </tbody>
+    </table>
+
+    <h4>Backend Components</h4>
+    <table>
+        <thead><tr><th>File</th><th>Purpose</th></tr></thead>
+        <tbody>
+            <tr><td><code>app/Settings/FirebaseSettings.php</code></td><td>Spatie settings class for Firebase config (group: <code>firebase</code>)</td></tr>
+            <tr><td><code>app/Services/FirebaseService.php</code></td><td>Core service: <code>sendToUser()</code>, <code>sendToTokens()</code>, <code>sendTest()</code>, <code>validateServiceAccount()</code></td></tr>
+            <tr><td><code>app/Channels/FcmChannel.php</code></td><td>Laravel notification channel &mdash; calls <code>toFcm()</code> or <code>toArray()</code> on the notification</td></tr>
+            <tr><td><code>app/Models/FcmToken.php</code></td><td>Eloquent model for stored FCM tokens (user_id, token, device_type, device_name)</td></tr>
+            <tr><td><code>app/Http/Controllers/Admin/FirebaseSettingController.php</code></td><td>Admin settings CRUD + test push endpoint</td></tr>
+            <tr><td><code>app/Http/Controllers/FcmTokenController.php</code></td><td>Token register/unregister API for authenticated users</td></tr>
+        </tbody>
+    </table>
+
+    <h4>Frontend Components</h4>
+    <table>
+        <thead><tr><th>File</th><th>Purpose</th></tr></thead>
+        <tbody>
+            <tr><td><code>public/firebase-messaging-sw.js</code></td><td>Service worker for background push &mdash; uses Firebase compat SDK. Receives config via <code>postMessage</code></td></tr>
+            <tr><td><code>resources/js/composables/useFirebaseMessaging.ts</code></td><td>Vue composable: initializes Firebase, registers SW, handles foreground messages, provides <code>requestPermission()</code></td></tr>
+            <tr><td><code>resources/js/Pages/Admin/Firebase/Settings.vue</code></td><td>Admin settings page with status, upload, config, and test cards</td></tr>
+        </tbody>
+    </table>
+
+    <h4>FCM Token Database Schema</h4>
+    <pre><code class="language-php">Schema::create('fcm_tokens', function (Blueprint $table) {
+    $table->id();
+    $table->foreignId('user_id')->constrained()->cascadeOnDelete();
+    $table->string('token', 512)->unique();
+    $table->enum('device_type', ['web', 'android', 'ios'])->default('web');
+    $table->string('device_name')->nullable();
+    $table->timestamp('last_used_at')->nullable();
+    $table->timestamps();
+    $table->index(['user_id', 'device_type']);
+});</code></pre>
+
+    <h4>Adding Push to Notification Classes</h4>
+    <p>Push is opt-in per notification. All four notification classes (<code>SystemNotification</code>, <code>UserActionNotification</code>, <code>SecurityAlertNotification</code>, <code>BroadcastableNotification</code>) support push:</p>
+    <pre><code class="language-php">class SystemNotification extends Notification
+{
+    public bool $sendPush = false;
+
+    public function via(object $notifiable): array
+    {
+        $channels = ['database'];
+        if ($this->sendPush && app(FirebaseService::class)->isEnabled()) {
+            $channels[] = FcmChannel::class;
+        }
+        return $channels;
+    }
+
+    public function toFcm(object $notifiable): array
+    {
+        return [
+            'title' => $this->title,
+            'message' => $this->message,
+            'action_url' => $this->actionUrl,
+            'type' => 'system',
+        ];
+    }
+}</code></pre>
+
+    <h4>Shared Inertia Data</h4>
+    <p>Firebase web config is shared via <code>HandleInertiaRequests</code> middleware (cached 1 hour):</p>
+    <pre><code class="language-php">// HandleInertiaRequests.php
+'firebaseConfig' => fn () => cache()->remember('firebase_web_config', 3600, function () {
+    $settings = app(FirebaseSettings::class);
+    if (!$settings->enabled) return null;
+    return array_filter([
+        'apiKey' => $settings->api_key,
+        'authDomain' => $settings->auth_domain,
+        'projectId' => $settings->project_id,
+        // ... other config keys
+    ]) ?: null;
+}),</code></pre>
+
+    <h4>useFirebaseMessaging Composable</h4>
+    <p>Called automatically in <code>AuthenticatedLayout</code>. Initializes Firebase when config is present, registers the service worker, and listens for foreground messages (shows toast + reloads notification count).</p>
+    <pre><code class="language-typescript">import { useFirebaseMessaging } from '@/composables/useFirebaseMessaging';
+
+// In AuthenticatedLayout.vue setup
+useFirebaseMessaging();
+
+// In Firebase Settings page for manual control
+const { permissionStatus, currentToken, isSupported, requestPermission, unregisterToken } = useFirebaseMessaging();</code></pre>
+
+    <table>
+        <thead><tr><th>Return</th><th>Type</th><th>Description</th></tr></thead>
+        <tbody>
+            <tr><td><code>permissionStatus</code></td><td><code>Ref&lt;NotificationPermission&gt;</code></td><td>Browser permission: <code>'default'</code>, <code>'granted'</code>, or <code>'denied'</code></td></tr>
+            <tr><td><code>currentToken</code></td><td><code>Ref&lt;string | null&gt;</code></td><td>Current FCM token (null if not registered)</td></tr>
+            <tr><td><code>isSupported</code></td><td><code>Ref&lt;boolean&gt;</code></td><td>Whether the browser supports push notifications</td></tr>
+            <tr><td><code>requestPermission()</code></td><td><code>() =&gt; Promise&lt;string | null&gt;</code></td><td>Request browser permission, get token, register with backend</td></tr>
+            <tr><td><code>unregisterToken()</code></td><td><code>() =&gt; Promise&lt;void&gt;</code></td><td>Unregister current token from backend</td></tr>
+        </tbody>
+    </table>
+
+    <h4>Service Worker</h4>
+    <p>The service worker at <code>public/firebase-messaging-sw.js</code> handles background push notifications. It receives Firebase config via <code>postMessage</code> from the app and shows system notifications when messages arrive while the app is in the background. Clicking a notification opens or focuses the app at the action URL.</p>
+
+    <div class="callout callout-tip">
+        <div class="callout-title">&#9889; Environment Variables (Optional)</div>
+        Firebase settings are managed from the admin UI, but you can also set fallback values via <code>.env</code> for the service account path:
+        <pre><code class="language-bash"># .env (optional)
+FIREBASE_CREDENTIALS=storage/app/firebase/service-account.json
+VITE_FIREBASE_API_KEY=AIzaSy...
+VITE_FIREBASE_VAPID_KEY=BNx...</code></pre>
+    </div>
+
+    <div class="callout callout-info">
+        <div class="callout-title">&#8505; Invalid Token Cleanup</div>
+        When sending push notifications, <code>FirebaseService</code> automatically detects and removes invalid tokens from the <code>fcm_tokens</code> table using the multicast failure report. This keeps the token table clean without manual maintenance.
+    </div>
 </section>
 
 <hr class="section-divider">

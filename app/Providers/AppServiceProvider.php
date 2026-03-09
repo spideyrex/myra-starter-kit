@@ -15,12 +15,13 @@ use Spatie\Health\Checks\Checks\DatabaseCheck;
 use Spatie\Health\Checks\Checks\CacheCheck;
 use Spatie\Health\Checks\Checks\UsedDiskSpaceCheck;
 use App\Health\EnvCheck;
+use App\Services\FirebaseService;
 
 class AppServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
-        //
+        $this->app->singleton(FirebaseService::class);
     }
 
     public function boot(): void

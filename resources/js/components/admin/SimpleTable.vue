@@ -31,7 +31,8 @@ withDefaults(defineProps<{
                     <slot name="empty" />
                 </template>
             </EmptyState>
-            <Table v-else>
+            <div v-else class="overflow-x-auto">
+            <Table>
                 <TableHeader>
                     <TableRow>
                         <TableHead
@@ -61,6 +62,7 @@ withDefaults(defineProps<{
                     </TableRow>
                 </TableBody>
             </Table>
+            </div>
         </CardContent>
     </Card>
 </template>

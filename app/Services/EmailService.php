@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\EmailLog;
 use App\Models\EmailTemplate;
+use App\Settings\EmailSettings;
 use Illuminate\Support\Facades\Mail;
 
 class EmailService
@@ -22,6 +23,9 @@ class EmailService
             'status' => 'queued',
         ]);
 
+        // Apply admin-configured SMTP settings from database
+        $this->applyMailConfig();
+
         try {
             Mail::html($body, function ($message) use ($to, $subject) {
                 $message->to($to)->subject($subject);
@@ -37,6 +41,40 @@ class EmailService
                 'error' => $e->getMessage(),
             ]);
         }
+    }
+
+    /**
+     * Apply runtime mail configuration from admin-stored settings.
+     */
+    private function applyMailConfig(): void
+    {
+        $settings = app(EmailSettings::class);
+
+        config([
+            'mail.default' => $settings->mail_mailer,
+            'mail.mailers.smtp.host' => $settings->mail_host,
+            'mail.mailers.smtp.port' => $settings->mail_port,
+            'mail.mailers.smtp.username' => $settings->mail_username,
+            'mail.mailers.smtp.password' => $settings->mail_password,
+            'mail.mailers.smtp.encryption' => $settings->mail_encryption,
+            'mail.from.address' => $settings->mail_from_address,
+            'mail.from.name' => $settings->mail_from_name,
+        ]);
+
+        // Purge cached transport so new settings take effect
+        app('mail.manager')->purge('smtp');
+    }
+
+    public function sendTemplateTest(EmailTemplate $template, string $to, array $variables = []): void
+    {
+        $this->applyMailConfig();
+
+        $subject = '[Test] ' . $this->replaceVariables($template->subject, $variables);
+        $body = $this->replaceVariables($template->body_html, $variables);
+
+        Mail::html($body, function ($message) use ($to, $subject) {
+            $message->to($to)->subject($subject);
+        });
     }
 
     private function replaceVariables(string $content, array $variables): string

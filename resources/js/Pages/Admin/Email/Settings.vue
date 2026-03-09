@@ -81,8 +81,8 @@ async function sendTest() {
             <Card>
                 <CardHeader><CardTitle>Test Email</CardTitle></CardHeader>
                 <CardContent>
-                    <form @submit.prevent="sendTest" class="flex gap-2">
-                        <Input v-model="testForm.email" type="email" placeholder="recipient@example.com" required class="max-w-sm" />
+                    <form @submit.prevent="sendTest" class="flex flex-col gap-2 sm:flex-row">
+                        <Input v-model="testForm.email" type="email" placeholder="recipient@example.com" required class="sm:max-w-sm" />
                         <LoadingButton :loading="testForm.processing">
                             <Send class="mr-2 size-4" />Send Test
                         </LoadingButton>

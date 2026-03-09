@@ -469,11 +469,31 @@
         <a href="#table-builder">Table Builder</a>
         <a href="#table-columns">Table Columns</a>
         <a href="#table-filters">Table Filters</a>
+        <a href="#sticky-header">Sticky Header</a>
+        <a href="#column-manager">Column Manager</a>
         <a href="#table-actions">Table Actions</a>
+
+        <div class="nav-group">Advanced Features</div>
+        <a href="#websocket-notifications">WebSocket Notifications</a>
+        <a href="#multi-tenancy">Multi-Tenancy</a>
+        <a href="#inline-editing">Inline Table Editing</a>
+        <a href="#conditional-visibility">Conditional Visibility</a>
+        <a href="#row-grouping">Row Grouping &amp; Summaries</a>
+        <a href="#drag-reorder">Drag &amp; Drop Reordering</a>
+        <a href="#infolist-builder">Infolist Builder</a>
+        <a href="#relation-manager">Relation Manager</a>
+        <a href="#dashboard-widgets">Dashboard Widgets</a>
 
         <div class="nav-group">Components</div>
         <a href="#admin-components">Admin Components</a>
         <a href="#shared-components">Shared Components</a>
+
+        <div class="nav-group">UI Components (shadcn-vue)</div>
+        <a href="#ui-inputs">Input Components</a>
+        <a href="#ui-data-display">Data Display</a>
+        <a href="#ui-layout">Layout</a>
+        <a href="#ui-navigation">Navigation</a>
+        <a href="#ui-feedback">Feedback &amp; Overlay</a>
 
         <div class="nav-group">Composables</div>
         <a href="#composables">Overview</a>
@@ -763,7 +783,9 @@ php artisan myra:install --composer=/path/to/composer.phar</code></pre>
     <h3>File Structure</h3>
     <div class="file-tree"><span class="dir">app/</span>
 ├── <span class="dir">Admin/Traits/</span>
-│   └── <span class="file">SearchableQuery.php</span>          <span class="comment"># Reusable search/sort/paginate trait</span>
+│   ├── <span class="file">SearchableQuery.php</span>          <span class="comment"># Reusable search/sort/paginate trait</span>
+│   ├── <span class="file">HasRelationManagers.php</span>       <span class="comment"># Relation pagination helper trait</span>
+│   └── <span class="file">ExportableQuery.php</span>          <span class="comment"># CSV export trait</span>
 ├── <span class="dir">Http/Controllers/</span>
 │   ├── <span class="dir">Admin/</span>                       <span class="comment"># Admin controllers</span>
 │   │   ├── <span class="file">AdminNotificationController.php</span>
@@ -788,6 +810,14 @@ php artisan myra:install --composer=/path/to/composer.phar</code></pre>
 │   │   ├── <span class="file">SimpleTable.vue</span>          <span class="comment"># Static table</span>
 │   │   ├── <span class="file">RowActions.vue</span>           <span class="comment"># Dropdown row actions</span>
 │   │   ├── <span class="file">DateCell.vue</span>             <span class="comment"># Date formatter</span>
+│   │   ├── <span class="file">InfolistEntries.vue</span>      <span class="comment"># Recursive infolist renderer</span>
+│   │   ├── <span class="file">InfolistEntry.vue</span>        <span class="comment"># Single infolist entry</span>
+│   │   ├── <span class="file">RelationManager.vue</span>      <span class="comment"># Related record manager</span>
+│   │   ├── <span class="file">DashboardGrid.vue</span>        <span class="comment"># Widget grid renderer</span>
+│   │   ├── <span class="dir">widgets/</span>                 <span class="comment"># Dashboard widget components</span>
+│   │   │   ├── <span class="file">StatWidget.vue</span>       <span class="comment"># Stat card widget</span>
+│   │   │   ├── <span class="file">ChartWidget.vue</span>      <span class="comment"># Chart widget (bar/line/pie/doughnut)</span>
+│   │   │   └── <span class="file">TableWidget.vue</span>      <span class="comment"># Embedded table widget</span>
 │   │   └── <span class="file">index.ts</span>                 <span class="comment"># Barrel exports</span>
 │   ├── <span class="dir">ui/</span>                          <span class="comment"># shadcn-vue primitives</span>
 │   ├── <span class="file">DataTable.vue</span>                <span class="comment"># Paginated, sortable, searchable table</span>
@@ -805,6 +835,9 @@ php artisan myra:install --composer=/path/to/composer.phar</code></pre>
 │   ├── <span class="file">useTableSchema.ts</span>            <span class="comment"># Table column builder API</span>
 │   ├── <span class="file">useTableFilters.ts</span>           <span class="comment"># Table filter builder API</span>
 │   ├── <span class="file">useTableActions.ts</span>           <span class="comment"># Table action builder API</span>
+│   ├── <span class="file">useInfolistSchema.ts</span>         <span class="comment"># Infolist entry builder API</span>
+│   ├── <span class="file">useDashboardWidgets.ts</span>       <span class="comment"># Dashboard widget builder API</span>
+│   ├── <span class="file">useGlobalSearch.ts</span>           <span class="comment"># Global search composable</span>
 │   ├── <span class="file">useResourceForm.ts</span>           <span class="comment"># Form submission handler</span>
 │   ├── <span class="file">useConfirmAction.ts</span>          <span class="comment"># Delete/post confirmation</span>
 │   ├── <span class="file">useConfirm.ts</span>                <span class="comment"># Confirm dialog state</span>
@@ -832,6 +865,7 @@ php artisan myra:install --composer=/path/to/composer.phar</code></pre>
     ├── <span class="dir">ApiTokens/</span>                   <span class="comment"># Index</span>
     ├── <span class="dir">ActivityLog/</span>                 <span class="comment"># Index</span>
     ├── <span class="dir">Media/</span>                       <span class="comment"># Index</span>
+    ├── <span class="dir">Demo/</span>                        <span class="comment"># Feature showcase pages (15 demos)</span>
     └── <span class="file">SystemHealth.vue</span>
 
 <span class="dir">stubs/admin/</span>                         <span class="comment"># Artisan command templates</span>
@@ -1068,17 +1102,18 @@ Toggle.make('notifications').label('Enable notifications')</code></pre>
 Checkbox.make('subscribe').label('Subscribe to newsletter')</code></pre>
 
     <h4>DatePicker</h4>
-    <p>Native date input.</p>
+    <p>Native date input. Optionally renders a shadcn Calendar popover via <code>.useCalendar()</code>.</p>
     <pre><code class="language-typescript">DatePicker.make('birth_date')
-DatePicker.make('start_date').minDate('2024-01-01').maxDate('2026-12-31')</code></pre>
+DatePicker.make('start_date').minDate('2024-01-01').maxDate('2026-12-31')
+DatePicker.make('event_date').useCalendar()         // renders Calendar in Popover</code></pre>
 
     <h4>DateTimePicker</h4>
-    <p>Native datetime-local input.</p>
+    <p>Native datetime-local input. Also supports <code>.useCalendar()</code>.</p>
     <pre><code class="language-typescript">DateTimePicker.make('scheduled_at')
 DateTimePicker.make('event_start').minDate('2024-01-01T00:00')</code></pre>
 
     <h4>Radio</h4>
-    <p>Radio button group. Supports same option formats as Select.</p>
+    <p>Radio button group using shadcn <code>RadioGroup</code> + <code>RadioGroupItem</code>. Supports same option formats as Select.</p>
     <pre><code class="language-typescript">Radio.make('theme').options({ light: 'Light', dark: 'Dark', system: 'System' })
 Radio.make('priority').options({ low: 'Low', medium: 'Medium', high: 'High' }).inline()</code></pre>
 
@@ -1106,6 +1141,154 @@ FileUpload.make('attachments').multiple().accept('.pdf,.doc,.docx').maxSize(10)<
     <p>Enhanced textarea for rich content (renders as <code>&lt;textarea&gt;</code> with larger default rows).</p>
     <pre><code class="language-typescript">RichEditor.make('content')
 RichEditor.make('body').rows(12)</code></pre>
+
+    <h4>Slider</h4>
+    <p>Range slider using shadcn <code>Slider</code>. Model value is a number.</p>
+    <pre><code class="language-typescript">Slider.make('volume').min(0).max(100).step(5)
+Slider.make('opacity').min(0).max(1).step(0.1).showValue()</code></pre>
+    <table>
+        <thead><tr><th>Method</th><th>Description</th></tr></thead>
+        <tbody>
+            <tr><td><code>.min(n)</code></td><td>Minimum value (default: 0)</td></tr>
+            <tr><td><code>.max(n)</code></td><td>Maximum value (default: 100)</td></tr>
+            <tr><td><code>.step(n)</code></td><td>Step increment (default: 1)</td></tr>
+            <tr><td><code>.showValue()</code></td><td>Display current value next to slider</td></tr>
+        </tbody>
+    </table>
+
+    <h4>NumberField</h4>
+    <p>Stepper-style number input with increment/decrement buttons. Supports locale-aware formatting.</p>
+    <pre><code class="language-typescript">NumberField.make('quantity').min(1).max(99)
+NumberField.make('price').min(0).step(0.01).currency('USD')
+NumberField.make('ratio').percent()</code></pre>
+    <table>
+        <thead><tr><th>Method</th><th>Description</th></tr></thead>
+        <tbody>
+            <tr><td><code>.min(n)</code></td><td>Minimum value</td></tr>
+            <tr><td><code>.max(n)</code></td><td>Maximum value</td></tr>
+            <tr><td><code>.step(n)</code></td><td>Step increment (default: 1)</td></tr>
+            <tr><td><code>.formatOptions(opts)</code></td><td>Custom <code>Intl.NumberFormatOptions</code></td></tr>
+            <tr><td><code>.currency(code)</code></td><td>Format as currency (e.g. <code>'USD'</code>)</td></tr>
+            <tr><td><code>.percent()</code></td><td>Format as percentage</td></tr>
+        </tbody>
+    </table>
+
+    <h4>PinInput</h4>
+    <p>Individual character input slots for OTP codes, PINs, or verification codes.</p>
+    <pre><code class="language-typescript">PinInput.make('otp_code').otp().length(6)
+PinInput.make('pin').length(4).mask()       // masked characters</code></pre>
+    <table>
+        <thead><tr><th>Method</th><th>Description</th></tr></thead>
+        <tbody>
+            <tr><td><code>.length(n)</code></td><td>Number of input slots (default: 6)</td></tr>
+            <tr><td><code>.mask()</code></td><td>Mask input characters</td></tr>
+            <tr><td><code>.otp()</code></td><td>Enable OTP autocomplete</td></tr>
+        </tbody>
+    </table>
+
+    <h4>TagsInput</h4>
+    <p>Free-form tag entry field. Model value is a string array.</p>
+    <pre><code class="language-typescript">TagsInput.make('tags').maxTags(5).tagPlaceholder('Type and press Enter')
+TagsInput.make('skills').hint('Up to 10 skills')</code></pre>
+    <table>
+        <thead><tr><th>Method</th><th>Description</th></tr></thead>
+        <tbody>
+            <tr><td><code>.maxTags(n)</code></td><td>Maximum number of tags allowed</td></tr>
+            <tr><td><code>.tagPlaceholder(text)</code></td><td>Placeholder for the tag input</td></tr>
+        </tbody>
+    </table>
+
+    <h4>ToggleGroupField</h4>
+    <p>Group of toggle buttons for single or multiple selection.</p>
+    <pre><code class="language-typescript">ToggleGroupField.make('alignment').options({
+    left: 'Left', center: 'Center', right: 'Right',
+})
+ToggleGroupField.make('features').options({...}).multiple().variant('outline')</code></pre>
+    <table>
+        <thead><tr><th>Method</th><th>Description</th></tr></thead>
+        <tbody>
+            <tr><td><code>.options(opts)</code></td><td>Toggle options (same format as Select)</td></tr>
+            <tr><td><code>.multiple()</code></td><td>Allow multiple selections (model becomes array)</td></tr>
+            <tr><td><code>.variant(v)</code></td><td><code>'default'</code> or <code>'outline'</code> (default: outline)</td></tr>
+        </tbody>
+    </table>
+
+    <h4>CalendarPicker</h4>
+    <p>Date picker rendered as a shadcn Calendar inside a Popover. Model value is a date string (<code>YYYY-MM-DD</code>).</p>
+    <pre><code class="language-typescript">CalendarPicker.make('event_date')
+CalendarPicker.make('deadline').minDate('2024-01-01').maxDate('2026-12-31')</code></pre>
+    <table>
+        <thead><tr><th>Method</th><th>Description</th></tr></thead>
+        <tbody>
+            <tr><td><code>.minDate(d)</code></td><td>Earliest selectable date</td></tr>
+            <tr><td><code>.maxDate(d)</code></td><td>Latest selectable date</td></tr>
+            <tr><td><code>.dateFormat(fmt)</code></td><td>Display format string</td></tr>
+        </tbody>
+    </table>
+
+    <h4>TimePicker</h4>
+    <p>Native HTML time input with optional min/max constraints.</p>
+    <pre><code class="language-typescript">TimePicker.make('meeting_time')
+TimePicker.make('start_time').minTime('08:00').maxTime('18:00')</code></pre>
+    <table>
+        <thead><tr><th>Method</th><th>Description</th></tr></thead>
+        <tbody>
+            <tr><td><code>.minTime(t)</code></td><td>Earliest selectable time (e.g. <code>'08:00'</code>)</td></tr>
+            <tr><td><code>.maxTime(t)</code></td><td>Latest selectable time (e.g. <code>'18:00'</code>)</td></tr>
+        </tbody>
+    </table>
+
+    <h4>CheckboxList</h4>
+    <p>Multi-select as a list of checkboxes. Model value is <code>string[]</code>. Supports search filtering and grid columns.</p>
+    <pre><code class="language-typescript">CheckboxList.make('permissions')
+    .options([
+        { label: 'Read', value: 'read' },
+        { label: 'Write', value: 'write' },
+        { label: 'Delete', value: 'delete' },
+    ])
+    .searchable()
+    .columns(2)</code></pre>
+    <table>
+        <thead><tr><th>Method</th><th>Description</th></tr></thead>
+        <tbody>
+            <tr><td><code>.options(opts)</code></td><td>Array or Record of options</td></tr>
+            <tr><td><code>.searchable()</code></td><td>Show search input above options</td></tr>
+            <tr><td><code>.columns(n)</code></td><td>Grid columns for layout (default 1)</td></tr>
+        </tbody>
+    </table>
+
+    <h4>KeyValue</h4>
+    <p>Dynamic key-value pair editor. Model value is <code>Array&lt;{ key: string, value: string }&gt;</code>.</p>
+    <pre><code class="language-typescript">KeyValue.make('metadata')
+    .keyLabel('Property')
+    .valueLabel('Value')
+    .keyPlaceholder('Enter key...')
+    .valuePlaceholder('Enter value...')
+    .maxItems(10)</code></pre>
+    <table>
+        <thead><tr><th>Method</th><th>Description</th></tr></thead>
+        <tbody>
+            <tr><td><code>.keyLabel(text)</code></td><td>Header label for key column</td></tr>
+            <tr><td><code>.valueLabel(text)</code></td><td>Header label for value column</td></tr>
+            <tr><td><code>.keyPlaceholder(text)</code></td><td>Placeholder for key inputs</td></tr>
+            <tr><td><code>.valuePlaceholder(text)</code></td><td>Placeholder for value inputs</td></tr>
+            <tr><td><code>.maxItems(n)</code></td><td>Maximum number of pairs</td></tr>
+        </tbody>
+    </table>
+
+    <h4>MarkdownEditor</h4>
+    <p>Split-pane markdown editor with live preview. Uses the <code>marked</code> library for rendering. Model value is a markdown string.</p>
+    <pre><code class="language-typescript">MarkdownEditor.make('readme').rows(12)</code></pre>
+    <table>
+        <thead><tr><th>Method</th><th>Description</th></tr></thead>
+        <tbody>
+            <tr><td><code>.rows(n)</code></td><td>Height of the editor textarea</td></tr>
+        </tbody>
+    </table>
+    <div class="callout callout-info">
+        <div class="callout-title">&#8505; Note</div>
+        MarkdownEditor is distinct from <code>RichEditor</code> (TipTap HTML). Use MarkdownEditor when you want raw markdown input/output, and RichEditor for WYSIWYG HTML editing.
+    </div>
 </section>
 
 <section id="shared-methods">
@@ -1120,8 +1303,11 @@ RichEditor.make('body').rows(12)</code></pre>
             <tr><td><code>.placeholder(text)</code></td><td>Input placeholder text</td><td><code>.placeholder('Enter name')</code></td></tr>
             <tr><td><code>.disabled()</code></td><td>Disable the field</td><td><code>.disabled()</code></td></tr>
             <tr><td><code>.colSpan(n)</code></td><td>Grid column span</td><td><code>.colSpan(2)</code></td></tr>
+            <tr><td><code>.visibleWhen(cond)</code></td><td>Show field only when condition is met</td><td><code>.visibleWhen('type:business')</code></td></tr>
+            <tr><td><code>.hiddenWhen(cond)</code></td><td>Hide field when condition is met</td><td><code>.hiddenWhen('role:viewer')</code></td></tr>
         </tbody>
     </table>
+    <p>See <a href="#conditional-visibility">Conditional Field Visibility</a> for full condition syntax (string patterns and function callbacks).</p>
 
     <h4>Auto-derived Labels</h4>
     <p>If <code>.label()</code> is not called, the label is derived from the field name:</p>
@@ -1462,6 +1648,8 @@ const actions = [
             <tr><td><code>ImageColumn</code></td><td><code>&lt;img&gt;</code> tag</td><td><code>.circular()</code>, <code>.size(n)</code>, <code>.defaultUrl(url)</code></td></tr>
             <tr><td><code>IconColumn</code></td><td>Lucide icon</td><td><code>.icon(fn)</code>, <code>.color(fn)</code></td></tr>
             <tr><td><code>ToggleColumn</code></td><td><code>&lt;Switch&gt;</code></td><td><code>.onUpdate(fn)</code> &mdash; inline editable boolean</td></tr>
+            <tr><td><code>SelectColumn</code></td><td><code>&lt;Select&gt;</code> dropdown</td><td><code>.options(obj|arr)</code>, <code>.onUpdate(fn)</code>, <code>.placeholder(text)</code> &mdash; inline editable select</td></tr>
+            <tr><td><code>TextInputColumn</code></td><td><code>&lt;Input&gt;</code></td><td><code>.onUpdate(fn)</code>, <code>.placeholder(text)</code>, <code>.debounce(ms)</code> &mdash; inline editable text (default 500ms debounce)</td></tr>
         </tbody>
     </table>
 
@@ -1479,6 +1667,7 @@ const actions = [
             <tr><td><code>.tooltip(text)</code></td><td>Add tooltip text</td></tr>
             <tr><td><code>.toggleable()</code></td><td>User can show/hide this column</td></tr>
             <tr><td><code>.grow()</code></td><td>Column takes available space</td></tr>
+            <tr><td><code>.summarize(type, fn?)</code></td><td>Add column summary. Types: <code>'sum'</code>, <code>'average'</code>, <code>'count'</code>, <code>'range'</code>, <code>'custom'</code>. Custom fn receives values array.</td></tr>
         </tbody>
     </table>
 </section>
@@ -1554,6 +1743,64 @@ public function index(Request $request): Response
         <div class="callout-title">&#8505; URL Persistence</div>
         Filter values are stored in URL query params (<code>?status=active&amp;email_verified=1</code>), so they persist across page refreshes and browser history navigation. A <strong>Clear filters</strong> button appears when any filter is active.
     </div>
+
+    <h4>DateRangeFilter</h4>
+    <p>Renders two date inputs with a "to" label between them. Sends <code>{name}_from</code> and <code>{name}_to</code> as query params.</p>
+    <pre><code class="language-typescript">import { DateRangeFilter } from '@/composables/useTableFilters';
+
+DateRangeFilter.make('created')
+    .label('Created Date')
+    .minDate('2024-01-01')
+    .maxDate('2026-12-31')</code></pre>
+    <table>
+        <thead><tr><th>Method</th><th>Description</th></tr></thead>
+        <tbody>
+            <tr><td><code>.minDate(d)</code></td><td>Minimum selectable date</td></tr>
+            <tr><td><code>.maxDate(d)</code></td><td>Maximum selectable date</td></tr>
+        </tbody>
+    </table>
+
+    <h4>QueryBuilderFilter</h4>
+    <p>A recursive query builder component for complex filtering. Supports AND/OR conjunctions, nested groups (max 1 level), and multiple field operators. Serialized to JSON query param.</p>
+    <pre><code class="language-typescript">import { QueryBuilderFilter } from '@/composables/useTableFilters';
+
+QueryBuilderFilter.make('query_builder')
+    .label('Advanced Query')
+    .fields([
+        { name: 'name', label: 'Name', operators: ['=', 'contains', 'starts_with'] },
+        { name: 'price', label: 'Price', operators: ['=', '>', '<', '>=', '<='] },
+        { name: 'status', label: 'Status', operators: ['=', '!='] },
+    ])</code></pre>
+    <table>
+        <thead><tr><th>Method</th><th>Description</th></tr></thead>
+        <tbody>
+            <tr><td><code>.fields(arr)</code></td><td>Array of <code>{ name, label, operators }</code> definitions</td></tr>
+        </tbody>
+    </table>
+</section>
+
+<section id="sticky-header">
+    <h3>Sticky Table Header</h3>
+    <p>Add the <code>sticky-header</code> prop to <code>&lt;DataTable&gt;</code> to pin the table header when scrolling through long tables.</p>
+    <pre><code class="language-xml">&lt;DataTable
+    :columns="columns"
+    :data="data"
+    :sticky-header="true"
+    route-name="admin.users.index"
+/&gt;</code></pre>
+    <p>When enabled, the table container becomes scrollable with a max height of 600px, and the <code>&lt;thead&gt;</code> stays fixed at the top. Default is <code>false</code> for backward compatibility.</p>
+</section>
+
+<section id="column-manager">
+    <h3>Column Manager</h3>
+    <p>When any column has <code>.toggleable(true)</code>, a <strong>Columns</strong> button appears in the toolbar. Users can show/hide columns via a popover with checkboxes. Preferences are saved to <code>localStorage</code> per route.</p>
+    <pre><code class="language-typescript">const columns = [
+    TextColumn.make('name').label('Name'),
+    TextColumn.make('email').label('Email').toggleable(),
+    TextColumn.make('phone').label('Phone').toggleable().hidden(), // hidden by default, user can enable
+    DateColumn.make('created_at').label('Created').toggleable(),
+];</code></pre>
+    <p>The visibility state is stored in <code>localStorage</code> with key <code>dt-columns-{routeName}</code>. When a user toggles a column, their preference overrides the schema <code>hidden</code> default.</p>
 </section>
 
 <section id="table-actions">
@@ -1594,6 +1841,415 @@ const bulkActions = [
 <hr class="section-divider">
 
 <!-- ============================================================ -->
+<!-- SECTION 3c: ADVANCED FEATURES -->
+<!-- ============================================================ -->
+
+<section id="inline-editing">
+    <h2>Inline Table Editing</h2>
+    <p>Edit cell values directly in the table without opening a form. Three inline-editable column types are available: <code>ToggleColumn</code>, <code>SelectColumn</code>, and <code>TextInputColumn</code>.</p>
+
+    <h3>SelectColumn</h3>
+    <p>Renders an inline <code>&lt;Select&gt;</code> dropdown in each cell. Changes are emitted immediately via the <code>onUpdate</code> callback.</p>
+    <pre><code class="language-typescript">import { SelectColumn } from '@/composables/useTableSchema';
+
+SelectColumn.make('status')
+    .label('Status')
+    .options({ active: 'Active', draft: 'Draft', archived: 'Archived' })
+    .placeholder('Select...')
+    .onUpdate((row, value) => {
+        router.put(route('admin.products.inline-update', row.id), {
+            field: 'status', value,
+        });
+    })</code></pre>
+
+    <h3>TextInputColumn</h3>
+    <p>Renders an inline <code>&lt;Input&gt;</code> with built-in debounce (default 500ms). Changes fire after the user stops typing.</p>
+    <pre><code class="language-typescript">import { TextInputColumn } from '@/composables/useTableSchema';
+
+TextInputColumn.make('stock')
+    .label('Stock')
+    .placeholder('Qty')
+    .debounce(300)  // ms, default 500
+    .onUpdate((row, value) => {
+        router.put(route('admin.products.inline-update', row.id), {
+            field: 'stock', value,
+        });
+    })</code></pre>
+
+    <h3>ToggleColumn</h3>
+    <p>Renders an inline <code>&lt;Switch&gt;</code> toggle for boolean fields.</p>
+    <pre><code class="language-typescript">import { ToggleColumn } from '@/composables/useTableSchema';
+
+ToggleColumn.make('is_active')
+    .label('Active')
+    .onUpdate((row, value) => {
+        router.put(route('admin.products.toggle', row.id), { is_active: value });
+    })</code></pre>
+
+    <h3>Backend Pattern</h3>
+    <pre><code class="language-php">// Single endpoint handles all inline updates
+public function inlineUpdate(Request $request, int $id): RedirectResponse
+{
+    $product = Product::findOrFail($id);
+    $product->update([$request->field => $request->value]);
+    return back()->with('success', 'Updated successfully.');
+}</code></pre>
+</section>
+
+<section id="conditional-visibility">
+    <h2>Conditional Field Visibility</h2>
+    <p>Show or hide form fields reactively based on other field values. Uses <code>v-show</code> so hidden fields keep their values in the form object for server-side validation.</p>
+
+    <h3>visibleWhen / hiddenWhen</h3>
+    <p>Added to <code>BaseField</code> &mdash; available on all field types:</p>
+    <table>
+        <thead><tr><th>Method</th><th>Description</th></tr></thead>
+        <tbody>
+            <tr><td><code>.visibleWhen(condition)</code></td><td>Show field only when condition is true</td></tr>
+            <tr><td><code>.hiddenWhen(condition)</code></td><td>Hide field when condition is true</td></tr>
+        </tbody>
+    </table>
+
+    <h3>String Conditions</h3>
+    <p>Concise string syntax for common patterns:</p>
+    <pre><code class="language-typescript">// Show when type equals 'business'
+TextInput.make('company_name').visibleWhen('type:business')
+
+// Show when type is NOT 'personal'
+TextInput.make('tax_id').visibleWhen('!type:personal')
+
+// AND logic: show when type is business AND country is us
+TextInput.make('ein').visibleWhen('type:business,country:us')
+
+// OR values: show when status is active OR pending
+TextInput.make('renewal_date').visibleWhen('status:active|pending')</code></pre>
+
+    <h3>Function Conditions</h3>
+    <p>For complex logic, use a function that receives the form object:</p>
+    <pre><code class="language-typescript">// Show when amount exceeds threshold
+TextInput.make('approval_note')
+    .visibleWhen((form) => form.amount > 1000)
+
+// Hide for certain roles
+TextInput.make('admin_override')
+    .hiddenWhen((form) => form.role === 'viewer')</code></pre>
+
+    <h3>evaluateVisibility Helper</h3>
+    <p>The exported <code>evaluateVisibility(condition, form)</code> function can be used outside of FormFields for custom visibility logic.</p>
+    <pre><code class="language-typescript">import { evaluateVisibility } from '@/composables/useFormSchema';
+
+// Returns boolean
+const isVisible = evaluateVisibility('type:business', formData);</code></pre>
+</section>
+
+<section id="row-grouping">
+    <h2>Row Grouping &amp; Summaries</h2>
+    <p>Group table rows by a column value and display aggregated summaries per column.</p>
+
+    <h3>Grouping</h3>
+    <p>Pass the <code>groupBy</code> prop to <code>&lt;DataTable&gt;</code> with a column key. Rows are grouped client-side with collapsible group headers.</p>
+    <pre><code class="language-xml">&lt;DataTable
+    :columns="columns"
+    :data="orders"
+    :filters="filters"
+    group-by="status"
+    route-name="admin.orders.index"
+/&gt;</code></pre>
+    <p>Group headers show the group label and a count badge. Click to collapse/expand.</p>
+
+    <h3>Column Summaries</h3>
+    <p>Add <code>.summarize(type)</code> to any column to display an aggregated value in the footer row:</p>
+    <pre><code class="language-typescript">const columns = [
+    TextColumn.make('order_number').sortable(),
+    BadgeColumn.make('status'),
+    TextColumn.make('quantity').numeric(0).summarize('sum'),
+    TextColumn.make('price').money('USD').summarize('sum'),           // auto-formats as currency
+    TextColumn.make('discount').numeric(2).summarize('average'),
+    TextColumn.make('rating').summarize('range'),                     // shows "1.5 – 4.8"
+    TextColumn.make('items').summarize('count'),
+    TextColumn.make('custom').summarize('custom', (values) => {       // custom function
+        return `${values.length} unique`;
+    }),
+];</code></pre>
+
+    <table>
+        <thead><tr><th>Summary Type</th><th>Description</th></tr></thead>
+        <tbody>
+            <tr><td><code>'sum'</code></td><td>Sum of numeric values. Respects <code>.money()</code> formatting.</td></tr>
+            <tr><td><code>'average'</code></td><td>Average of numeric values</td></tr>
+            <tr><td><code>'count'</code></td><td>Count of non-null values</td></tr>
+            <tr><td><code>'range'</code></td><td>Shows <code>min &ndash; max</code></td></tr>
+            <tr><td><code>'custom'</code></td><td>Custom function receives all values, returns display string</td></tr>
+        </tbody>
+    </table>
+
+    <h3>Server-Side Summaries</h3>
+    <p>For large datasets, pass pre-computed summaries from the backend via the <code>summaries</code> prop. Server summaries take precedence over client-side calculation:</p>
+    <pre><code class="language-xml">&lt;DataTable
+    :columns="columns"
+    :data="orders"
+    :summaries="{ price: '$45,230.00', quantity: 1284 }"
+    route-name="admin.orders.index"
+/&gt;</code></pre>
+
+    <h3>Group + Summary Combined</h3>
+    <p>When both <code>groupBy</code> and summaries are used, each group shows its own summary row plus an overall footer.</p>
+</section>
+
+<section id="drag-reorder">
+    <h2>Drag &amp; Drop Reordering</h2>
+    <p>Reorder table rows by dragging. Drag handles appear as the first column. Sorting is automatically disabled when reordering is enabled.</p>
+
+    <h3>Usage</h3>
+    <pre><code class="language-xml">&lt;DataTable
+    :columns="columns"
+    :data="tasks"
+    :reorderable="true"
+    reorder-route="admin.tasks.reorder"
+    route-name="admin.tasks.index"
+/&gt;</code></pre>
+
+    <h3>DataTable Props</h3>
+    <table>
+        <thead><tr><th>Prop</th><th>Type</th><th>Default</th><th>Description</th></tr></thead>
+        <tbody>
+            <tr><td><code>reorderable</code></td><td><code>boolean</code></td><td><code>false</code></td><td>Enable drag-and-drop reordering</td></tr>
+            <tr><td><code>reorderRoute</code></td><td><code>string</code></td><td>&mdash;</td><td>Named route to POST ordered IDs to</td></tr>
+        </tbody>
+    </table>
+
+    <h3>Backend</h3>
+    <p>The reorder endpoint receives an array of IDs in the new order:</p>
+    <pre><code class="language-php">public function reorder(Request $request): RedirectResponse
+{
+    $ids = $request->validate(['ids' => 'required|array'])['ids'];
+
+    foreach ($ids as $index => $id) {
+        Task::where('id', $id)->update(['sort_order' => $index + 1]);
+    }
+
+    return back()->with('success', 'Order saved.');
+}</code></pre>
+
+    <h3>Database</h3>
+    <p>Add a <code>sort_order</code> column to any model that needs reordering:</p>
+    <pre><code class="language-sql">ALTER TABLE `tasks` ADD COLUMN `sort_order` INT UNSIGNED DEFAULT 0 AFTER `id`;
+CREATE INDEX `idx_sort_order` ON `tasks` (`sort_order`);</code></pre>
+    <p>Order your queries by <code>sort_order</code>:</p>
+    <pre><code class="language-php">Task::orderBy('sort_order')->paginate(15);</code></pre>
+</section>
+
+<section id="infolist-builder">
+    <h2>Infolist Builder (Show Pages)</h2>
+    <p>Schema-based read-only detail views. Mirrors the form builder pattern but for displaying data instead of editing it. Use it for user profiles, order details, or any "show" page.</p>
+
+    <h3>Imports</h3>
+    <pre><code class="language-typescript">// Entry types
+import {
+    TextEntry, BadgeEntry, DateEntry, BooleanEntry,
+    ImageEntry, IconEntry, RepeatableEntry, KeyValueEntry,
+} from '@/composables/useInfolistSchema';
+
+// Layout types (reused from form builder)
+import { Section, Grid, Tabs, Tab, Fieldset } from '@/composables/useInfolistSchema';
+
+// Component
+import { InfolistEntries } from '@/components/admin';</code></pre>
+
+    <h3>Entry Types</h3>
+    <table>
+        <thead><tr><th>Class</th><th>Renders</th><th>Key Methods</th></tr></thead>
+        <tbody>
+            <tr><td><code>TextEntry</code></td><td>Plain or formatted text</td><td><code>.copyable()</code>, <code>.badge()</code>, <code>.badgeColors(map)</code>, <code>.money(currency)</code>, <code>.numeric(decimals)</code>, <code>.prefix()</code>, <code>.suffix()</code>, <code>.url(fn)</code>, <code>.limit(n)</code>, <code>.formatStateUsing(fn)</code>, <code>.description(fn)</code>, <code>.default(val)</code></td></tr>
+            <tr><td><code>BadgeEntry</code></td><td>Colored <code>&lt;Badge&gt;</code></td><td><code>.colors(map)</code></td></tr>
+            <tr><td><code>DateEntry</code></td><td><code>&lt;DateCell&gt;</code></td><td><code>.format('date'|'datetime'|'relative')</code></td></tr>
+            <tr><td><code>BooleanEntry</code></td><td>Check/X icon</td><td><code>.trueIcon(icon)</code>, <code>.falseIcon(icon)</code>, <code>.trueColor()</code>, <code>.falseColor()</code></td></tr>
+            <tr><td><code>ImageEntry</code></td><td><code>&lt;img&gt;</code></td><td><code>.circular()</code>, <code>.size(n)</code></td></tr>
+            <tr><td><code>IconEntry</code></td><td>Lucide icon</td><td><code>.icon(fn)</code>, <code>.color(fn)</code></td></tr>
+            <tr><td><code>RepeatableEntry</code></td><td>List of sub-entries</td><td><code>.schema(entries[])</code></td></tr>
+            <tr><td><code>KeyValueEntry</code></td><td>Key-value table</td><td>(none &mdash; renders object as key/value pairs)</td></tr>
+        </tbody>
+    </table>
+
+    <h3>Shared Entry Methods</h3>
+    <table>
+        <thead><tr><th>Method</th><th>Description</th></tr></thead>
+        <tbody>
+            <tr><td><code>.label(text)</code></td><td>Override auto-derived label</td></tr>
+            <tr><td><code>.colSpan(n)</code></td><td>Grid column span</td></tr>
+            <tr><td><code>.hidden(fn?)</code></td><td>Hide entry (static or function-based)</td></tr>
+            <tr><td><code>.visible(fn)</code></td><td>Show entry only when fn returns true</td></tr>
+            <tr><td><code>.tooltip(text)</code></td><td>Tooltip on the label</td></tr>
+        </tbody>
+    </table>
+
+    <h3>Example: User Detail Page</h3>
+    <pre><code class="language-typescript">import { TextEntry, BadgeEntry, DateEntry, BooleanEntry, KeyValueEntry, RepeatableEntry } from '@/composables/useInfolistSchema';
+import { Section, Grid } from '@/composables/useInfolistSchema';
+
+const schema = [
+    Section.make('Profile').schema([
+        TextEntry.make('name').copyable(),
+        TextEntry.make('email').copyable(),
+        TextEntry.make('phone').default('Not provided'),
+        BadgeEntry.make('status').colors({
+            active: 'default',
+            suspended: 'destructive',
+        }),
+        TextEntry.make('balance').money('USD'),
+        DateEntry.make('created_at').format('relative'),
+    ]),
+    Section.make('Security').columns(2).schema([
+        BooleanEntry.make('email_verified'),
+        BooleanEntry.make('two_factor_enabled'),
+        DateEntry.make('last_login_at').format('datetime'),
+    ]),
+    Section.make('Preferences').schema([
+        KeyValueEntry.make('metadata'),
+    ]),
+    Section.make('Recent Activity').columns(1).schema([
+        RepeatableEntry.make('recent_activity').schema([
+            TextEntry.make('action'),
+            DateEntry.make('date').format('relative'),
+            TextEntry.make('ip'),
+        ]),
+    ]),
+];</code></pre>
+
+    <h3>Rendering</h3>
+    <pre><code class="language-xml">&lt;InfolistEntries :schema="schema" :record="user" /&gt;</code></pre>
+    <p>The <code>record</code> prop is a plain object with key-value pairs. The component recursively renders entries inside layout wrappers (Section, Grid, Tabs, etc.) just like FormFields does for forms.</p>
+</section>
+
+<section id="relation-manager">
+    <h2>Relation Manager</h2>
+    <p>Embedded DataTable for managing related records on a detail page. Wraps <code>&lt;DataTable&gt;</code> in a Card with an optional create button that opens an <code>&lt;ActionModal&gt;</code>.</p>
+
+    <h3>Import</h3>
+    <pre><code class="language-typescript">import { RelationManager } from '@/components/admin';</code></pre>
+
+    <h3>Props</h3>
+    <table>
+        <thead><tr><th>Prop</th><th>Type</th><th>Default</th><th>Description</th></tr></thead>
+        <tbody>
+            <tr><td><code>title</code></td><td><code>string</code></td><td>required</td><td>Card title</td></tr>
+            <tr><td><code>description</code></td><td><code>string</code></td><td>&mdash;</td><td>Card description</td></tr>
+            <tr><td><code>columns</code></td><td><code>BaseColumn[]</code></td><td>required</td><td>Table columns</td></tr>
+            <tr><td><code>data</code></td><td><code>PaginatedData</code></td><td>required</td><td>Paginated related records</td></tr>
+            <tr><td><code>routeName</code></td><td><code>string</code></td><td>required</td><td>Route name for pagination</td></tr>
+            <tr><td><code>filters</code></td><td><code>Record</code></td><td>&mdash;</td><td>Current filter values</td></tr>
+            <tr><td><code>tableFilters</code></td><td><code>BaseFilter[]</code></td><td>&mdash;</td><td>Filter controls</td></tr>
+            <tr><td><code>actions</code></td><td><code>Action[]</code></td><td>&mdash;</td><td>Row actions</td></tr>
+            <tr><td><code>bulkActions</code></td><td><code>BulkAction[]</code></td><td>&mdash;</td><td>Bulk actions</td></tr>
+            <tr><td><code>searchable</code></td><td><code>boolean</code></td><td><code>true</code></td><td>Show search</td></tr>
+            <tr><td><code>createSchema</code></td><td><code>SchemaItem[]</code></td><td>&mdash;</td><td>Form schema for create modal</td></tr>
+            <tr><td><code>createRouteName</code></td><td><code>string</code></td><td>&mdash;</td><td>Route for create POST</td></tr>
+            <tr><td><code>createDefaults</code></td><td><code>Record</code></td><td>&mdash;</td><td>Default form values</td></tr>
+            <tr><td><code>createLabel</code></td><td><code>string</code></td><td><code>'Create'</code></td><td>Create button text</td></tr>
+        </tbody>
+    </table>
+
+    <h3>Example: User Orders</h3>
+    <pre><code class="language-xml">&lt;RelationManager
+    title="Orders"
+    description="All orders placed by this user."
+    :columns="orderColumns"
+    :data="orders"
+    :filters="filters"
+    route-name="admin.users.orders"
+    :route-params="{ user: user.id }"
+    :create-schema="createOrderSchema"
+    create-route-name="admin.orders.store"
+    :create-defaults="{ user_id: user.id }"
+    create-label="New Order"
+/&gt;</code></pre>
+
+    <p>When <code>createSchema</code> and <code>createRouteName</code> are provided, a "Create" button appears in the card header. Clicking it opens an ActionModal with the provided form schema.</p>
+</section>
+
+<section id="dashboard-widgets">
+    <h2>Dashboard Widget System</h2>
+    <p>Configurable widget builders for creating dashboards. Replaces hardcoded dashboard layouts with a schema-driven approach.</p>
+
+    <h3>Imports</h3>
+    <pre><code class="language-typescript">import { StatWidget, ChartWidget, TableWidget, CustomWidget } from '@/composables/useDashboardWidgets';
+import { DashboardGrid } from '@/components/admin';</code></pre>
+
+    <h3>Widget Types</h3>
+    <table>
+        <thead><tr><th>Class</th><th>Renders</th><th>Key Methods</th></tr></thead>
+        <tbody>
+            <tr><td><code>StatWidget</code></td><td><code>&lt;StatCard&gt;</code></td><td><code>.value(fn)</code>, <code>.description(fn)</code>, <code>.icon(component)</code>, <code>.trend(fn)</code></td></tr>
+            <tr><td><code>ChartWidget</code></td><td>Chart.js chart in Card</td><td><code>.type('bar'|'line'|'pie'|'doughnut')</code>, <code>.data(fn)</code>, <code>.height(n)</code>, <code>.collapsible()</code></td></tr>
+            <tr><td><code>TableWidget</code></td><td>Table in Card</td><td><code>.columns(fn)</code>, <code>.data(fn)</code>, <code>.footerLink(fn)</code></td></tr>
+            <tr><td><code>CustomWidget</code></td><td>Any component</td><td><code>.make(key, component)</code>, <code>.props(fn)</code></td></tr>
+        </tbody>
+    </table>
+
+    <h3>Shared Widget Methods</h3>
+    <table>
+        <thead><tr><th>Method</th><th>Description</th></tr></thead>
+        <tbody>
+            <tr><td><code>.title(text)</code></td><td>Widget title (auto-derived from key)</td></tr>
+            <tr><td><code>.colSpan(n)</code></td><td>Grid column span (1&ndash;4)</td></tr>
+        </tbody>
+    </table>
+
+    <h3>Example Dashboard</h3>
+    <pre><code class="language-typescript">import { StatWidget, ChartWidget, TableWidget } from '@/composables/useDashboardWidgets';
+import { Users, DollarSign, ShoppingCart, TrendingUp } from 'lucide-vue-next';
+
+const widgets = [
+    StatWidget.make('users')
+        .title('Total Users')
+        .value((p) => p.data.totalUsers.toLocaleString())
+        .description(() => 'All time')
+        .icon(Users)
+        .trend((p) => ({ value: 12.5, isPositive: true })),
+
+    StatWidget.make('revenue')
+        .title('Revenue')
+        .value((p) => '$' + p.data.revenue.toLocaleString())
+        .icon(DollarSign),
+
+    ChartWidget.make('sales-chart')
+        .title('Sales by Month')
+        .type('bar')
+        .colSpan(2)
+        .collapsible()
+        .data((p) => ({
+            labels: p.data.salesByMonth.map(m => m.month),
+            datasets: [{
+                label: 'Sales',
+                data: p.data.salesByMonth.map(m => m.sales),
+                backgroundColor: 'rgba(59, 130, 246, 0.5)',
+            }],
+        })),
+
+    TableWidget.make('recent-orders')
+        .title('Recent Orders')
+        .colSpan(2)
+        .columns(() => [
+            { key: 'id', label: 'Order' },
+            { key: 'customer', label: 'Customer' },
+            { key: 'total', label: 'Total', class: 'text-right' },
+            { key: 'status', label: 'Status' },
+        ])
+        .data((p) => p.data.recentOrders)
+        .footerLink(() => ({ label: 'View all orders', href: '/admin/orders' })),
+];</code></pre>
+
+    <h3>Rendering</h3>
+    <pre><code class="language-xml">&lt;DashboardGrid :widgets="widgets" :page-props="$page.props" /&gt;</code></pre>
+    <p>The <code>DashboardGrid</code> component renders a responsive <code>grid-cols-1 sm:grid-cols-2 lg:grid-cols-4</code> grid. Each widget receives the <code>pageProps</code> so its builder functions can access backend data.</p>
+
+    <h3>ChartWidget Collapsible State</h3>
+    <p>When <code>.collapsible()</code> is set, the chart section can be collapsed by clicking the header. The collapsed state is persisted in <code>localStorage</code> per widget key.</p>
+</section>
+
+<hr class="section-divider">
+
+<!-- ============================================================ -->
 <!-- SECTION 4: COMPONENTS -->
 <!-- ============================================================ -->
 <section id="admin-components">
@@ -1602,7 +2258,10 @@ const bulkActions = [
 
     <h3>Admin Components</h3>
     <p>Imported from <code>@/components/admin</code>:</p>
-    <pre><code class="language-typescript">import { FormField, FormFields, ResourceForm, SettingsCard, SimpleTable, RowActions, DateCell } from '@/components/admin';</code></pre>
+    <pre><code class="language-typescript">import {
+    FormField, FormFields, ResourceForm, SettingsCard, SimpleTable, RowActions, DateCell,
+    InfolistEntries, InfolistEntry, RelationManager, DashboardGrid,
+} from '@/components/admin';</code></pre>
 
     <h4 id="comp-formfield">FormField</h4>
     <p>Renders a single form field with label, input, error, and hint. Automatically selects the correct input component based on <code>type</code>.</p>
@@ -2054,6 +2713,413 @@ const tableFilters = [SelectFilter.make('status').options({ active: 'Active', su
     <p><strong>Components used:</strong> <code>CommandDialog</code>, <code>CommandInput</code>, <code>CommandList</code>, <code>CommandEmpty</code>, <code>CommandGroup</code>, <code>CommandItem</code>, <code>CommandSeparator</code></p>
 </section>
 
+<!-- ============================================================ -->
+<!-- UI COMPONENTS (shadcn-vue) -->
+<!-- ============================================================ -->
+
+<section id="ui-inputs">
+    <h3>Input Components (shadcn-vue)</h3>
+    <p>All input-related components from shadcn-vue, available in <code>@/components/ui/</code>.</p>
+
+    <table>
+        <thead><tr><th>Component</th><th>Import</th><th>Description</th></tr></thead>
+        <tbody>
+            <tr>
+                <td><strong>Button</strong></td>
+                <td><code>@/components/ui/button</code></td>
+                <td>Primary action button with variants (<code>default</code>, <code>destructive</code>, <code>outline</code>, <code>secondary</code>, <code>ghost</code>, <code>link</code>) and sizes.</td>
+            </tr>
+            <tr>
+                <td><strong>Checkbox</strong></td>
+                <td><code>@/components/ui/checkbox</code></td>
+                <td>Styled checkbox with checked/indeterminate states.</td>
+            </tr>
+            <tr>
+                <td><strong>Input</strong></td>
+                <td><code>@/components/ui/input</code></td>
+                <td>Standard text input with consistent styling.</td>
+            </tr>
+            <tr>
+                <td><strong>Input Group</strong></td>
+                <td><code>@/components/ui/input-group</code></td>
+                <td>Group inputs with addons, icons, or buttons.</td>
+            </tr>
+            <tr>
+                <td><strong>Number Field</strong></td>
+                <td><code>@/components/ui/number-field</code></td>
+                <td>Stepper-style number input with increment/decrement buttons and locale-aware formatting.</td>
+            </tr>
+            <tr>
+                <td><strong>Pin Input</strong></td>
+                <td><code>@/components/ui/pin-input</code></td>
+                <td>Individual character input slots for OTP codes and PINs.</td>
+            </tr>
+            <tr>
+                <td><strong>Radio Group</strong></td>
+                <td><code>@/components/ui/radio-group</code></td>
+                <td>Styled radio button group with <code>RadioGroupItem</code>.</td>
+            </tr>
+            <tr>
+                <td><strong>Select</strong></td>
+                <td><code>@/components/ui/select</code></td>
+                <td>Custom dropdown select with trigger, content, and items.</td>
+            </tr>
+            <tr>
+                <td><strong>Slider</strong></td>
+                <td><code>@/components/ui/slider</code></td>
+                <td>Range slider with track, range highlight, and thumb.</td>
+            </tr>
+            <tr>
+                <td><strong>Switch</strong></td>
+                <td><code>@/components/ui/switch</code></td>
+                <td>Toggle switch for boolean values.</td>
+            </tr>
+            <tr>
+                <td><strong>Tags Input</strong></td>
+                <td><code>@/components/ui/tags-input</code></td>
+                <td>Free-form tag entry with tag items and delete buttons.</td>
+            </tr>
+            <tr>
+                <td><strong>Textarea</strong></td>
+                <td><code>@/components/ui/textarea</code></td>
+                <td>Multi-line text input.</td>
+            </tr>
+            <tr>
+                <td><strong>Toggle</strong></td>
+                <td><code>@/components/ui/toggle</code></td>
+                <td>Two-state button (pressed/unpressed).</td>
+            </tr>
+            <tr>
+                <td><strong>Toggle Group</strong></td>
+                <td><code>@/components/ui/toggle-group</code></td>
+                <td>Group of toggle buttons for single or multiple selection.</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <p><strong>Usage example (Number Field):</strong></p>
+    <pre><code class="language-xml">&lt;script setup&gt;
+import { NumberField, NumberFieldContent, NumberFieldDecrement, NumberFieldIncrement, NumberFieldInput } from '@/components/ui/number-field';
+&lt;/script&gt;
+
+&lt;NumberField :model-value="quantity" :min="1" :max="99"&gt;
+    &lt;NumberFieldContent&gt;
+        &lt;NumberFieldDecrement /&gt;
+        &lt;NumberFieldInput /&gt;
+        &lt;NumberFieldIncrement /&gt;
+    &lt;/NumberFieldContent&gt;
+&lt;/NumberField&gt;</code></pre>
+
+    <p><strong>Usage example (Tags Input):</strong></p>
+    <pre><code class="language-xml">&lt;script setup&gt;
+import { TagsInput, TagsInputInput, TagsInputItem, TagsInputItemDelete, TagsInputItemText } from '@/components/ui/tags-input';
+const tags = ref(['vue', 'typescript']);
+&lt;/script&gt;
+
+&lt;TagsInput v-model="tags"&gt;
+    &lt;TagsInputItem v-for="tag in tags" :key="tag" :value="tag"&gt;
+        &lt;TagsInputItemText /&gt;
+        &lt;TagsInputItemDelete /&gt;
+    &lt;/TagsInputItem&gt;
+    &lt;TagsInputInput placeholder="Add tag..." /&gt;
+&lt;/TagsInput&gt;</code></pre>
+</section>
+
+<section id="ui-data-display">
+    <h3>Data Display Components</h3>
+    <p>Components for presenting data and content.</p>
+
+    <table>
+        <thead><tr><th>Component</th><th>Import</th><th>Description</th></tr></thead>
+        <tbody>
+            <tr>
+                <td><strong>Avatar</strong></td>
+                <td><code>@/components/ui/avatar</code></td>
+                <td>User avatar with image, fallback initials, and sizes.</td>
+            </tr>
+            <tr>
+                <td><strong>Badge</strong></td>
+                <td><code>@/components/ui/badge</code></td>
+                <td>Small label with variants (<code>default</code>, <code>secondary</code>, <code>destructive</code>, <code>outline</code>).</td>
+            </tr>
+            <tr>
+                <td><strong>Calendar</strong></td>
+                <td><code>@/components/ui/calendar</code></td>
+                <td>Full calendar grid for date selection. Uses <code>@internationalized/date</code> for locale-aware dates.</td>
+            </tr>
+            <tr>
+                <td><strong>Card</strong></td>
+                <td><code>@/components/ui/card</code></td>
+                <td>Container with header, content, and footer sections.</td>
+            </tr>
+            <tr>
+                <td><strong>Kbd</strong></td>
+                <td><code>@/components/ui/kbd</code></td>
+                <td>Keyboard shortcut indicator.</td>
+            </tr>
+            <tr>
+                <td><strong>Progress</strong></td>
+                <td><code>@/components/ui/progress</code></td>
+                <td>Horizontal progress bar with animated fill.</td>
+            </tr>
+            <tr>
+                <td><strong>Range Calendar</strong></td>
+                <td><code>@/components/ui/range-calendar</code></td>
+                <td>Calendar for selecting a date range (start &amp; end dates).</td>
+            </tr>
+            <tr>
+                <td><strong>Separator</strong></td>
+                <td><code>@/components/ui/separator</code></td>
+                <td>Visual divider (horizontal or vertical).</td>
+            </tr>
+            <tr>
+                <td><strong>Skeleton</strong></td>
+                <td><code>@/components/ui/skeleton</code></td>
+                <td>Animated loading placeholder matching content dimensions.</td>
+            </tr>
+            <tr>
+                <td><strong>Table</strong></td>
+                <td><code>@/components/ui/table</code></td>
+                <td>Styled table with header, body, row, head, and cell sub-components.</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <p><strong>Usage example (Calendar):</strong></p>
+    <pre><code class="language-xml">&lt;script setup&gt;
+import { Calendar } from '@/components/ui/calendar';
+import { ref } from 'vue';
+const date = ref();
+&lt;/script&gt;
+
+&lt;Calendar v-model="date" /&gt;</code></pre>
+</section>
+
+<section id="ui-layout">
+    <h3>Layout Components</h3>
+    <p>Components for organizing and structuring content.</p>
+
+    <table>
+        <thead><tr><th>Component</th><th>Import</th><th>Description</th></tr></thead>
+        <tbody>
+            <tr>
+                <td><strong>Accordion</strong></td>
+                <td><code>@/components/ui/accordion</code></td>
+                <td>Collapsible content sections. Supports single or multiple open items.</td>
+            </tr>
+            <tr>
+                <td><strong>Aspect Ratio</strong></td>
+                <td><code>@/components/ui/aspect-ratio</code></td>
+                <td>Maintains a consistent width-to-height ratio for child content.</td>
+            </tr>
+            <tr>
+                <td><strong>Carousel</strong></td>
+                <td><code>@/components/ui/carousel</code></td>
+                <td>Scrollable content carousel with previous/next navigation. Powered by Embla Carousel.</td>
+            </tr>
+            <tr>
+                <td><strong>Collapsible</strong></td>
+                <td><code>@/components/ui/collapsible</code></td>
+                <td>Toggleable section that shows/hides content.</td>
+            </tr>
+            <tr>
+                <td><strong>Resizable</strong></td>
+                <td><code>@/components/ui/resizable</code></td>
+                <td>Resizable panel groups with draggable handles.</td>
+            </tr>
+            <tr>
+                <td><strong>Scroll Area</strong></td>
+                <td><code>@/components/ui/scroll-area</code></td>
+                <td>Custom scrollbar container with cross-browser consistency.</td>
+            </tr>
+            <tr>
+                <td><strong>Stepper</strong></td>
+                <td><code>@/components/ui/stepper</code></td>
+                <td>Multi-step progress indicator with numbered steps.</td>
+            </tr>
+            <tr>
+                <td><strong>Tabs</strong></td>
+                <td><code>@/components/ui/tabs</code></td>
+                <td>Tabbed content panels with trigger buttons and content areas.</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <p><strong>Usage example (Accordion):</strong></p>
+    <pre><code class="language-xml">&lt;script setup&gt;
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
+&lt;/script&gt;
+
+&lt;Accordion type="single" collapsible&gt;
+    &lt;AccordionItem value="item-1"&gt;
+        &lt;AccordionTrigger&gt;Section Title&lt;/AccordionTrigger&gt;
+        &lt;AccordionContent&gt;Section content here.&lt;/AccordionContent&gt;
+    &lt;/AccordionItem&gt;
+&lt;/Accordion&gt;</code></pre>
+
+    <p><strong>Usage example (Carousel):</strong></p>
+    <pre><code class="language-xml">&lt;script setup&gt;
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
+&lt;/script&gt;
+
+&lt;Carousel&gt;
+    &lt;CarouselContent&gt;
+        &lt;CarouselItem v-for="i in 5" :key="i"&gt;Slide {{ i }}&lt;/CarouselItem&gt;
+    &lt;/CarouselContent&gt;
+    &lt;CarouselPrevious /&gt;
+    &lt;CarouselNext /&gt;
+&lt;/Carousel&gt;</code></pre>
+</section>
+
+<section id="ui-navigation">
+    <h3>Navigation Components</h3>
+    <p>Components for site navigation and menus.</p>
+
+    <table>
+        <thead><tr><th>Component</th><th>Import</th><th>Description</th></tr></thead>
+        <tbody>
+            <tr>
+                <td><strong>Breadcrumb</strong></td>
+                <td><code>@/components/ui/breadcrumb</code></td>
+                <td>Trail of navigation links showing current location.</td>
+            </tr>
+            <tr>
+                <td><strong>Command</strong></td>
+                <td><code>@/components/ui/command</code></td>
+                <td>Command palette / searchable command menu (cmdk-style).</td>
+            </tr>
+            <tr>
+                <td><strong>Context Menu</strong></td>
+                <td><code>@/components/ui/context-menu</code></td>
+                <td>Right-click context menu with items, checkboxes, radio groups, and sub-menus.</td>
+            </tr>
+            <tr>
+                <td><strong>Dropdown Menu</strong></td>
+                <td><code>@/components/ui/dropdown-menu</code></td>
+                <td>Click-triggered dropdown with items, separators, and sub-menus.</td>
+            </tr>
+            <tr>
+                <td><strong>Menubar</strong></td>
+                <td><code>@/components/ui/menubar</code></td>
+                <td>Horizontal menu bar with dropdown menus (desktop application-style).</td>
+            </tr>
+            <tr>
+                <td><strong>Navigation Menu</strong></td>
+                <td><code>@/components/ui/navigation-menu</code></td>
+                <td>Horizontal navigation with dropdown content panels.</td>
+            </tr>
+            <tr>
+                <td><strong>Pagination</strong></td>
+                <td><code>@/components/ui/pagination</code></td>
+                <td>Page navigation controls with previous, next, and page numbers.</td>
+            </tr>
+            <tr>
+                <td><strong>Sidebar</strong></td>
+                <td><code>@/components/ui/sidebar</code></td>
+                <td>Collapsible sidebar navigation with sections, items, and mobile support.</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <p><strong>Usage example (Context Menu):</strong></p>
+    <pre><code class="language-xml">&lt;script setup&gt;
+import { ContextMenu, ContextMenuContent, ContextMenuItem, ContextMenuTrigger } from '@/components/ui/context-menu';
+&lt;/script&gt;
+
+&lt;ContextMenu&gt;
+    &lt;ContextMenuTrigger&gt;Right click me&lt;/ContextMenuTrigger&gt;
+    &lt;ContextMenuContent&gt;
+        &lt;ContextMenuItem&gt;Edit&lt;/ContextMenuItem&gt;
+        &lt;ContextMenuItem&gt;Delete&lt;/ContextMenuItem&gt;
+    &lt;/ContextMenuContent&gt;
+&lt;/ContextMenu&gt;</code></pre>
+</section>
+
+<section id="ui-feedback">
+    <h3>Feedback &amp; Overlay Components</h3>
+    <p>Components for notifications, dialogs, and overlays.</p>
+
+    <table>
+        <thead><tr><th>Component</th><th>Import</th><th>Description</th></tr></thead>
+        <tbody>
+            <tr>
+                <td><strong>Alert</strong></td>
+                <td><code>@/components/ui/alert</code></td>
+                <td>Static alert message with title and description. Variants: <code>default</code>, <code>destructive</code>.</td>
+            </tr>
+            <tr>
+                <td><strong>Alert Dialog</strong></td>
+                <td><code>@/components/ui/alert-dialog</code></td>
+                <td>Modal confirmation dialog requiring user action before proceeding.</td>
+            </tr>
+            <tr>
+                <td><strong>Dialog</strong></td>
+                <td><code>@/components/ui/dialog</code></td>
+                <td>Modal dialog with header, content, and footer sections.</td>
+            </tr>
+            <tr>
+                <td><strong>Drawer</strong></td>
+                <td><code>@/components/ui/drawer</code></td>
+                <td>Slide-out panel from bottom (mobile-friendly). Powered by Vaul Vue.</td>
+            </tr>
+            <tr>
+                <td><strong>Hover Card</strong></td>
+                <td><code>@/components/ui/hover-card</code></td>
+                <td>Preview card that appears on hover over a trigger element.</td>
+            </tr>
+            <tr>
+                <td><strong>Popover</strong></td>
+                <td><code>@/components/ui/popover</code></td>
+                <td>Floating content panel anchored to a trigger.</td>
+            </tr>
+            <tr>
+                <td><strong>Sheet</strong></td>
+                <td><code>@/components/ui/sheet</code></td>
+                <td>Slide-out panel from any side (top, right, bottom, left).</td>
+            </tr>
+            <tr>
+                <td><strong>Sonner</strong></td>
+                <td><code>@/components/ui/sonner</code></td>
+                <td>Toast notification system. Used via <code>vue-sonner</code>.</td>
+            </tr>
+            <tr>
+                <td><strong>Spinner</strong></td>
+                <td><code>@/components/ui/spinner</code></td>
+                <td>Loading spinner animation.</td>
+            </tr>
+            <tr>
+                <td><strong>Tooltip</strong></td>
+                <td><code>@/components/ui/tooltip</code></td>
+                <td>Small informational popup on hover.</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <p><strong>Usage example (Drawer):</strong></p>
+    <pre><code class="language-xml">&lt;script setup&gt;
+import { Drawer, DrawerClose, DrawerContent, DrawerDescription, DrawerFooter, DrawerHeader, DrawerTitle, DrawerTrigger } from '@/components/ui/drawer';
+import { Button } from '@/components/ui/button';
+&lt;/script&gt;
+
+&lt;Drawer&gt;
+    &lt;DrawerTrigger as-child&gt;
+        &lt;Button variant="outline"&gt;Open Drawer&lt;/Button&gt;
+    &lt;/DrawerTrigger&gt;
+    &lt;DrawerContent&gt;
+        &lt;DrawerHeader&gt;
+            &lt;DrawerTitle&gt;Settings&lt;/DrawerTitle&gt;
+            &lt;DrawerDescription&gt;Configure your preferences.&lt;/DrawerDescription&gt;
+        &lt;/DrawerHeader&gt;
+        &lt;!-- content here --&gt;
+        &lt;DrawerFooter&gt;
+            &lt;DrawerClose as-child&gt;
+                &lt;Button variant="outline"&gt;Cancel&lt;/Button&gt;
+            &lt;/DrawerClose&gt;
+        &lt;/DrawerFooter&gt;
+    &lt;/DrawerContent&gt;
+&lt;/Drawer&gt;</code></pre>
+</section>
+
 <hr class="section-divider">
 
 <!-- ============================================================ -->
@@ -2066,7 +3132,7 @@ const tableFilters = [SelectFilter.make('status').options({ active: 'Active', su
     <h4>useFormSchema</h4>
     <p>Form builder API for defining field schemas and layouts with a fluent, chainable syntax.</p>
     <p><strong>File:</strong> <code>resources/js/composables/useFormSchema.ts</code></p>
-    <p><strong>Field exports:</strong> <code>TextInput</code>, <code>Select</code>, <code>Textarea</code>, <code>Toggle</code>, <code>Checkbox</code>, <code>DatePicker</code>, <code>DateTimePicker</code>, <code>Radio</code>, <code>ColorPicker</code>, <code>Hidden</code>, <code>FileUpload</code>, <code>RichEditor</code></p>
+    <p><strong>Field exports:</strong> <code>TextInput</code>, <code>Select</code>, <code>Textarea</code>, <code>Toggle</code>, <code>Checkbox</code>, <code>DatePicker</code>, <code>DateTimePicker</code>, <code>Radio</code>, <code>ColorPicker</code>, <code>Hidden</code>, <code>FileUpload</code>, <code>RichEditor</code>, <code>Repeater</code>, <code>Slider</code>, <code>NumberField</code>, <code>PinInput</code>, <code>TagsInput</code>, <code>ToggleGroupField</code>, <code>CalendarPicker</code></p>
     <p><strong>Layout exports:</strong> <code>Section</code>, <code>Grid</code>, <code>Tabs</code>, <code>Tab</code>, <code>Fieldset</code>, <code>Flex</code>, <code>Wizard</code>, <code>WizardStep</code>, <code>Callout</code></p>
     <p><strong>Type exports:</strong> <code>FieldSchema</code>, <code>LayoutSchema</code>, <code>SchemaItem</code>, <code>BaseField</code></p>
     <p>See <a href="#form-builder">Form Builder</a> and <a href="#form-layouts">Form Layouts</a> for full documentation.</p>
@@ -2088,6 +3154,21 @@ const tableFilters = [SelectFilter.make('status').options({ active: 'Active', su
     <p><strong>File:</strong> <code>resources/js/composables/useTableActions.ts</code></p>
     <p><strong>Exports:</strong> <code>Action</code>, <code>EditAction</code>, <code>ViewAction</code>, <code>DeleteAction</code>, <code>ActionGroup</code>, <code>BulkAction</code></p>
     <p>See <a href="#table-actions">Table Actions</a> for full documentation.</p>
+
+    <h4>useInfolistSchema</h4>
+    <p>Infolist entry builder API for defining read-only detail views with a fluent, chainable syntax. Re-exports layout classes from <code>useFormSchema</code> for structural composition.</p>
+    <p><strong>File:</strong> <code>resources/js/composables/useInfolistSchema.ts</code></p>
+    <p><strong>Entry exports:</strong> <code>TextEntry</code>, <code>BadgeEntry</code>, <code>DateEntry</code>, <code>BooleanEntry</code>, <code>ImageEntry</code>, <code>IconEntry</code>, <code>RepeatableEntry</code>, <code>KeyValueEntry</code></p>
+    <p><strong>Layout re-exports:</strong> <code>Section</code>, <code>Grid</code>, <code>Tabs</code>, <code>Tab</code>, <code>Fieldset</code>, <code>Flex</code></p>
+    <p><strong>Type exports:</strong> <code>EntrySchema</code>, <code>EntryType</code>, <code>InfolistSchemaItem</code></p>
+    <p>See <a href="#infolist-builder">Infolist Builder</a> for full documentation.</p>
+
+    <h4>useDashboardWidgets</h4>
+    <p>Dashboard widget builder API for defining configurable dashboard layouts with stat cards, charts, tables, and custom components.</p>
+    <p><strong>File:</strong> <code>resources/js/composables/useDashboardWidgets.ts</code></p>
+    <p><strong>Exports:</strong> <code>StatWidget</code>, <code>ChartWidget</code>, <code>TableWidget</code>, <code>CustomWidget</code></p>
+    <p><strong>Type exports:</strong> <code>WidgetSchema</code>, <code>WidgetType</code>, <code>ChartType</code></p>
+    <p>See <a href="#dashboard-widgets">Dashboard Widgets</a> for full documentation.</p>
 </section>
 
 <section id="useResourceForm">
@@ -3691,7 +4772,9 @@ interface NavItem {
     type: 'text' | 'email' | 'password' | 'number' | 'textarea'
         | 'select' | 'switch' | 'checkbox' | 'tel' | 'url'
         | 'date' | 'datetime-local' | 'radio' | 'color'
-        | 'hidden' | 'file' | 'richtext';
+        | 'hidden' | 'file' | 'richtext' | 'repeater'
+        | 'slider' | 'number-field' | 'pin-input'
+        | 'tags-input' | 'toggle-group' | 'calendar';
     required: boolean;
     hint?: string;
     placeholder?: string;
@@ -3705,6 +4788,34 @@ interface NavItem {
     accept?: string;
     multiple?: boolean;
     maxSize?: number;
+    // Slider / NumberField
+    min?: number;
+    max?: number;
+    step?: number;
+    showValue?: boolean;
+    formatOptions?: Intl.NumberFormatOptions;
+    // PinInput
+    pinLength?: number;
+    pinMask?: boolean;
+    // TagsInput
+    maxTags?: number;
+    tagPlaceholder?: string;
+    // ToggleGroup
+    toggleMultiple?: boolean;
+    toggleVariant?: 'default' | 'outline';
+    // Calendar date picker
+    useCalendar?: boolean;
+    dateFormat?: string;
+    // Repeater
+    subSchema?: SchemaItem[];
+    minItems?: number;
+    maxItems?: number;
+    addLabel?: string;
+    reorderable?: boolean;
+    repeaterCollapsible?: boolean;
+    // Conditional visibility
+    visibleWhen?: string | ((form: Record&lt;string, any&gt;) =&gt; boolean);
+    hiddenWhen?: string | ((form: Record&lt;string, any&gt;) =&gt; boolean);
 }</code></pre>
 
     <h4>SelectOption</h4>
@@ -3768,6 +4879,8 @@ interface NavItem {
     tooltip?: string;
     toggleable: boolean;
     grow: boolean;
+    summarize?: 'sum' | 'average' | 'count' | 'range' | 'custom';
+    summaryFn?: (rows: any[]) =&gt; string | number;
 }
 
 type ColumnSchema =
@@ -3777,7 +4890,9 @@ type ColumnSchema =
     | BooleanColumnSchema   // type: 'boolean' + trueIcon, falseIcon, trueColor, falseColor
     | ImageColumnSchema     // type: 'image' + circular, size, defaultUrl
     | IconColumnSchema      // type: 'icon' + iconFn, colorFn
-    | ToggleColumnSchema;   // type: 'toggle' + onUpdateFn</code></pre>
+    | ToggleColumnSchema    // type: 'toggle' + onUpdateFn
+    | SelectColumnSchema   // type: 'select' + options, onUpdateFn, placeholder
+    | TextInputColumnSchema; // type: 'textinput' + onUpdateFn, placeholder, debounceMs</code></pre>
 
     <h4>FilterSchema</h4>
     <pre><code class="language-typescript">type FilterSchema =
@@ -3832,6 +4947,157 @@ type ColumnSchema =
 }
 
 type SchemaItem = BaseField | LayoutItem; // Field or layout wrapper</code></pre>
+
+    <h4>EntrySchema (Infolist)</h4>
+    <p>Used by infolist entry builders (<code>TextEntry</code>, <code>BadgeEntry</code>, <code>DateEntry</code>, etc.).</p>
+    <pre><code class="language-typescript">type EntryType = 'text' | 'badge' | 'date' | 'boolean' | 'image' | 'icon' | 'repeatable' | 'key-value';
+
+interface EntrySchema {
+    key: string;
+    label: string;
+    type: EntryType;
+    colSpan?: number;
+    hidden?: boolean;
+    tooltip?: string;
+    // Text
+    copyable?: boolean;
+    isBadge?: boolean;
+    badgeColors?: Record&lt;string, string&gt;;
+    formatFn?: (value: any, record: any) =&gt; string;
+    descriptionFn?: (record: any) =&gt; string;
+    defaultValue?: string;
+    prefix?: string;
+    suffix?: string;
+    currency?: string;
+    decimals?: number;
+    urlFn?: (record: any) =&gt; string;
+    limit?: number;
+    // Date
+    dateFormat?: 'date' | 'datetime' | 'relative';
+    // Boolean
+    trueIcon?: Component;
+    falseIcon?: Component;
+    trueColor?: string;
+    falseColor?: string;
+    // Image
+    circular?: boolean;
+    imageSize?: number;
+    // Icon
+    iconFn?: (value: any, record: any) =&gt; Component;
+    colorFn?: (value: any, record: any) =&gt; string;
+    // Repeatable
+    subSchema?: EntrySchema[];
+    // Visibility
+    visibleFn?: (record: any) =&gt; boolean;
+    hiddenFn?: (record: any) =&gt; boolean;
+}
+
+type InfolistSchemaItem = EntrySchema | BaseEntry | LayoutSchema | Section | Grid | Tabs | Fieldset | Flex;</code></pre>
+
+    <h4>WidgetSchema (Dashboard)</h4>
+    <p>Used by dashboard widget builders (<code>StatWidget</code>, <code>ChartWidget</code>, <code>TableWidget</code>, <code>CustomWidget</code>).</p>
+    <pre><code class="language-typescript">type WidgetType = 'stat' | 'chart' | 'table' | 'custom';
+type ChartType = 'bar' | 'line' | 'pie' | 'doughnut';
+
+interface WidgetSchema {
+    key: string;
+    type: WidgetType;
+    colSpan: number;
+    title?: string;
+    // Stat
+    valueFn?: (props: any) =&gt; string | number;
+    descriptionFn?: (props: any) =&gt; string;
+    icon?: Component;
+    trendFn?: (props: any) =&gt; { value: number; isPositive: boolean } | null;
+    // Chart
+    chartType?: ChartType;
+    dataFn?: (props: any) =&gt; any;
+    height?: number;
+    collapsible?: boolean;
+    // Table
+    columnsFn?: (props: any) =&gt; Array&lt;{ key: string; label: string; class?: string }&gt;;
+    rowsFn?: (props: any) =&gt; any[];
+    footerLinkFn?: (props: any) =&gt; { label: string; href: string } | null;
+    // Custom
+    component?: Component;
+    propsFn?: (props: any) =&gt; Record&lt;string, any&gt;;
+}</code></pre>
+</section>
+
+<section id="websocket-notifications">
+    <h3>Real-Time Notifications (WebSocket)</h3>
+    <p>Optional WebSocket support via Laravel Reverb. When <code>VITE_REVERB_APP_KEY</code> is set, the app connects to Reverb and listens for real-time notifications on the user's private channel.</p>
+
+    <h4>Setup</h4>
+    <ol>
+        <li>Install Laravel Reverb: <code>composer require laravel/reverb</code></li>
+        <li>Publish and run Reverb migrations</li>
+        <li>Set the Reverb environment variables in <code>.env</code>:
+            <pre><code class="language-bash">BROADCAST_CONNECTION=reverb
+REVERB_APP_ID=my-app-id
+REVERB_APP_KEY=my-app-key
+REVERB_APP_SECRET=my-app-secret
+REVERB_HOST="localhost"
+REVERB_PORT=8080
+REVERB_SCHEME=http
+VITE_REVERB_APP_KEY="${REVERB_APP_KEY}"
+VITE_REVERB_HOST="${REVERB_HOST}"
+VITE_REVERB_PORT="${REVERB_PORT}"
+VITE_REVERB_SCHEME="${REVERB_SCHEME}"</code></pre>
+        </li>
+        <li>Start Reverb: <code>php artisan reverb:start</code></li>
+    </ol>
+
+    <h4>How It Works</h4>
+    <ul>
+        <li>The <code>useEcho()</code> composable is called in <code>AuthenticatedLayout</code></li>
+        <li>If <code>VITE_REVERB_APP_KEY</code> is not set, nothing loads (graceful no-op)</li>
+        <li>When connected, it listens on <code>App.Models.User.{id}</code> private channel</li>
+        <li>Incoming notifications show a toast and reload the notification count</li>
+    </ul>
+
+    <h4>BroadcastableNotification</h4>
+    <p>Use this notification class to send real-time notifications to users:</p>
+    <pre><code class="language-php">use App\Notifications\BroadcastableNotification;
+
+$user->notify(new BroadcastableNotification(
+    message: 'Your report is ready.',
+    type: 'info',
+    extra: ['url' => '/reports/123'],
+));</code></pre>
+    <p>The notification is stored in the database AND broadcast via WebSocket simultaneously.</p>
+</section>
+
+<section id="multi-tenancy">
+    <h3>Multi-Tenancy (Teams)</h3>
+    <p>Optional team-based multi-tenancy. The Team switcher only appears when the user belongs to teams. The <code>BelongsToTeam</code> trait is opt-in per model.</p>
+
+    <h4>Setup</h4>
+    <ol>
+        <li>Run the teams migration: <code>php artisan migrate</code></li>
+        <li>Create teams and assign users via the pivot table</li>
+        <li>Add the <code>BelongsToTeam</code> trait to any model that should be scoped by team</li>
+    </ol>
+
+    <h4>BelongsToTeam Trait</h4>
+    <p>Add this trait to any Eloquent model that should be automatically scoped to the current team:</p>
+    <pre><code class="language-php">use App\Models\Traits\BelongsToTeam;
+
+class Project extends Model
+{
+    use BelongsToTeam;
+    // ...
+}</code></pre>
+    <p>The trait does two things:</p>
+    <ul>
+        <li><strong>Auto-sets team_id</strong> on creating: fills <code>team_id</code> from the authenticated user's <code>current_team_id</code></li>
+        <li><strong>Global scope</strong>: automatically filters queries to only show records matching the user's current team</li>
+    </ul>
+
+    <h4>Team Switcher</h4>
+    <p>The <code>&lt;TeamSwitcher&gt;</code> component renders in the header when <code>page.props.teams</code> has entries. It's a dropdown showing all teams with the current team checked.</p>
+    <pre><code class="language-typescript">// Switching teams sends a POST to /teams/{team}/switch
+// The middleware EnsureTeamContext sets current_team_id if not yet set</code></pre>
 </section>
 
 <hr class="section-divider">

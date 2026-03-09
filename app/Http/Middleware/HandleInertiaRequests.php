@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Settings\FirebaseSettings;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
@@ -66,6 +67,8 @@ class HandleInertiaRequests extends Middleware
             'impersonatorName' => fn () => $request->session()->has('impersonator_id')
                 ? \App\Models\User::find($request->session()->get('impersonator_id'))?->name
                 : null,
+            'currentTeam' => fn () => $request->user()?->currentTeam,
+            'teams' => fn () => $request->user()?->teams()->select('teams.id', 'teams.name', 'teams.slug')->get() ?? [],
             'siteSettings' => fn () => cache()->remember('site_settings_shared', 3600, function () {
                 $rows = DB::table('settings')->whereIn('group', ['general', 'appearance'])->get();
                 $settings = [];
@@ -82,6 +85,26 @@ class HandleInertiaRequests extends Middleware
                 }
 
                 return $settings;
+            }),
+            'firebaseConfig' => fn () => cache()->remember('firebase_web_config', 3600, function () {
+                try {
+                    $settings = app(FirebaseSettings::class);
+                    if (!$settings->enabled) {
+                        return null;
+                    }
+
+                    return array_filter([
+                        'apiKey' => $settings->api_key,
+                        'authDomain' => $settings->auth_domain,
+                        'projectId' => $settings->project_id,
+                        'storageBucket' => $settings->storage_bucket,
+                        'messagingSenderId' => $settings->messaging_sender_id,
+                        'appId' => $settings->app_id,
+                        'vapidKey' => $settings->vapid_key,
+                    ]) ?: null;
+                } catch (\Throwable) {
+                    return null;
+                }
             }),
         ];
     }

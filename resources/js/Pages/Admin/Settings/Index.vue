@@ -180,8 +180,8 @@ async function saveAppearance() {
                             <!-- Logo Upload -->
                             <div class="space-y-2">
                                 <Label>Site Logo</Label>
-                                <div class="flex items-start gap-4">
-                                    <div class="flex size-24 items-center justify-center rounded-lg border-2 border-dashed border-border bg-muted/30">
+                                <div class="flex flex-col items-start gap-4 sm:flex-row">
+                                    <div class="flex size-24 shrink-0 items-center justify-center rounded-lg border-2 border-dashed border-border bg-muted/30">
                                         <img
                                             v-if="logoPreview"
                                             :src="logoPreview"
@@ -211,8 +211,8 @@ async function saveAppearance() {
                             <!-- Favicon Upload -->
                             <div class="space-y-2">
                                 <Label>Favicon</Label>
-                                <div class="flex items-start gap-4">
-                                    <div class="flex size-16 items-center justify-center rounded-lg border-2 border-dashed border-border bg-muted/30">
+                                <div class="flex flex-col items-start gap-4 sm:flex-row">
+                                    <div class="flex size-16 shrink-0 items-center justify-center rounded-lg border-2 border-dashed border-border bg-muted/30">
                                         <img
                                             v-if="faviconPreview"
                                             :src="faviconPreview"

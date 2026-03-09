@@ -56,11 +56,16 @@ import {
 } from '@/components/ui/command';
 import ConfirmDialog from '@/components/ConfirmDialog.vue';
 import NotificationBell from '@/components/NotificationBell.vue';
+import TeamSwitcher from '@/components/TeamSwitcher.vue';
 import { useFlashToasts } from '@/composables/useFlashToasts';
+import { useGlobalSearch } from '@/composables/useGlobalSearch';
+import { useEcho } from '@/composables/useEcho';
+import { useFirebaseMessaging } from '@/composables/useFirebaseMessaging';
 import {
     LayoutDashboard,
     Users,
     Shield,
+    Search as SearchIcon,
     KeyRound,
     Image,
     Mail,
@@ -77,7 +82,9 @@ import {
     LogOut,
     User,
     Bell,
+    Smartphone,
     AlertTriangle,
+    FlaskConical,
 } from 'lucide-vue-next';
 
 defineProps<{
@@ -91,6 +98,8 @@ const impersonatorName = computed(() => page.props.impersonatorName);
 const { can } = usePermissions();
 
 useFlashToasts();
+useEcho();
+useFirebaseMessaging();
 
 const isDark = ref(document.documentElement.classList.contains('dark'));
 
@@ -149,6 +158,12 @@ const navGroups = computed(() => [
         ],
     },
     {
+        label: 'Push Notifications',
+        items: [
+            { title: 'Firebase Settings', href: route('admin.firebase-settings.index'), icon: Smartphone, permission: 'firebase.view' },
+        ],
+    },
+    {
         label: 'System',
         items: [
             { title: 'General Settings', href: route('admin.settings.index'), icon: Settings, permission: 'settings.view' },
@@ -157,6 +172,12 @@ const navGroups = computed(() => [
             { title: 'System Health', href: route('admin.system-health.index'), icon: HeartPulse, permission: 'system-health.view' },
             { title: 'API Tokens', href: route('admin.api-tokens.index'), icon: Key, permission: 'api-tokens.view' },
             { title: 'Notifications', href: route('admin.notifications.index'), icon: Bell, permission: 'notifications.view' },
+        ],
+    },
+    {
+        label: 'Demo',
+        items: [
+            { title: 'Feature Demos', href: route('admin.demo.index'), icon: FlaskConical, permission: null },
         ],
     },
 ]);
@@ -176,6 +197,7 @@ function isActive(href: string) {
 
 // Command palette
 const commandOpen = ref(false);
+const { query: searchQuery, results: searchResults, hasSearched: hasSearchResults, reset: resetSearch } = useGlobalSearch();
 
 function handleKeydown(e: KeyboardEvent) {
     if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
@@ -189,7 +211,12 @@ onUnmounted(() => document.removeEventListener('keydown', handleKeydown));
 
 function runCommand(callback: () => void) {
     commandOpen.value = false;
+    resetSearch();
     callback();
+}
+
+function handleCommandInput(value: string) {
+    searchQuery.value = value;
 }
 </script>
 
@@ -253,9 +280,15 @@ function runCommand(callback: () => void) {
                             </DropdownMenuTrigger>
                             <DropdownMenuContent side="top" class="w-56">
                                 <DropdownMenuItem as-child>
-                                    <Link :href="route('profile.edit')">
+                                    <Link :href="route('profile.show')">
                                         <User class="mr-2 size-4" />
                                         Profile
+                                    </Link>
+                                </DropdownMenuItem>
+                                <DropdownMenuItem as-child>
+                                    <Link :href="route('profile.security')">
+                                        <Shield class="mr-2 size-4" />
+                                        Security
                                     </Link>
                                 </DropdownMenuItem>
                                 <DropdownMenuSeparator />
@@ -278,18 +311,18 @@ function runCommand(callback: () => void) {
 
         <SidebarInset>
             <!-- Impersonation Banner -->
-            <div v-if="isImpersonating" class="flex items-center justify-center gap-3 bg-blue-900 px-4 py-2 text-sm font-medium text-white">
+            <div v-if="isImpersonating" class="flex flex-wrap items-center justify-center gap-2 bg-blue-900 px-4 py-2 text-xs font-medium text-white sm:gap-3 sm:text-sm">
                 <AlertTriangle class="size-4 shrink-0" />
-                <span>You are impersonating <strong>{{ user.name }}</strong></span>
-                <Button size="sm" variant="secondary" class="ml-2 h-7 text-xs" @click="stopImpersonating">
-                    Stop Impersonating
+                <span>Impersonating <strong>{{ user.name }}</strong></span>
+                <Button size="sm" variant="secondary" class="h-7 text-xs" @click="stopImpersonating">
+                    Stop
                 </Button>
             </div>
 
-            <header class="flex h-16 shrink-0 items-center gap-2 border-b px-4">
+            <header class="flex h-14 shrink-0 items-center gap-2 border-b px-3 sm:h-16 sm:px-4">
                 <SidebarTrigger class="-ml-1" />
-                <Separator orientation="vertical" class="mr-2 h-4" />
-                <Breadcrumb v-if="breadcrumbs?.length">
+                <Separator orientation="vertical" class="mr-2 hidden h-4 sm:block" />
+                <Breadcrumb v-if="breadcrumbs?.length" class="hidden min-w-0 sm:block">
                     <BreadcrumbList>
                         <template v-for="(crumb, index) in breadcrumbs" :key="index">
                             <BreadcrumbItemComponent>
@@ -303,11 +336,12 @@ function runCommand(callback: () => void) {
                     </BreadcrumbList>
                 </Breadcrumb>
                 <div class="ml-auto flex items-center gap-2">
+                    <TeamSwitcher v-if="(page.props.teams as any)?.length > 0" />
                     <NotificationBell />
                 </div>
             </header>
 
-            <main class="flex-1 p-4 md:p-6">
+            <main class="flex-1 p-3 sm:p-4 md:p-6">
                 <div :key="page.url" class="animate-fade-in-up">
                     <slot />
                 </div>
@@ -315,11 +349,32 @@ function runCommand(callback: () => void) {
         </SidebarInset>
     </SidebarProvider>
 
-    <!-- Command Palette -->
+    <!-- Command Palette with Global Search -->
     <CommandDialog v-model:open="commandOpen">
-        <CommandInput placeholder="Type a command or search..." />
+        <CommandInput placeholder="Type a command or search..." @input="handleCommandInput(($event.target as HTMLInputElement).value)" />
         <CommandList>
             <CommandEmpty>No results found.</CommandEmpty>
+
+            <!-- Search results when query is 2+ chars -->
+            <template v-if="hasSearchResults && searchResults.length > 0">
+                <CommandGroup v-for="group in searchResults" :key="group.group" :heading="group.group">
+                    <CommandItem
+                        v-for="item in group.items"
+                        :key="item.id"
+                        :value="`search-${group.group}-${item.id}-${item.title}`"
+                        @select="runCommand(() => router.visit(item.url))"
+                    >
+                        <SearchIcon class="mr-2 size-4 text-muted-foreground" />
+                        <div>
+                            <span>{{ item.title }}</span>
+                            <span class="ml-2 text-xs text-muted-foreground">{{ item.description }}</span>
+                        </div>
+                    </CommandItem>
+                </CommandGroup>
+                <CommandSeparator />
+            </template>
+
+            <!-- Navigation (shown when empty query or alongside results) -->
             <CommandGroup v-for="group in filteredNavGroups" :key="group.label" :heading="group.label">
                 <CommandItem
                     v-for="item in group.items"
@@ -333,7 +388,7 @@ function runCommand(callback: () => void) {
             </CommandGroup>
             <CommandSeparator />
             <CommandGroup heading="Actions">
-                <CommandItem value="Profile" @select="runCommand(() => router.visit(route('profile.edit')))">
+                <CommandItem value="Profile" @select="runCommand(() => router.visit(route('profile.show')))">
                     <User class="mr-2 size-4" />
                     Profile
                 </CommandItem>

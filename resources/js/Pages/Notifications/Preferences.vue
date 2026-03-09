@@ -14,6 +14,7 @@ interface Preference {
     label: string;
     email: boolean;
     database: boolean;
+    push: boolean;
 }
 
 const props = defineProps<{
@@ -55,6 +56,10 @@ async function submit() {
                     <div class="flex items-center gap-2">
                         <Switch :id="'db-' + pref.type" v-model="form.preferences[index].database" />
                         <Label :for="'db-' + pref.type">In-App</Label>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <Switch :id="'push-' + pref.type" v-model="form.preferences[index].push" />
+                        <Label :for="'push-' + pref.type">Push</Label>
                     </div>
                 </CardContent>
             </Card>

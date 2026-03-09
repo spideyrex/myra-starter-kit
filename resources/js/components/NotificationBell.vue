@@ -55,7 +55,7 @@ function openNotification(n: Notification) {
                 </Badge>
             </Button>
         </PopoverTrigger>
-        <PopoverContent class="w-80 p-0" align="end">
+        <PopoverContent class="w-[calc(100vw-2rem)] p-0 sm:w-80" align="end">
             <div class="flex items-center justify-between border-b p-3">
                 <h4 class="text-sm font-semibold">Notifications</h4>
                 <Button

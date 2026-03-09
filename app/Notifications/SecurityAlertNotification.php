@@ -2,13 +2,17 @@
 
 namespace App\Notifications;
 
+use App\Channels\FcmChannel;
+use App\Services\FirebaseService;
 use Illuminate\Bus\Queueable;
-use Illuminate\Notifications\Notification;
 use Illuminate\Notifications\Messages\MailMessage;
+use Illuminate\Notifications\Notification;
 
 class SecurityAlertNotification extends Notification
 {
     use Queueable;
+
+    public bool $sendPush = false;
 
     public function __construct(
         protected string $title,
@@ -19,7 +23,13 @@ class SecurityAlertNotification extends Notification
 
     public function via(object $notifiable): array
     {
-        return ['database', 'mail'];
+        $channels = ['database', 'mail'];
+
+        if ($this->sendPush && app(FirebaseService::class)->isEnabled()) {
+            $channels[] = FcmChannel::class;
+        }
+
+        return $channels;
     }
 
     public function toMail(object $notifiable): MailMessage
@@ -46,6 +56,16 @@ class SecurityAlertNotification extends Notification
             'message' => $this->message,
             'action_url' => $this->actionUrl,
             'ip_address' => $this->ipAddress,
+            'type' => 'security_alert',
+        ];
+    }
+
+    public function toFcm(object $notifiable): array
+    {
+        return [
+            'title' => $this->title,
+            'message' => $this->message,
+            'action_url' => $this->actionUrl,
             'type' => 'security_alert',
         ];
     }

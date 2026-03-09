@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Head, Link, useForm } from '@inertiajs/vue3';
-import { ref, onBeforeUnmount } from 'vue';
+import { ref } from 'vue';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import PageHeader from '@/components/PageHeader.vue';
 import { Button } from '@/components/ui/button';
@@ -9,12 +9,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent } from '@/components/ui/card';
 import Modal from '@/components/Modal.vue';
-import { useEditor, EditorContent } from '@tiptap/vue-3';
-import StarterKit from '@tiptap/starter-kit';
-import LinkExtension from '@tiptap/extension-link';
-import ImageExtension from '@tiptap/extension-image';
-import Placeholder from '@tiptap/extension-placeholder';
-import { Bold, Italic, List, ListOrdered, Link as LinkIcon, ImageIcon, Undo, Redo, Eye } from 'lucide-vue-next';
+import TipTapEditor from '@/components/TipTapEditor.vue';
+import { Eye, Send } from 'lucide-vue-next';
 import { useConfirm } from '@/composables/useConfirm';
 
 const props = defineProps<{
@@ -30,6 +26,8 @@ const props = defineProps<{
 
 const isEditing = !!props.template;
 const showPreview = ref(false);
+const showTestModal = ref(false);
+const editorRef = ref<InstanceType<typeof TipTapEditor> | null>(null);
 
 const form = useForm({
     name: props.template?.name || '',
@@ -39,39 +37,24 @@ const form = useForm({
     variables: props.template?.variables || [],
 });
 
-const editor = useEditor({
-    content: form.body_html,
-    extensions: [
-        StarterKit,
-        LinkExtension.configure({ openOnClick: false }),
-        ImageExtension,
-        Placeholder.configure({ placeholder: 'Start writing your email template...' }),
-    ],
-    onUpdate: ({ editor }) => {
-        form.body_html = editor.getHTML();
-    },
-});
-
-onBeforeUnmount(() => {
-    editor.value?.destroy();
-});
-
-function setLink() {
-    const url = window.prompt('Enter URL');
-    if (url) {
-        editor.value?.chain().focus().setLink({ href: url }).run();
-    }
-}
-
-function addImage() {
-    const url = window.prompt('Enter image URL');
-    if (url) {
-        editor.value?.chain().focus().setImage({ src: url }).run();
-    }
-}
-
 function insertVariable(variable: string) {
-    editor.value?.chain().focus().insertContent(`{{${variable}}}`).run();
+    // Access the editor through the component's exposed slot
+    const editorEl = document.querySelector('.tiptap-editor-wrapper .tiptap');
+    if (editorEl) {
+        // Use a simple approach: append to body_html
+        form.body_html = form.body_html.replace(/<\/p>$/, `{{${variable}}}</p>`);
+    }
+}
+
+const testForm = useForm({
+    email: '',
+    variables: {} as Record<string, string>,
+});
+
+function sendTestEmail() {
+    testForm.post(route('admin.email-templates.send-test', props.template!.id), {
+        onSuccess: () => { showTestModal.value = false; },
+    });
 }
 
 const { confirm } = useConfirm();
@@ -117,49 +100,30 @@ async function submit() {
                     <div class="space-y-2">
                         <div class="flex items-center justify-between">
                             <Label>Body</Label>
-                            <Button type="button" variant="ghost" size="sm" @click="showPreview = true">
-                                <Eye class="mr-1 size-4" />Preview
-                            </Button>
-                        </div>
-
-                        <!-- Toolbar -->
-                        <div v-if="editor" class="flex flex-wrap items-center gap-1 rounded-t-md border border-b-0 bg-muted/50 p-1">
-                            <Button type="button" variant="ghost" size="sm" class="size-8 p-0" @click="editor.chain().focus().toggleBold().run()" :class="{ 'bg-accent': editor.isActive('bold') }">
-                                <Bold class="size-4" />
-                            </Button>
-                            <Button type="button" variant="ghost" size="sm" class="size-8 p-0" @click="editor.chain().focus().toggleItalic().run()" :class="{ 'bg-accent': editor.isActive('italic') }">
-                                <Italic class="size-4" />
-                            </Button>
-                            <Button type="button" variant="ghost" size="sm" class="size-8 p-0" @click="editor.chain().focus().toggleBulletList().run()" :class="{ 'bg-accent': editor.isActive('bulletList') }">
-                                <List class="size-4" />
-                            </Button>
-                            <Button type="button" variant="ghost" size="sm" class="size-8 p-0" @click="editor.chain().focus().toggleOrderedList().run()" :class="{ 'bg-accent': editor.isActive('orderedList') }">
-                                <ListOrdered class="size-4" />
-                            </Button>
-                            <Button type="button" variant="ghost" size="sm" class="size-8 p-0" @click="setLink">
-                                <LinkIcon class="size-4" />
-                            </Button>
-                            <Button type="button" variant="ghost" size="sm" class="size-8 p-0" @click="addImage">
-                                <ImageIcon class="size-4" />
-                            </Button>
-                            <div class="mx-1 h-6 w-px bg-border" />
-                            <Button type="button" variant="ghost" size="sm" class="size-8 p-0" @click="editor.chain().focus().undo().run()">
-                                <Undo class="size-4" />
-                            </Button>
-                            <Button type="button" variant="ghost" size="sm" class="size-8 p-0" @click="editor.chain().focus().redo().run()">
-                                <Redo class="size-4" />
-                            </Button>
-
-                            <!-- Variable insertion -->
-                            <div v-if="form.variables.length" class="ml-auto flex items-center gap-1">
-                                <span class="text-xs text-muted-foreground">Insert:</span>
-                                <Button v-for="v in form.variables" :key="v" type="button" variant="outline" size="sm" class="h-6 text-xs" @click="insertVariable(v)">
-                                    {{ v }}
+                            <div class="flex gap-1">
+                                <Button v-if="isEditing" type="button" variant="ghost" size="sm" @click="showTestModal = true">
+                                    <Send class="mr-1 size-4" />Send Test
+                                </Button>
+                                <Button type="button" variant="ghost" size="sm" @click="showPreview = true">
+                                    <Eye class="mr-1 size-4" />Preview
                                 </Button>
                             </div>
                         </div>
 
-                        <EditorContent :editor="editor" class="tiptap-editor min-h-[300px] rounded-b-md border p-3 focus-within:ring-2 focus-within:ring-ring" />
+                        <TipTapEditor
+                            v-model="form.body_html"
+                            placeholder="Start writing your email template..."
+                            :toolbar="['bold', 'italic', '|', 'bulletList', 'orderedList', '|', 'link', 'image', '|', 'undo', 'redo']"
+                        >
+                            <template #toolbar-extra>
+                                <div v-if="form.variables.length" class="ml-auto flex flex-wrap items-center gap-1">
+                                    <span class="text-xs text-muted-foreground">Insert:</span>
+                                    <Button v-for="v in form.variables" :key="v" type="button" variant="outline" size="sm" class="h-6 text-xs" @click="insertVariable(v)">
+                                        {{ v }}
+                                    </Button>
+                                </div>
+                            </template>
+                        </TipTapEditor>
                         <p class="text-xs text-muted-foreground">Use &#123;&#123;variable_name&#125;&#125; for dynamic content.</p>
                         <p v-if="form.errors.body_html" class="text-sm text-destructive">{{ form.errors.body_html }}</p>
                     </div>
@@ -179,19 +143,29 @@ async function submit() {
                 <div class="rounded border bg-white p-4 text-sm" v-html="form.body_html" />
             </div>
         </Modal>
+
+        <!-- Send Test Modal -->
+        <Modal :open="showTestModal" title="Send Test Email" description="Send this template to a test recipient with sample values." @update:open="showTestModal = $event">
+            <form @submit.prevent="sendTestEmail" class="space-y-4">
+                <div class="space-y-2">
+                    <Label>Recipient Email</Label>
+                    <Input v-model="testForm.email" type="email" placeholder="test@example.com" required />
+                    <p v-if="testForm.errors.email" class="text-sm text-destructive">{{ testForm.errors.email }}</p>
+                </div>
+                <div v-if="props.template?.variables?.length" class="space-y-3">
+                    <Label class="text-muted-foreground">Template Variables</Label>
+                    <div v-for="v in props.template.variables" :key="v" class="space-y-1">
+                        <Label class="text-xs">{{ v }}</Label>
+                        <Input v-model="testForm.variables[v]" :placeholder="'Value for {{' + v + '}}'" />
+                    </div>
+                </div>
+            </form>
+            <template #footer>
+                <Button variant="outline" @click="showTestModal = false">Cancel</Button>
+                <LoadingButton :loading="testForm.processing" @click="sendTestEmail">
+                    <Send class="mr-2 size-4" />Send Test
+                </LoadingButton>
+            </template>
+        </Modal>
     </AuthenticatedLayout>
 </template>
-
-<style>
-.tiptap-editor .tiptap {
-    outline: none;
-    min-height: 280px;
-}
-.tiptap-editor .tiptap p.is-editor-empty:first-child::before {
-    content: attr(data-placeholder);
-    float: left;
-    color: hsl(var(--muted-foreground));
-    pointer-events: none;
-    height: 0;
-}
-</style>

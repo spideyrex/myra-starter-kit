@@ -5,6 +5,7 @@ import type { PageProps } from '@/types';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import StatCard from '@/components/StatCard.vue';
 import DateCell from '@/components/admin/DateCell.vue';
+import DashboardGrid from '@/components/admin/DashboardGrid.vue';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
@@ -19,6 +20,7 @@ import {
 } from 'lucide-vue-next';
 import { Bar } from 'vue-chartjs';
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip } from 'chart.js';
+import { StatWidget, ChartWidget, TableWidget } from '@/composables/useDashboardWidgets';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip);
 
@@ -163,6 +165,41 @@ const quickActions = [
     { label: 'System Health', icon: HeartPulse, href: 'admin.system-health.index' },
     { label: 'Settings', icon: Settings, href: 'admin.settings.index' },
 ];
+
+// Widget-based stat cards
+const statWidgets = [
+    StatWidget.make('total_users').title('Total Users')
+        .value(p => p.stats.totalUsers)
+        .icon(Users)
+        .trend(p => {
+            if (p.stats.lastMonthTotal === 0) return null;
+            const diff = p.stats.totalUsers - p.stats.lastMonthTotal;
+            const pct = Math.round((diff / p.stats.lastMonthTotal) * 100);
+            return { value: pct, isPositive: pct >= 0 };
+        })
+        .description(() => 'from last month'),
+    StatWidget.make('active_users').title('Active Users')
+        .value(p => p.stats.activeUsers)
+        .icon(UserCheck)
+        .description(p => {
+            const pct = p.stats.totalUsers === 0 ? 0 : Math.round((p.stats.activeUsers / p.stats.totalUsers) * 100);
+            return `${pct}% of total users`;
+        }),
+    StatWidget.make('new_users').title('New This Month')
+        .value(p => p.stats.newUsersThisMonth)
+        .icon(UserPlus)
+        .trend(p => {
+            if (p.stats.lastMonthNew === 0) return null;
+            const diff = p.stats.newUsersThisMonth - p.stats.lastMonthNew;
+            const pct = Math.round((diff / p.stats.lastMonthNew) * 100);
+            return { value: pct, isPositive: pct >= 0 };
+        })
+        .description(() => 'from last month'),
+    StatWidget.make('pending_verifications').title('Pending Verifications')
+        .value(p => p.stats.pendingVerifications)
+        .icon(ShieldAlert)
+        .description(() => 'unverified emails'),
+];
 </script>
 
 <template>
@@ -191,42 +228,11 @@ const quickActions = [
                 </CardContent>
             </Card>
 
-            <!-- Stats Row -->
-            <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-                <StatCard
-                    title="Total Users"
-                    :value="stats.totalUsers"
-                    :icon="Users"
-                    :trend="totalTrend ?? undefined"
-                    description="from last month"
-                    class="animate-stagger-1"
-                />
-                <StatCard
-                    title="Active Users"
-                    :value="stats.activeUsers"
-                    :icon="UserCheck"
-                    :description="`${activePercent}% of total users`"
-                    class="animate-stagger-2"
-                />
-                <StatCard
-                    title="New This Month"
-                    :value="stats.newUsersThisMonth"
-                    :icon="UserPlus"
-                    :trend="newUsersTrend ?? undefined"
-                    description="from last month"
-                    class="animate-stagger-3"
-                />
-                <StatCard
-                    title="Pending Verifications"
-                    :value="stats.pendingVerifications"
-                    :icon="ShieldAlert"
-                    description="unverified emails"
-                    class="animate-stagger-4"
-                />
-            </div>
+            <!-- Stats Row (widget-based) -->
+            <DashboardGrid :widgets="statWidgets" :page-props="props" />
 
             <!-- Charts Row -->
-            <div class="grid gap-6 lg:grid-cols-7">
+            <div class="grid grid-cols-1 gap-6 lg:grid-cols-7">
                 <!-- User Growth Chart -->
                 <Card class="lg:col-span-4 animate-fade-in-up">
                     <CardHeader>
@@ -277,7 +283,7 @@ const quickActions = [
             </div>
 
             <!-- Activity + Recent Users -->
-            <div class="grid gap-6 lg:grid-cols-7">
+            <div class="grid grid-cols-1 gap-6 lg:grid-cols-7">
                 <!-- Recent Activity -->
                 <Card class="lg:col-span-4 animate-fade-in-up">
                     <CardHeader>

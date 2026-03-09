@@ -1,7 +1,9 @@
 import type { Component } from 'vue';
 import type { SelectOption } from '@/types/admin';
 
-export type FieldType = 'text' | 'email' | 'password' | 'number' | 'textarea' | 'select' | 'switch' | 'checkbox' | 'tel' | 'url' | 'date' | 'datetime-local' | 'radio' | 'color' | 'hidden' | 'file' | 'richtext';
+export type FieldType = 'text' | 'email' | 'password' | 'number' | 'textarea' | 'select' | 'switch' | 'checkbox' | 'tel' | 'url' | 'date' | 'datetime-local' | 'radio' | 'color' | 'hidden' | 'file' | 'richtext' | 'repeater' | 'slider' | 'number-field' | 'pin-input' | 'tags-input' | 'toggle-group' | 'calendar' | 'time' | 'checkbox-list' | 'key-value' | 'markdown';
+
+export type VisibilityCondition = string | ((form: Record<string, any>) => boolean);
 
 export interface FieldSchema {
     name: string;
@@ -24,6 +26,48 @@ export interface FieldSchema {
     accept?: string;
     multiple?: boolean;
     maxSize?: number;
+    // Rich text fields
+    toolbar?: string[];
+    editorPlaceholder?: string;
+    // Repeater fields
+    subSchema?: SchemaItem[];
+    minItems?: number;
+    maxItems?: number;
+    addLabel?: string;
+    reorderable?: boolean;
+    repeaterCollapsible?: boolean;
+    // Slider / NumberField
+    min?: number;
+    max?: number;
+    step?: number;
+    showValue?: boolean;
+    formatOptions?: Intl.NumberFormatOptions;
+    // PinInput
+    pinLength?: number;
+    pinMask?: boolean;
+    // TagsInput
+    maxTags?: number;
+    tagPlaceholder?: string;
+    // ToggleGroup
+    toggleMultiple?: boolean;
+    toggleVariant?: 'default' | 'outline';
+    // Calendar date picker
+    useCalendar?: boolean;
+    dateFormat?: string;
+    // TimePicker
+    minTime?: string;
+    maxTime?: string;
+    // CheckboxList
+    checkboxSearchable?: boolean;
+    checkboxColumns?: number;
+    // KeyValue
+    keyLabel?: string;
+    valueLabel?: string;
+    keyPlaceholder?: string;
+    valuePlaceholder?: string;
+    // Conditional visibility
+    visibleWhen?: VisibilityCondition;
+    hiddenWhen?: VisibilityCondition;
 }
 
 function humanize(name: string): string {
@@ -54,7 +98,7 @@ export interface LayoutSchema {
     stepDescription?: string;
 }
 
-export type SchemaItem = FieldSchema | BaseField | LayoutSchema;
+export type SchemaItem = FieldSchema | BaseField | LayoutSchema | Section | Grid | Tabs | Fieldset | Flex | Wizard | Callout;
 export type SchemaField = FieldSchema | BaseField;
 
 // --- Layout Classes ---
@@ -443,6 +487,8 @@ export class BaseField {
     protected _placeholder?: string;
     protected _disabled = false;
     protected _colSpan?: number;
+    protected _visibleWhen?: VisibilityCondition;
+    protected _hiddenWhen?: VisibilityCondition;
 
     constructor(name: string) {
         this._name = name;
@@ -486,6 +532,16 @@ export class BaseField {
         return this;
     }
 
+    visibleWhen(condition: VisibilityCondition): this {
+        this._visibleWhen = condition;
+        return this;
+    }
+
+    hiddenWhen(condition: VisibilityCondition): this {
+        this._hiddenWhen = condition;
+        return this;
+    }
+
     toProps(): FieldSchema {
         return {
             name: this._name,
@@ -496,6 +552,8 @@ export class BaseField {
             placeholder: this._placeholder,
             disabled: this._disabled,
             colSpan: this._colSpan,
+            visibleWhen: this._visibleWhen,
+            hiddenWhen: this._hiddenWhen,
         };
     }
 }
@@ -611,6 +669,7 @@ export class Checkbox extends BaseField {
 export class DatePicker extends BaseField {
     private _minDate?: string;
     private _maxDate?: string;
+    private _useCalendar = false;
 
     constructor(name: string) {
         super(name);
@@ -631,14 +690,20 @@ export class DatePicker extends BaseField {
         return this;
     }
 
+    useCalendar(): this {
+        this._useCalendar = true;
+        return this;
+    }
+
     toProps(): FieldSchema {
-        return { ...super.toProps(), minDate: this._minDate, maxDate: this._maxDate };
+        return { ...super.toProps(), minDate: this._minDate, maxDate: this._maxDate, useCalendar: this._useCalendar };
     }
 }
 
 export class DateTimePicker extends BaseField {
     private _minDate?: string;
     private _maxDate?: string;
+    private _useCalendar = false;
 
     constructor(name: string) {
         super(name);
@@ -659,8 +724,13 @@ export class DateTimePicker extends BaseField {
         return this;
     }
 
+    useCalendar(): this {
+        this._useCalendar = true;
+        return this;
+    }
+
     toProps(): FieldSchema {
-        return { ...super.toProps(), minDate: this._minDate, maxDate: this._maxDate };
+        return { ...super.toProps(), minDate: this._minDate, maxDate: this._maxDate, useCalendar: this._useCalendar };
     }
 }
 
@@ -759,6 +829,8 @@ export class FileUpload extends BaseField {
 
 export class RichEditor extends BaseField {
     private _rows = 6;
+    private _toolbar?: string[];
+    private _editorPlaceholder?: string;
 
     constructor(name: string) {
         super(name);
@@ -767,6 +839,443 @@ export class RichEditor extends BaseField {
 
     static make(name: string): RichEditor {
         return new RichEditor(name);
+    }
+
+    rows(n: number): this {
+        this._rows = n;
+        return this;
+    }
+
+    toolbar(items: string[]): this {
+        this._toolbar = items;
+        return this;
+    }
+
+    editorPlaceholder(text: string): this {
+        this._editorPlaceholder = text;
+        return this;
+    }
+
+    toProps(): FieldSchema {
+        return { ...super.toProps(), rows: this._rows, toolbar: this._toolbar, editorPlaceholder: this._editorPlaceholder };
+    }
+}
+
+export class Repeater extends BaseField {
+    private _subSchema: SchemaItem[] = [];
+    private _minItems?: number;
+    private _maxItems?: number;
+    private _addLabel = 'Add Item';
+    private _reorderable = true;
+    private _collapsibleItems = false;
+
+    constructor(name: string) {
+        super(name);
+        this._type = 'repeater';
+    }
+
+    static make(name: string): Repeater {
+        return new Repeater(name);
+    }
+
+    schema(fields: SchemaItem[]): this {
+        this._subSchema = fields;
+        return this;
+    }
+
+    minItems(n: number): this {
+        this._minItems = n;
+        return this;
+    }
+
+    maxItems(n: number): this {
+        this._maxItems = n;
+        return this;
+    }
+
+    addLabel(text: string): this {
+        this._addLabel = text;
+        return this;
+    }
+
+    reorderable(value = true): this {
+        this._reorderable = value;
+        return this;
+    }
+
+    collapsible(value = true): this {
+        this._collapsibleItems = value;
+        return this;
+    }
+
+    toProps(): FieldSchema {
+        return {
+            ...super.toProps(),
+            subSchema: this._subSchema,
+            minItems: this._minItems,
+            maxItems: this._maxItems,
+            addLabel: this._addLabel,
+            reorderable: this._reorderable,
+            repeaterCollapsible: this._collapsibleItems,
+        };
+    }
+}
+
+// --- New shadcn-vue Field Types ---
+
+export class Slider extends BaseField {
+    private _min = 0;
+    private _max = 100;
+    private _step = 1;
+    private _showValue = false;
+
+    constructor(name: string) {
+        super(name);
+        this._type = 'slider';
+    }
+
+    static make(name: string): Slider {
+        return new Slider(name);
+    }
+
+    min(n: number): this {
+        this._min = n;
+        return this;
+    }
+
+    max(n: number): this {
+        this._max = n;
+        return this;
+    }
+
+    step(n: number): this {
+        this._step = n;
+        return this;
+    }
+
+    showValue(): this {
+        this._showValue = true;
+        return this;
+    }
+
+    toProps(): FieldSchema {
+        return { ...super.toProps(), min: this._min, max: this._max, step: this._step, showValue: this._showValue };
+    }
+}
+
+export class NumberField extends BaseField {
+    private _min?: number;
+    private _max?: number;
+    private _step = 1;
+    private _formatOptions?: Intl.NumberFormatOptions;
+
+    constructor(name: string) {
+        super(name);
+        this._type = 'number-field';
+    }
+
+    static make(name: string): NumberField {
+        return new NumberField(name);
+    }
+
+    min(n: number): this {
+        this._min = n;
+        return this;
+    }
+
+    max(n: number): this {
+        this._max = n;
+        return this;
+    }
+
+    step(n: number): this {
+        this._step = n;
+        return this;
+    }
+
+    formatOptions(opts: Intl.NumberFormatOptions): this {
+        this._formatOptions = opts;
+        return this;
+    }
+
+    currency(code: string): this {
+        this._formatOptions = { style: 'currency', currency: code, currencyDisplay: 'symbol' };
+        return this;
+    }
+
+    percent(): this {
+        this._formatOptions = { style: 'percent' };
+        return this;
+    }
+
+    toProps(): FieldSchema {
+        return { ...super.toProps(), min: this._min, max: this._max, step: this._step, formatOptions: this._formatOptions };
+    }
+}
+
+export class PinInput extends BaseField {
+    private _pinLength = 6;
+    private _pinMask = false;
+
+    constructor(name: string) {
+        super(name);
+        this._type = 'pin-input';
+    }
+
+    static make(name: string): PinInput {
+        return new PinInput(name);
+    }
+
+    length(n: number): this {
+        this._pinLength = n;
+        return this;
+    }
+
+    mask(): this {
+        this._pinMask = true;
+        return this;
+    }
+
+    otp(): this {
+        return this;
+    }
+
+    toProps(): FieldSchema {
+        return { ...super.toProps(), pinLength: this._pinLength, pinMask: this._pinMask };
+    }
+}
+
+export class TagsInput extends BaseField {
+    private _maxTags?: number;
+    private _tagPlaceholder?: string;
+
+    constructor(name: string) {
+        super(name);
+        this._type = 'tags-input';
+    }
+
+    static make(name: string): TagsInput {
+        return new TagsInput(name);
+    }
+
+    maxTags(n: number): this {
+        this._maxTags = n;
+        return this;
+    }
+
+    tagPlaceholder(text: string): this {
+        this._tagPlaceholder = text;
+        return this;
+    }
+
+    toProps(): FieldSchema {
+        return { ...super.toProps(), maxTags: this._maxTags, tagPlaceholder: this._tagPlaceholder };
+    }
+}
+
+export class ToggleGroupField extends BaseField {
+    private _options: SelectOption[] = [];
+    private _toggleMultiple = false;
+    private _toggleVariant: 'default' | 'outline' = 'outline';
+
+    constructor(name: string) {
+        super(name);
+        this._type = 'toggle-group';
+    }
+
+    static make(name: string): ToggleGroupField {
+        return new ToggleGroupField(name);
+    }
+
+    options(opts: SelectOption[] | Record<string, string>): this {
+        if (Array.isArray(opts)) {
+            this._options = opts;
+        } else {
+            this._options = Object.entries(opts).map(([value, label]) => ({ label, value }));
+        }
+        return this;
+    }
+
+    multiple(): this {
+        this._toggleMultiple = true;
+        return this;
+    }
+
+    variant(v: 'default' | 'outline'): this {
+        this._toggleVariant = v;
+        return this;
+    }
+
+    toProps(): FieldSchema {
+        return { ...super.toProps(), options: this._options, toggleMultiple: this._toggleMultiple, toggleVariant: this._toggleVariant };
+    }
+}
+
+export class CalendarPicker extends BaseField {
+    private _minDate?: string;
+    private _maxDate?: string;
+    private _dateFormat?: string;
+
+    constructor(name: string) {
+        super(name);
+        this._type = 'calendar';
+    }
+
+    static make(name: string): CalendarPicker {
+        return new CalendarPicker(name);
+    }
+
+    minDate(d: string): this {
+        this._minDate = d;
+        return this;
+    }
+
+    maxDate(d: string): this {
+        this._maxDate = d;
+        return this;
+    }
+
+    dateFormat(fmt: string): this {
+        this._dateFormat = fmt;
+        return this;
+    }
+
+    toProps(): FieldSchema {
+        return { ...super.toProps(), minDate: this._minDate, maxDate: this._maxDate, dateFormat: this._dateFormat, useCalendar: true };
+    }
+}
+
+// --- Additional Field Types ---
+
+export class TimePicker extends BaseField {
+    private _minTime?: string;
+    private _maxTime?: string;
+
+    constructor(name: string) {
+        super(name);
+        this._type = 'time';
+    }
+
+    static make(name: string): TimePicker {
+        return new TimePicker(name);
+    }
+
+    minTime(t: string): this {
+        this._minTime = t;
+        return this;
+    }
+
+    maxTime(t: string): this {
+        this._maxTime = t;
+        return this;
+    }
+
+    toProps(): FieldSchema {
+        return { ...super.toProps(), minTime: this._minTime, maxTime: this._maxTime };
+    }
+}
+
+export class CheckboxList extends BaseField {
+    private _options: SelectOption[] = [];
+    private _searchable = false;
+    private _columns = 1;
+
+    constructor(name: string) {
+        super(name);
+        this._type = 'checkbox-list';
+    }
+
+    static make(name: string): CheckboxList {
+        return new CheckboxList(name);
+    }
+
+    options(opts: SelectOption[] | Record<string, string>): this {
+        if (Array.isArray(opts)) {
+            this._options = opts;
+        } else {
+            this._options = Object.entries(opts).map(([value, label]) => ({ label, value }));
+        }
+        return this;
+    }
+
+    searchable(value = true): this {
+        this._searchable = value;
+        return this;
+    }
+
+    columns(n: number): this {
+        this._columns = n;
+        return this;
+    }
+
+    toProps(): FieldSchema {
+        return { ...super.toProps(), options: this._options, checkboxSearchable: this._searchable, checkboxColumns: this._columns };
+    }
+}
+
+export class KeyValue extends BaseField {
+    private _keyLabel = 'Key';
+    private _valueLabel = 'Value';
+    private _keyPlaceholder = 'Enter key...';
+    private _valuePlaceholder = 'Enter value...';
+    private _maxItems?: number;
+
+    constructor(name: string) {
+        super(name);
+        this._type = 'key-value';
+    }
+
+    static make(name: string): KeyValue {
+        return new KeyValue(name);
+    }
+
+    keyLabel(text: string): this {
+        this._keyLabel = text;
+        return this;
+    }
+
+    valueLabel(text: string): this {
+        this._valueLabel = text;
+        return this;
+    }
+
+    keyPlaceholder(text: string): this {
+        this._keyPlaceholder = text;
+        return this;
+    }
+
+    valuePlaceholder(text: string): this {
+        this._valuePlaceholder = text;
+        return this;
+    }
+
+    maxItems(n: number): this {
+        this._maxItems = n;
+        return this;
+    }
+
+    toProps(): FieldSchema {
+        return {
+            ...super.toProps(),
+            keyLabel: this._keyLabel,
+            valueLabel: this._valueLabel,
+            keyPlaceholder: this._keyPlaceholder,
+            valuePlaceholder: this._valuePlaceholder,
+            maxItems: this._maxItems,
+        };
+    }
+}
+
+export class MarkdownEditor extends BaseField {
+    private _rows = 10;
+
+    constructor(name: string) {
+        super(name);
+        this._type = 'markdown';
+    }
+
+    static make(name: string): MarkdownEditor {
+        return new MarkdownEditor(name);
     }
 
     rows(n: number): this {
@@ -792,4 +1301,31 @@ export function resolveLayout(item: Section | Grid | Tabs | Fieldset | Flex | Wi
         return item.toLayout();
     }
     return item as LayoutSchema;
+}
+
+/**
+ * Evaluate a visibility condition against form data.
+ * String conditions: 'type:business' (equals), '!type:personal' (not equals),
+ * 'type:business,country:us' (AND), 'status:active|pending' (OR values)
+ * Function conditions: (form) => form.amount > 1000
+ */
+export function evaluateVisibility(condition: VisibilityCondition, form: Record<string, any>): boolean {
+    if (typeof condition === 'function') {
+        return condition(form);
+    }
+
+    // String-based conditions: comma-separated AND pairs
+    const pairs = condition.split(',').map(s => s.trim());
+    return pairs.every(pair => {
+        const negated = pair.startsWith('!');
+        const clean = negated ? pair.slice(1) : pair;
+        const [key, valuesStr] = clean.split(':');
+        if (!key || valuesStr === undefined) return true;
+
+        // Pipe-separated OR values: 'status:active|pending'
+        const allowedValues = valuesStr.split('|');
+        const formValue = String(form[key] ?? '');
+        const matches = allowedValues.includes(formValue);
+        return negated ? !matches : matches;
+    });
 }

@@ -41,6 +41,7 @@ const { form, submit } = useResourceForm({
         title: '',
         message: '',
         action_url: '',
+        send_push: false,
     },
     storeRoute: 'admin.notifications.store',
     confirm: {
@@ -228,6 +229,15 @@ watch(() => form.target, (val) => {
                 placeholder="https://example.com/path"
                 hint="Optional link the user can click on."
                 :error="form.errors.action_url"
+            />
+
+            <FormField
+                label="Send Push Notification"
+                name="send_push"
+                type="switch"
+                v-model="form.send_push"
+                hint="Also send as a push notification to users with push enabled."
+                :error="form.errors.send_push"
             />
         </ResourceForm>
     </AuthenticatedLayout>

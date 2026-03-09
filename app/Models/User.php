@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
@@ -16,7 +17,7 @@ use Spatie\Permission\Traits\HasRoles;
 class User extends Authenticatable implements HasMedia, MustVerifyEmail
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasApiTokens, HasFactory, HasRoles, InteractsWithMedia, LogsActivity, Notifiable;
+    use HasApiTokens, HasFactory, HasRoles, InteractsWithMedia, LogsActivity, Notifiable, SoftDeletes;
 
     protected $fillable = [
         'name',
@@ -28,6 +29,7 @@ class User extends Authenticatable implements HasMedia, MustVerifyEmail
         'two_factor_secret',
         'two_factor_recovery_codes',
         'two_factor_confirmed_at',
+        'current_team_id',
     ];
 
     protected $hidden = [
@@ -68,5 +70,34 @@ class User extends Authenticatable implements HasMedia, MustVerifyEmail
             ->logOnly(['name', 'email', 'phone', 'status'])
             ->logOnlyDirty()
             ->dontSubmitEmptyLogs();
+    }
+
+    // --- FCM Tokens ---
+
+    public function fcmTokens(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(FcmToken::class);
+    }
+
+    public function routeNotificationForFcm(): array
+    {
+        return $this->fcmTokens()->pluck('token')->all();
+    }
+
+    // --- Multi-tenancy ---
+
+    public function teams(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
+    {
+        return $this->belongsToMany(Team::class)->withPivot('role')->withTimestamps();
+    }
+
+    public function currentTeam(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(Team::class, 'current_team_id');
+    }
+
+    public function switchTeam(Team $team): void
+    {
+        $this->update(['current_team_id' => $team->id]);
     }
 }

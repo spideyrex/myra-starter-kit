@@ -50,4 +50,16 @@ class MediaController extends Controller
 
         return back()->with('success', 'File deleted successfully.');
     }
+
+    public function bulkDestroy(Request $request): RedirectResponse
+    {
+        $request->validate([
+            'ids' => 'required|array',
+            'ids.*' => 'integer',
+        ]);
+
+        Media::whereIn('id', $request->ids)->each(fn (Media $media) => $media->delete());
+
+        return back()->with('success', 'Selected files deleted.');
+    }
 }

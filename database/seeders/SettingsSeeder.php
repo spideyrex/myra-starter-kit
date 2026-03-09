@@ -46,6 +46,16 @@ class SettingsSeeder extends Seeder
             ['group' => 'email', 'name' => 'mail_encryption', 'payload' => json_encode(config('mail.mailers.smtp.encryption', 'tls'))],
             ['group' => 'email', 'name' => 'mail_from_address', 'payload' => json_encode(config('mail.from.address'))],
             ['group' => 'email', 'name' => 'mail_from_name', 'payload' => json_encode(config('mail.from.name'))],
+
+            ['group' => 'firebase', 'name' => 'enabled', 'payload' => json_encode(false)],
+            ['group' => 'firebase', 'name' => 'service_account_path', 'payload' => json_encode(null)],
+            ['group' => 'firebase', 'name' => 'api_key', 'payload' => json_encode(null)],
+            ['group' => 'firebase', 'name' => 'auth_domain', 'payload' => json_encode(null)],
+            ['group' => 'firebase', 'name' => 'project_id', 'payload' => json_encode(null)],
+            ['group' => 'firebase', 'name' => 'storage_bucket', 'payload' => json_encode(null)],
+            ['group' => 'firebase', 'name' => 'messaging_sender_id', 'payload' => json_encode(null)],
+            ['group' => 'firebase', 'name' => 'app_id', 'payload' => json_encode(null)],
+            ['group' => 'firebase', 'name' => 'vapid_key', 'payload' => json_encode(null)],
         ];
 
         foreach ($settings as $setting) {

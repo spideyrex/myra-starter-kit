@@ -63,6 +63,10 @@ class RoleAndPermissionSeeder extends Seeder
             // Notifications
             'notifications.view',
             'notifications.create',
+
+            // Firebase
+            'firebase.view',
+            'firebase.edit',
         ];
 
         foreach ($permissions as $permission) {
@@ -86,6 +90,7 @@ class RoleAndPermissionSeeder extends Seeder
             'activity-log.view',
             'media.view', 'media.create',
             'notifications.view', 'notifications.create',
+            'firebase.view',
         ]);
 
         // Editor - content permissions

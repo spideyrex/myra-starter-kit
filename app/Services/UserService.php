@@ -15,13 +15,22 @@ class UserService
 
     public function list(Request $request): LengthAwarePaginator
     {
+        $query = User::query()
+            ->with('roles')
+            ->when($request->status, fn ($q, $status) => $q->where('status', $status))
+            ->when($request->role, function ($q, $role) {
+                $q->whereHas('roles', fn ($q) => $q->where('name', $role));
+            });
+
+        // Handle trashed filter
+        if ($request->trashed === 'only') {
+            $query->onlyTrashed();
+        } elseif ($request->trashed === 'with') {
+            $query->withTrashed();
+        }
+
         return $this->applySearchAndPaginate(
-            User::query()
-                ->with('roles')
-                ->when($request->status, fn ($q, $status) => $q->where('status', $status))
-                ->when($request->role, function ($q, $role) {
-                    $q->whereHas('roles', fn ($q) => $q->where('name', $role));
-                }),
+            $query,
             $request,
             searchable: ['name', 'email'],
         );
@@ -84,5 +93,15 @@ class UserService
     public function activate(User $user): void
     {
         $user->update(['status' => 'active']);
+    }
+
+    public function restore(int $id): void
+    {
+        User::withTrashed()->findOrFail($id)->restore();
+    }
+
+    public function forceDelete(int $id): void
+    {
+        User::withTrashed()->findOrFail($id)->forceDelete();
     }
 }

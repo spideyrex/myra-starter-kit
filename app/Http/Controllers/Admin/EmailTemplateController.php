@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\EmailTemplate;
+use App\Services\EmailService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -66,5 +67,25 @@ class EmailTemplateController extends Controller
         $emailTemplate->delete();
 
         return redirect()->route('admin.email-templates.index')->with('success', 'Template deleted.');
+    }
+
+    public function sendTest(Request $request, EmailTemplate $emailTemplate): RedirectResponse
+    {
+        $request->validate([
+            'email' => 'required|email',
+            'variables' => 'nullable|array',
+        ]);
+
+        try {
+            app(EmailService::class)->sendTemplateTest(
+                $emailTemplate,
+                $request->email,
+                $request->variables ?? [],
+            );
+
+            return back()->with('success', 'Test email sent to ' . $request->email);
+        } catch (\Exception $e) {
+            return back()->with('error', 'Failed to send: ' . $e->getMessage());
+        }
     }
 }

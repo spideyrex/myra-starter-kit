@@ -16,6 +16,7 @@ class EmailLogResource extends JsonResource
             'template_slug' => $this->template_slug,
             'status' => $this->status,
             'sent_at' => $this->sent_at?->toDateTimeString(),
+            'created_at' => $this->created_at?->toDateTimeString(),
             'error' => $this->error,
         ];
     }

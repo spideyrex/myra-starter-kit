@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue';
-import { Head, Link } from '@inertiajs/vue3';
+import { Head, Link, router } from '@inertiajs/vue3';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import DataTable from '@/components/DataTable.vue';
 import type { Column } from '@/components/DataTable.vue';
@@ -11,8 +11,9 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { usePermissions } from '@/composables/usePermissions';
 import { SelectFilter } from '@/composables/useTableFilters';
+import { BulkAction } from '@/composables/useTableActions';
 import type { PaginatedData } from '@/types';
-import { Plus, Eye } from 'lucide-vue-next';
+import { Plus, Eye, CheckCheck, Trash2 } from 'lucide-vue-next';
 
 interface AdminNotification {
     id: string;
@@ -72,6 +73,17 @@ function openNotification(row: AdminNotification) {
     selectedNotification.value = row;
     dialogOpen.value = true;
 }
+
+const bulkActions = [
+    BulkAction.make('Mark Read')
+        .action((ids) => router.post(route('admin.notifications.bulk-action'), { ids, action: 'mark_read' }))
+        .icon(CheckCheck),
+    BulkAction.make('Delete')
+        .action((ids) => router.post(route('admin.notifications.bulk-action'), { ids, action: 'delete' }))
+        .destructive()
+        .requiresConfirmation('Delete Notifications', 'Are you sure you want to delete the selected notifications?')
+        .icon(Trash2),
+];
 </script>
 
 <template>
@@ -94,6 +106,8 @@ function openNotification(row: AdminNotification) {
                 :data="notifications"
                 :filters="filters"
                 :table-filters="tableFilters"
+                :selectable="true"
+                :bulk-actions="bulkActions"
                 route-name="admin.notifications.index"
                 search-placeholder="Search by recipient or content..."
             >

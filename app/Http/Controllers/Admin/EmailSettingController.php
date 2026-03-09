@@ -75,6 +75,9 @@ class EmailSettingController extends Controller
             'mail.from.name' => $settings->mail_from_name,
         ]);
 
+        // Purge cached transport so new settings take effect
+        app('mail.manager')->purge('smtp');
+
         try {
             Mail::raw('This is a test email from your application.', function ($message) use ($request) {
                 $message->to($request->email)->subject('Test Email');

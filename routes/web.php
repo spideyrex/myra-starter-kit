@@ -21,15 +21,24 @@ use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Auth\SessionController;
 use App\Http\Controllers\Auth\TwoFactorController;
 use App\Http\Controllers\FcmTokenController;
+use App\Http\Controllers\HomepageController;
 use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\PublicArticleController;
+use App\Http\Controllers\PublicPageController;
 use App\Http\Controllers\TeamController;
 use App\Http\Controllers\NotificationPreferenceController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\Admin\ArticleController;
+use App\Http\Controllers\Admin\CategoryController;
+use App\Http\Controllers\Admin\PageController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    return redirect()->route('login');
-});
+Route::get('/', [HomepageController::class, 'index'])->name('home');
+
+// Public pages & blog
+Route::get('/pages/{slug}', [PublicPageController::class, 'show'])->name('pages.show');
+Route::get('/blog', [PublicArticleController::class, 'index'])->name('articles.index');
+Route::get('/blog/{slug}', [PublicArticleController::class, 'show'])->name('articles.show');
 
 Route::get('/dashboard', [DashboardController::class, 'index'])
     ->middleware(['auth', 'verified'])
@@ -106,6 +115,7 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->name('admin.')->group(
     Route::get('/roles/{role}/edit', [RoleController::class, 'edit'])->middleware('permission:roles.edit')->name('roles.edit');
     Route::put('/roles/{role}', [RoleController::class, 'update'])->middleware('permission:roles.edit')->name('roles.update');
     Route::post('/roles', [RoleController::class, 'store'])->middleware('permission:roles.create')->name('roles.store');
+    Route::post('/roles/{role}/clone', [RoleController::class, 'clone'])->middleware('permission:roles.create')->name('roles.clone');
     Route::delete('/roles/{role}', [RoleController::class, 'destroy'])->middleware('permission:roles.delete')->name('roles.destroy');
 
     // Permissions
@@ -115,6 +125,7 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->name('admin.')->group(
     Route::get('/settings', [SettingController::class, 'index'])->middleware('permission:settings.view')->name('settings.index');
     Route::put('/settings/{group}', [SettingController::class, 'update'])->middleware('permission:settings.edit')->name('settings.update');
     Route::post('/settings/appearance', [SettingController::class, 'updateAppearance'])->middleware('permission:settings.edit')->name('settings.update-appearance');
+    Route::post('/settings/homepage', [SettingController::class, 'updateHomepage'])->middleware('permission:settings.edit')->name('settings.update-homepage');
 
     // Email Templates
     Route::get('/email-templates', [EmailTemplateController::class, 'index'])->middleware('permission:email.view')->name('email-templates.index');
@@ -170,6 +181,34 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->name('admin.')->group(
     Route::get('/notifications/create', [AdminNotificationController::class, 'create'])->middleware('permission:notifications.create')->name('notifications.create');
     Route::post('/notifications', [AdminNotificationController::class, 'store'])->middleware('permission:notifications.create')->name('notifications.store');
     Route::post('/notifications/bulk-action', [AdminNotificationController::class, 'bulkAction'])->middleware('permission:notifications.view')->name('notifications.bulk-action');
+
+    // Pages
+    Route::get('/pages', [PageController::class, 'index'])->middleware('permission:pages.view')->name('pages.index');
+    Route::get('/pages/create', [PageController::class, 'create'])->middleware('permission:pages.create')->name('pages.create');
+    Route::post('/pages', [PageController::class, 'store'])->middleware('permission:pages.create')->name('pages.store');
+    Route::get('/pages/{page}/edit', [PageController::class, 'edit'])->middleware('permission:pages.edit')->name('pages.edit');
+    Route::put('/pages/{page}', [PageController::class, 'update'])->middleware('permission:pages.edit')->name('pages.update');
+    Route::delete('/pages/{page}', [PageController::class, 'destroy'])->middleware('permission:pages.delete')->name('pages.destroy');
+    Route::post('/pages/bulk-action', [PageController::class, 'bulkAction'])->middleware('permission:pages.edit')->name('pages.bulk-action');
+    Route::post('/pages/{page}/restore', [PageController::class, 'restore'])->middleware('permission:pages.edit')->name('pages.restore');
+    Route::delete('/pages/{page}/force-delete', [PageController::class, 'forceDelete'])->middleware('permission:pages.delete')->name('pages.force-delete');
+
+    // Articles
+    Route::get('/articles', [ArticleController::class, 'index'])->middleware('permission:articles.view')->name('articles.index');
+    Route::get('/articles/create', [ArticleController::class, 'create'])->middleware('permission:articles.create')->name('articles.create');
+    Route::post('/articles', [ArticleController::class, 'store'])->middleware('permission:articles.create')->name('articles.store');
+    Route::get('/articles/{article}/edit', [ArticleController::class, 'edit'])->middleware('permission:articles.edit')->name('articles.edit');
+    Route::put('/articles/{article}', [ArticleController::class, 'update'])->middleware('permission:articles.edit')->name('articles.update');
+    Route::delete('/articles/{article}', [ArticleController::class, 'destroy'])->middleware('permission:articles.delete')->name('articles.destroy');
+    Route::post('/articles/bulk-action', [ArticleController::class, 'bulkAction'])->middleware('permission:articles.edit')->name('articles.bulk-action');
+    Route::post('/articles/{article}/restore', [ArticleController::class, 'restore'])->middleware('permission:articles.edit')->name('articles.restore');
+    Route::delete('/articles/{article}/force-delete', [ArticleController::class, 'forceDelete'])->middleware('permission:articles.delete')->name('articles.force-delete');
+
+    // Categories
+    Route::get('/categories', [CategoryController::class, 'index'])->middleware('permission:categories.view')->name('categories.index');
+    Route::post('/categories', [CategoryController::class, 'store'])->middleware('permission:categories.create')->name('categories.store');
+    Route::put('/categories/{category}', [CategoryController::class, 'update'])->middleware('permission:categories.edit')->name('categories.update');
+    Route::delete('/categories/{category}', [CategoryController::class, 'destroy'])->middleware('permission:categories.delete')->name('categories.destroy');
 
     // Global Search
     Route::get('/search', [SearchController::class, 'index'])->name('search');

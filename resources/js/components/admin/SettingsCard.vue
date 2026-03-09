@@ -26,7 +26,7 @@ const emit = defineEmits<{
             <CardDescription v-if="description">{{ description }}</CardDescription>
         </CardHeader>
         <CardContent>
-            <form @submit.prevent="emit('submit')" class="space-y-4">
+            <form @submit.prevent="emit('submit')" class="space-y-6">
                 <div class="grid gap-4" :class="{
                     'sm:grid-cols-1': columns === 1,
                     'sm:grid-cols-2': columns === 2,
@@ -36,9 +36,11 @@ const emit = defineEmits<{
 
                 <slot name="after-fields" />
 
-                <slot name="actions">
-                    <LoadingButton :loading="processing">{{ submitText }}</LoadingButton>
-                </slot>
+                <div class="flex items-center border-t pt-4">
+                    <slot name="actions">
+                        <LoadingButton :loading="processing">{{ submitText }}</LoadingButton>
+                    </slot>
+                </div>
             </form>
         </CardContent>
     </Card>

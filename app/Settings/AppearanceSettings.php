@@ -7,6 +7,7 @@ use Spatie\LaravelSettings\Settings;
 class AppearanceSettings extends Settings
 {
     public string $primary_color;
+    public string $theme;
     public ?string $logo_path;
     public ?string $favicon_path;
 

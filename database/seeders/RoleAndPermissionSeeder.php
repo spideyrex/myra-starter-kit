@@ -67,6 +67,24 @@ class RoleAndPermissionSeeder extends Seeder
             // Firebase
             'firebase.view',
             'firebase.edit',
+
+            // Pages
+            'pages.view',
+            'pages.create',
+            'pages.edit',
+            'pages.delete',
+
+            // Articles
+            'articles.view',
+            'articles.create',
+            'articles.edit',
+            'articles.delete',
+
+            // Categories
+            'categories.view',
+            'categories.create',
+            'categories.edit',
+            'categories.delete',
         ];
 
         foreach ($permissions as $permission) {
@@ -91,6 +109,9 @@ class RoleAndPermissionSeeder extends Seeder
             'media.view', 'media.create',
             'notifications.view', 'notifications.create',
             'firebase.view',
+            'pages.view', 'pages.create', 'pages.edit',
+            'articles.view', 'articles.create', 'articles.edit',
+            'categories.view', 'categories.create', 'categories.edit',
         ]);
 
         // Editor - content permissions
@@ -98,6 +119,9 @@ class RoleAndPermissionSeeder extends Seeder
         $editor->syncPermissions([
             'media.view', 'media.create',
             'email.view',
+            'pages.view', 'pages.create', 'pages.edit',
+            'articles.view', 'articles.create', 'articles.edit',
+            'categories.view', 'categories.create',
         ]);
 
         // Viewer - read-only
@@ -105,6 +129,9 @@ class RoleAndPermissionSeeder extends Seeder
         $viewer->syncPermissions([
             'users.view',
             'media.view',
+            'pages.view',
+            'articles.view',
+            'categories.view',
         ]);
     }
 }

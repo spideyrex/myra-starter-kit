@@ -61,15 +61,18 @@ import { useFlashToasts } from '@/composables/useFlashToasts';
 import { useGlobalSearch } from '@/composables/useGlobalSearch';
 import { useEcho } from '@/composables/useEcho';
 import { useFirebaseMessaging } from '@/composables/useFirebaseMessaging';
+import { useThemeColors } from '@/composables/useThemeColors';
 import {
     LayoutDashboard,
     Users,
     Shield,
     Search as SearchIcon,
-    KeyRound,
+
     Image,
     Mail,
     FileText,
+    Newspaper,
+    FolderOpen,
     MailCheck,
     Settings,
     Activity,
@@ -100,6 +103,7 @@ const { can } = usePermissions();
 useFlashToasts();
 useEcho();
 useFirebaseMessaging();
+useThemeColors();
 
 const isDark = ref(document.documentElement.classList.contains('dark'));
 
@@ -139,13 +143,15 @@ const navGroups = computed(() => [
         label: 'User Management',
         items: [
             { title: 'Users', href: route('admin.users.index'), icon: Users, permission: 'users.view' },
-            { title: 'Roles', href: route('admin.roles.index'), icon: Shield, permission: 'roles.view' },
-            { title: 'Permissions', href: route('admin.permissions.index'), icon: KeyRound, permission: 'permissions.view' },
+            { title: 'Roles & Permissions', href: route('admin.roles.index'), icon: Shield, permission: 'roles.view' },
         ],
     },
     {
         label: 'Content',
         items: [
+            { title: 'Pages', href: route('admin.pages.index'), icon: FileText, permission: 'pages.view' },
+            { title: 'Articles', href: route('admin.articles.index'), icon: Newspaper, permission: 'articles.view' },
+            { title: 'Categories', href: route('admin.categories.index'), icon: FolderOpen, permission: 'categories.view' },
             { title: 'Media Manager', href: route('admin.media.index'), icon: Image, permission: 'media.view' },
         ],
     },

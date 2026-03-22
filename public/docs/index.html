@@ -544,7 +544,11 @@
         <a href="#middleware">Middleware</a>
 
         <div class="nav-group">CMS</div>
+        <a href="#module-articles">Articles</a>
+        <a href="#module-categories">Categories</a>
+        <a href="#module-pages">Pages</a>
         <a href="#homepage-cms">Homepage CMS</a>
+        <a href="#theme-selector">Theme Selector</a>
 
         <div class="nav-group">Reference</div>
         <a href="#type-definitions">Type Definitions</a>
@@ -558,8 +562,8 @@
 <!-- SECTION 1: OVERVIEW -->
 <!-- ============================================================ -->
 <section id="overview">
-    <h2>Myra Starter Kit Documentation <span class="version-badge">v1.0</span></h2>
-    <p>A production-ready starter kit built on Laravel + Inertia.js + Vue 3 (TypeScript) with shadcn-vue components. Schema-driven forms, reusable UI components, and Artisan scaffolding for rapid admin panel development.</p>
+    <h2>Myra Starter Kit Documentation <span class="version-badge">v1.1</span></h2>
+    <p>A production-ready starter kit built on Laravel + Inertia.js + Vue 3 (TypeScript) with shadcn-vue components. Schema-driven forms, reusable UI components, CMS with articles and pages, configurable marketing homepage, and Artisan scaffolding for rapid admin panel development.</p>
 
     <h4>Key Features</h4>
     <ul class="inline-list">
@@ -569,8 +573,13 @@
         <li><strong>Notification System</strong> &mdash; In-app notifications with bell dropdown, detail dialogs, preferences, and admin management</li>
         <li><strong>Authentication</strong> &mdash; Login, registration, password reset, email verification, and two-factor authentication</li>
         <li><strong>Role-Based Access Control</strong> &mdash; Spatie permissions with <code>usePermissions</code> composable for frontend checks</li>
+        <li><strong>CMS (Content Management)</strong> &mdash; Articles with rich text editor, categories, and static pages with SEO fields</li>
+        <li><strong>Homepage Builder</strong> &mdash; Settings-driven marketing landing page with hero, features, testimonials, pricing, and CTA sections</li>
         <li><strong>Built-in Admin Modules</strong> &mdash; Users, roles, settings, email logs, backups, API tokens, system health, activity log, media manager</li>
+        <li><strong>Theme Selector</strong> &mdash; 10 predefined shadcn color themes (Zinc, Slate, Stone, Red, Rose, Orange, Green, Blue, Violet, Yellow) configurable from admin</li>
         <li><strong>Dark Mode</strong> &mdash; Full dark/light theme support with persistent user preference</li>
+        <li><strong>Security</strong> &mdash; Profile security page with 2FA setup, password change, and browser session management</li>
+        <li><strong>Command Palette</strong> &mdash; Ctrl+K fuzzy search for quick navigation across all admin pages</li>
     </ul>
 
     <h4>Screenshots</h4>
@@ -582,7 +591,7 @@
 
     <div class="screenshot">
         <img src="screenshots/dashboard.png" alt="Dashboard" loading="lazy">
-        <div class="screenshot-caption">Dashboard with stat cards, user growth chart, and status distribution</div>
+        <div class="screenshot-caption">Dashboard with gradient welcome banner, color-coded stat cards, multi-colored growth chart, and status distribution</div>
     </div>
 
     <div class="screenshot">
@@ -613,6 +622,31 @@
     <div class="screenshot">
         <img src="screenshots/media.png" alt="Media Manager" loading="lazy">
         <div class="screenshot-caption">Media manager for file uploads and organization</div>
+    </div>
+
+    <div class="screenshot">
+        <img src="screenshots/articles.png" alt="Articles" loading="lazy">
+        <div class="screenshot-caption">CMS articles with rich text editor, categories, and publishing controls</div>
+    </div>
+
+    <div class="screenshot">
+        <img src="screenshots/homepage.png" alt="Public Homepage" loading="lazy">
+        <div class="screenshot-caption">Public marketing homepage with hero, features, testimonials, and pricing sections</div>
+    </div>
+
+    <div class="screenshot">
+        <img src="screenshots/settings-appearance.png" alt="Theme Selector" loading="lazy">
+        <div class="screenshot-caption">Appearance settings with shadcn theme selector and logo/favicon uploads</div>
+    </div>
+
+    <div class="screenshot">
+        <img src="screenshots/dashboard-dark.png" alt="Dashboard Dark Mode" loading="lazy">
+        <div class="screenshot-caption">Dashboard in dark mode with all components adapting to the dark theme</div>
+    </div>
+
+    <div class="screenshot">
+        <img src="screenshots/security.png" alt="Security Settings" loading="lazy">
+        <div class="screenshot-caption">Security page with two-factor authentication setup, password change, and browser sessions</div>
     </div>
 
     <div class="callout callout-tip">
@@ -698,18 +732,23 @@ npm run dev</code></pre>
 
     <h3>What's Included After Installation</h3>
     <ul>
-        <li><strong>Dashboard</strong> &mdash; Stats overview with charts</li>
+        <li><strong>Dashboard</strong> &mdash; Colorful stats overview with gradient banner, color-coded stat cards, multi-colored charts, and quick actions</li>
         <li><strong>User Management</strong> &mdash; CRUD, bulk actions, CSV export, impersonation</li>
         <li><strong>Roles &amp; Permissions</strong> &mdash; Full RBAC management</li>
-        <li><strong>Settings</strong> &mdash; General, SEO, appearance, social, maintenance</li>
+        <li><strong>CMS</strong> &mdash; Articles with categories, static pages, and public article/page views</li>
+        <li><strong>Homepage Builder</strong> &mdash; Settings-driven marketing landing page with hero, features, testimonials, pricing, and CTA sections</li>
+        <li><strong>Settings</strong> &mdash; General, SEO, Appearance (theme selector), Social, Maintenance, and Homepage tabs</li>
+        <li><strong>Theme Selector</strong> &mdash; 10 shadcn color themes selectable from Appearance settings</li>
         <li><strong>Email System</strong> &mdash; Templates, logs, and SMTP configuration</li>
         <li><strong>Media Library</strong> &mdash; File uploads with Spatie Media Library</li>
         <li><strong>Activity Logging</strong> &mdash; Full audit trail</li>
         <li><strong>System Health</strong> &mdash; Health check monitoring</li>
         <li><strong>Backup Management</strong> &mdash; Create, download, and delete backups</li>
         <li><strong>API Tokens</strong> &mdash; Personal access token management</li>
-        <li><strong>Two-Factor Authentication</strong> &mdash; TOTP with QR codes</li>
+        <li><strong>Two-Factor Authentication</strong> &mdash; TOTP with QR codes and profile security page</li>
         <li><strong>Notification System</strong> &mdash; In-app notifications with preferences</li>
+        <li><strong>Command Palette</strong> &mdash; Ctrl+K fuzzy search for quick navigation</li>
+        <li><strong>Profile &amp; Security</strong> &mdash; Profile settings, 2FA setup, password change, and browser session management</li>
     </ul>
 
     <h3>Default Roles</h3>
@@ -831,7 +870,7 @@ php artisan myra:install --composer=/path/to/composer.phar</code></pre>
 │   ├── <span class="file">LoadingButton.vue</span>            <span class="comment"># Button with spinner</span>
 │   ├── <span class="file">PasswordInput.vue</span>            <span class="comment"># Password with visibility toggle</span>
 │   ├── <span class="file">ConfirmDialog.vue</span>            <span class="comment"># Global confirm dialog</span>
-│   ├── <span class="file">StatCard.vue</span>                 <span class="comment"># Dashboard stat card</span>
+│   ├── <span class="file">StatCard.vue</span>                 <span class="comment"># Dashboard stat card with color accents</span>
 │   ├── <span class="file">NotificationBell.vue</span>         <span class="comment"># Notification header popover</span>
 │   └── <span class="file">NotificationDetailDialog.vue</span> <span class="comment"># Full notification modal</span>
 ├── <span class="dir">composables/</span>
@@ -1017,7 +1056,7 @@ const actions = [
     <h4>Dashboard / Analytics Page</h4>
     <div class="file-tree">Controller (index)
 └── Vue Page
-    └── StatCard + DataTable/Charts</div>
+    └── DashboardGrid + StatWidget(.color()) + Charts</div>
 </section>
 
 <hr class="section-divider">
@@ -2183,7 +2222,7 @@ import { DashboardGrid } from '@/components/admin';</code></pre>
     <table>
         <thead><tr><th>Class</th><th>Renders</th><th>Key Methods</th></tr></thead>
         <tbody>
-            <tr><td><code>StatWidget</code></td><td><code>&lt;StatCard&gt;</code></td><td><code>.value(fn)</code>, <code>.description(fn)</code>, <code>.icon(component)</code>, <code>.trend(fn)</code></td></tr>
+            <tr><td><code>StatWidget</code></td><td><code>&lt;StatCard&gt;</code></td><td><code>.value(fn)</code>, <code>.description(fn)</code>, <code>.icon(component)</code>, <code>.trend(fn)</code>, <code>.color(name)</code></td></tr>
             <tr><td><code>ChartWidget</code></td><td>Chart.js chart in Card</td><td><code>.type('bar'|'line'|'pie'|'doughnut')</code>, <code>.data(fn)</code>, <code>.height(n)</code>, <code>.collapsible()</code></td></tr>
             <tr><td><code>TableWidget</code></td><td>Table in Card</td><td><code>.columns(fn)</code>, <code>.data(fn)</code>, <code>.footerLink(fn)</code></td></tr>
             <tr><td><code>CustomWidget</code></td><td>Any component</td><td><code>.make(key, component)</code>, <code>.props(fn)</code></td></tr>
@@ -2209,12 +2248,26 @@ const widgets = [
         .value((p) => p.data.totalUsers.toLocaleString())
         .description(() => 'All time')
         .icon(Users)
+        .color('blue')
         .trend((p) => ({ value: 12.5, isPositive: true })),
 
     StatWidget.make('revenue')
         .title('Revenue')
         .value((p) => '$' + p.data.revenue.toLocaleString())
-        .icon(DollarSign),
+        .icon(DollarSign)
+        .color('green'),
+
+    StatWidget.make('orders')
+        .title('Orders')
+        .value((p) => p.data.totalOrders)
+        .icon(ShoppingCart)
+        .color('violet'),
+
+    StatWidget.make('growth')
+        .title('Growth')
+        .value((p) => p.data.growthRate + '%')
+        .icon(TrendingUp)
+        .color('orange'),
 
     ChartWidget.make('sales-chart')
         .title('Sales by Month')
@@ -2242,6 +2295,20 @@ const widgets = [
         .data((p) => p.data.recentOrders)
         .footerLink(() => ({ label: 'View all orders', href: '/admin/orders' })),
 ];</code></pre>
+
+    <h3>StatWidget Color Options</h3>
+    <p>The <code>.color(name)</code> method adds a colored top border and a tinted icon background to stat cards. Available colors:</p>
+    <table>
+        <thead><tr><th>Color</th><th>Border</th><th>Icon Style</th></tr></thead>
+        <tbody>
+            <tr><td><code>'blue'</code></td><td>Blue top border</td><td>Blue icon on light blue circle</td></tr>
+            <tr><td><code>'green'</code></td><td>Emerald top border</td><td>Emerald icon on light green circle</td></tr>
+            <tr><td><code>'violet'</code></td><td>Violet top border</td><td>Violet icon on light purple circle</td></tr>
+            <tr><td><code>'orange'</code></td><td>Amber top border</td><td>Amber icon on light orange circle</td></tr>
+            <tr><td><code>'rose'</code></td><td>Rose top border</td><td>Rose icon on light pink circle</td></tr>
+        </tbody>
+    </table>
+    <p>Colors automatically adapt to dark mode. Without <code>.color()</code>, stat cards render with the default plain style.</p>
 
     <h3>Rendering</h3>
     <pre><code class="language-xml">&lt;DashboardGrid :widgets="widgets" :page-props="$page.props" /&gt;</code></pre>
@@ -2599,7 +2666,7 @@ const tableFilters = [SelectFilter.make('status').options({ active: 'Active', su
     <pre><code class="language-xml">&lt;ConfirmDialog /&gt;</code></pre>
 
     <h4 id="comp-statcard">StatCard</h4>
-    <p>Dashboard statistic card with optional trend indicator.</p>
+    <p>Dashboard statistic card with optional trend indicator and color accent. When a <code>color</code> is set, the icon gets a soft colored circle background and the card gets a colored top border.</p>
     <table>
         <thead><tr><th>Prop</th><th>Type</th><th>Description</th></tr></thead>
         <tbody>
@@ -2608,14 +2675,26 @@ const tableFilters = [SelectFilter.make('status').options({ active: 'Active', su
             <tr><td><code>description</code></td><td><code>string</code></td><td>Additional context</td></tr>
             <tr><td><code>icon</code></td><td><code>Component</code></td><td>Lucide icon</td></tr>
             <tr><td><code>trend</code></td><td><code>{ value: number, isPositive: boolean }</code></td><td>Trend indicator</td></tr>
+            <tr><td><code>color</code></td><td><code>'blue' | 'green' | 'violet' | 'orange' | 'rose'</code></td><td>Color accent for icon background and top border (optional)</td></tr>
         </tbody>
     </table>
-    <pre><code class="language-xml">&lt;StatCard
+    <pre><code class="language-xml">&lt;!-- Plain stat card (no color) --&gt;
+&lt;StatCard
     title="Total Revenue"
     value="$12,345"
     description="Last 30 days"
     :icon="DollarSign"
     :trend="{ value: 12.5, isPositive: true }"
+/&gt;
+
+&lt;!-- Color-coded stat card with blue accent --&gt;
+&lt;StatCard
+    title="Total Users"
+    :value="1234"
+    description="from last month"
+    :icon="Users"
+    color="blue"
+    :trend="{ value: 8, isPositive: true }"
 /&gt;</code></pre>
 
     <h4 id="comp-notificationbell">NotificationBell</h4>
@@ -3168,10 +3247,11 @@ import { Button } from '@/components/ui/button';
     <p>See <a href="#infolist-builder">Infolist Builder</a> for full documentation.</p>
 
     <h4>useDashboardWidgets</h4>
-    <p>Dashboard widget builder API for defining configurable dashboard layouts with stat cards, charts, tables, and custom components.</p>
+    <p>Dashboard widget builder API for defining configurable dashboard layouts with stat cards, charts, tables, and custom components. StatWidget supports a <code>.color()</code> method for color-coded stat cards with tinted icon backgrounds and colored top borders.</p>
     <p><strong>File:</strong> <code>resources/js/composables/useDashboardWidgets.ts</code></p>
     <p><strong>Exports:</strong> <code>StatWidget</code>, <code>ChartWidget</code>, <code>TableWidget</code>, <code>CustomWidget</code></p>
     <p><strong>Type exports:</strong> <code>WidgetSchema</code>, <code>WidgetType</code>, <code>ChartType</code></p>
+    <p><strong>Re-exports:</strong> <code>StatCardColor</code> (from <code>StatCard.vue</code>)</p>
     <p>See <a href="#dashboard-widgets">Dashboard Widgets</a> for full documentation.</p>
 </section>
 
@@ -3702,7 +3782,11 @@ Notification::send($recipients, $notification);</code></pre>
 
 <section id="two-factor-auth">
     <h3>Two-Factor Authentication</h3>
-    <p>The <code>TwoFactorChallenge.vue</code> page handles TOTP (time-based one-time password) verification after login.</p>
+    <p>The <code>TwoFactorChallenge.vue</code> page handles TOTP (time-based one-time password) verification after login. Users manage 2FA from the Profile Security page.</p>
+    <div class="screenshot">
+        <img src="screenshots/security.png" alt="Security Page" loading="lazy">
+        <div class="screenshot-caption">Profile security page with 2FA toggle, password change form, and active browser sessions</div>
+    </div>
 
     <h4>Challenge Flow</h4>
     <ol class="step-list">
@@ -3715,6 +3799,14 @@ Notification::send($recipients, $notification);</code></pre>
     <div class="callout callout-tip">
         <div class="callout-title">&#9889; Recovery Codes</div>
         Recovery codes are single-use backup codes generated when 2FA is first enabled. Each code can only be used once. Users should store them securely.
+    </div>
+
+    <h3>Profile Page</h3>
+    <p>Users can update their profile details (name, email) from the profile page.</p>
+    <p><strong>Location:</strong> <code>Pages/Profile/Edit.vue</code> &mdash; <strong>Route:</strong> <code>/profile</code></p>
+    <div class="screenshot">
+        <img src="screenshots/profile.png" alt="Profile Page" loading="lazy">
+        <div class="screenshot-caption">Profile page with personal information, email, and account settings</div>
     </div>
 </section>
 
@@ -3742,7 +3834,7 @@ Notification::send($recipients, $notification);</code></pre>
 │   ├── <span class="dir">Navigation Groups</span>
 │   │   ├── <span class="file">Main</span> (Dashboard)
 │   │   ├── <span class="file">User Management</span> (Users, Roles, Permissions)
-│   │   ├── <span class="file">Content</span> (Media Manager)
+│   │   ├── <span class="file">Content</span> (Articles, Categories, Pages, Media Manager)
 │   │   ├── <span class="file">Email</span> (Templates, Log, Settings)
 │   │   └── <span class="file">System</span> (Settings, Activity Log, Backups, Health, API Tokens, Notifications)
 │   └── <span class="file">Collapse Toggle</span>
@@ -3893,6 +3985,10 @@ Notification::send($recipients, $notification);</code></pre>
         <img src="screenshots/user-create.png" alt="Create User" loading="lazy">
         <div class="screenshot-caption">Create user form with role assignment and status selection</div>
     </div>
+    <div class="screenshot">
+        <img src="screenshots/user-edit.png" alt="Edit User" loading="lazy">
+        <div class="screenshot-caption">Edit user form with profile details, role assignment, and status management</div>
+    </div>
 
     <h4>Pages</h4>
     <table>
@@ -3979,7 +4075,15 @@ Notification::send($recipients, $notification);</code></pre>
     <p><strong>Location:</strong> <code>Pages/Admin/Settings/Index.vue</code> &mdash; <strong>Route:</strong> <code>/admin/settings</code></p>
     <div class="screenshot">
         <img src="screenshots/settings.png" alt="Settings Page" loading="lazy">
-        <div class="screenshot-caption">Settings page with General, SEO, Appearance, Social, and Maintenance tabs</div>
+        <div class="screenshot-caption">Settings page with General, SEO, Appearance, Social, Maintenance, and Homepage tabs</div>
+    </div>
+    <div class="screenshot">
+        <img src="screenshots/settings-appearance.png" alt="Appearance Settings" loading="lazy">
+        <div class="screenshot-caption">Appearance tab with shadcn theme selector, logo upload, and favicon upload</div>
+    </div>
+    <div class="screenshot">
+        <img src="screenshots/settings-homepage.png" alt="Homepage Settings" loading="lazy">
+        <div class="screenshot-caption">Homepage tab with hero section, features, testimonials, pricing, and CTA configuration</div>
     </div>
 
     <h4>Settings Groups</h4>
@@ -5218,6 +5322,7 @@ type InfolistSchemaItem = EntrySchema | BaseEntry | LayoutSchema | Section | Gri
     <p>Used by dashboard widget builders (<code>StatWidget</code>, <code>ChartWidget</code>, <code>TableWidget</code>, <code>CustomWidget</code>).</p>
     <pre><code class="language-typescript">type WidgetType = 'stat' | 'chart' | 'table' | 'custom';
 type ChartType = 'bar' | 'line' | 'pie' | 'doughnut';
+type StatCardColor = 'blue' | 'green' | 'violet' | 'orange' | 'rose';
 
 interface WidgetSchema {
     key: string;
@@ -5229,6 +5334,7 @@ interface WidgetSchema {
     descriptionFn?: (props: any) =&gt; string;
     icon?: Component;
     trendFn?: (props: any) =&gt; { value: number; isPositive: boolean } | null;
+    color?: StatCardColor;
     // Chart
     chartType?: ChartType;
     dataFn?: (props: any) =&gt; any;
@@ -5323,11 +5429,142 @@ class Project extends Model
 <hr class="section-divider">
 
 <!-- ============================================================ -->
+<!-- SECTION: CMS — Articles, Categories, Pages -->
+<!-- ============================================================ -->
+<section id="module-articles">
+    <h2>CMS — Content Management</h2>
+    <p>A full-featured content management system with articles, categories, and static pages. Includes a rich text editor, SEO fields, featured images, and publishing controls.</p>
+
+    <h3>Articles</h3>
+    <p>Create and manage blog articles with a WYSIWYG editor, category assignment, and publish/draft workflow.</p>
+    <p><strong>Location:</strong> <code>Pages/Admin/Articles/</code> &mdash; <strong>Route:</strong> <code>/admin/articles</code> &mdash; <strong>Permissions:</strong> <code>articles.view</code>, <code>articles.create</code>, <code>articles.edit</code>, <code>articles.delete</code></p>
+    <div class="screenshot">
+        <img src="screenshots/articles.png" alt="Articles List" loading="lazy">
+        <div class="screenshot-caption">Articles list with title, category, status, author, and published date columns</div>
+    </div>
+    <div class="screenshot">
+        <img src="screenshots/article-create.png" alt="Create Article" loading="lazy">
+        <div class="screenshot-caption">Article editor with rich text content, category selector, featured image, and SEO fields</div>
+    </div>
+
+    <h4>Features</h4>
+    <ul class="inline-list">
+        <li><strong>Rich Text Editor</strong> — WYSIWYG content editing</li>
+        <li><strong>Categories</strong> — Assign articles to categories for organization</li>
+        <li><strong>Featured Image</strong> — Upload a hero/thumbnail image</li>
+        <li><strong>SEO Fields</strong> — Meta title, description, and slug customization</li>
+        <li><strong>Publishing Controls</strong> — Draft/published status with publish date</li>
+        <li><strong>Public Display</strong> — Articles viewable at <code>/articles/{slug}</code></li>
+    </ul>
+
+    <h4>Key Files</h4>
+    <table>
+        <thead><tr><th>File</th><th>Purpose</th></tr></thead>
+        <tbody>
+            <tr><td><code>app/Http/Controllers/Admin/ArticleController.php</code></td><td>CRUD controller for articles</td></tr>
+            <tr><td><code>app/Models/Article.php</code></td><td>Article model with category relationship</td></tr>
+            <tr><td><code>Pages/Admin/Articles/Index.vue</code></td><td>Articles list with DataTable</td></tr>
+            <tr><td><code>Pages/Admin/Articles/Create.vue</code></td><td>Create/edit article form</td></tr>
+            <tr><td><code>Pages/Public/ArticleShow.vue</code></td><td>Public article view</td></tr>
+        </tbody>
+    </table>
+</section>
+
+<section id="module-categories">
+    <h3>Categories</h3>
+    <p>Organize articles into categories. Categories have names, slugs, and optional descriptions.</p>
+    <p><strong>Location:</strong> <code>Pages/Admin/Categories/</code> &mdash; <strong>Route:</strong> <code>/admin/categories</code></p>
+    <div class="screenshot">
+        <img src="screenshots/categories.png" alt="Categories" loading="lazy">
+        <div class="screenshot-caption">Categories management with name, slug, and article count</div>
+    </div>
+</section>
+
+<section id="module-pages">
+    <h3>Static Pages</h3>
+    <p>Create and manage static pages (e.g., About, Contact, Terms) with a rich text editor and SEO fields.</p>
+    <p><strong>Location:</strong> <code>Pages/Admin/Pages/</code> &mdash; <strong>Route:</strong> <code>/admin/pages</code> &mdash; <strong>Permissions:</strong> <code>pages.view</code>, <code>pages.create</code>, <code>pages.edit</code>, <code>pages.delete</code></p>
+    <div class="screenshot">
+        <img src="screenshots/pages-admin.png" alt="Pages List" loading="lazy">
+        <div class="screenshot-caption">Static pages management with title, slug, status, and actions</div>
+    </div>
+    <div class="screenshot">
+        <img src="screenshots/page-create.png" alt="Create Page" loading="lazy">
+        <div class="screenshot-caption">Page editor with rich text content, featured image, and SEO fields</div>
+    </div>
+
+    <h4>Features</h4>
+    <ul class="inline-list">
+        <li><strong>WYSIWYG Editor</strong> — Rich text content editing</li>
+        <li><strong>SEO Fields</strong> — Meta title, description, and custom slug</li>
+        <li><strong>Publishing Controls</strong> — Draft/published status</li>
+        <li><strong>Public Display</strong> — Pages viewable at <code>/pages/{slug}</code></li>
+    </ul>
+</section>
+
+<section id="theme-selector">
+    <h3>Theme Selector</h3>
+    <p>Choose from 10 predefined shadcn-vue color themes. The selected theme is applied globally via CSS custom property overrides and persists across sessions.</p>
+    <p><strong>Location:</strong> Admin &gt; Settings &gt; Appearance tab</p>
+    <div class="screenshot">
+        <img src="screenshots/settings-appearance.png" alt="Theme Selector" loading="lazy">
+        <div class="screenshot-caption">Appearance tab with 10 shadcn theme presets — click a color circle to apply</div>
+    </div>
+
+    <h4>Available Themes</h4>
+    <table>
+        <thead><tr><th>Theme</th><th>Primary Color</th></tr></thead>
+        <tbody>
+            <tr><td>Zinc</td><td>Neutral gray (default)</td></tr>
+            <tr><td>Slate</td><td>Cool blue-gray</td></tr>
+            <tr><td>Stone</td><td>Warm gray</td></tr>
+            <tr><td>Red</td><td>Vibrant red</td></tr>
+            <tr><td>Rose</td><td>Soft pink-red</td></tr>
+            <tr><td>Orange</td><td>Warm orange</td></tr>
+            <tr><td>Green</td><td>Natural green</td></tr>
+            <tr><td>Blue</td><td>Classic blue</td></tr>
+            <tr><td>Violet</td><td>Purple violet</td></tr>
+            <tr><td>Yellow</td><td>Bright yellow</td></tr>
+        </tbody>
+    </table>
+
+    <h4>How It Works</h4>
+    <ul class="inline-list">
+        <li>Theme name stored in <code>AppearanceSettings</code> (Spatie settings, key: <code>theme</code>)</li>
+        <li>Passed to frontend via <code>siteSettings.theme</code> in shared Inertia props</li>
+        <li><code>useThemeColors()</code> composable overrides CSS custom properties on <code>document.documentElement</code></li>
+        <li>MutationObserver detects dark mode toggle and re-applies the correct theme variant</li>
+        <li>Applied in <code>AuthenticatedLayout</code>, <code>PublicLayout</code>, and <code>Home.vue</code></li>
+    </ul>
+
+    <h4>Key Files</h4>
+    <table>
+        <thead><tr><th>File</th><th>Purpose</th></tr></thead>
+        <tbody>
+            <tr><td><code>resources/js/composables/useThemeColors.ts</code></td><td>Theme presets and CSS variable application</td></tr>
+            <tr><td><code>app/Settings/AppearanceSettings.php</code></td><td>Stores theme name in database</td></tr>
+            <tr><td><code>Pages/Admin/Settings/Index.vue</code></td><td>Theme selector UI (Appearance tab)</td></tr>
+        </tbody>
+    </table>
+</section>
+
+<hr class="section-divider">
+
+<!-- ============================================================ -->
 <!-- SECTION: HOMEPAGE CMS -->
 <!-- ============================================================ -->
 <section id="homepage-cms">
     <h2>Homepage CMS</h2>
     <p>A fully settings-driven public marketing homepage inspired by modern SaaS landing pages. Every section is configurable from the Admin Settings panel — no code changes needed.</p>
+
+    <div class="screenshot">
+        <img src="screenshots/homepage.png" alt="Public Homepage" loading="lazy">
+        <div class="screenshot-caption">Public marketing homepage with navbar, hero section, and configurable content blocks</div>
+    </div>
+    <div class="screenshot">
+        <img src="screenshots/settings-homepage.png" alt="Homepage Settings" loading="lazy">
+        <div class="screenshot-caption">Admin Settings > Homepage tab — configure hero, features, testimonials, pricing, CTA, and footer</div>
+    </div>
 
     <h3>Overview</h3>
     <p>The root route (<code>/</code>) renders a public marketing homepage with the following sections:</p>
@@ -5419,9 +5656,23 @@ class Project extends Model
     </table>
 </section>
 
+<section id="demo-page">
+    <h3>UI Component Demo</h3>
+    <p>A built-in demo page showcasing all available UI components, form fields, and interaction patterns in one place.</p>
+    <p><strong>Route:</strong> <code>/admin/demo</code></p>
+    <div class="screenshot">
+        <img src="screenshots/demo.png" alt="Demo Page" loading="lazy">
+        <div class="screenshot-caption">Component demo page with buttons, form fields, alerts, badges, and other UI elements</div>
+    </div>
+</section>
+
 <section id="dark-mode">
     <h3>Dark Mode</h3>
     <p>The application supports full dark/light theme switching with persistent user preference.</p>
+    <div class="screenshot">
+        <img src="screenshots/dashboard-dark.png" alt="Dashboard Dark Mode" loading="lazy">
+        <div class="screenshot-caption">Dashboard in dark mode — all components, charts, and stat cards adapt seamlessly</div>
+    </div>
 
     <h4>How It Works</h4>
     <ul class="inline-list">

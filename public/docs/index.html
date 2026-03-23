@@ -483,6 +483,10 @@
         <a href="#infolist-builder">Infolist Builder</a>
         <a href="#relation-manager">Relation Manager</a>
         <a href="#dashboard-widgets">Dashboard Widgets</a>
+        <a href="#wizard-validation">Wizard Validation</a>
+        <a href="#image-editor">Image Editor</a>
+        <a href="#xlsx-export">XLSX Export</a>
+        <a href="#i18n">i18n / Localization</a>
 
         <div class="nav-group">Components</div>
         <a href="#admin-components">Admin Components</a>
@@ -2297,18 +2301,27 @@ const widgets = [
 ];</code></pre>
 
     <h3>StatWidget Color Options</h3>
-    <p>The <code>.color(name)</code> method adds a colored top border and a tinted icon background to stat cards. Available colors:</p>
+    <p>The <code>.color(name)</code> method renders the stat card with a bold gradient background, white text, and a frosted glass icon container. Available colors:</p>
     <table>
-        <thead><tr><th>Color</th><th>Border</th><th>Icon Style</th></tr></thead>
+        <thead><tr><th>Color</th><th>Gradient</th></tr></thead>
         <tbody>
-            <tr><td><code>'blue'</code></td><td>Blue top border</td><td>Blue icon on light blue circle</td></tr>
-            <tr><td><code>'green'</code></td><td>Emerald top border</td><td>Emerald icon on light green circle</td></tr>
-            <tr><td><code>'violet'</code></td><td>Violet top border</td><td>Violet icon on light purple circle</td></tr>
-            <tr><td><code>'orange'</code></td><td>Amber top border</td><td>Amber icon on light orange circle</td></tr>
-            <tr><td><code>'rose'</code></td><td>Rose top border</td><td>Rose icon on light pink circle</td></tr>
+            <tr><td><code>'blue'</code></td><td>Blue 500 &rarr; Blue 600</td></tr>
+            <tr><td><code>'green'</code></td><td>Emerald 500 &rarr; Emerald 600</td></tr>
+            <tr><td><code>'violet'</code></td><td>Violet 500 &rarr; Violet 600</td></tr>
+            <tr><td><code>'orange'</code></td><td>Amber 500 &rarr; Orange 500</td></tr>
+            <tr><td><code>'rose'</code></td><td>Rose 500 &rarr; Rose 600</td></tr>
+            <tr><td><code>'cyan'</code></td><td>Cyan 500 &rarr; Cyan 600</td></tr>
+            <tr><td><code>'purple'</code></td><td>Purple 500 &rarr; Purple 600</td></tr>
+            <tr><td><code>'red'</code></td><td>Red 500 &rarr; Red 600</td></tr>
+            <tr><td><code>'amber'</code></td><td>Amber 400 &rarr; Amber 500</td></tr>
+            <tr><td><code>'emerald'</code></td><td>Emerald 400 &rarr; Emerald 600</td></tr>
+            <tr><td><code>'indigo'</code></td><td>Indigo 500 &rarr; Indigo 600</td></tr>
+            <tr><td><code>'teal'</code></td><td>Teal 500 &rarr; Teal 600</td></tr>
+            <tr><td><code>'pink'</code></td><td>Pink 500 &rarr; Pink 600</td></tr>
+            <tr><td><code>'sky'</code></td><td>Sky 500 &rarr; Sky 600</td></tr>
         </tbody>
     </table>
-    <p>Colors automatically adapt to dark mode. Without <code>.color()</code>, stat cards render with the default plain style.</p>
+    <p>Each colored card features: a gradient background, white icon in a frosted <code>bg-white/20 backdrop-blur-sm</code> container (top-left), bold 3xl value (top-right), and title and description below. Without <code>.color()</code>, stat cards render with the default bordered card style.</p>
 
     <h3>Rendering</h3>
     <pre><code class="language-xml">&lt;DashboardGrid :widgets="widgets" :page-props="$page.props" /&gt;</code></pre>
@@ -2316,6 +2329,247 @@ const widgets = [
 
     <h3>ChartWidget Collapsible State</h3>
     <p>When <code>.collapsible()</code> is set, the chart section can be collapsed by clicking the header. The collapsed state is persisted in <code>localStorage</code> per widget key.</p>
+</section>
+
+<hr class="section-divider">
+
+<!-- ============================================================ -->
+<!-- WIZARD VALIDATION -->
+<!-- ============================================================ -->
+<section id="wizard-validation">
+    <h2>Wizard Per-Step Validation</h2>
+    <p>The <code>WizardStep</code> class supports per-step validation that blocks advancing to the next step until all required fields are filled and custom validators pass.</p>
+
+    <h3>Basic Usage</h3>
+    <p>Add <code>.validate()</code> to any wizard step with a map of field names to validation rules:</p>
+    <pre><code class="language-typescript">import { Wizard, WizardStep, TextInput, type ValidationRule } from '@/composables/useFormSchema';
+
+const emailValidator: ValidationRule = (value) => {
+    if (!value) return true; // handled by required
+    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return re.test(value) ? true : 'Please enter a valid email address';
+};
+
+const schema = [
+    Wizard.make([
+        WizardStep.make('Personal Info')
+            .schema([
+                TextInput.make('first_name').required(),
+                TextInput.make('email').email().required(),
+            ])
+            .validate({
+                email: [emailValidator],
+            }),
+        WizardStep.make('Review')
+            .schema([
+                Textarea.make('bio'),
+            ]),
+    ]),
+];</code></pre>
+
+    <h3>Validation Rules</h3>
+    <p>A <code>ValidationRule</code> is a function that receives <code>(value, form)</code> and returns either <code>true</code> (valid) or an error message string:</p>
+    <pre><code class="language-typescript">type ValidationRule = (value: any, form: Record&lt;string, any&gt;) =&gt; string | true;</code></pre>
+
+    <h3>How It Works</h3>
+    <ul>
+        <li>Required fields are checked automatically (empty string, null, undefined, empty array)</li>
+        <li>Custom validators from <code>.validate()</code> run after required checks</li>
+        <li>Errors are written to <code>form.errors</code> and displayed below each field</li>
+        <li>An error summary appears above the step content when validation fails</li>
+        <li>The Next button only advances if all validations pass</li>
+    </ul>
+
+    <h3>Helper: collectFieldNames()</h3>
+    <p>Recursively collects all field names from a schema tree:</p>
+    <pre><code class="language-typescript">import { collectFieldNames } from '@/composables/useFormSchema';
+
+const names = collectFieldNames(stepSchema);
+// ['first_name', 'email', 'bio']</code></pre>
+</section>
+
+<hr class="section-divider">
+
+<!-- ============================================================ -->
+<!-- IMAGE EDITOR -->
+<!-- ============================================================ -->
+<section id="image-editor">
+    <h2>Image Editor</h2>
+    <p>The <code>ImageEditor</code> component provides crop, rotate, flip, and zoom controls using CropperJS. It integrates automatically with <code>FileUpload</code> fields.</p>
+
+    <h3>Schema Integration</h3>
+    <p>Enable image editing on any <code>FileUpload</code> field with <code>.imageCrop()</code>:</p>
+    <pre><code class="language-typescript">import { FileUpload } from '@/composables/useFormSchema';
+
+FileUpload.make('avatar')
+    .image()
+    .imageCrop()
+    .imageAspectRatio(1)         // square crop
+    .imageOutputType('image/jpeg')
+    .imageOutputQuality(0.85)
+    .maxSize(2);</code></pre>
+
+    <h3>Standalone Usage</h3>
+    <pre><code class="language-xml">&lt;ImageEditor
+    v-model:open="editorOpen"
+    :file="selectedFile"
+    :aspect-ratio="16/9"
+    output-type="image/png"
+    :output-quality="0.9"
+    @save="handleSave"
+    @cancel="handleCancel"
+/&gt;</code></pre>
+
+    <h3>Props</h3>
+    <table>
+        <thead><tr><th>Prop</th><th>Type</th><th>Default</th><th>Description</th></tr></thead>
+        <tbody>
+            <tr><td><code>open</code></td><td>boolean</td><td>&mdash;</td><td>Controls dialog visibility (v-model)</td></tr>
+            <tr><td><code>file</code></td><td>File | null</td><td>&mdash;</td><td>The image file to edit</td></tr>
+            <tr><td><code>aspectRatio</code></td><td>number</td><td>NaN (free)</td><td>Enforce aspect ratio (e.g. 1, 16/9)</td></tr>
+            <tr><td><code>outputType</code></td><td>string</td><td>'image/jpeg'</td><td>MIME type for output</td></tr>
+            <tr><td><code>outputQuality</code></td><td>number</td><td>0.9</td><td>Quality 0&ndash;1 for JPEG output</td></tr>
+        </tbody>
+    </table>
+
+    <h3>Events</h3>
+    <table>
+        <thead><tr><th>Event</th><th>Payload</th><th>Description</th></tr></thead>
+        <tbody>
+            <tr><td><code>save</code></td><td>(file: File, dataUrl: string)</td><td>Emitted when user applies the crop</td></tr>
+            <tr><td><code>cancel</code></td><td>&mdash;</td><td>Emitted when user cancels editing</td></tr>
+        </tbody>
+    </table>
+
+    <h3>Controls</h3>
+    <p>The editor toolbar provides: Rotate Left, Rotate Right, Flip Horizontal, Flip Vertical, Zoom In, Zoom Out, and Reset.</p>
+</section>
+
+<hr class="section-divider">
+
+<!-- ============================================================ -->
+<!-- XLSX EXPORT -->
+<!-- ============================================================ -->
+<section id="xlsx-export">
+    <h2>XLSX Export</h2>
+    <p>The <code>useExcelExport</code> composable generates styled Excel files client-side using ExcelJS (dynamically imported for tree-shaking).</p>
+
+    <h3>Composable Usage</h3>
+    <pre><code class="language-typescript">import { useExcelExport } from '@/composables/useExcelExport';
+
+const { exportToXlsx, exporting } = useExcelExport();
+
+exportToXlsx({
+    filename: 'users',
+    sheetName: 'Users',
+    columns: [
+        { header: 'Name', key: 'name', width: 25 },
+        { header: 'Email', key: 'email', width: 30 },
+        { header: 'Role', key: 'role' },
+    ],
+    data: usersArray,
+    headerStyle: {
+        bgColor: '4F46E5',
+        fontColor: 'FFFFFF',
+        bold: true,
+    },
+});</code></pre>
+
+    <h3>ExportDropdown Component</h3>
+    <p>A ready-made dropdown that offers both CSV and XLSX export:</p>
+    <pre><code class="language-xml">&lt;ExportDropdown
+    :csv-href="route('admin.users.export-csv')"
+    xlsx-filename="users"
+    xlsx-sheet-name="Users"
+    :columns="xlsxColumns"
+    :data="tableData"
+/&gt;</code></pre>
+
+    <h3>API Reference</h3>
+    <table>
+        <thead><tr><th>Option</th><th>Type</th><th>Required</th><th>Description</th></tr></thead>
+        <tbody>
+            <tr><td><code>filename</code></td><td>string</td><td>Yes</td><td>Output filename (auto-appends .xlsx)</td></tr>
+            <tr><td><code>sheetName</code></td><td>string</td><td>No</td><td>Worksheet name (default: 'Sheet1')</td></tr>
+            <tr><td><code>columns</code></td><td>ExcelColumn[]</td><td>Yes</td><td>Column definitions with header, key, and optional width</td></tr>
+            <tr><td><code>data</code></td><td>Record[]</td><td>Yes</td><td>Array of row objects</td></tr>
+            <tr><td><code>headerStyle</code></td><td>object</td><td>No</td><td>Header styling: bgColor, fontColor, bold</td></tr>
+        </tbody>
+    </table>
+
+    <h3>Features</h3>
+    <ul>
+        <li>Dynamic import of ExcelJS &mdash; zero impact on main bundle size</li>
+        <li>Styled headers with bold font, colored background, and borders</li>
+        <li>Auto-fitted column widths based on content length</li>
+        <li><code>exporting</code> ref for loading state in the UI</li>
+    </ul>
+</section>
+
+<hr class="section-divider">
+
+<!-- ============================================================ -->
+<!-- I18N / LOCALIZATION -->
+<!-- ============================================================ -->
+<section id="i18n">
+    <h2>i18n / Localization</h2>
+    <p>The starter kit includes <code>vue-i18n</code> with lazy-loaded locale files. English is loaded eagerly; other locales are fetched on demand.</p>
+
+    <h3>Setup</h3>
+    <p>The i18n plugin is registered in <code>resources/js/app.ts</code>:</p>
+    <pre><code class="language-typescript">import i18n from '@/i18n';
+app.use(i18n);</code></pre>
+
+    <h3>Included Locales</h3>
+    <table>
+        <thead><tr><th>Code</th><th>Language</th><th>File</th></tr></thead>
+        <tbody>
+            <tr><td><code>en</code></td><td>English</td><td><code>i18n/locales/en.json</code></td></tr>
+            <tr><td><code>ms</code></td><td>Bahasa Melayu</td><td><code>i18n/locales/ms.json</code></td></tr>
+            <tr><td><code>zh</code></td><td>Chinese</td><td><code>i18n/locales/zh.json</code></td></tr>
+        </tbody>
+    </table>
+
+    <h3>Translation Keys</h3>
+    <p>Translations are organized into namespaces:</p>
+    <table>
+        <thead><tr><th>Namespace</th><th>Keys</th><th>Description</th></tr></thead>
+        <tbody>
+            <tr><td><code>nav.*</code></td><td>dashboard, users, roles, pages, etc.</td><td>Sidebar navigation labels</td></tr>
+            <tr><td><code>navGroups.*</code></td><td>main, userManagement, content, etc.</td><td>Sidebar section headers</td></tr>
+            <tr><td><code>common.*</code></td><td>save, cancel, delete, edit, etc.</td><td>Common button and UI labels</td></tr>
+            <tr><td><code>status.*</code></td><td>active, inactive, pending, etc.</td><td>Status labels</td></tr>
+            <tr><td><code>auth.*</code></td><td>login, register, email, password, etc.</td><td>Authentication page strings</td></tr>
+            <tr><td><code>validation.*</code></td><td>required, email, minLength, etc.</td><td>Validation messages with interpolation</td></tr>
+        </tbody>
+    </table>
+
+    <h3>Using Translations</h3>
+    <pre><code class="language-xml">&lt;!-- In templates --&gt;
+{{ $t('common.save') }}
+{{ $t('nav.dashboard') }}
+
+&lt;!-- In script setup --&gt;
+&lt;script setup&gt;
+import { useI18n } from 'vue-i18n';
+const { t } = useI18n();
+const label = t('common.save');
+&lt;/script&gt;</code></pre>
+
+    <h3>Adding a New Language</h3>
+    <ol>
+        <li>Create <code>resources/js/i18n/locales/xx.json</code> (copy from <code>en.json</code>)</li>
+        <li>Add the locale to <code>SUPPORTED_LOCALES</code> in <code>resources/js/i18n/index.ts</code></li>
+        <li>Translate the values in the JSON file</li>
+    </ol>
+
+    <h3>LanguageSwitcher Component</h3>
+    <p>A globe-icon dropdown in the header that allows users to switch languages. Selection is persisted to <code>localStorage</code>.</p>
+    <pre><code class="language-xml">&lt;LanguageSwitcher /&gt;</code></pre>
+
+    <h3>Switching Locale Programmatically</h3>
+    <pre><code class="language-typescript">import { setLocale } from '@/i18n';
+await setLocale('ms'); // Lazy-loads Bahasa Melayu translations</code></pre>
 </section>
 
 <hr class="section-divider">
@@ -2666,7 +2920,7 @@ const tableFilters = [SelectFilter.make('status').options({ active: 'Active', su
     <pre><code class="language-xml">&lt;ConfirmDialog /&gt;</code></pre>
 
     <h4 id="comp-statcard">StatCard</h4>
-    <p>Dashboard statistic card with optional trend indicator and color accent. When a <code>color</code> is set, the icon gets a soft colored circle background and the card gets a colored top border.</p>
+    <p>Dashboard statistic card with optional trend indicator and color accent. When a <code>color</code> is set, the card renders with a bold gradient background, white text, and a frosted glass icon container.</p>
     <table>
         <thead><tr><th>Prop</th><th>Type</th><th>Description</th></tr></thead>
         <tbody>
@@ -2675,7 +2929,7 @@ const tableFilters = [SelectFilter.make('status').options({ active: 'Active', su
             <tr><td><code>description</code></td><td><code>string</code></td><td>Additional context</td></tr>
             <tr><td><code>icon</code></td><td><code>Component</code></td><td>Lucide icon</td></tr>
             <tr><td><code>trend</code></td><td><code>{ value: number, isPositive: boolean }</code></td><td>Trend indicator</td></tr>
-            <tr><td><code>color</code></td><td><code>'blue' | 'green' | 'violet' | 'orange' | 'rose'</code></td><td>Color accent for icon background and top border (optional)</td></tr>
+            <tr><td><code>color</code></td><td><code>'blue' | 'green' | 'violet' | 'orange' | 'rose'</code></td><td>Gradient background color (renders full-color card style when set)</td></tr>
         </tbody>
     </table>
     <pre><code class="language-xml">&lt;!-- Plain stat card (no color) --&gt;
@@ -3247,7 +3501,7 @@ import { Button } from '@/components/ui/button';
     <p>See <a href="#infolist-builder">Infolist Builder</a> for full documentation.</p>
 
     <h4>useDashboardWidgets</h4>
-    <p>Dashboard widget builder API for defining configurable dashboard layouts with stat cards, charts, tables, and custom components. StatWidget supports a <code>.color()</code> method for color-coded stat cards with tinted icon backgrounds and colored top borders.</p>
+    <p>Dashboard widget builder API for defining configurable dashboard layouts with stat cards, charts, tables, and custom components. StatWidget supports a <code>.color()</code> method for color-coded stat cards with gradient backgrounds and frosted glass icon containers.</p>
     <p><strong>File:</strong> <code>resources/js/composables/useDashboardWidgets.ts</code></p>
     <p><strong>Exports:</strong> <code>StatWidget</code>, <code>ChartWidget</code>, <code>TableWidget</code>, <code>CustomWidget</code></p>
     <p><strong>Type exports:</strong> <code>WidgetSchema</code>, <code>WidgetType</code>, <code>ChartType</code></p>
@@ -3820,32 +4074,40 @@ Notification::send($recipients, $notification);</code></pre>
     <p>Two layout components wrap all pages: <code>AuthenticatedLayout</code> for logged-in users and <code>GuestLayout</code> for auth pages.</p>
 
     <h3>AuthenticatedLayout</h3>
-    <p>Main application layout with collapsible sidebar, header with notification bell and user menu, and breadcrumb navigation.</p>
+    <p>Main application layout with collapsible sidebar, sticky header, breadcrumb navigation in the content area, and configurable logo position.</p>
     <p><strong>File:</strong> <code>resources/js/Layouts/AuthenticatedLayout.vue</code></p>
     <div class="screenshot">
         <img src="screenshots/dashboard.png" alt="Authenticated Layout" loading="lazy">
-        <div class="screenshot-caption">AuthenticatedLayout with sidebar navigation, header, notification bell, and dashboard content</div>
+        <div class="screenshot-caption">AuthenticatedLayout with sidebar navigation, sticky header, notification bell, and dashboard content</div>
     </div>
 
     <h4>Structure</h4>
     <div class="file-tree">AuthenticatedLayout
 ├── <span class="dir">Sidebar</span>
-│   ├── <span class="file">Brand/Logo</span>
+│   ├── <span class="file">Brand/Logo</span> (when logo_position = 'sidebar')
 │   ├── <span class="dir">Navigation Groups</span>
 │   │   ├── <span class="file">Main</span> (Dashboard)
 │   │   ├── <span class="file">User Management</span> (Users, Roles, Permissions)
 │   │   ├── <span class="file">Content</span> (Articles, Categories, Pages, Media Manager)
 │   │   ├── <span class="file">Email</span> (Templates, Log, Settings)
 │   │   └── <span class="file">System</span> (Settings, Activity Log, Backups, Health, API Tokens, Notifications)
-│   └── <span class="file">Collapse Toggle</span>
-├── <span class="dir">Header</span>
-│   ├── <span class="file">Breadcrumbs</span>
-│   ├── <span class="file">NotificationBell</span>
-│   ├── <span class="file">Theme Toggle</span> (Dark/Light)
-│   └── <span class="file">User Avatar Dropdown</span> (Profile, Logout)
+│   └── <span class="dir">Footer</span>
+│       ├── <span class="file">Expand Toggle</span> (visible when collapsed)
+│       ├── <span class="file">User Avatar Dropdown</span> (Profile, Security, Theme, Logout)
+│       └── <span class="file">Collapse Toggle</span> (visible when expanded)
+├── <span class="dir">Header</span> (sticky top)
+│   ├── <span class="file">Mobile Sidebar Trigger</span>
+│   ├── <span class="file">Centered Logo</span> (when logo_position = 'header')
+│   ├── <span class="file">TeamSwitcher</span>
+│   └── <span class="file">NotificationBell</span>
+├── <span class="dir">Main Content</span>
+│   ├── <span class="file">Breadcrumbs</span> (above page content)
+│   └── <span class="file">Slot</span> (page content)
 ├── <span class="file">Flash Toasts</span> (via useFlashToasts)
-├── <span class="file">ConfirmDialog</span> (global)
-└── <span class="dir">Main Content</span> (slot)</div>
+└── <span class="file">ConfirmDialog</span> (global)</div>
+
+    <h4>Logo Position</h4>
+    <p>The logo can be displayed in either the <strong>header</strong> (centered in the top bar) or the <strong>sidebar</strong> (top of sidebar with site name). This is configurable via <strong>Settings &rarr; Appearance &rarr; Logo Position</strong>. The setting is stored as <code>logo_position</code> in the appearance settings group and passed to the frontend via <code>siteSettings.logo_position</code>.</p>
 
     <h4>Props</h4>
     <table>
@@ -3913,11 +4175,16 @@ Notification::send($recipients, $notification);</code></pre>
         <tbody>
             <tr><td><strong>Main</strong></td><td>Dashboard</td><td>&mdash; (always visible)</td></tr>
             <tr><td><strong>User Management</strong></td><td>Users, Roles, Permissions</td><td>users.view, roles.view, permissions.view</td></tr>
-            <tr><td><strong>Content</strong></td><td>Media Manager</td><td>media.view</td></tr>
+            <tr><td><strong>Content</strong></td><td>Pages, Articles, Categories, Media Manager</td><td>pages.view, articles.view, categories.view, media.view</td></tr>
             <tr><td><strong>Email</strong></td><td>Templates, Email Log, Email Settings</td><td>email.view, settings.view</td></tr>
+            <tr><td><strong>Push Notifications</strong></td><td>Firebase Settings</td><td>firebase.view</td></tr>
             <tr><td><strong>System</strong></td><td>General Settings, Activity Log, Backups, System Health, API Tokens, Notifications</td><td>settings.view, activity-log.view, backups.view, system-health.view, api-tokens.view, notifications.view</td></tr>
+            <tr><td><strong>Demo</strong></td><td>Feature Demos</td><td>&mdash; (always visible)</td></tr>
         </tbody>
     </table>
+
+    <h4>Sidebar Collapse/Expand</h4>
+    <p>The sidebar footer contains a collapse/expand toggle alongside the user profile dropdown. When the sidebar is expanded, a <code>ChevronsLeft</code> icon sits to the right of the user avatar to collapse. When collapsed to icon mode, a <code>ChevronsRight</code> expand button appears above the avatar. The toggle uses the <code>SidebarTrigger</code> component which calls <code>useSidebar().toggleSidebar()</code>.</p>
 
     <h4>Adding a New Nav Item</h4>
     <p>To add a new page to the sidebar, add an entry to the appropriate group in <code>AuthenticatedLayout.vue</code>:</p>
@@ -3936,7 +4203,7 @@ Notification::send($recipients, $notification);</code></pre>
 
 <section id="breadcrumbs">
     <h3>Breadcrumbs</h3>
-    <p>Breadcrumbs are passed as a prop to <code>AuthenticatedLayout</code> and rendered in the header.</p>
+    <p>Breadcrumbs are passed as a prop to <code>AuthenticatedLayout</code> and rendered in the main content area, directly above the page content (before the <code>&lt;slot /&gt;</code>). This places them as a contextual navigation trail just above the <code>PageHeader</code> on every page.</p>
     <pre><code class="language-typescript">interface BreadcrumbItem {
     label: string;     // Display text
     href?: string;     // Optional link (last item is typically not linked)
@@ -4079,7 +4346,7 @@ Notification::send($recipients, $notification);</code></pre>
     </div>
     <div class="screenshot">
         <img src="screenshots/settings-appearance.png" alt="Appearance Settings" loading="lazy">
-        <div class="screenshot-caption">Appearance tab with shadcn theme selector, logo upload, and favicon upload</div>
+        <div class="screenshot-caption">Appearance tab with logo upload, favicon upload, logo position selector, sidebar theme presets with custom color pickers, and shadcn color theme selector</div>
     </div>
     <div class="screenshot">
         <img src="screenshots/settings-homepage.png" alt="Homepage Settings" loading="lazy">
@@ -5537,13 +5804,31 @@ class Project extends Model
         <li>Applied in <code>AuthenticatedLayout</code>, <code>PublicLayout</code>, and <code>Home.vue</code></li>
     </ul>
 
+    <h4>Sidebar Theme Colors</h4>
+    <p>Admins can customize sidebar colors independently from the main color theme. Three nullable hex color settings are stored in the <code>appearance</code> group:</p>
+    <table>
+        <thead><tr><th>Setting</th><th>CSS Variable</th><th>Description</th></tr></thead>
+        <tbody>
+            <tr><td><code>sidebar_background</code></td><td><code>--sidebar</code></td><td>Sidebar background color</td></tr>
+            <tr><td><code>sidebar_foreground</code></td><td><code>--sidebar-foreground</code></td><td>Sidebar text / menu item color</td></tr>
+            <tr><td><code>sidebar_accent</code></td><td><code>--sidebar-accent</code></td><td>Active / hover item highlight</td></tr>
+        </tbody>
+    </table>
+    <p>Additionally, <code>--sidebar-border</code> is auto-derived from the background (slightly lighter or darker), and <code>--sidebar-accent-foreground</code> is auto-contrasted against the accent color (dark text on light accents, white text on dark accents).</p>
+
+    <p><strong>Presets:</strong> 8 curated sidebar presets are available: Default, Dark Navy, Charcoal, Deep Purple, Forest, Ocean Blue, Warm Gray, and White. Each preset sets all three colors at once. Individual colors can also be fine-tuned via native color pickers with hex text input.</p>
+
+    <p><strong>Layering:</strong> Custom sidebar colors layer on top of the selected color theme. Setting a color theme changes <code>--sidebar-primary</code> (accent buttons), while sidebar theme colors control <code>--sidebar</code>, <code>--sidebar-foreground</code>, and <code>--sidebar-accent</code> (different CSS variables). When sidebar colors are <code>null</code> (default), the sidebar uses the CSS defaults from <code>app.css</code> which respond to light/dark mode. When set, they apply uniformly regardless of dark mode.</p>
+
+    <p><strong>Hex to OKLCH:</strong> The <code>hexToOklch()</code> helper in <code>useThemeColors.ts</code> converts hex colors to <code>oklch()</code> CSS values at runtime (sRGB &rarr; linear RGB &rarr; OKLab &rarr; OKLCH), matching the Tailwind v4 color format.</p>
+
     <h4>Key Files</h4>
     <table>
         <thead><tr><th>File</th><th>Purpose</th></tr></thead>
         <tbody>
-            <tr><td><code>resources/js/composables/useThemeColors.ts</code></td><td>Theme presets and CSS variable application</td></tr>
-            <tr><td><code>app/Settings/AppearanceSettings.php</code></td><td>Stores theme name in database</td></tr>
-            <tr><td><code>Pages/Admin/Settings/Index.vue</code></td><td>Theme selector UI (Appearance tab)</td></tr>
+            <tr><td><code>resources/js/composables/useThemeColors.ts</code></td><td>Theme presets, sidebar color application, and hex-to-oklch conversion</td></tr>
+            <tr><td><code>app/Settings/AppearanceSettings.php</code></td><td>Stores theme name and sidebar colors in database</td></tr>
+            <tr><td><code>Pages/Admin/Settings/Index.vue</code></td><td>Theme selector and sidebar theme UI (Appearance tab)</td></tr>
         </tbody>
     </table>
 </section>
@@ -5657,13 +5942,283 @@ class Project extends Model
 </section>
 
 <section id="demo-page">
-    <h3>UI Component Demo</h3>
-    <p>A built-in demo page showcasing all available UI components, form fields, and interaction patterns in one place.</p>
-    <p><strong>Route:</strong> <code>/admin/demo</code></p>
+    <h3>Feature Demos</h3>
+    <p>The application includes <strong>18 dedicated feature demo pages</strong> accessible from <code>/admin/demo</code>. Each demo showcases a distinct feature with realistic mock data, making it easy to explore capabilities without affecting production data.</p>
+    <p><strong>Index Route:</strong> <code>/admin/demo</code></p>
     <div class="screenshot">
-        <img src="screenshots/demo.png" alt="Demo Page" loading="lazy">
-        <div class="screenshot-caption">Component demo page with buttons, form fields, alerts, badges, and other UI elements</div>
+        <img src="screenshots/demo.png" alt="Feature Demo Index" loading="lazy">
+        <div class="screenshot-caption">Feature demo index &mdash; grid of cards linking to each individual demo page</div>
     </div>
+
+    <!-- Rich Text Editor -->
+    <h4 id="demo-rich-text-editor">Rich Text Editor</h4>
+    <p><strong>Route:</strong> <code>/admin/demo/rich-text-editor</code></p>
+    <p>TipTap v3 WYSIWYG editor integration with multiple toolbar configurations. Demonstrates how rich text fields integrate with the FormFields schema system.</p>
+    <div class="screenshot">
+        <img src="screenshots/demo-rich-text-editor.png" alt="Rich Text Editor Demo" loading="lazy">
+        <div class="screenshot-caption">Rich text editor with full toolbar, minimal toolbar, and custom toolbar extensions</div>
+    </div>
+    <ul class="inline-list">
+        <li>Full toolbar with formatting, lists, links, images, and code blocks</li>
+        <li>Minimal toolbar variant for lightweight editing</li>
+        <li>Custom toolbar extensions and button groups</li>
+        <li>Schema-driven integration with <code>FormFields</code></li>
+    </ul>
+
+    <!-- Repeater Field -->
+    <h4 id="demo-repeater-field">Repeater Field</h4>
+    <p><strong>Route:</strong> <code>/admin/demo/repeater-field</code></p>
+    <p>Dynamic add/remove field groups for collections like contacts, team members, or invoice line items. Supports constraints, collapsible rows, and drag reordering.</p>
+    <div class="screenshot">
+        <img src="screenshots/demo-repeater-field.png" alt="Repeater Field Demo" loading="lazy">
+        <div class="screenshot-caption">Repeater fields with add/remove controls, collapsible rows, and drag reordering</div>
+    </div>
+    <ul class="inline-list">
+        <li>Add and remove field groups dynamically</li>
+        <li>Min/max item constraints</li>
+        <li>Collapsible rows with summary labels</li>
+        <li>Drag-and-drop reordering within the repeater</li>
+    </ul>
+
+    <!-- Form Builder -->
+    <h4 id="demo-form-builder">Form Builder</h4>
+    <p><strong>Route:</strong> <code>/admin/demo/form-builder</code></p>
+    <p>Comprehensive showcase of every available field type in the schema-driven form system. Useful as a reference for building new forms.</p>
+    <div class="screenshot">
+        <img src="screenshots/demo-form-builder.png" alt="Form Builder Demo" loading="lazy">
+        <div class="screenshot-caption">All field types: text, select, radio, toggle, date, color, file upload, rich text, repeater, slider, and more</div>
+    </div>
+    <ul class="inline-list">
+        <li>Text, textarea, number, and PIN inputs</li>
+        <li>Select, radio group, checkbox, and toggle fields</li>
+        <li>Date/time pickers, color picker, and file upload</li>
+        <li>Rich text editor, repeater, slider, tags, and wizard fields</li>
+    </ul>
+
+    <!-- Bulk Actions -->
+    <h4 id="demo-bulk-actions">Bulk Actions</h4>
+    <p><strong>Route:</strong> <code>/admin/demo/bulk-actions</code></p>
+    <p>DataTable with row selection and bulk operations. Demonstrates how to apply actions to multiple records at once with confirmation dialogs.</p>
+    <div class="screenshot">
+        <img src="screenshots/demo-bulk-actions.png" alt="Bulk Actions Demo" loading="lazy">
+        <div class="screenshot-caption">Selectable rows with bulk delete, archive, and activate actions</div>
+    </div>
+    <ul class="inline-list">
+        <li>Checkbox row selection with select-all toggle</li>
+        <li>Bulk delete, archive, and activate with confirmation dialogs</li>
+        <li>Column filters and search</li>
+        <li>CSV export of filtered results</li>
+    </ul>
+
+    <!-- Soft Deletes -->
+    <h4 id="demo-soft-deletes">Soft Deletes &amp; Trash</h4>
+    <p><strong>Route:</strong> <code>/admin/demo/soft-deletes</code></p>
+    <p>Table with trash/restore workflow demonstrating soft-delete patterns. Records can be trashed, restored, or permanently deleted.</p>
+    <div class="screenshot">
+        <img src="screenshots/demo-soft-deletes.png" alt="Soft Deletes Demo" loading="lazy">
+        <div class="screenshot-caption">Soft deletes with trash filter, restore, and force-delete actions</div>
+    </div>
+    <ul class="inline-list">
+        <li>Trash and restore individual records</li>
+        <li>Trashed filter to show/hide deleted items</li>
+        <li>Bulk restore and force-delete</li>
+        <li>Conditional row actions based on trashed state</li>
+    </ul>
+
+    <!-- Action Modals -->
+    <h4 id="demo-action-modals">Action Modals</h4>
+    <p><strong>Route:</strong> <code>/admin/demo/action-modals</code></p>
+    <p>Modal-based inline CRUD without leaving the page. Edit records, change status, and delete via modal dialogs triggered from table row actions.</p>
+    <div class="screenshot">
+        <img src="screenshots/demo-action-modals.png" alt="Action Modals Demo" loading="lazy">
+        <div class="screenshot-caption">Inline edit, status change, and delete via modal dialogs</div>
+    </div>
+    <ul class="inline-list">
+        <li>Edit record fields in a modal form</li>
+        <li>Change status with a dropdown modal</li>
+        <li>Delete with confirmation dialog</li>
+        <li>No page navigation required &mdash; all actions are inline</li>
+    </ul>
+
+    <!-- Import & Export -->
+    <h4 id="demo-import-export">Import &amp; Export</h4>
+    <p><strong>Route:</strong> <code>/admin/demo/import-export</code></p>
+    <p>CSV import with column mapping and preview, plus CSV streaming export and XLSX export via the ExportDropdown component.</p>
+    <div class="screenshot">
+        <img src="screenshots/demo-import-export.png" alt="Import & Export Demo" loading="lazy">
+        <div class="screenshot-caption">CSV import with column mapping, preview, and multi-format export</div>
+    </div>
+    <ul class="inline-list">
+        <li>CSV file upload with column mapping interface</li>
+        <li>Preview imported data before committing</li>
+        <li>Streaming CSV export for large datasets</li>
+        <li>XLSX export via <code>ExportDropdown</code> component</li>
+    </ul>
+
+    <!-- Global Search -->
+    <h4 id="demo-global-search">Global Search</h4>
+    <p><strong>Route:</strong> <code>/admin/demo/global-search</code></p>
+    <p>Command palette (<kbd>Ctrl+K</kbd>) with fuzzy search across all application resources. Results are grouped by type with keyboard navigation.</p>
+    <div class="screenshot">
+        <img src="screenshots/demo-global-search.png" alt="Global Search Demo" loading="lazy">
+        <div class="screenshot-caption">Command palette with grouped results, keyboard navigation, and permission-aware filtering</div>
+    </div>
+    <ul class="inline-list">
+        <li>Fuzzy search across users, articles, pages, and settings</li>
+        <li>Results grouped by resource type</li>
+        <li>Full keyboard navigation (arrow keys, Enter, Escape)</li>
+        <li>Permission-aware &mdash; only shows resources the user can access</li>
+    </ul>
+
+    <!-- Inline Editing -->
+    <h4 id="demo-inline-editing">Inline Table Editing</h4>
+    <p><strong>Route:</strong> <code>/admin/demo/inline-editing</code></p>
+    <p>Edit table cells directly without opening a form. Supports text inputs with debounce, select dropdowns, and toggle switches.</p>
+    <div class="screenshot">
+        <img src="screenshots/demo-inline-editing.png" alt="Inline Editing Demo" loading="lazy">
+        <div class="screenshot-caption">Edit cells directly in the table with text inputs, selects, and toggles</div>
+    </div>
+    <ul class="inline-list">
+        <li>Click-to-edit text fields with debounced save</li>
+        <li>Inline select dropdowns for categorical columns</li>
+        <li>Toggle switches for boolean fields</li>
+        <li>Toast notifications on successful save</li>
+    </ul>
+
+    <!-- Conditional Fields -->
+    <h4 id="demo-conditional-fields">Conditional Fields</h4>
+    <p><strong>Route:</strong> <code>/admin/demo/conditional-fields</code></p>
+    <p>Dynamic form visibility rules using <code>.visibleWhen()</code> and <code>.hiddenWhen()</code> modifiers. Fields appear or hide based on other field values.</p>
+    <div class="screenshot">
+        <img src="screenshots/demo-conditional-fields.png" alt="Conditional Fields Demo" loading="lazy">
+        <div class="screenshot-caption">Dynamic field visibility driven by account type, country, and payment method selections</div>
+    </div>
+    <ul class="inline-list">
+        <li>Show/hide fields based on select, radio, or checkbox values</li>
+        <li>Account type drives which detail fields appear</li>
+        <li>Country and payment method conditionals</li>
+        <li>Schema-driven &mdash; no manual <code>v-if</code> logic needed</li>
+    </ul>
+
+    <!-- Infolist -->
+    <h4 id="demo-infolist">Infolist / Show Page</h4>
+    <p><strong>Route:</strong> <code>/admin/demo/infolist</code></p>
+    <p>Read-only schema-based detail views for displaying record information. Uses the same schema system as forms but renders as static content.</p>
+    <div class="screenshot">
+        <img src="screenshots/demo-infolist.png" alt="Infolist Demo" loading="lazy">
+        <div class="screenshot-caption">Schema-driven detail view with image, text, badge, date, boolean, and key-value entries</div>
+    </div>
+    <ul class="inline-list">
+        <li>Image, text, and badge display entries</li>
+        <li>Date formatting and boolean indicators</li>
+        <li>Key-value pairs and repeatable entries</li>
+        <li>Tab-based layout for organizing sections</li>
+    </ul>
+
+    <!-- Relation Manager -->
+    <h4 id="demo-relation-manager">Relation Managers</h4>
+    <p><strong>Route:</strong> <code>/admin/demo/relation-manager</code></p>
+    <p>Embedded DataTables for managing related records directly from a parent record's page. Supports create modals and tab navigation.</p>
+    <div class="screenshot">
+        <img src="screenshots/demo-relation-manager.png" alt="Relation Manager Demo" loading="lazy">
+        <div class="screenshot-caption">Related orders and activity tables embedded in a parent record view with tab navigation</div>
+    </div>
+    <ul class="inline-list">
+        <li>Embedded DataTables for related records (orders, activity)</li>
+        <li>Create new related records via modal</li>
+        <li>Tab navigation between relation types</li>
+        <li>Full sorting, filtering, and pagination per relation</li>
+    </ul>
+
+    <!-- Grouping -->
+    <h4 id="demo-grouping">Row Grouping &amp; Summarizers</h4>
+    <p><strong>Route:</strong> <code>/admin/demo/grouping</code></p>
+    <p>Table rows grouped by a column value (e.g., status) with collapsible group headers and aggregate summary rows.</p>
+    <div class="screenshot">
+        <img src="screenshots/demo-grouping.png" alt="Row Grouping Demo" loading="lazy">
+        <div class="screenshot-caption">Grouped rows by status with collapsible headers and sum/count summary aggregates</div>
+    </div>
+    <ul class="inline-list">
+        <li>Automatic grouping by any column value</li>
+        <li>Collapsible group headers with item counts</li>
+        <li>Summary rows with aggregate functions (sum, count)</li>
+        <li>Compatible with sorting and filtering</li>
+    </ul>
+
+    <!-- Reordering -->
+    <h4 id="demo-reordering">Drag-and-Drop Reordering</h4>
+    <p><strong>Route:</strong> <code>/admin/demo/reordering</code></p>
+    <p>Draggable table rows using VueDraggable with grip handles. Sort order is persisted to the server on drop.</p>
+    <div class="screenshot">
+        <img src="screenshots/demo-reordering.png" alt="Drag Reordering Demo" loading="lazy">
+        <div class="screenshot-caption">Draggable table rows with grip handles and persisted sort order</div>
+    </div>
+    <ul class="inline-list">
+        <li>Drag-and-drop via grip handle column</li>
+        <li>Visual feedback during drag operation</li>
+        <li>Persisted sort order via server callback</li>
+        <li>Powered by <code>vuedraggable</code> (VueDraggable)</li>
+    </ul>
+
+    <!-- Widgets -->
+    <h4 id="demo-widgets">Dashboard Widgets</h4>
+    <p><strong>Route:</strong> <code>/admin/demo/widgets</code></p>
+    <p>Stat cards with trend indicators, bar/line charts via vue-chartjs, and data tables arranged in a responsive grid layout.</p>
+    <div class="screenshot">
+        <img src="screenshots/demo-widgets.png" alt="Dashboard Widgets Demo" loading="lazy">
+        <div class="screenshot-caption">Stat cards with trends, bar/line charts, and data tables in a responsive widget grid</div>
+    </div>
+    <ul class="inline-list">
+        <li>StatCard widgets with value, trend, and icon</li>
+        <li>Bar and line charts via <code>vue-chartjs</code></li>
+        <li>Embedded data tables as widgets</li>
+        <li>Responsive grid layout adapting to screen size</li>
+    </ul>
+
+    <!-- Field Types -->
+    <h4 id="demo-field-types">New Field Types</h4>
+    <p><strong>Route:</strong> <code>/admin/demo/field-types</code></p>
+    <p>Specialized form field types beyond the standard set: TimePicker, searchable CheckboxList, Key-Value editor, and Markdown editor with live preview.</p>
+    <div class="screenshot">
+        <img src="screenshots/demo-field-types.png" alt="Field Types Demo" loading="lazy">
+        <div class="screenshot-caption">TimePicker, searchable CheckboxList, Key-Value editor, and Markdown editor with preview</div>
+    </div>
+    <ul class="inline-list">
+        <li>TimePicker with hour/minute selection</li>
+        <li>CheckboxList with search filtering and grid layout</li>
+        <li>Key-Value editor for arbitrary key-value pairs</li>
+        <li>Markdown editor with side-by-side live preview</li>
+    </ul>
+
+    <!-- Advanced Filters -->
+    <h4 id="demo-advanced-filters">Advanced Filters</h4>
+    <p><strong>Route:</strong> <code>/admin/demo/advanced-filters</code></p>
+    <p>Comprehensive filtering system with select, ternary, checkbox, date range, and a visual query builder supporting recursive AND/OR rule groups.</p>
+    <div class="screenshot">
+        <img src="screenshots/demo-advanced-filters.png" alt="Advanced Filters Demo" loading="lazy">
+        <div class="screenshot-caption">Select, ternary, date range, and query builder filters with nested AND/OR groups</div>
+    </div>
+    <ul class="inline-list">
+        <li>Select and ternary (yes/no/any) filters</li>
+        <li>Checkbox filters and date range pickers</li>
+        <li>Visual query builder with recursive AND/OR groups</li>
+        <li>All filters are URL-persisted and shareable</li>
+    </ul>
+
+    <!-- Wizard -->
+    <h4 id="demo-wizard">Wizard / Multi-Step Form</h4>
+    <p><strong>Route:</strong> <code>/admin/demo/wizard</code></p>
+    <p>Multi-step form wizard with per-step validation, progress indicator, and a review step before submission.</p>
+    <div class="screenshot">
+        <img src="screenshots/demo-wizard.png" alt="Wizard Demo" loading="lazy">
+        <div class="screenshot-caption">Multi-step wizard with per-step validation, image crop, tags, slider, and review step</div>
+    </div>
+    <ul class="inline-list">
+        <li>Step-by-step progress indicator</li>
+        <li>Per-step validation before advancing</li>
+        <li>Image crop, tags input, and slider fields</li>
+        <li>Final review step summarizing all entered data</li>
+    </ul>
 </section>
 
 <section id="dark-mode">

@@ -1,6 +1,6 @@
-MIT License
+MIT License with Attribution
 
-Copyright (c) 2026 Myra
+Copyright (c) 2026 @spideyrex (Myra Starter Kit)
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -9,8 +9,18 @@ to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 copies of the Software, and to permit persons to whom the Software is
 furnished to do so, subject to the following conditions:
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+1. The above copyright notice and this permission notice shall be included in
+   all copies or substantial portions of the Software.
+
+2. Attribution Requirement: Any project that uses, forks, or derives from this
+   Software must include visible credit to the original author in at least one
+   of the following:
+   - The project's README or documentation
+   - An "About" or "Credits" page in the application
+   - The project's package metadata (e.g., composer.json, package.json)
+
+   The attribution must read:
+   "Built with Myra Starter Kit by @spideyrex (https://github.com/spideyrex/myra-starter-kit)"
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,

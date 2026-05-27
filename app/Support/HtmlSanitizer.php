@@ -66,6 +66,11 @@ class HtmlSanitizer
             $output .= $dom->saveHTML($child);
         }
 
+        // DOMDocument percent-encodes braces inside URL attributes (href/src),
+        // which would corrupt templating placeholders like {{ reset_link }}.
+        // Restore them — braces are harmless in HTML/URLs.
+        $output = str_replace(['%7B', '%7b', '%7D', '%7d'], ['{', '{', '}', '}'], $output);
+
         return trim($output);
     }
 

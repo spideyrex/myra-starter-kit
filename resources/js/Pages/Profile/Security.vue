@@ -8,6 +8,7 @@ import PasswordInput from '@/components/PasswordInput.vue';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { sanitizeSvg } from '@/composables/useSanitize';
 import { Badge } from '@/components/ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Shield, Smartphone, Trash2 } from 'lucide-vue-next';
@@ -101,7 +102,7 @@ async function revokeSession(id: string) {
                         <p class="text-sm text-muted-foreground">
                             Scan the QR code with your authenticator app, then enter the verification code.
                         </p>
-                        <div class="flex justify-center rounded-lg border bg-white p-4" v-html="qrCode.svg" />
+                        <div class="flex justify-center rounded-lg border bg-white p-4" v-html="sanitizeSvg(qrCode.svg)" />
                         <div class="rounded-lg bg-muted p-3">
                             <p class="text-xs text-muted-foreground">Secret Key (manual entry):</p>
                             <p class="font-mono text-sm">{{ qrCode.secret }}</p>

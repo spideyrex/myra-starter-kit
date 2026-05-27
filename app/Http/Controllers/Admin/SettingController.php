@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Settings\AiSettings;
 use App\Settings\AppearanceSettings;
 use App\Settings\GeneralSettings;
 use App\Settings\HomepageSettings;
@@ -34,6 +35,9 @@ class SettingController extends Controller
             'homepage' => array_merge($homepage->toArray(), [
                 'hero_image_url' => $homepage->hero_image_path ? Storage::disk('public')->url($homepage->hero_image_path) : null,
             ]),
+            'ai' => array_merge(app(AiSettings::class)->toArray(), [
+                'api_key' => app(AiSettings::class)->api_key ? str_repeat('*', 8) : null,
+            ]),
         ]);
     }
 
@@ -48,9 +52,19 @@ class SettingController extends Controller
             default => abort(404),
         };
 
-        foreach ($request->all() as $key => $value) {
-            if (property_exists($settings, $key)) {
-                $settings->$key = $value;
+        // Explicit whitelist of allowed fields per settings group
+        $allowedFields = match ($group) {
+            'general' => ['site_name', 'site_description', 'site_email', 'site_phone', 'site_address', 'timezone', 'locale', 'date_format', 'time_format', 'registration_enabled'],
+            'seo' => ['meta_title', 'meta_description', 'meta_keywords', 'google_analytics_id', 'robots_txt', 'og_image_path'],
+            'appearance' => ['primary_color', 'theme'],
+            'social' => ['facebook_url', 'twitter_url', 'instagram_url', 'linkedin_url', 'youtube_url', 'github_url'],
+            'maintenance' => ['enabled', 'message', 'allowed_ips', 'secret'],
+            default => [],
+        };
+
+        foreach ($allowedFields as $key) {
+            if ($request->has($key) && property_exists($settings, $key)) {
+                $settings->$key = $request->input($key);
             }
         }
 
@@ -68,6 +82,10 @@ class SettingController extends Controller
             'favicon' => ['nullable', 'image', 'max:1024'],
             'primary_color' => ['nullable', 'string', 'max:20'],
             'theme' => ['nullable', 'string', 'max:20'],
+            'logo_position' => ['nullable', 'string', 'in:sidebar,header'],
+            'sidebar_background' => ['nullable', 'string', 'max:20', 'regex:/^#[0-9a-fA-F]{6}$/'],
+            'sidebar_foreground' => ['nullable', 'string', 'max:20', 'regex:/^#[0-9a-fA-F]{6}$/'],
+            'sidebar_accent' => ['nullable', 'string', 'max:20', 'regex:/^#[0-9a-fA-F]{6}$/'],
         ]);
 
         $settings = app(AppearanceSettings::class);
@@ -112,6 +130,19 @@ class SettingController extends Controller
         // Handle theme
         if ($request->filled('theme')) {
             $settings->theme = $request->input('theme');
+        }
+
+        // Handle logo position
+        if ($request->filled('logo_position')) {
+            $settings->logo_position = $request->input('logo_position');
+        }
+
+        // Handle sidebar colors (empty string = reset to null)
+        foreach (['sidebar_background', 'sidebar_foreground', 'sidebar_accent'] as $field) {
+            if ($request->has($field)) {
+                $value = $request->input($field);
+                $settings->$field = ($value === '' || $value === null) ? null : $value;
+            }
         }
 
         $settings->save();

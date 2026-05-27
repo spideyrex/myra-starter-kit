@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Settings\AiSettings;
 use App\Settings\FirebaseSettings;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -85,6 +86,13 @@ class HandleInertiaRequests extends Middleware
                 }
 
                 return $settings;
+            }),
+            'aiEnabled' => fn () => cache()->remember('ai_enabled', 3600, function () {
+                try {
+                    return app(AiSettings::class)->enabled;
+                } catch (\Throwable) {
+                    return false;
+                }
             }),
             'firebaseConfig' => fn () => cache()->remember('firebase_web_config', 3600, function () {
                 try {

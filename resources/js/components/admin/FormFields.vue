@@ -6,11 +6,13 @@ import {
     isLayoutItem,
     resolveLayout,
     evaluateVisibility,
+    collectFieldNames,
     type SchemaItem,
     type LayoutSchema,
     type FieldSchema,
     type FieldType,
     type VisibilityCondition,
+    type ValidationRule,
 } from '@/composables/useFormSchema';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -18,7 +20,8 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/component
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
-import { ChevronDown, Info, AlertTriangle, CheckCircle2, AlertCircle } from 'lucide-vue-next';
+import { Progress } from '@/components/ui/progress';
+import { ChevronDown, ChevronLeft, ChevronRight, Check, Info, AlertTriangle, CheckCircle2, AlertCircle } from 'lucide-vue-next';
 
 const props = defineProps<{
     schema: SchemaItem[];
@@ -81,6 +84,7 @@ function toggleCollapsed(label: string, defaultCollapsed: boolean) {
 
 // Wizard step tracking (keyed by index in resolved array)
 const wizardSteps = ref<Record<number, number>>({});
+const wizardErrors = ref<Record<number, string[]>>({});
 
 function getWizardStep(wizardIndex: number): number {
     return wizardSteps.value[wizardIndex] ?? 0;
@@ -88,6 +92,84 @@ function getWizardStep(wizardIndex: number): number {
 
 function setWizardStep(wizardIndex: number, step: number) {
     wizardSteps.value[wizardIndex] = step;
+}
+
+function getWizardErrors(wizardIndex: number): string[] {
+    return wizardErrors.value[wizardIndex] ?? [];
+}
+
+function validateWizardStep(wizardIndex: number, stepLayout: LayoutSchema): boolean {
+    const errors: string[] = [];
+    const fieldNames = collectFieldNames(stepLayout.schema);
+    const rules = stepLayout.validationRules || {};
+
+    // Check required fields
+    for (const item of stepLayout.schema) {
+        const field = item instanceof BaseField ? item.toProps() : (isLayoutItem(item) ? null : item as unknown as FieldSchema);
+        if (field && 'name' in field && 'required' in field && field.required) {
+            const val = props.form[field.name];
+            if (val === undefined || val === null || val === '' || (Array.isArray(val) && val.length === 0)) {
+                const label = field.label || field.name;
+                const msg = `${label} is required`;
+                errors.push(msg);
+                props.form.errors[field.name] = msg;
+            }
+        }
+    }
+
+    // Check nested required fields (within layout items)
+    function checkNestedRequired(items: SchemaItem[]) {
+        for (const item of items) {
+            if (isLayoutItem(item)) {
+                const layout = resolveLayout(item as any);
+                checkNestedRequired(layout.schema);
+            } else {
+                const field = item instanceof BaseField ? item.toProps() : item as unknown as FieldSchema;
+                if (field && 'name' in field && 'required' in field && field.required) {
+                    const val = props.form[field.name];
+                    if (val === undefined || val === null || val === '' || (Array.isArray(val) && val.length === 0)) {
+                        const label = field.label || field.name;
+                        const msg = `${label} is required`;
+                        if (!errors.includes(msg)) {
+                            errors.push(msg);
+                            props.form.errors[field.name] = msg;
+                        }
+                    }
+                }
+            }
+        }
+    }
+    checkNestedRequired(stepLayout.schema);
+
+    // Run custom validators
+    for (const [fieldName, fieldRules] of Object.entries(rules)) {
+        for (const rule of fieldRules) {
+            const result = rule(props.form[fieldName], props.form);
+            if (result !== true) {
+                errors.push(result);
+                props.form.errors[fieldName] = result;
+            }
+        }
+    }
+
+    wizardErrors.value[wizardIndex] = errors;
+    return errors.length === 0;
+}
+
+function handleWizardNext(wizardIndex: number, steps: LayoutSchema[]) {
+    const currentStep = getWizardStep(wizardIndex);
+    const stepLayout = steps[currentStep];
+
+    // Clear previous errors for this step's fields
+    const fieldNames = collectFieldNames(stepLayout.schema);
+    for (const name of fieldNames) {
+        delete props.form.errors[name];
+    }
+
+    if (validateWizardStep(wizardIndex, stepLayout)) {
+        wizardErrors.value[wizardIndex] = [];
+        setWizardStep(wizardIndex, currentStep + 1);
+    }
 }
 
 // Callout variant config
@@ -208,42 +290,87 @@ const calloutConfig: Record<string, { classes: string; icon: typeof Info }> = {
         <!-- Layout: Wizard -->
         <template v-else-if="entry.isLayout && entry.layout.layoutType === 'wizard'">
             <div class="col-span-full space-y-6">
+                <!-- Progress bar -->
+                <Progress :model-value="((getWizardStep(index) + 1) / (entry.layout.schema as unknown as LayoutSchema[]).length) * 100" class="h-1.5" />
+
                 <!-- Step indicators -->
                 <div class="flex items-center overflow-x-auto pb-2">
                     <template v-for="(step, si) in (entry.layout.schema as unknown as LayoutSchema[])" :key="si">
                         <div class="flex shrink-0 flex-col items-center">
+                            <!-- Completed step -->
                             <div
-                                class="flex size-7 items-center justify-center rounded-full border-2 text-xs font-medium transition-colors sm:size-8 sm:text-sm"
-                                :class="si <= getWizardStep(index)
-                                    ? 'border-primary bg-primary text-primary-foreground'
-                                    : 'border-muted-foreground/30 text-muted-foreground'"
+                                v-if="si < getWizardStep(index)"
+                                class="flex size-7 items-center justify-center rounded-full border-2 border-success bg-success text-white transition-all duration-300 sm:size-8"
                             >
-                                <component :is="step.icon" v-if="step.icon && si <= getWizardStep(index)" class="size-3.5 sm:size-4" />
-                                <span v-else>{{ si + 1 }}</span>
+                                <Check class="size-3.5 sm:size-4" />
                             </div>
-                            <span class="mt-1 text-[10px] font-medium sm:text-xs" :class="si <= getWizardStep(index) ? 'text-foreground' : 'text-muted-foreground'">
+                            <!-- Active step -->
+                            <div
+                                v-else-if="si === getWizardStep(index)"
+                                class="relative flex size-7 items-center justify-center rounded-full border-2 text-xs font-bold transition-all duration-300 sm:size-8 sm:text-sm"
+                                :class="getWizardErrors(index).length > 0
+                                    ? 'border-destructive bg-destructive/10 text-destructive'
+                                    : 'border-primary bg-primary text-primary-foreground ring-4 ring-primary/20'"
+                            >
+                                <span>{{ si + 1 }}</span>
+                                <span
+                                    v-if="getWizardErrors(index).length > 0"
+                                    class="absolute -right-1.5 -top-1.5 flex size-4 items-center justify-center rounded-full bg-destructive text-[10px] font-bold text-white"
+                                >
+                                    {{ getWizardErrors(index).length }}
+                                </span>
+                            </div>
+                            <!-- Upcoming step -->
+                            <div
+                                v-else
+                                class="flex size-7 items-center justify-center rounded-full border-2 border-muted-foreground/25 text-xs font-medium text-muted-foreground transition-all duration-300 sm:size-8 sm:text-sm"
+                            >
+                                <span>{{ si + 1 }}</span>
+                            </div>
+                            <span class="mt-1.5 text-[10px] font-medium sm:text-xs" :class="si <= getWizardStep(index) ? 'text-foreground' : 'text-muted-foreground'">
                                 {{ step.label }}
                             </span>
                             <span v-if="step.stepDescription" class="hidden text-xs text-muted-foreground sm:block">{{ step.stepDescription }}</span>
                         </div>
-                        <div v-if="si < (entry.layout.schema as unknown as LayoutSchema[]).length - 1" class="mx-1 h-px flex-1 sm:mx-2" :class="si < getWizardStep(index) ? 'bg-primary' : 'bg-border'" />
+                        <!-- Connector line -->
+                        <div v-if="si < (entry.layout.schema as unknown as LayoutSchema[]).length - 1" class="mx-1 h-0.5 flex-1 rounded-full transition-all duration-500 sm:mx-2" :class="si < getWizardStep(index) ? 'bg-success' : 'bg-border'" />
                     </template>
                 </div>
-                <!-- Current step content -->
-                <div class="form-grid grid gap-4" :style="`grid-template-columns: repeat(${((entry.layout.schema as unknown as LayoutSchema[])[getWizardStep(index)])?.columns || 2}, minmax(0, 1fr))`">
+
+                <!-- Validation error summary -->
+                <div v-if="getWizardErrors(index).length > 0" class="rounded-md border border-destructive/30 bg-destructive/10 p-3">
+                    <p class="mb-1 text-sm font-medium text-destructive">Please fix the following errors:</p>
+                    <ul class="list-inside list-disc space-y-0.5 text-sm text-destructive">
+                        <li v-for="(err, ei) in getWizardErrors(index)" :key="ei">{{ err }}</li>
+                    </ul>
+                </div>
+
+                <!-- Current step content with transition -->
+                <div
+                    :key="`wizard-${index}-step-${getWizardStep(index)}`"
+                    class="animate-fade-in-up form-grid grid gap-4"
+                    :style="`grid-template-columns: repeat(${((entry.layout.schema as unknown as LayoutSchema[])[getWizardStep(index)])?.columns || 2}, minmax(0, 1fr))`"
+                >
                     <FormFields :schema="((entry.layout.schema as unknown as LayoutSchema[])[getWizardStep(index)])?.schema || []" :form="form" />
                 </div>
+
                 <!-- Navigation -->
-                <div class="flex justify-between">
-                    <Button variant="outline" :disabled="getWizardStep(index) === 0" @click="setWizardStep(index, getWizardStep(index) - 1)">
+                <div class="flex items-center justify-between">
+                    <Button variant="outline" :disabled="getWizardStep(index) === 0" @click="wizardErrors[index] = []; setWizardStep(index, getWizardStep(index) - 1)">
+                        <ChevronLeft class="mr-1 size-4" />
                         Previous
                     </Button>
+                    <span class="text-sm text-muted-foreground">
+                        Step {{ getWizardStep(index) + 1 }} of {{ (entry.layout.schema as unknown as LayoutSchema[]).length }}
+                    </span>
                     <Button
                         v-if="getWizardStep(index) < (entry.layout.schema as unknown as LayoutSchema[]).length - 1"
-                        @click="setWizardStep(index, getWizardStep(index) + 1)"
+                        @click="handleWizardNext(index, entry.layout.schema as unknown as LayoutSchema[])"
                     >
                         Next
+                        <ChevronRight class="ml-1 size-4" />
                     </Button>
+                    <div v-else />
                 </div>
             </div>
         </template>

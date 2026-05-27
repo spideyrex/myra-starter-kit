@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { HTMLAttributes } from "vue"
+import { useSlots } from "vue"
 import { ViewVerticalIcon } from '@radix-icons/vue'
 import { cn } from "@/lib/utils"
 import { Button } from '@/components/ui/button'
@@ -9,6 +10,7 @@ const props = defineProps<{
   class?: HTMLAttributes["class"]
 }>()
 
+const slots = useSlots()
 const { toggleSidebar } = useSidebar()
 </script>
 
@@ -17,11 +19,13 @@ const { toggleSidebar } = useSidebar()
     data-sidebar="trigger"
     data-slot="sidebar-trigger"
     variant="ghost"
-    size="icon"
-    :class="cn('h-7 w-7', props.class)"
+    :size="slots.default ? 'default' : 'icon'"
+    :class="cn(slots.default ? 'h-auto' : 'h-7 w-7', props.class)"
     @click="toggleSidebar"
   >
-    <ViewVerticalIcon />
-    <span class="sr-only">Toggle Sidebar</span>
+    <slot>
+      <ViewVerticalIcon />
+      <span class="sr-only">Toggle Sidebar</span>
+    </slot>
   </Button>
 </template>

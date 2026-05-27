@@ -24,6 +24,7 @@ import {
     LayoutDashboard,
     ListChecks,
     SlidersHorizontal,
+    Wand2,
 } from 'lucide-vue-next';
 
 const demos = [
@@ -148,6 +149,13 @@ const demos = [
         icon: SlidersHorizontal,
         route: 'admin.demo.advanced-filters',
         badge: 'Filters',
+    },
+    {
+        title: 'Wizard Validation',
+        description: '5-step onboarding wizard with per-step validation, image editor, XLSX export, and i18n awareness.',
+        icon: Wand2,
+        route: 'admin.demo.wizard',
+        badge: '5 Features',
     },
 ];
 </script>

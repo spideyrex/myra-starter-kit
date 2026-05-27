@@ -146,7 +146,41 @@ class UserController extends Controller
 
     public function impersonate(User $user): RedirectResponse
     {
-        session()->put('impersonator_id', Auth::id());
+        $currentUser = Auth::user();
+
+        // Prevent impersonating super-admins (privilege escalation)
+        abort_if(
+            $user->hasRole('super-admin'),
+            403,
+            'Cannot impersonate a super-admin user.'
+        );
+
+        // Only super-admins can impersonate (not just users.edit permission)
+        abort_unless(
+            $currentUser->hasRole('super-admin'),
+            403,
+            'Only super-admins can impersonate other users.'
+        );
+
+        // Cannot impersonate yourself
+        abort_if(
+            $currentUser->id === $user->id,
+            403,
+            'Cannot impersonate yourself.'
+        );
+
+        // Log the impersonation for audit trail
+        activity()
+            ->causedBy($currentUser)
+            ->performedOn($user)
+            ->withProperties(['impersonator_id' => $currentUser->id])
+            ->log("Started impersonating {$user->name}");
+
+        session()->put('impersonator_id', $currentUser->id);
+
+        // Regenerate session ID to prevent session fixation
+        session()->regenerate();
+
         Auth::login($user);
 
         return redirect()->route('dashboard')->with('success', "You are now impersonating {$user->name}.");
@@ -157,7 +191,24 @@ class UserController extends Controller
         $originalId = session()->pull('impersonator_id');
 
         if ($originalId) {
-            Auth::loginUsingId($originalId);
+            // Verify the original user still exists and is active
+            $originalUser = User::find($originalId);
+
+            abort_unless(
+                $originalUser && $originalUser->status === 'active',
+                403,
+                'Original user account is no longer available.'
+            );
+
+            // Log stop impersonation
+            activity()
+                ->causedBy($originalUser)
+                ->log('Stopped impersonating ' . Auth::user()->name);
+
+            // Regenerate session to prevent session fixation
+            session()->regenerate();
+
+            Auth::login($originalUser);
         }
 
         return redirect()->route('admin.users.index')->with('success', 'Stopped impersonating.');

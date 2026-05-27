@@ -19,5 +19,6 @@ const trend = props.widget.trendFn?.(props.pageProps) ?? undefined;
         :icon="widget.icon"
         :description="description"
         :trend="trend"
+        :color="widget.color"
     />
 </template>

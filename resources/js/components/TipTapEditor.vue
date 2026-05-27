@@ -6,6 +6,7 @@ import LinkExtension from '@tiptap/extension-link';
 import ImageExtension from '@tiptap/extension-image';
 import Placeholder from '@tiptap/extension-placeholder';
 import { Button } from '@/components/ui/button';
+import TipTapAiAssistant from '@/components/TipTapAiAssistant.vue';
 import {
     Bold,
     Italic,
@@ -39,6 +40,7 @@ const props = withDefaults(defineProps<{
     placeholder?: string;
     toolbar?: ToolbarItem[];
     disabled?: boolean;
+    aiEnabled?: boolean;
 }>(), {
     modelValue: '',
     placeholder: 'Start writing...',
@@ -127,6 +129,10 @@ const toolbarItems: Record<string, { icon: any; action: () => void; isActive?: (
                 >
                     <component :is="toolbarItems[item].icon" class="size-4" />
                 </Button>
+            </template>
+            <template v-if="aiEnabled">
+                <div class="mx-1 h-6 w-px bg-border" />
+                <TipTapAiAssistant :editor="editor!" :disabled="disabled" />
             </template>
             <slot name="toolbar-extra" :editor="editor" />
         </div>

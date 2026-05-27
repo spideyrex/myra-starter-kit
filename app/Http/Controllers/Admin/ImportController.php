@@ -8,6 +8,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use Spatie\Permission\Models\Role;
 
 class ImportController extends Controller
 {
@@ -122,13 +123,17 @@ class ImportController extends Controller
         $user = User::create([
             'name' => $data['name'],
             'email' => $data['email'],
-            'password' => Hash::make($data['password'] ?? 'password'),
+            'password' => Hash::make($data['password'] ?? \Illuminate\Support\Str::random(24)),
             'phone' => $data['phone'] ?? null,
-            'status' => $data['status'] ?? 'active',
+            'status' => in_array($data['status'] ?? '', ['active', 'suspended', 'pending']) ? $data['status'] : 'pending',
         ]);
 
         if (!empty($data['role'])) {
-            $user->assignRole($data['role']);
+            // Validate role exists before assignment
+            $roleName = trim($data['role']);
+            if (Role::where('name', $roleName)->exists()) {
+                $user->assignRole($roleName);
+            }
         }
 
         return true;

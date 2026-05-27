@@ -31,6 +31,10 @@ class SettingsSeeder extends Seeder
             ['group' => 'appearance', 'name' => 'theme', 'payload' => json_encode('zinc')],
             ['group' => 'appearance', 'name' => 'logo_path', 'payload' => json_encode(null)],
             ['group' => 'appearance', 'name' => 'favicon_path', 'payload' => json_encode(null)],
+            ['group' => 'appearance', 'name' => 'logo_position', 'payload' => json_encode('header')],
+            ['group' => 'appearance', 'name' => 'sidebar_background', 'payload' => json_encode(null)],
+            ['group' => 'appearance', 'name' => 'sidebar_foreground', 'payload' => json_encode(null)],
+            ['group' => 'appearance', 'name' => 'sidebar_accent', 'payload' => json_encode(null)],
 
             ['group' => 'social', 'name' => 'facebook_url', 'payload' => json_encode(null)],
             ['group' => 'social', 'name' => 'twitter_url', 'payload' => json_encode(null)],
@@ -103,6 +107,14 @@ class SettingsSeeder extends Seeder
                 ['label' => 'Pricing', 'url' => '#pricing'],
                 ['label' => 'Testimonials', 'url' => '#testimonials'],
             ])],
+
+            ['group' => 'ai', 'name' => 'enabled', 'payload' => json_encode(false)],
+            ['group' => 'ai', 'name' => 'provider', 'payload' => json_encode('openai')],
+            ['group' => 'ai', 'name' => 'api_key', 'payload' => json_encode(null)],
+            ['group' => 'ai', 'name' => 'model', 'payload' => json_encode(null)],
+            ['group' => 'ai', 'name' => 'base_url', 'payload' => json_encode(null)],
+            ['group' => 'ai', 'name' => 'temperature', 'payload' => json_encode(0.7)],
+            ['group' => 'ai', 'name' => 'max_tokens', 'payload' => json_encode(2048)],
 
             ['group' => 'firebase', 'name' => 'enabled', 'payload' => json_encode(false)],
             ['group' => 'firebase', 'name' => 'service_account_path', 'payload' => json_encode(null)],

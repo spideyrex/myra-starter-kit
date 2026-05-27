@@ -82,6 +82,10 @@ export interface SiteSettings {
     favicon_url?: string;
     primary_color?: string;
     theme?: string;
+    logo_position?: string;
+    sidebar_background?: string | null;
+    sidebar_foreground?: string | null;
+    sidebar_accent?: string | null;
 }
 
 export interface FirebaseConfig {
@@ -109,6 +113,7 @@ export type PageProps<T extends Record<string, unknown> = Record<string, unknown
     impersonatorName?: string;
     siteSettings?: SiteSettings;
     firebaseConfig?: FirebaseConfig | null;
+    aiEnabled?: boolean;
     currentTeam?: Team;
     teams?: Team[];
 };

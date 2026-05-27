@@ -103,12 +103,23 @@ class TwoFactorController extends Controller
 
     public function qrCode(Request $request): \Illuminate\Http\JsonResponse
     {
+        $user = $request->user();
+
+        // Only expose secret/QR during setup (before confirmation)
+        if ($user->two_factor_confirmed_at) {
+            return response()->json([
+                'svg' => null,
+                'secret' => null,
+                'recovery_codes' => null,
+            ]);
+        }
+
         $google2fa = new Google2FA();
-        $secret = decrypt($request->user()->two_factor_secret);
+        $secret = decrypt($user->two_factor_secret);
 
         $qrCodeUrl = $google2fa->getQRCodeUrl(
             config('app.name'),
-            $request->user()->email,
+            $user->email,
             $secret,
         );
 
@@ -122,7 +133,7 @@ class TwoFactorController extends Controller
         return response()->json([
             'svg' => $svg,
             'secret' => $secret,
-            'recovery_codes' => json_decode(decrypt($request->user()->two_factor_recovery_codes), true),
+            'recovery_codes' => json_decode(decrypt($user->two_factor_recovery_codes), true),
         ]);
     }
 }

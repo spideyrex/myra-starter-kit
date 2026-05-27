@@ -1,9 +1,11 @@
 <script setup lang="ts">
+import { computed } from 'vue';
 import { Head, Link } from '@inertiajs/vue3';
 import PublicLayout from '@/Layouts/PublicLayout.vue';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { sanitizeHtml } from '@/composables/useSanitize';
 
 const props = defineProps<{
     article: {
@@ -87,7 +89,7 @@ function getInitials(name: string): string {
             </header>
 
             <!-- Content -->
-            <div class="prose prose-neutral dark:prose-invert max-w-none" v-html="article.body_html" />
+            <div class="prose prose-neutral dark:prose-invert max-w-none" v-html="sanitizeHtml(article.body_html)" />
 
             <!-- Tags -->
             <div v-if="article.tags && article.tags.length > 0" class="mt-8 flex flex-wrap gap-2">

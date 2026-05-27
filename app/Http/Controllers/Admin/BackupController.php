@@ -45,6 +45,8 @@ class BackupController extends Controller
 
     public function download(string $path): StreamedResponse
     {
+        $this->validateBackupPath($path);
+
         $disk = Storage::disk(config('backup.backup.destination.disks')[0] ?? 'local');
 
         abort_unless($disk->exists($path), 404, 'Backup not found.');
@@ -56,9 +58,43 @@ class BackupController extends Controller
 
     public function destroy(string $path): RedirectResponse
     {
+        $this->validateBackupPath($path);
+
         $disk = Storage::disk(config('backup.backup.destination.disks')[0] ?? 'local');
+
+        abort_unless($disk->exists($path), 404, 'Backup not found.');
+
         $disk->delete($path);
 
         return back()->with('success', 'Backup deleted successfully.');
+    }
+
+    /**
+     * Validate that the given path is within the expected backup directory
+     * and does not contain path traversal sequences.
+     */
+    private function validateBackupPath(string $path): void
+    {
+        // Reject path traversal sequences
+        abort_if(
+            str_contains($path, '..') || str_contains($path, "\0"),
+            403,
+            'Invalid backup path.'
+        );
+
+        // Ensure the path starts with the backup prefix directory
+        $prefix = config('backup.backup.name') ?? config('app.name');
+        abort_unless(
+            str_starts_with($path, $prefix . '/'),
+            403,
+            'Invalid backup path.'
+        );
+
+        // Ensure it's a zip file
+        abort_unless(
+            str_ends_with(strtolower($path), '.zip'),
+            403,
+            'Invalid backup file type.'
+        );
     }
 }

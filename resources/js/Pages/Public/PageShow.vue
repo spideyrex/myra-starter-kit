@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { Head } from '@inertiajs/vue3';
 import PublicLayout from '@/Layouts/PublicLayout.vue';
+import { sanitizeHtml } from '@/composables/useSanitize';
 
 const props = defineProps<{
     page: {
@@ -50,7 +51,7 @@ function formatDate(dateStr?: string): string {
             </header>
 
             <!-- Content -->
-            <div class="prose prose-neutral dark:prose-invert max-w-none" v-html="page.body_html" />
+            <div class="prose prose-neutral dark:prose-invert max-w-none" v-html="sanitizeHtml(page.body_html)" />
         </article>
     </PublicLayout>
 </template>

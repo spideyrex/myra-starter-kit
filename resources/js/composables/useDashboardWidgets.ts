@@ -1,4 +1,5 @@
 import type { Component } from 'vue';
+import type { StatCardColor } from '@/components/StatCard.vue';
 
 export type WidgetType = 'stat' | 'chart' | 'table' | 'custom';
 export type ChartType = 'bar' | 'line' | 'pie' | 'doughnut';
@@ -13,6 +14,7 @@ export interface WidgetSchema {
     descriptionFn?: (props: any) => string;
     icon?: Component;
     trendFn?: (props: any) => { value: number; isPositive: boolean } | null;
+    color?: StatCardColor;
     // Chart
     chartType?: ChartType;
     dataFn?: (props: any) => any;
@@ -69,6 +71,7 @@ export class StatWidget extends BaseWidget {
     private _descriptionFn?: (props: any) => string;
     private _icon?: Component;
     private _trendFn?: (props: any) => { value: number; isPositive: boolean } | null;
+    private _color?: StatCardColor;
 
     static make(key: string): StatWidget {
         return new StatWidget(key);
@@ -94,6 +97,11 @@ export class StatWidget extends BaseWidget {
         return this;
     }
 
+    color(c: StatCardColor): this {
+        this._color = c;
+        return this;
+    }
+
     toSchema(): WidgetSchema {
         return {
             ...super.toSchema(),
@@ -102,6 +110,7 @@ export class StatWidget extends BaseWidget {
             descriptionFn: this._descriptionFn,
             icon: this._icon,
             trendFn: this._trendFn,
+            color: this._color,
         };
     }
 }

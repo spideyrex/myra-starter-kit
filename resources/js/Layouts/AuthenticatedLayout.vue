@@ -57,6 +57,8 @@ import {
 import ConfirmDialog from '@/components/ConfirmDialog.vue';
 import NotificationBell from '@/components/NotificationBell.vue';
 import TeamSwitcher from '@/components/TeamSwitcher.vue';
+import LanguageSwitcher from '@/components/LanguageSwitcher.vue';
+import { useI18n } from 'vue-i18n';
 import { useFlashToasts } from '@/composables/useFlashToasts';
 import { useGlobalSearch } from '@/composables/useGlobalSearch';
 import { useEcho } from '@/composables/useEcho';
@@ -80,6 +82,7 @@ import {
     HeartPulse,
     Key,
     ChevronRight,
+    ChevronsLeft,
     Moon,
     Sun,
     LogOut,
@@ -99,6 +102,7 @@ const user = computed(() => page.props.auth.user);
 const isImpersonating = computed(() => page.props.impersonating);
 const impersonatorName = computed(() => page.props.impersonatorName);
 const { can } = usePermissions();
+const logoPosition = computed(() => page.props.siteSettings?.logo_position || 'header');
 
 useFlashToasts();
 useEcho();
@@ -132,58 +136,60 @@ function initials(name: string) {
     return name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
 }
 
+const { t } = useI18n();
+
 const navGroups = computed(() => [
     {
-        label: 'Main',
+        label: t('navGroups.main'),
         items: [
-            { title: 'Dashboard', href: route('dashboard'), icon: LayoutDashboard, permission: null },
+            { title: t('nav.dashboard'), href: route('dashboard'), icon: LayoutDashboard, permission: null },
         ],
     },
     {
-        label: 'User Management',
+        label: t('navGroups.userManagement'),
         items: [
-            { title: 'Users', href: route('admin.users.index'), icon: Users, permission: 'users.view' },
-            { title: 'Roles & Permissions', href: route('admin.roles.index'), icon: Shield, permission: 'roles.view' },
+            { title: t('nav.users'), href: route('admin.users.index'), icon: Users, permission: 'users.view' },
+            { title: t('nav.roles'), href: route('admin.roles.index'), icon: Shield, permission: 'roles.view' },
         ],
     },
     {
-        label: 'Content',
+        label: t('navGroups.content'),
         items: [
-            { title: 'Pages', href: route('admin.pages.index'), icon: FileText, permission: 'pages.view' },
-            { title: 'Articles', href: route('admin.articles.index'), icon: Newspaper, permission: 'articles.view' },
-            { title: 'Categories', href: route('admin.categories.index'), icon: FolderOpen, permission: 'categories.view' },
-            { title: 'Media Manager', href: route('admin.media.index'), icon: Image, permission: 'media.view' },
+            { title: t('nav.pages'), href: route('admin.pages.index'), icon: FileText, permission: 'pages.view' },
+            { title: t('nav.articles'), href: route('admin.articles.index'), icon: Newspaper, permission: 'articles.view' },
+            { title: t('nav.categories'), href: route('admin.categories.index'), icon: FolderOpen, permission: 'categories.view' },
+            { title: t('nav.media'), href: route('admin.media.index'), icon: Image, permission: 'media.view' },
         ],
     },
     {
-        label: 'Email',
+        label: t('navGroups.email'),
         items: [
-            { title: 'Templates', href: route('admin.email-templates.index'), icon: FileText, permission: 'email.view' },
-            { title: 'Email Log', href: route('admin.email-logs.index'), icon: Mail, permission: 'email.view' },
-            { title: 'Email Settings', href: route('admin.email-settings.index'), icon: MailCheck, permission: 'settings.view' },
+            { title: t('nav.templates'), href: route('admin.email-templates.index'), icon: FileText, permission: 'email.view' },
+            { title: t('nav.emailLog'), href: route('admin.email-logs.index'), icon: Mail, permission: 'email.view' },
+            { title: t('nav.emailSettings'), href: route('admin.email-settings.index'), icon: MailCheck, permission: 'settings.view' },
         ],
     },
     {
-        label: 'Push Notifications',
+        label: t('navGroups.pushNotifications'),
         items: [
-            { title: 'Firebase Settings', href: route('admin.firebase-settings.index'), icon: Smartphone, permission: 'firebase.view' },
+            { title: t('nav.firebaseSettings'), href: route('admin.firebase-settings.index'), icon: Smartphone, permission: 'firebase.view' },
         ],
     },
     {
-        label: 'System',
+        label: t('navGroups.system'),
         items: [
-            { title: 'General Settings', href: route('admin.settings.index'), icon: Settings, permission: 'settings.view' },
-            { title: 'Activity Log', href: route('admin.activity-logs.index'), icon: Activity, permission: 'activity-log.view' },
-            { title: 'Backups', href: route('admin.backups.index'), icon: Database, permission: 'backups.view' },
-            { title: 'System Health', href: route('admin.system-health.index'), icon: HeartPulse, permission: 'system-health.view' },
-            { title: 'API Tokens', href: route('admin.api-tokens.index'), icon: Key, permission: 'api-tokens.view' },
-            { title: 'Notifications', href: route('admin.notifications.index'), icon: Bell, permission: 'notifications.view' },
+            { title: t('nav.generalSettings'), href: route('admin.settings.index'), icon: Settings, permission: 'settings.view' },
+            { title: t('nav.activityLog'), href: route('admin.activity-logs.index'), icon: Activity, permission: 'activity-log.view' },
+            { title: t('nav.backups'), href: route('admin.backups.index'), icon: Database, permission: 'backups.view' },
+            { title: t('nav.systemHealth'), href: route('admin.system-health.index'), icon: HeartPulse, permission: 'system-health.view' },
+            { title: t('nav.apiTokens'), href: route('admin.api-tokens.index'), icon: Key, permission: 'api-tokens.view' },
+            { title: t('nav.notifications'), href: route('admin.notifications.index'), icon: Bell, permission: 'notifications.view' },
         ],
     },
     {
-        label: 'Demo',
+        label: t('navGroups.demo'),
         items: [
-            { title: 'Feature Demos', href: route('admin.demo.index'), icon: FlaskConical, permission: null },
+            { title: t('nav.featureDemos'), href: route('admin.demo.index'), icon: FlaskConical, permission: null },
         ],
     },
 ]);
@@ -232,7 +238,7 @@ function handleCommandInput(value: string) {
             <SidebarHeader>
                 <SidebarMenu>
                     <SidebarMenuItem>
-                        <SidebarMenuButton size="lg" as-child>
+                        <SidebarMenuButton v-if="logoPosition === 'sidebar'" size="lg" as-child>
                             <Link :href="route('dashboard')">
                                 <div v-if="page.props.siteSettings?.logo_url" class="flex aspect-square size-8 items-center justify-center rounded-lg overflow-hidden">
                                     <img :src="page.props.siteSettings.logo_url" alt="Logo" class="size-full object-contain" />
@@ -270,11 +276,16 @@ function handleCommandInput(value: string) {
 
             <SidebarFooter>
                 <SidebarMenu>
-                    <SidebarMenuItem>
+                    <SidebarMenuItem class="hidden group-data-[collapsible=icon]:flex justify-center">
+                        <SidebarTrigger class="text-sidebar-foreground/50 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground">
+                            <ChevronsLeft class="size-4 rotate-180" />
+                        </SidebarTrigger>
+                    </SidebarMenuItem>
+                    <SidebarMenuItem class="flex items-center gap-1">
                         <DropdownMenu>
                             <DropdownMenuTrigger as-child>
-                                <SidebarMenuButton size="lg">
-                                    <Avatar class="size-8">
+                                <SidebarMenuButton size="lg" class="min-w-0 flex-1">
+                                    <Avatar class="size-8 shrink-0">
                                         <AvatarImage v-if="user.avatar" :src="user.avatar" :alt="user.name" />
                                         <AvatarFallback>{{ initials(user.name) }}</AvatarFallback>
                                     </Avatar>
@@ -288,28 +299,31 @@ function handleCommandInput(value: string) {
                                 <DropdownMenuItem as-child>
                                     <Link :href="route('profile.show')">
                                         <User class="mr-2 size-4" />
-                                        Profile
+                                        {{ $t('common.profile') }}
                                     </Link>
                                 </DropdownMenuItem>
                                 <DropdownMenuItem as-child>
                                     <Link :href="route('profile.security')">
                                         <Shield class="mr-2 size-4" />
-                                        Security
+                                        {{ $t('common.security') }}
                                     </Link>
                                 </DropdownMenuItem>
                                 <DropdownMenuSeparator />
                                 <DropdownMenuItem @click="toggleDark">
                                     <Moon v-if="!isDark" class="mr-2 size-4" />
                                     <Sun v-else class="mr-2 size-4" />
-                                    {{ isDark ? 'Light Mode' : 'Dark Mode' }}
+                                    {{ isDark ? $t('common.lightMode') : $t('common.darkMode') }}
                                 </DropdownMenuItem>
                                 <DropdownMenuSeparator />
                                 <DropdownMenuItem @click="logout">
                                     <LogOut class="mr-2 size-4" />
-                                    Log Out
+                                    {{ $t('common.logout') }}
                                 </DropdownMenuItem>
                             </DropdownMenuContent>
                         </DropdownMenu>
+                        <SidebarTrigger class="shrink-0 text-sidebar-foreground/50 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground group-data-[collapsible=icon]:hidden">
+                            <ChevronsLeft class="size-4" />
+                        </SidebarTrigger>
                     </SidebarMenuItem>
                 </SidebarMenu>
             </SidebarFooter>
@@ -325,30 +339,39 @@ function handleCommandInput(value: string) {
                 </Button>
             </div>
 
-            <header class="flex h-14 shrink-0 items-center gap-2 border-b px-3 sm:h-16 sm:px-4">
-                <SidebarTrigger class="-ml-1" />
-                <Separator orientation="vertical" class="mr-2 hidden h-4 sm:block" />
-                <Breadcrumb v-if="breadcrumbs?.length" class="hidden min-w-0 sm:block">
-                    <BreadcrumbList>
-                        <template v-for="(crumb, index) in breadcrumbs" :key="index">
-                            <BreadcrumbItemComponent>
-                                <BreadcrumbLink v-if="crumb.href" as-child>
-                                    <Link :href="crumb.href">{{ crumb.label }}</Link>
-                                </BreadcrumbLink>
-                                <BreadcrumbPage v-else>{{ crumb.label }}</BreadcrumbPage>
-                            </BreadcrumbItemComponent>
-                            <BreadcrumbSeparator v-if="index < breadcrumbs.length - 1" />
-                        </template>
-                    </BreadcrumbList>
-                </Breadcrumb>
+            <header class="sticky top-0 z-10 relative flex h-14 shrink-0 items-center border-b bg-background px-3 sm:h-16 sm:px-4">
+                <SidebarTrigger class="-ml-1 md:hidden" />
+                <Link v-if="logoPosition === 'header'" :href="route('dashboard')" class="absolute left-1/2 -translate-x-1/2 flex items-center gap-2">
+                    <div v-if="page.props.siteSettings?.logo_url" class="flex size-8 items-center justify-center rounded-lg overflow-hidden">
+                        <img :src="page.props.siteSettings.logo_url" alt="Logo" class="size-full object-contain" />
+                    </div>
+                    <div v-else class="flex size-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
+                        <LayoutDashboard class="size-4" />
+                    </div>
+                    <span class="hidden font-semibold text-sm sm:inline">{{ page.props.siteSettings?.site_name || 'Admin' }}</span>
+                </Link>
                 <div class="ml-auto flex items-center gap-2">
                     <TeamSwitcher v-if="(page.props.teams as any)?.length > 0" />
+                    <LanguageSwitcher />
                     <NotificationBell />
                 </div>
             </header>
 
             <main class="flex-1 p-3 sm:p-4 md:p-6">
                 <div :key="page.url" class="animate-fade-in-up">
+                    <Breadcrumb v-if="breadcrumbs?.length" class="mb-4">
+                        <BreadcrumbList>
+                            <template v-for="(crumb, index) in breadcrumbs" :key="index">
+                                <BreadcrumbItemComponent>
+                                    <BreadcrumbLink v-if="crumb.href" as-child>
+                                        <Link :href="crumb.href">{{ crumb.label }}</Link>
+                                    </BreadcrumbLink>
+                                    <BreadcrumbPage v-else>{{ crumb.label }}</BreadcrumbPage>
+                                </BreadcrumbItemComponent>
+                                <BreadcrumbSeparator v-if="index < breadcrumbs.length - 1" />
+                            </template>
+                        </BreadcrumbList>
+                    </Breadcrumb>
                     <slot />
                 </div>
             </main>
@@ -393,19 +416,19 @@ function handleCommandInput(value: string) {
                 </CommandItem>
             </CommandGroup>
             <CommandSeparator />
-            <CommandGroup heading="Actions">
+            <CommandGroup :heading="$t('common.actions')">
                 <CommandItem value="Profile" @select="runCommand(() => router.visit(route('profile.show')))">
                     <User class="mr-2 size-4" />
-                    Profile
+                    {{ $t('common.profile') }}
                 </CommandItem>
                 <CommandItem value="Toggle Dark Mode" @select="runCommand(toggleDark)">
                     <Moon v-if="!isDark" class="mr-2 size-4" />
                     <Sun v-else class="mr-2 size-4" />
-                    {{ isDark ? 'Light Mode' : 'Dark Mode' }}
+                    {{ isDark ? $t('common.lightMode') : $t('common.darkMode') }}
                 </CommandItem>
                 <CommandItem value="Log Out" @select="runCommand(logout)">
                     <LogOut class="mr-2 size-4" />
-                    Log Out
+                    {{ $t('common.logout') }}
                 </CommandItem>
             </CommandGroup>
         </CommandList>

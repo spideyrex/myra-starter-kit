@@ -46,6 +46,11 @@ class DemoController extends Controller
         return Inertia::render('Admin/Demo/ConditionalFields');
     }
 
+    public function wizardDemo()
+    {
+        return Inertia::render('Admin/Demo/WizardDemo');
+    }
+
     public function globalSearch()
     {
         return Inertia::render('Admin/Demo/GlobalSearch');

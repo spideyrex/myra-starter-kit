@@ -26,6 +26,10 @@ export interface FieldSchema {
     accept?: string;
     multiple?: boolean;
     maxSize?: number;
+    imageCrop?: boolean;
+    imageAspectRatio?: number;
+    imageOutputType?: string;
+    imageOutputQuality?: number;
     // Rich text fields
     toolbar?: string[];
     editorPlaceholder?: string;
@@ -80,6 +84,8 @@ function humanize(name: string): string {
 
 export type LayoutType = 'section' | 'grid' | 'tabs' | 'tab' | 'fieldset' | 'flex' | 'wizard' | 'wizard-step' | 'callout';
 
+export type ValidationRule = (value: any, form: Record<string, any>) => string | true;
+
 export interface LayoutSchema {
     layoutType: LayoutType;
     label?: string;
@@ -96,6 +102,7 @@ export interface LayoutSchema {
     justify?: string;
     align?: string;
     stepDescription?: string;
+    validationRules?: Record<string, ValidationRule[]>;
 }
 
 export type SchemaItem = FieldSchema | BaseField | LayoutSchema | Section | Grid | Tabs | Fieldset | Flex | Wizard | Callout;
@@ -348,7 +355,9 @@ export class WizardStep {
     private _label: string;
     private _description?: string;
     private _icon?: Component;
+    private _columns?: number;
     private _schema: SchemaItem[] = [];
+    private _validationRules: Record<string, ValidationRule[]> = {};
 
     constructor(label: string) {
         this._label = label;
@@ -368,8 +377,18 @@ export class WizardStep {
         return this;
     }
 
+    columns(n: number): this {
+        this._columns = n;
+        return this;
+    }
+
     schema(fields: SchemaItem[]): this {
         this._schema = fields;
+        return this;
+    }
+
+    validate(rules: Record<string, ValidationRule[]>): this {
+        this._validationRules = rules;
         return this;
     }
 
@@ -379,7 +398,9 @@ export class WizardStep {
             label: this._label,
             stepDescription: this._description,
             icon: this._icon,
+            columns: this._columns,
             schema: this._schema,
+            validationRules: Object.keys(this._validationRules).length > 0 ? this._validationRules : undefined,
         };
     }
 
@@ -792,6 +813,10 @@ export class FileUpload extends BaseField {
     private _accept?: string;
     private _multiple = false;
     private _maxSize?: number;
+    private _imageCrop = false;
+    private _imageAspectRatio?: number;
+    private _imageOutputType?: string;
+    private _imageOutputQuality?: number;
 
     constructor(name: string) {
         super(name);
@@ -822,8 +847,38 @@ export class FileUpload extends BaseField {
         return this;
     }
 
+    imageCrop(value = true): this {
+        this._imageCrop = value;
+        if (value && !this._accept) this._accept = 'image/*';
+        return this;
+    }
+
+    imageAspectRatio(ratio: number): this {
+        this._imageAspectRatio = ratio;
+        return this;
+    }
+
+    imageOutputType(type: string): this {
+        this._imageOutputType = type;
+        return this;
+    }
+
+    imageOutputQuality(quality: number): this {
+        this._imageOutputQuality = quality;
+        return this;
+    }
+
     toProps(): FieldSchema {
-        return { ...super.toProps(), accept: this._accept, multiple: this._multiple, maxSize: this._maxSize };
+        return {
+            ...super.toProps(),
+            accept: this._accept,
+            multiple: this._multiple,
+            maxSize: this._maxSize,
+            imageCrop: this._imageCrop,
+            imageAspectRatio: this._imageAspectRatio,
+            imageOutputType: this._imageOutputType,
+            imageOutputQuality: this._imageOutputQuality,
+        };
     }
 }
 
@@ -1301,6 +1356,24 @@ export function resolveLayout(item: Section | Grid | Tabs | Fieldset | Flex | Wi
         return item.toLayout();
     }
     return item as LayoutSchema;
+}
+
+/**
+ * Recursively collect field names from a schema tree.
+ */
+export function collectFieldNames(items: SchemaItem[]): string[] {
+    const names: string[] = [];
+    for (const item of items) {
+        if (item instanceof BaseField) {
+            names.push(item.name);
+        } else if (isLayoutItem(item)) {
+            const layout = resolveLayout(item as any);
+            names.push(...collectFieldNames(layout.schema));
+        } else if ('name' in item && typeof (item as any).name === 'string') {
+            names.push((item as any).name);
+        }
+    }
+    return names;
 }
 
 /**

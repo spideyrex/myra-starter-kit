@@ -186,6 +186,88 @@ const themeVars = [
     '--sidebar-primary', '--sidebar-primary-foreground',
 ];
 
+// Sidebar CSS vars managed separately from theme presets
+const sidebarVars = [
+    '--sidebar', '--sidebar-foreground', '--sidebar-accent',
+    '--sidebar-accent-foreground', '--sidebar-border',
+];
+
+/** Convert a hex color (#RRGGBB) to an oklch() string. */
+export function hexToOklch(hex: string): string {
+    // Parse hex to sRGB [0-1]
+    const r = parseInt(hex.slice(1, 3), 16) / 255;
+    const g = parseInt(hex.slice(3, 5), 16) / 255;
+    const b = parseInt(hex.slice(5, 7), 16) / 255;
+
+    // sRGB → linear RGB
+    const toLinear = (c: number) => c <= 0.04045 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
+    const lr = toLinear(r);
+    const lg = toLinear(g);
+    const lb = toLinear(b);
+
+    // Linear RGB → OKLab
+    const l_ = Math.cbrt(0.4122214708 * lr + 0.5363325363 * lg + 0.0514459929 * lb);
+    const m_ = Math.cbrt(0.2119034982 * lr + 0.6806995451 * lg + 0.1073969566 * lb);
+    const s_ = Math.cbrt(0.0883024619 * lr + 0.2817188376 * lg + 0.6299787005 * lb);
+
+    const L = 0.2104542553 * l_ + 0.7936177850 * m_ - 0.0040720468 * s_;
+    const a = 1.9779984951 * l_ - 2.4285922050 * m_ + 0.4505937099 * s_;
+    const bOk = 0.0259040371 * l_ + 0.7827717662 * m_ - 0.8086757660 * s_;
+
+    // OKLab → OKLCH
+    const C = Math.sqrt(a * a + bOk * bOk);
+    let H = Math.atan2(bOk, a) * (180 / Math.PI);
+    if (H < 0) H += 360;
+
+    return `oklch(${L.toFixed(3)} ${C.toFixed(3)} ${H.toFixed(1)})`;
+}
+
+/** Returns true if the hex color is perceptually light (L > 0.6). */
+export function isLightColor(hex: string): boolean {
+    const r = parseInt(hex.slice(1, 3), 16) / 255;
+    const g = parseInt(hex.slice(3, 5), 16) / 255;
+    const b = parseInt(hex.slice(5, 7), 16) / 255;
+
+    const toLinear = (c: number) => c <= 0.04045 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
+    const lr = toLinear(r);
+    const lg = toLinear(g);
+    const lb = toLinear(b);
+
+    const l_ = Math.cbrt(0.4122214708 * lr + 0.5363325363 * lg + 0.0514459929 * lb);
+    const m_ = Math.cbrt(0.2119034982 * lr + 0.6806995451 * lg + 0.1073969566 * lb);
+    const s_ = Math.cbrt(0.0883024619 * lr + 0.2817188376 * lg + 0.6299787005 * lb);
+
+    const L = 0.2104542553 * l_ + 0.7936177850 * m_ - 0.0040720468 * s_;
+    return L > 0.6;
+}
+
+/** Darken or lighten a hex color by adjusting OKLab L, returning an oklch() string. */
+function adjustLightness(hex: string, delta: number): string {
+    const r = parseInt(hex.slice(1, 3), 16) / 255;
+    const g = parseInt(hex.slice(3, 5), 16) / 255;
+    const b = parseInt(hex.slice(5, 7), 16) / 255;
+
+    const toLinear = (c: number) => c <= 0.04045 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
+    const lr = toLinear(r);
+    const lg = toLinear(g);
+    const lb = toLinear(b);
+
+    const l_ = Math.cbrt(0.4122214708 * lr + 0.5363325363 * lg + 0.0514459929 * lb);
+    const m_ = Math.cbrt(0.2119034982 * lr + 0.6806995451 * lg + 0.1073969566 * lb);
+    const s_ = Math.cbrt(0.0883024619 * lr + 0.2817188376 * lg + 0.6299787005 * lb);
+
+    let L = 0.2104542553 * l_ + 0.7936177850 * m_ - 0.0040720468 * s_;
+    const a = 1.9779984951 * l_ - 2.4285922050 * m_ + 0.4505937099 * s_;
+    const bOk = 0.0259040371 * l_ + 0.7827717662 * m_ - 0.8086757660 * s_;
+
+    L = Math.max(0, Math.min(1, L + delta));
+    const C = Math.sqrt(a * a + bOk * bOk);
+    let H = Math.atan2(bOk, a) * (180 / Math.PI);
+    if (H < 0) H += 360;
+
+    return `oklch(${L.toFixed(3)} ${C.toFixed(3)} ${H.toFixed(1)})`;
+}
+
 export function useThemeColors() {
     const page = usePage<PageProps>();
     const siteSettings = computed(() => page.props.siteSettings);
@@ -204,9 +286,35 @@ export function useThemeColors() {
             root.style.removeProperty(v);
         }
 
-        // Apply new overrides (empty for zinc = use CSS defaults)
+        // Clear any previous sidebar color overrides
+        for (const v of sidebarVars) {
+            root.style.removeProperty(v);
+        }
+
+        // Apply theme preset overrides (empty for zinc = use CSS defaults)
         for (const [prop, value] of Object.entries(vars)) {
             root.style.setProperty(prop, value);
+        }
+
+        // Apply custom sidebar colors (layered on top of theme)
+        const bg = siteSettings.value?.sidebar_background;
+        const fg = siteSettings.value?.sidebar_foreground;
+        const accent = siteSettings.value?.sidebar_accent;
+
+        if (bg) {
+            root.style.setProperty('--sidebar', hexToOklch(bg));
+            // Derive border: slightly lighter/darker than background
+            root.style.setProperty('--sidebar-border', adjustLightness(bg, isLightColor(bg) ? -0.08 : 0.08));
+        }
+
+        if (fg) {
+            root.style.setProperty('--sidebar-foreground', hexToOklch(fg));
+        }
+
+        if (accent) {
+            root.style.setProperty('--sidebar-accent', hexToOklch(accent));
+            // Auto-contrast foreground for accent
+            root.style.setProperty('--sidebar-accent-foreground', isLightColor(accent) ? 'oklch(0.205 0 0)' : 'oklch(0.985 0 0)');
         }
     }
 

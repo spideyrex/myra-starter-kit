@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue';
+import { usePage } from '@inertiajs/vue3';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -18,11 +19,15 @@ import { Button } from '@/components/ui/button';
 import PasswordInput from '@/components/PasswordInput.vue';
 import TipTapEditor from '@/components/TipTapEditor.vue';
 import RepeaterField from '@/components/admin/RepeaterField.vue';
+import ImageEditor from '@/components/ImageEditor.vue';
 import type { SelectOption } from '@/types/admin';
 import type { FieldType, SchemaItem } from '@/composables/useFormSchema';
 import { CalendarDate, type DateValue, getLocalTimeZone, today } from '@internationalized/date';
 import { CalendarIcon, Plus, Trash2 } from 'lucide-vue-next';
 import { marked } from 'marked';
+import { sanitizeHtml } from '@/composables/useSanitize';
+
+const page = usePage();
 
 const props = withDefaults(defineProps<{
     label: string;
@@ -44,6 +49,10 @@ const props = withDefaults(defineProps<{
     accept?: string;
     multiple?: boolean;
     maxSize?: number;
+    imageCrop?: boolean;
+    imageAspectRatio?: number;
+    imageOutputType?: string;
+    imageOutputQuality?: number;
     // Rich text fields
     toolbar?: string[];
     editorPlaceholder?: string;
@@ -93,10 +102,39 @@ const model = defineModel<any>();
 
 const fieldId = computed(() => `field-${props.name}`);
 
+// Image editor state
+const imageEditorOpen = ref(false);
+const imageEditorFile = ref<File | null>(null);
+const imagePreview = ref<string | null>(null);
+const fileInputRef = ref<HTMLInputElement | null>(null);
+
 function handleFileChange(event: Event) {
     const target = event.target as HTMLInputElement;
-    if (!target.files) return;
-    model.value = props.multiple ? Array.from(target.files) : target.files[0];
+    if (!target.files || target.files.length === 0) return;
+
+    const file = target.files[0];
+
+    if (props.imageCrop && file.type.startsWith('image/')) {
+        imageEditorFile.value = file;
+        imageEditorOpen.value = true;
+        return;
+    }
+
+    model.value = props.multiple ? Array.from(target.files) : file;
+}
+
+function handleImageSave(file: File, dataUrl: string) {
+    model.value = file;
+    imagePreview.value = dataUrl;
+    imageEditorFile.value = null;
+}
+
+function handleImageCancel() {
+    imageEditorFile.value = null;
+    imagePreview.value = null;
+    if (fileInputRef.value) {
+        fileInputRef.value.value = '';
+    }
 }
 
 // --- Calendar date conversion helpers ---
@@ -200,7 +238,7 @@ function updateKvPair(index: number, field: 'key' | 'value', value: string) {
 // --- Markdown helpers ---
 const renderedMarkdown = computed(() => {
     if (!model.value) return '';
-    return marked.parse(String(model.value)) as string;
+    return sanitizeHtml(marked.parse(String(model.value)) as string);
 });
 </script>
 
@@ -230,6 +268,7 @@ const renderedMarkdown = computed(() => {
                     :placeholder="editorPlaceholder || placeholder || 'Start writing...'"
                     :toolbar="toolbar as any"
                     :disabled="disabled"
+                    :ai-enabled="(page.props as any).aiEnabled"
                 />
                 <Textarea
                     v-else-if="type === 'textarea'"
@@ -309,6 +348,7 @@ const renderedMarkdown = computed(() => {
                 <div v-else-if="type === 'file'">
                     <input
                         :id="fieldId"
+                        ref="fileInputRef"
                         type="file"
                         :accept="accept"
                         :multiple="multiple"
@@ -317,6 +357,19 @@ const renderedMarkdown = computed(() => {
                         @change="handleFileChange"
                     />
                     <p v-if="maxSize" class="mt-1 text-xs text-muted-foreground">Max size: {{ maxSize }}MB</p>
+                    <div v-if="imagePreview" class="mt-2">
+                        <img :src="imagePreview" alt="Cropped preview" class="h-24 w-auto rounded-md border object-cover" />
+                    </div>
+                    <ImageEditor
+                        v-if="imageCrop"
+                        v-model:open="imageEditorOpen"
+                        :file="imageEditorFile"
+                        :aspect-ratio="imageAspectRatio"
+                        :output-type="imageOutputType"
+                        :output-quality="imageOutputQuality"
+                        @save="handleImageSave"
+                        @cancel="handleImageCancel"
+                    />
                 </div>
 
                 <!-- Repeater field -->

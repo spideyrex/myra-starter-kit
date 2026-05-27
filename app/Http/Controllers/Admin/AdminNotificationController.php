@@ -104,7 +104,7 @@ class AdminNotificationController extends Controller
             'user_ids.*' => ['exists:users,id'],
             'title' => ['required', 'string', 'max:255'],
             'message' => ['required', 'string', 'max:1000'],
-            'action_url' => ['nullable', 'url', 'max:255'],
+            'action_url' => ['nullable', 'url', 'max:255', 'regex:/^https?:\/\//i'],
             'send_push' => ['nullable', 'boolean'],
         ]);
 
@@ -154,10 +154,12 @@ class AdminNotificationController extends Controller
             'action' => 'required|in:mark_read,delete',
         ]);
 
-        $notifications = DatabaseNotification::whereIn('id', $request->ids);
+        // Scope to user notifications only (prevent accessing other notifiable types)
+        $notifications = DatabaseNotification::whereIn('id', $request->ids)
+            ->where('notifiable_type', 'App\\Models\\User');
 
         if ($request->action === 'mark_read') {
-            $notifications->whereNull('read_at')->update(['read_at' => now()]);
+            $notifications->clone()->whereNull('read_at')->update(['read_at' => now()]);
             return back()->with('success', 'Selected notifications marked as read.');
         }
 

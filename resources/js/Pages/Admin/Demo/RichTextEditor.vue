@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue';
-import { Head, Link } from '@inertiajs/vue3';
+import { Head, Link, usePage } from '@inertiajs/vue3';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import PageHeader from '@/components/PageHeader.vue';
 import TipTapEditor from '@/components/TipTapEditor.vue';
@@ -10,6 +10,9 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { RichEditor, Section, type SchemaItem } from '@/composables/useFormSchema';
 import { ArrowLeft } from 'lucide-vue-next';
+
+const page = usePage();
+const aiEnabled = (page.props as any).aiEnabled as boolean;
 
 const fullContent = ref('<h2>Welcome to the Rich Text Editor</h2><p>This editor is powered by <strong>TipTap v3</strong> with a configurable toolbar. Try out the formatting options above!</p><ul><li>Bold, italic, and strikethrough</li><li>Headings (H1, H2, H3)</li><li>Bullet and ordered lists</li><li>Blockquotes and code blocks</li></ul><blockquote>This is a blockquote example.</blockquote><p>You can also add <a href="https://tiptap.dev">links</a> and images.</p>');
 
@@ -59,7 +62,7 @@ const formSchema: SchemaItem[] = [
                     <CardDescription>All toolbar items enabled — bold, italic, headings, lists, blockquote, code, links, images, undo/redo.</CardDescription>
                 </CardHeader>
                 <CardContent>
-                    <TipTapEditor v-model="fullContent" />
+                    <TipTapEditor v-model="fullContent" :ai-enabled="aiEnabled" />
                 </CardContent>
             </Card>
 
@@ -77,6 +80,7 @@ const formSchema: SchemaItem[] = [
                         v-model="minimalContent"
                         :toolbar="['bold', 'italic', '|', 'link', '|', 'undo', 'redo']"
                         placeholder="Write something simple..."
+                        :ai-enabled="aiEnabled"
                     />
                 </CardContent>
             </Card>
@@ -94,6 +98,7 @@ const formSchema: SchemaItem[] = [
                     <TipTapEditor
                         v-model="fullContent"
                         :toolbar="['bold', 'italic', 'strike', '|', 'bulletList', 'orderedList', '|', 'undo', 'redo']"
+                        :ai-enabled="aiEnabled"
                     >
                         <template #toolbar-extra="{ editor }">
                             <div class="mx-1 h-6 w-px bg-border" />

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, onMounted, onBeforeUnmount } from 'vue';
+import { ref, computed, watch, onMounted, onBeforeUnmount } from 'vue';
 import { Head, Link, useForm, router } from '@inertiajs/vue3';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import PageHeader from '@/components/PageHeader.vue';
@@ -8,14 +8,17 @@ import LoadingButton from '@/components/LoadingButton.vue';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Checkbox } from '@/components/ui/checkbox';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Progress } from '@/components/ui/progress';
+import { Switch } from '@/components/ui/switch';
+import { Separator } from '@/components/ui/separator';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { Badge } from '@/components/ui/badge';
 import { useConfirm } from '@/composables/useConfirm';
 import {
     ShieldCheck, Search, UserCog, Shield, Lock, Settings,
     Mail, Activity, Image, HeartPulse, Database, Key, Bell, Flame,
-    Smartphone, FileText, Newspaper, FolderOpen,
+    Smartphone, FileText, Newspaper, FolderOpen, Check, Minus,
 } from 'lucide-vue-next';
 
 const props = defineProps<{
@@ -38,17 +41,6 @@ const form = useForm({
 
 // --- Search ---
 const searchQuery = ref('');
-
-const filteredPermissionGroups = computed(() => {
-    if (!searchQuery.value.trim()) return props.permissionGroups;
-    const q = searchQuery.value.toLowerCase();
-    const filtered: Record<string, string[]> = {};
-    for (const [group, perms] of Object.entries(props.permissionGroups)) {
-        const matched = perms.filter((p: string) => p.toLowerCase().includes(q));
-        if (matched.length > 0) filtered[group] = matched;
-    }
-    return filtered;
-});
 
 // --- Module Icons ---
 const moduleIcons: Record<string, any> = {
@@ -74,8 +66,50 @@ function getModuleIcon(module: string) {
     return moduleIcons[module] || Shield;
 }
 
+// --- Two-panel state ---
+interface ModuleInfo {
+    name: string;
+    permissions: string[];
+    selectedCount: number;
+    totalCount: number;
+    percent: number;
+}
+
+const activeModule = ref<string>(Object.keys(props.permissionGroups)[0] || '');
+
+const moduleList = computed<ModuleInfo[]>(() => {
+    const q = searchQuery.value.toLowerCase().trim();
+    const entries = Object.entries(props.permissionGroups);
+    return entries
+        .map(([name, perms]) => {
+            const filteredPerms = q ? perms.filter(p => p.toLowerCase().includes(q)) : perms;
+            if (q && filteredPerms.length === 0) return null;
+            const selectedCount = perms.filter(p => form.permissions.includes(p)).length;
+            return {
+                name,
+                permissions: q ? filteredPerms : perms,
+                selectedCount,
+                totalCount: perms.length,
+                percent: perms.length > 0 ? Math.round((selectedCount / perms.length) * 100) : 0,
+            };
+        })
+        .filter((m): m is ModuleInfo => m !== null)
+        .sort((a, b) => a.name.localeCompare(b.name));
+});
+
+const activeModuleData = computed(() =>
+    moduleList.value.find(m => m.name === activeModule.value)
+);
+
+// Auto-select first visible module when active is filtered out
+watch(moduleList, (list) => {
+    if (list.length > 0 && !list.find(m => m.name === activeModule.value)) {
+        activeModule.value = list[0].name;
+    }
+});
+
 // --- Permission toggling ---
-function togglePermission(permission: string, checked: boolean | 'indeterminate') {
+function togglePermission(permission: string, checked: boolean) {
     if (checked) {
         form.permissions.push(permission);
     } else {
@@ -83,9 +117,9 @@ function togglePermission(permission: string, checked: boolean | 'indeterminate'
     }
 }
 
-function toggleGroup(group: string, checked: boolean | 'indeterminate') {
+function toggleGroup(group: string, selectAll: boolean) {
     const groupPerms = props.permissionGroups[group];
-    if (checked) {
+    if (selectAll) {
         const newPerms = new Set([...form.permissions, ...groupPerms]);
         form.permissions = [...newPerms];
     } else {
@@ -95,12 +129,6 @@ function toggleGroup(group: string, checked: boolean | 'indeterminate') {
 
 function isGroupChecked(group: string): boolean {
     return props.permissionGroups[group].every(p => form.permissions.includes(p));
-}
-
-function isGroupIndeterminate(group: string): boolean {
-    const groupPerms = props.permissionGroups[group];
-    const checkedCount = groupPerms.filter(p => form.permissions.includes(p)).length;
-    return checkedCount > 0 && checkedCount < groupPerms.length;
 }
 
 function selectAll() {
@@ -118,6 +146,13 @@ const selectedCount = computed(() => form.permissions.length);
 const progressPercent = computed(() =>
     totalPermissions.value > 0 ? Math.round((selectedCount.value / totalPermissions.value) * 100) : 0
 );
+
+// --- Module badge color ---
+function getModuleBadgeVariant(module: ModuleInfo): 'default' | 'secondary' | 'outline' {
+    if (module.selectedCount === module.totalCount) return 'default';
+    if (module.selectedCount > 0) return 'secondary';
+    return 'outline';
+}
 
 // --- Unsaved changes warning ---
 const isDirty = computed(() => form.isDirty);
@@ -167,7 +202,7 @@ async function submit() {
 
         <PageHeader :title="isEditing ? `Edit Role: ${role!.name}` : 'Create Role'" :description="isEditing ? 'Manage permissions for this role.' : 'Create a new role and assign permissions.'" />
 
-        <div class="mt-6 max-w-4xl space-y-6">
+        <div class="mt-6 space-y-6">
             <!-- Super-admin notice -->
             <Alert v-if="isSuperAdmin">
                 <ShieldCheck class="size-4" />
@@ -177,7 +212,7 @@ async function submit() {
             </Alert>
 
             <form @submit.prevent="submit" class="space-y-6">
-                <Card>
+                <Card class="max-w-4xl">
                     <CardContent class="pt-6">
                         <div class="space-y-2">
                             <Label for="name">Role Name</Label>
@@ -216,38 +251,114 @@ async function submit() {
                         </div>
                     </div>
 
-                    <p v-if="Object.keys(filteredPermissionGroups).length === 0" class="text-sm text-muted-foreground">
+                    <p v-if="moduleList.length === 0" class="text-sm text-muted-foreground">
                         No permissions match "{{ searchQuery }}".
                     </p>
 
-                    <Card v-for="(permissions, group) in filteredPermissionGroups" :key="group">
-                        <CardHeader class="pb-3">
-                            <div class="flex items-center gap-2">
-                                <Checkbox
-                                    :model-value="isGroupChecked(group as string) ? true : isGroupIndeterminate(group as string) ? 'indeterminate' : false"
-                                    @update:model-value="(v: boolean | 'indeterminate') => toggleGroup(group as string, v)"
-                                />
-                                <component :is="getModuleIcon(group as string)" class="size-4 text-muted-foreground" />
-                                <CardTitle class="text-base capitalize">{{ group }}</CardTitle>
-                                <span class="text-xs text-muted-foreground">
-                                    ({{ (props.permissionGroups[group as string] || []).filter((p: string) => form.permissions.includes(p)).length }}/{{ (props.permissionGroups[group as string] || []).length }})
-                                </span>
-                            </div>
-                        </CardHeader>
-                        <CardContent>
-                            <div class="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4">
-                                <label
-                                    v-for="permission in permissions"
-                                    :key="permission"
-                                    class="flex cursor-pointer items-center gap-2 rounded-md px-2 py-1.5 text-sm transition-colors hover:bg-muted"
-                                    :class="form.permissions.includes(permission) ? 'bg-primary/5 ring-1 ring-primary/20' : ''"
+                    <!-- Two-panel layout -->
+                    <Card v-if="moduleList.length > 0">
+                        <CardContent class="p-0">
+                            <!-- Mobile: horizontal scrollable pills -->
+                            <div class="flex gap-2 overflow-x-auto border-b p-3 md:hidden">
+                                <Button
+                                    v-for="mod in moduleList"
+                                    :key="mod.name"
+                                    type="button"
+                                    :variant="activeModule === mod.name ? 'default' : 'outline'"
+                                    size="sm"
+                                    class="shrink-0 gap-1.5 capitalize"
+                                    @click="activeModule = mod.name"
                                 >
-                                    <Checkbox
-                                        :model-value="form.permissions.includes(permission)"
-                                        @update:model-value="(v: boolean | 'indeterminate') => togglePermission(permission, v)"
-                                    />
-                                    <span>{{ (permission as string).split('.').pop() }}</span>
-                                </label>
+                                    <component :is="getModuleIcon(mod.name)" class="size-3.5" />
+                                    {{ mod.name }}
+                                    <Badge
+                                        :variant="getModuleBadgeVariant(mod)"
+                                        class="ml-1 h-5 min-w-5 rounded-full px-1.5 text-xs"
+                                        :class="activeModule === mod.name ? 'bg-background/20 text-primary-foreground' : ''"
+                                    >
+                                        {{ mod.selectedCount }}/{{ mod.totalCount }}
+                                    </Badge>
+                                </Button>
+                            </div>
+
+                            <div class="flex">
+                                <!-- Desktop sidebar -->
+                                <div class="hidden w-64 shrink-0 border-r md:block">
+                                    <ScrollArea class="h-[500px]">
+                                        <div class="p-1">
+                                            <button
+                                                v-for="mod in moduleList"
+                                                :key="mod.name"
+                                                type="button"
+                                                class="flex w-full items-center gap-2 rounded-md px-3 py-2.5 text-left text-sm transition-colors"
+                                                :class="activeModule === mod.name ? 'bg-accent text-accent-foreground' : 'hover:bg-muted/50'"
+                                                @click="activeModule = mod.name"
+                                            >
+                                                <component :is="getModuleIcon(mod.name)" class="size-4 shrink-0 text-muted-foreground" />
+                                                <span class="flex-1 truncate capitalize">{{ mod.name }}</span>
+                                                <div class="flex items-center gap-2">
+                                                    <Badge
+                                                        :variant="getModuleBadgeVariant(mod)"
+                                                        class="h-5 min-w-5 rounded-full px-1.5 text-xs"
+                                                    >
+                                                        {{ mod.selectedCount }}/{{ mod.totalCount }}
+                                                    </Badge>
+                                                </div>
+                                            </button>
+                                        </div>
+                                    </ScrollArea>
+                                </div>
+
+                                <!-- Right panel: permissions for active module -->
+                                <div class="flex-1">
+                                    <template v-if="activeModuleData">
+                                        <!-- Module header -->
+                                        <div class="flex items-center justify-between border-b px-4 py-3 sm:px-6">
+                                            <div class="flex items-center gap-2">
+                                                <component :is="getModuleIcon(activeModuleData.name)" class="size-5 text-muted-foreground" />
+                                                <h3 class="text-sm font-semibold capitalize">{{ activeModuleData.name }}</h3>
+                                                <Badge :variant="getModuleBadgeVariant(activeModuleData)" class="text-xs">
+                                                    {{ activeModuleData.selectedCount }}/{{ activeModuleData.totalCount }}
+                                                </Badge>
+                                            </div>
+                                            <Button
+                                                type="button"
+                                                variant="outline"
+                                                size="sm"
+                                                @click="toggleGroup(activeModuleData.name, !isGroupChecked(activeModuleData.name))"
+                                            >
+                                                {{ isGroupChecked(activeModuleData.name) ? 'Deselect Module' : 'Select Module' }}
+                                            </Button>
+                                        </div>
+
+                                        <!-- Fill bar for module -->
+                                        <div class="px-4 pt-3 sm:px-6">
+                                            <Progress :model-value="activeModuleData.percent" class="h-1.5" />
+                                        </div>
+
+                                        <!-- Permissions list with switches -->
+                                        <div class="p-4 sm:p-6">
+                                            <div class="space-y-1">
+                                                <label
+                                                    v-for="permission in activeModuleData.permissions"
+                                                    :key="permission"
+                                                    class="flex cursor-pointer items-center justify-between rounded-md px-3 py-2.5 transition-colors hover:bg-muted/50"
+                                                    :class="form.permissions.includes(permission) ? 'bg-primary/5' : ''"
+                                                >
+                                                    <div class="flex items-center gap-2.5">
+                                                        <Check v-if="form.permissions.includes(permission)" class="size-4 text-success" />
+                                                        <Minus v-else class="size-4 text-muted-foreground/30" />
+                                                        <span class="text-sm">{{ permission.split('.').pop() }}</span>
+                                                    </div>
+                                                    <Switch
+                                                        :model-value="form.permissions.includes(permission)"
+                                                        @update:model-value="(v: boolean) => togglePermission(permission, v)"
+                                                    />
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </template>
+                                </div>
                             </div>
                         </CardContent>
                     </Card>

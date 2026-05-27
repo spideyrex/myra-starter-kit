@@ -538,6 +538,7 @@
         <a href="#module-media">Media Manager</a>
         <a href="#module-notifications">Notifications</a>
         <a href="#module-firebase">Push Notifications (Firebase)</a>
+        <a href="#module-ai">AI Assistant</a>
 
         <div class="nav-group">Backend</div>
         <a href="#app-install">App Install</a>
@@ -580,6 +581,7 @@
         <li><strong>CMS (Content Management)</strong> &mdash; Articles with rich text editor, categories, and static pages with SEO fields</li>
         <li><strong>Homepage Builder</strong> &mdash; Settings-driven marketing landing page with hero, features, testimonials, pricing, and CTA sections</li>
         <li><strong>Built-in Admin Modules</strong> &mdash; Users, roles, settings, email logs, backups, API tokens, system health, activity log, media manager</li>
+        <li><strong>AI Assistant</strong> &mdash; Bring-your-own-key AI integration (OpenAI, Anthropic, OpenRouter, or self-hosted Ollama) with a streaming writing assistant built into the rich text editor</li>
         <li><strong>Theme Selector</strong> &mdash; 10 predefined shadcn color themes (Zinc, Slate, Stone, Red, Rose, Orange, Green, Blue, Violet, Yellow) configurable from admin</li>
         <li><strong>Dark Mode</strong> &mdash; Full dark/light theme support with persistent user preference</li>
         <li><strong>Security</strong> &mdash; Profile security page with 2FA setup, password change, and browser session management</li>
@@ -610,7 +612,7 @@
 
     <div class="screenshot">
         <img src="screenshots/settings.png" alt="General Settings" loading="lazy">
-        <div class="screenshot-caption">Settings page with General, SEO, Appearance, Social, and Maintenance tabs</div>
+        <div class="screenshot-caption">Settings page with General, SEO, Appearance, Social, Maintenance, Homepage, and AI tabs</div>
     </div>
 
     <div class="screenshot">
@@ -741,7 +743,8 @@ npm run dev</code></pre>
         <li><strong>Roles &amp; Permissions</strong> &mdash; Full RBAC management</li>
         <li><strong>CMS</strong> &mdash; Articles with categories, static pages, and public article/page views</li>
         <li><strong>Homepage Builder</strong> &mdash; Settings-driven marketing landing page with hero, features, testimonials, pricing, and CTA sections</li>
-        <li><strong>Settings</strong> &mdash; General, SEO, Appearance (theme selector), Social, Maintenance, and Homepage tabs</li>
+        <li><strong>Settings</strong> &mdash; General, SEO, Appearance (theme selector), Social, Maintenance, Homepage, and AI tabs</li>
+        <li><strong>AI Integration</strong> &mdash; Pluggable provider (OpenAI, Anthropic, OpenRouter, Ollama) powering the rich text editor's AI Assistant</li>
         <li><strong>Theme Selector</strong> &mdash; 10 shadcn color themes selectable from Appearance settings</li>
         <li><strong>Email System</strong> &mdash; Templates, logs, and SMTP configuration</li>
         <li><strong>Media Library</strong> &mdash; File uploads with Spatie Media Library</li>
@@ -768,12 +771,10 @@ npm run dev</code></pre>
         </tbody>
     </table>
 
-    <h3>Install Options</h3>
-    <pre><code class="language-bash"># Overwrite existing files (useful when updating)
-php artisan myra:install --force
-
-# Use a specific Composer binary
-php artisan myra:install --composer=/path/to/composer.phar</code></pre>
+    <h3>Re-running the Installer</h3>
+    <p>The <code>app:install</code> command takes no flags. It is safe to re-run &mdash; if the application is already installed (the <code>settings</code> table has data) it asks for confirmation before continuing, and all seeders use <code>firstOrCreate</code> / <code>updateOrInsert</code> so existing data is preserved.</p>
+    <pre><code class="language-bash"># Re-run setup (prompts for confirmation if already installed)
+php artisan app:install</code></pre>
 
     <div class="callout callout-tip">
         <div class="callout-title">&#9889; Starter Kit Pattern</div>
@@ -912,7 +913,7 @@ php artisan myra:install --composer=/path/to/composer.phar</code></pre>
     ├── <span class="dir">ApiTokens/</span>                   <span class="comment"># Index</span>
     ├── <span class="dir">ActivityLog/</span>                 <span class="comment"># Index</span>
     ├── <span class="dir">Media/</span>                       <span class="comment"># Index</span>
-    ├── <span class="dir">Demo/</span>                        <span class="comment"># Feature showcase pages (15 demos)</span>
+    ├── <span class="dir">Demo/</span>                        <span class="comment"># Feature showcase pages (18 demos)</span>
     └── <span class="file">SystemHealth.vue</span>
 
 <span class="dir">stubs/admin/</span>                         <span class="comment"># Artisan command templates</span>
@@ -4342,7 +4343,7 @@ Notification::send($recipients, $notification);</code></pre>
     <p><strong>Location:</strong> <code>Pages/Admin/Settings/Index.vue</code> &mdash; <strong>Route:</strong> <code>/admin/settings</code></p>
     <div class="screenshot">
         <img src="screenshots/settings.png" alt="Settings Page" loading="lazy">
-        <div class="screenshot-caption">Settings page with General, SEO, Appearance, Social, Maintenance, and Homepage tabs</div>
+        <div class="screenshot-caption">Settings page with General, SEO, Appearance, Social, Maintenance, Homepage, and AI tabs</div>
     </div>
     <div class="screenshot">
         <img src="screenshots/settings-appearance.png" alt="Appearance Settings" loading="lazy">
@@ -4800,6 +4801,73 @@ VITE_FIREBASE_VAPID_KEY=BNx...</code></pre>
     </div>
 </section>
 
+<section id="module-ai">
+    <h3>AI Assistant</h3>
+    <p>A bring-your-own-key AI integration that powers a streaming writing assistant inside the rich text editor. The provider is pluggable, so you can use a hosted API or a self-hosted model without changing any frontend code.</p>
+    <p><strong>Admin config:</strong> <code>/admin/settings</code> (AI tab) &mdash; <strong>Settings class:</strong> <code>App\Settings\AiSettings</code> (group <code>ai</code>)</p>
+
+    <div class="screenshot">
+        <img src="screenshots/settings-ai.png" alt="AI Settings" loading="lazy">
+        <div class="screenshot-caption">AI tab &mdash; enable toggle, provider selector, API key, model, base URL, temperature, and max tokens</div>
+    </div>
+
+    <h4>Supported Providers</h4>
+    <p>The active provider is resolved from <code>AiSettings::provider</code> by <code>App\Services\Ai\AiService</code>. Each provider implements <code>AiProviderInterface</code> (<code>complete()</code>, <code>stream()</code>, <code>testConnection()</code>).</p>
+    <table>
+        <thead><tr><th>Provider</th><th>Class</th><th>Default Model</th><th>Notes</th></tr></thead>
+        <tbody>
+            <tr><td><code>openai</code> (default)</td><td><code>OpenAiProvider</code></td><td><code>gpt-4o-mini</code></td><td>API key required; custom <code>base_url</code> supported (Azure / compatible gateways)</td></tr>
+            <tr><td><code>anthropic</code></td><td><code>AnthropicProvider</code></td><td><code>claude-sonnet-4-5-20250929</code></td><td>API key required</td></tr>
+            <tr><td><code>openrouter</code></td><td><code>OpenRouterProvider</code></td><td><code>openai/gpt-4o-mini</code></td><td>API key required; any OpenRouter-listed model</td></tr>
+            <tr><td><code>ollama</code></td><td><code>OllamaProvider</code></td><td><code>llama3.1</code></td><td>Self-hosted, no API key; set <code>base_url</code> to your Ollama host</td></tr>
+        </tbody>
+    </table>
+
+    <h4>Settings Fields</h4>
+    <table>
+        <thead><tr><th>Field</th><th>Type</th><th>Description</th></tr></thead>
+        <tbody>
+            <tr><td><code>enabled</code></td><td>bool</td><td>Master switch. When off, the assistant and endpoints return a disabled message</td></tr>
+            <tr><td><code>provider</code></td><td>string</td><td>One of <code>openai</code>, <code>anthropic</code>, <code>openrouter</code>, <code>ollama</code></td></tr>
+            <tr><td><code>api_key</code></td><td>string</td><td>Provider API key (left blank on save = keep existing key)</td></tr>
+            <tr><td><code>model</code></td><td>string</td><td>Overrides the provider default model</td></tr>
+            <tr><td><code>base_url</code></td><td>string</td><td>Custom endpoint (OpenAI-compatible gateways, Ollama host)</td></tr>
+            <tr><td><code>temperature</code></td><td>float</td><td>0&ndash;2 sampling temperature (default <code>0.7</code>)</td></tr>
+            <tr><td><code>max_tokens</code></td><td>int</td><td>1&ndash;32000 response cap (default <code>2048</code>)</td></tr>
+        </tbody>
+    </table>
+
+    <h4>Editor AI Assistant</h4>
+    <p>The <code>TipTapAiAssistant</code> component adds a <strong>Sparkles</strong> menu to the rich text editor toolbar. It calls the streaming endpoint and inserts the result into the document as it arrives. Available actions:</p>
+    <table>
+        <thead><tr><th>Action</th><th>Behaviour</th></tr></thead>
+        <tbody>
+            <tr><td><code>generate</code></td><td>Generate new content from a free-text prompt</td></tr>
+            <tr><td><code>improve</code></td><td>Improve writing quality, preserving meaning</td></tr>
+            <tr><td><code>fix_grammar</code></td><td>Fix grammar, spelling, and punctuation</td></tr>
+            <tr><td><code>make_shorter</code></td><td>Condense while keeping key information</td></tr>
+            <tr><td><code>make_longer</code></td><td>Expand with more relevant detail</td></tr>
+            <tr><td><code>summarize</code></td><td>Produce a concise overview</td></tr>
+            <tr><td><code>change_tone</code></td><td>Rewrite in a <code>professional</code>, <code>casual</code>, <code>friendly</code>, or <code>formal</code> tone</td></tr>
+        </tbody>
+    </table>
+
+    <h4>Routes</h4>
+    <table>
+        <thead><tr><th>Method</th><th>URI</th><th>Name</th><th>Access</th></tr></thead>
+        <tbody>
+            <tr><td>PUT</td><td><code>/admin/settings/ai</code></td><td><code>admin.settings.update-ai</code></td><td><code>permission:settings.edit</code></td></tr>
+            <tr><td>POST</td><td><code>/admin/ai/test</code></td><td><code>admin.ai.test-connection</code></td><td><code>permission:settings.edit</code></td></tr>
+            <tr><td>POST</td><td><code>/ai/assist</code></td><td><code>ai.assist</code></td><td>Any authenticated user, <code>throttle:30,1</code></td></tr>
+        </tbody>
+    </table>
+
+    <div class="callout callout-info">
+        <div class="callout-title">&#8505; Streaming &amp; Frontend Gating</div>
+        <code>/ai/assist</code> returns a Server-Sent Events stream (<code>text/event-stream</code>) &mdash; chunks arrive as <code>data: {"content": "..."}</code> lines terminated by <code>data: [DONE]</code>. The assistant UI only renders when the shared Inertia prop <code>aiEnabled</code> is <code>true</code>, which mirrors <code>AiSettings::enabled</code> (cached for one hour and cleared on save).
+    </div>
+</section>
+
 <hr class="section-divider">
 
 <!-- ============================================================ -->
@@ -5199,11 +5267,18 @@ public function share(Request $request): array
             'error' =&gt; fn () =&gt; $request-&gt;session()-&gt;get('error'),
             'warning' =&gt; fn () =&gt; $request-&gt;session()-&gt;get('warning'),
             'info' =&gt; fn () =&gt; $request-&gt;session()-&gt;get('info'),
+            'newToken' =&gt; fn () =&gt; $request-&gt;session()-&gt;get('newToken'),
         ],
         'unreadNotificationsCount' =&gt; fn () =&gt; $request-&gt;user()?-&gt;unreadNotifications()-&gt;count() ?? 0,
         'recentNotifications' =&gt; fn () =&gt; $request-&gt;user()
-            ?-&gt;notifications()-&gt;latest()-&gt;take(10)-&gt;get() ?? [],
-        'siteSettings' =&gt; fn () =&gt; cache()-&gt;remember('site-settings', 300, fn () =&gt; [...]),
+            ?-&gt;notifications()-&gt;latest()-&gt;take(5)-&gt;get() ?? [],
+        'impersonating' =&gt; fn () =&gt; $request-&gt;session()-&gt;has('impersonator_id'),
+        'currentTeam' =&gt; fn () =&gt; $request-&gt;user()?-&gt;currentTeam,
+        'teams' =&gt; fn () =&gt; $request-&gt;user()?-&gt;teams()-&gt;get() ?? [],
+        // Cached for 1 hour; 'site_settings_shared' is cleared when settings are saved
+        'siteSettings' =&gt; fn () =&gt; cache()-&gt;remember('site_settings_shared', 3600, fn () =&gt; [...]),
+        'aiEnabled' =&gt; fn () =&gt; cache()-&gt;remember('ai_enabled', 3600, fn () =&gt; app(AiSettings::class)-&gt;enabled),
+        'firebaseConfig' =&gt; fn () =&gt; cache()-&gt;remember('firebase_web_config', 3600, fn () =&gt; [...]),
     ];
 }</code></pre>
 

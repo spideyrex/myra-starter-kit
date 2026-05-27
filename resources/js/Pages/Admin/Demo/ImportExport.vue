@@ -1,15 +1,16 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 import { Head, Link, router } from '@inertiajs/vue3';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import DataTable from '@/components/DataTable.vue';
 import PageHeader from '@/components/PageHeader.vue';
 import ImportModal from '@/components/ImportModal.vue';
+import ExportDropdown from '@/components/ExportDropdown.vue';
 import { Button } from '@/components/ui/button';
 import { TextColumn, DateColumn } from '@/composables/useTableSchema';
 import { BulkAction } from '@/composables/useTableActions';
 import type { PaginatedData } from '@/types';
-import { ArrowLeft, Download, Upload, Trash2 } from 'lucide-vue-next';
+import { ArrowLeft, Upload, Trash2 } from 'lucide-vue-next';
 
 const props = defineProps<{
     contacts: PaginatedData<any>;
@@ -33,6 +34,16 @@ const bulkActions = [
         .requiresConfirmation('Delete Contacts', 'Are you sure you want to delete the selected contacts?')
         .icon(Trash2),
 ];
+
+const xlsxColumns = [
+    { header: 'Name', key: 'name' },
+    { header: 'Email', key: 'email' },
+    { header: 'Phone', key: 'phone' },
+    { header: 'Company', key: 'company' },
+    { header: 'Created', key: 'created_at' },
+];
+
+const xlsxData = computed(() => props.contacts.data);
 </script>
 
 <template>
@@ -41,10 +52,13 @@ const bulkActions = [
 
         <PageHeader title="Import & Export" description="CSV import with column mapping and preview, plus streaming CSV export.">
             <template #actions>
-                <Button variant="outline" as="a" :href="route('admin.demo.export-csv')">
-                    <Download class="mr-2 size-4" />
-                    Export CSV
-                </Button>
+                <ExportDropdown
+                    :csv-href="route('admin.demo.export-csv')"
+                    xlsx-filename="contacts"
+                    xlsx-sheet-name="Contacts"
+                    :columns="xlsxColumns"
+                    :data="xlsxData"
+                />
                 <Button variant="outline" @click="showImport = true">
                     <Upload class="mr-2 size-4" />
                     Import CSV

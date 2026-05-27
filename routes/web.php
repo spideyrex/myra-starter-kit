@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\ActivityLogController;
 use App\Http\Controllers\Admin\AdminNotificationController;
 use App\Http\Controllers\Admin\ApiTokenController;
 use App\Http\Controllers\Admin\BackupController;
+use App\Http\Controllers\Admin\AiController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\DemoController;
 use App\Http\Controllers\Admin\EmailLogController;
@@ -58,7 +59,9 @@ Route::middleware('auth')->group(function () {
         $sessions = app(SessionController::class)->index(request());
         return inertia('Profile/Security', array_merge($sessions, [
             'twoFactorEnabled' => request()->user()->hasTwoFactorEnabled(),
-            'qrCode' => request()->user()->two_factor_secret ? app(TwoFactorController::class)->qrCode(request())->getData(true) : null,
+            'qrCode' => request()->user()->two_factor_secret && !request()->user()->two_factor_confirmed_at
+                ? app(TwoFactorController::class)->qrCode(request())->getData(true)
+                : null,
         ]));
     })->name('profile.security');
 
@@ -86,6 +89,9 @@ Route::middleware('auth')->group(function () {
     Route::post('/fcm-tokens', [FcmTokenController::class, 'store'])->name('fcm-tokens.store');
     Route::delete('/fcm-tokens', [FcmTokenController::class, 'destroy'])->name('fcm-tokens.destroy');
 
+    // AI Assist (available to any authenticated user)
+    Route::post('/ai/assist', [AiController::class, 'assist'])->middleware('throttle:30,1')->name('ai.assist');
+
     // Team switching
     Route::post('/teams/{team}/switch', [TeamController::class, 'switch'])->name('teams.switch');
 });
@@ -100,7 +106,7 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->name('admin.')->group(
     Route::put('/users/{user}', [UserController::class, 'update'])->middleware('permission:users.edit')->name('users.update');
     Route::delete('/users/{user}', [UserController::class, 'destroy'])->middleware('permission:users.delete')->name('users.destroy');
     Route::post('/users/bulk-action', [UserController::class, 'bulkAction'])->middleware('permission:users.edit')->name('users.bulk-action');
-    Route::get('/users/export-csv', [UserController::class, 'exportCsv'])->middleware('permission:users.view')->name('users.export-csv');
+    Route::get('/users/export-csv', [UserController::class, 'exportCsv'])->middleware(['permission:users.view', 'throttle:5,1'])->name('users.export-csv');
     Route::post('/users/{user}/impersonate', [UserController::class, 'impersonate'])->middleware('permission:users.edit')->name('users.impersonate');
     Route::post('/users/{user}/restore', [UserController::class, 'restore'])->middleware('permission:users.edit')->name('users.restore');
     Route::delete('/users/{user}/force-delete', [UserController::class, 'forceDelete'])->middleware('permission:users.delete')->name('users.force-delete');
@@ -123,9 +129,11 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->name('admin.')->group(
 
     // Settings
     Route::get('/settings', [SettingController::class, 'index'])->middleware('permission:settings.view')->name('settings.index');
+    Route::put('/settings/ai', [AiController::class, 'updateSettings'])->middleware('permission:settings.edit')->name('settings.update-ai');
     Route::put('/settings/{group}', [SettingController::class, 'update'])->middleware('permission:settings.edit')->name('settings.update');
     Route::post('/settings/appearance', [SettingController::class, 'updateAppearance'])->middleware('permission:settings.edit')->name('settings.update-appearance');
     Route::post('/settings/homepage', [SettingController::class, 'updateHomepage'])->middleware('permission:settings.edit')->name('settings.update-homepage');
+    Route::post('/ai/test', [AiController::class, 'testConnection'])->middleware('permission:settings.edit')->name('ai.test-connection');
 
     // Email Templates
     Route::get('/email-templates', [EmailTemplateController::class, 'index'])->middleware('permission:email.view')->name('email-templates.index');
@@ -167,13 +175,13 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->name('admin.')->group(
 
     // Backups
     Route::get('/backups', [BackupController::class, 'index'])->middleware('permission:backups.view')->name('backups.index');
-    Route::post('/backups', [BackupController::class, 'store'])->middleware('permission:backups.create')->name('backups.store');
+    Route::post('/backups', [BackupController::class, 'store'])->middleware(['permission:backups.create', 'throttle:3,1'])->name('backups.store');
     Route::get('/backups/download/{path}', [BackupController::class, 'download'])->middleware('permission:backups.view')->name('backups.download')->where('path', '.*');
     Route::delete('/backups/{path}', [BackupController::class, 'destroy'])->middleware('permission:backups.delete')->name('backups.destroy')->where('path', '.*');
 
     // API Tokens
     Route::get('/api-tokens', [ApiTokenController::class, 'index'])->middleware('permission:api-tokens.view')->name('api-tokens.index');
-    Route::post('/api-tokens', [ApiTokenController::class, 'store'])->middleware('permission:api-tokens.create')->name('api-tokens.store');
+    Route::post('/api-tokens', [ApiTokenController::class, 'store'])->middleware(['permission:api-tokens.create', 'throttle:10,1'])->name('api-tokens.store');
     Route::delete('/api-tokens/{token}', [ApiTokenController::class, 'destroy'])->middleware('permission:api-tokens.delete')->name('api-tokens.destroy');
 
     // Notifications
@@ -246,6 +254,7 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->name('admin.')->group(
     Route::get('/demo/widgets', [DemoController::class, 'widgets'])->name('demo.widgets');
     Route::get('/demo/field-types', [DemoController::class, 'fieldTypes'])->name('demo.field-types');
     Route::get('/demo/advanced-filters', [DemoController::class, 'advancedFilters'])->name('demo.advanced-filters');
+    Route::get('/demo/wizard', [DemoController::class, 'wizardDemo'])->name('demo.wizard');
 });
 
 require __DIR__.'/auth.php';

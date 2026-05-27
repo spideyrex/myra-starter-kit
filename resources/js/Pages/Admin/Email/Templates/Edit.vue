@@ -8,6 +8,7 @@ import LoadingButton from '@/components/LoadingButton.vue';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent } from '@/components/ui/card';
+import { sanitizeHtml } from '@/composables/useSanitize';
 import Modal from '@/components/Modal.vue';
 import TipTapEditor from '@/components/TipTapEditor.vue';
 import { Eye, Send } from 'lucide-vue-next';
@@ -140,7 +141,7 @@ async function submit() {
         <Modal :open="showPreview" title="Email Preview" @update:open="showPreview = $event">
             <div class="space-y-2">
                 <p class="text-sm"><strong>Subject:</strong> {{ form.subject }}</p>
-                <div class="rounded border bg-white p-4 text-sm" v-html="form.body_html" />
+                <div class="rounded border bg-white p-4 text-sm" v-html="sanitizeHtml(form.body_html)" />
             </div>
         </Modal>
 

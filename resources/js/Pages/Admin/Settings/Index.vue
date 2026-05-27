@@ -12,9 +12,10 @@ import { FormField, FormFields, SettingsCard } from '@/components/admin';
 import RepeaterField from '@/components/admin/RepeaterField.vue';
 import LoadingButton from '@/components/LoadingButton.vue';
 import { useConfirm } from '@/composables/useConfirm';
-import { TextInput, Textarea, Toggle, Select } from '@/composables/useFormSchema';
-import { Upload, X, Image, Globe, Check } from 'lucide-vue-next';
-import { themePresets } from '@/composables/useThemeColors';
+import { TextInput, Textarea, Toggle, Select, Slider as SliderField } from '@/composables/useFormSchema';
+import { Upload, X, Image, Globe, Check, PanelTop, PanelLeft, RotateCcw, Sparkles, Loader2, CheckCircle, XCircle } from 'lucide-vue-next';
+import { toast } from 'vue-sonner';
+import { themePresets, hexToOklch, isLightColor } from '@/composables/useThemeColors';
 
 const props = defineProps<{
     general: Record<string, any>;
@@ -23,6 +24,7 @@ const props = defineProps<{
     social: Record<string, any>;
     maintenance: Record<string, any>;
     homepage: Record<string, any>;
+    ai: Record<string, any>;
 }>();
 
 const generalForm = useForm({ ...props.general });
@@ -33,6 +35,7 @@ const maintenanceForm = useForm({ ...props.maintenance });
 // Appearance state (managed manually for file uploads)
 const appearanceProcessing = ref(false);
 const selectedTheme = ref(props.appearance.theme || 'zinc');
+const selectedLogoPosition = ref(props.appearance.logo_position || 'header');
 const logoFile = ref<File | null>(null);
 const faviconFile = ref<File | null>(null);
 const logoPreview = ref<string | null>(props.appearance.logo_url || null);
@@ -40,6 +43,73 @@ const faviconPreview = ref<string | null>(props.appearance.favicon_url || null);
 const removeLogo = ref(false);
 const removeFavicon = ref(false);
 const appearanceErrors = ref<Record<string, string>>({});
+
+// Sidebar custom colors
+const sidebarBackground = ref(props.appearance.sidebar_background || '');
+const sidebarForeground = ref(props.appearance.sidebar_foreground || '');
+const sidebarAccent = ref(props.appearance.sidebar_accent || '');
+
+interface SidebarPreset {
+    label: string;
+    background: string;
+    foreground: string;
+    accent: string;
+}
+
+const sidebarPresets: SidebarPreset[] = [
+    { label: 'Default', background: '', foreground: '', accent: '' },
+    { label: 'Dark Navy', background: '#1e293b', foreground: '#e2e8f0', accent: '#334155' },
+    { label: 'Charcoal', background: '#1c1c1c', foreground: '#e0e0e0', accent: '#333333' },
+    { label: 'Deep Purple', background: '#2d1b69', foreground: '#e8e0f0', accent: '#3d2b7a' },
+    { label: 'Forest', background: '#1a2e1a', foreground: '#d4e8d4', accent: '#2a4a2a' },
+    { label: 'Ocean Blue', background: '#0c2d48', foreground: '#d6e8f0', accent: '#1a4060' },
+    { label: 'Warm Gray', background: '#44403c', foreground: '#e7e5e4', accent: '#57534e' },
+    { label: 'White', background: '#ffffff', foreground: '#1c1917', accent: '#f5f5f4' },
+];
+
+function applySidebarPreset(preset: SidebarPreset) {
+    sidebarBackground.value = preset.background;
+    sidebarForeground.value = preset.foreground;
+    sidebarAccent.value = preset.accent;
+    previewSidebarColors();
+}
+
+function isSidebarPresetActive(preset: SidebarPreset): boolean {
+    return sidebarBackground.value === preset.background
+        && sidebarForeground.value === preset.foreground
+        && sidebarAccent.value === preset.accent;
+}
+
+function previewSidebarColors() {
+    const root = document.documentElement;
+    const vars = ['--sidebar', '--sidebar-foreground', '--sidebar-accent', '--sidebar-accent-foreground', '--sidebar-border'];
+    for (const v of vars) root.style.removeProperty(v);
+
+    if (sidebarBackground.value) {
+        root.style.setProperty('--sidebar', hexToOklch(sidebarBackground.value));
+        const light = isLightColor(sidebarBackground.value);
+        root.style.setProperty('--sidebar-border', hexToOklch(
+            adjustHexLightness(sidebarBackground.value, light ? -20 : 20)
+        ));
+    }
+    if (sidebarForeground.value) {
+        root.style.setProperty('--sidebar-foreground', hexToOklch(sidebarForeground.value));
+    }
+    if (sidebarAccent.value) {
+        root.style.setProperty('--sidebar-accent', hexToOklch(sidebarAccent.value));
+        root.style.setProperty('--sidebar-accent-foreground', isLightColor(sidebarAccent.value) ? 'oklch(0.205 0 0)' : 'oklch(0.985 0 0)');
+    }
+}
+
+function adjustHexLightness(hex: string, amount: number): string {
+    let r = parseInt(hex.slice(1, 3), 16);
+    let g = parseInt(hex.slice(3, 5), 16);
+    let b = parseInt(hex.slice(5, 7), 16);
+    r = Math.max(0, Math.min(255, r + amount));
+    g = Math.max(0, Math.min(255, g + amount));
+    b = Math.max(0, Math.min(255, b + amount));
+    return '#' + [r, g, b].map(c => c.toString(16).padStart(2, '0')).join('');
+}
 
 const logoInput = ref<HTMLInputElement>();
 const faviconInput = ref<HTMLInputElement>();
@@ -212,6 +282,78 @@ const maintenanceSchema = [
     Textarea.make('message').label('Maintenance Message'),
 ];
 
+// AI Settings
+const aiForm = useForm({
+    enabled: props.ai.enabled ?? false,
+    provider: props.ai.provider ?? 'openai',
+    api_key: '',
+    model: props.ai.model ?? '',
+    base_url: props.ai.base_url ?? '',
+    temperature: props.ai.temperature ?? 0.7,
+    max_tokens: props.ai.max_tokens ?? 2048,
+});
+
+const aiSchema = [
+    Toggle.make('enabled').label('Enable AI Features'),
+    Select.make('provider').label('AI Provider')
+        .options([
+            { label: 'OpenAI', value: 'openai' },
+            { label: 'Anthropic (Claude)', value: 'anthropic' },
+            { label: 'OpenRouter', value: 'openrouter' },
+            { label: 'Ollama (Local)', value: 'ollama' },
+        ])
+        .visibleWhen('enabled:true'),
+    TextInput.make('api_key').password().label('API Key')
+        .placeholder(props.ai.api_key ? 'Key is set — leave blank to keep' : 'Enter API key')
+        .visibleWhen((f: any) => f.enabled && ['openai', 'anthropic', 'openrouter'].includes(f.provider)),
+    TextInput.make('model').label('Model')
+        .placeholder('Leave blank for default')
+        .hint('e.g. gpt-4o-mini, claude-sonnet-4-5-20250929, llama3.1')
+        .visibleWhen('enabled:true'),
+    TextInput.make('base_url').label('Base URL (optional)')
+        .placeholder('Custom API endpoint')
+        .hint('Only needed for custom deployments (Azure OpenAI, self-hosted Ollama, etc.)')
+        .visibleWhen((f: any) => f.enabled && ['openai', 'ollama'].includes(f.provider)),
+    SliderField.make('temperature').label('Temperature').min(0).max(2).step(0.1).showValue()
+        .visibleWhen('enabled:true'),
+    TextInput.make('max_tokens').label('Max Tokens').placeholder('2048')
+        .visibleWhen('enabled:true'),
+];
+
+const aiTestLoading = ref(false);
+const aiTestResult = ref<{ success: boolean; message: string } | null>(null);
+
+async function testAiConnection() {
+    aiTestLoading.value = true;
+    aiTestResult.value = null;
+    try {
+        const response = await fetch(route('admin.ai.test-connection'), {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': (document.querySelector('meta[name="csrf-token"]') as HTMLMetaElement)?.content || '',
+                'Accept': 'application/json',
+            },
+        });
+        aiTestResult.value = await response.json();
+    } catch (e: any) {
+        aiTestResult.value = { success: false, message: 'Request failed: ' + (e.message || 'Unknown error') };
+    } finally {
+        aiTestLoading.value = false;
+    }
+}
+
+async function saveAi() {
+    const confirmed = await confirm({ title: 'Save Settings', description: 'Are you sure you want to save the AI settings?', confirmText: 'Save' });
+    if (confirmed) {
+        aiForm.put(route('admin.settings.update-ai'), {
+            onSuccess: () => {
+                aiTestResult.value = null;
+            },
+        });
+    }
+}
+
 const { confirm } = useConfirm();
 
 async function saveGroup(group: string, form: any) {
@@ -225,6 +367,12 @@ async function saveAppearance() {
 
     const data = new FormData();
     data.append('theme', selectedTheme.value);
+    data.append('logo_position', selectedLogoPosition.value);
+
+    // Sidebar colors (empty string = reset to null on server)
+    data.append('sidebar_background', sidebarBackground.value);
+    data.append('sidebar_foreground', sidebarForeground.value);
+    data.append('sidebar_accent', sidebarAccent.value);
 
     if (logoFile.value) data.append('logo', logoFile.value);
     if (faviconFile.value) data.append('favicon', faviconFile.value);
@@ -328,6 +476,10 @@ async function saveHomepage() {
                 <TabsTrigger value="social">Social</TabsTrigger>
                 <TabsTrigger value="maintenance">Maintenance</TabsTrigger>
                 <TabsTrigger value="homepage">Homepage</TabsTrigger>
+                <TabsTrigger value="ai">
+                    <Sparkles class="mr-1.5 size-4" />
+                    AI
+                </TabsTrigger>
             </TabsList>
 
             <TabsContent value="general">
@@ -409,6 +561,178 @@ async function saveHomepage() {
                                         <input ref="faviconInput" type="file" accept="image/*" class="hidden" @change="onFaviconChange" />
                                         <p v-if="appearanceErrors.favicon" class="text-sm text-destructive">{{ appearanceErrors.favicon }}</p>
                                     </div>
+                                </div>
+                            </div>
+
+                            <!-- Logo Position -->
+                            <div class="space-y-3">
+                                <Label class="text-base font-semibold">Logo Position</Label>
+                                <p class="text-sm text-muted-foreground">Choose where the logo appears in the admin layout.</p>
+                                <div class="flex gap-3">
+                                    <button
+                                        v-for="option in [
+                                            { value: 'header', label: 'Header', icon: PanelTop, description: 'Centered in the top bar' },
+                                            { value: 'sidebar', label: 'Sidebar', icon: PanelLeft, description: 'Top of the sidebar' },
+                                        ]"
+                                        :key="option.value"
+                                        type="button"
+                                        class="flex flex-1 flex-col items-center gap-2 rounded-lg border-2 p-4 transition-all hover:bg-accent"
+                                        :class="selectedLogoPosition === option.value ? 'border-primary bg-accent' : 'border-border'"
+                                        @click="selectedLogoPosition = option.value"
+                                    >
+                                        <component :is="option.icon" class="size-6 text-muted-foreground" />
+                                        <span class="text-sm font-medium">{{ option.label }}</span>
+                                        <span class="text-xs text-muted-foreground">{{ option.description }}</span>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Sidebar Theme -->
+                            <div class="space-y-3">
+                                <Label class="text-base font-semibold">Sidebar Theme</Label>
+                                <p class="text-sm text-muted-foreground">Choose a preset or customize individual sidebar colors.</p>
+
+                                <!-- Preset cards -->
+                                <div class="grid grid-cols-2 gap-2 sm:grid-cols-4">
+                                    <button
+                                        v-for="preset in sidebarPresets"
+                                        :key="preset.label"
+                                        type="button"
+                                        class="group flex flex-col items-center gap-1.5 rounded-lg border-2 p-3 transition-all hover:shadow-sm"
+                                        :class="isSidebarPresetActive(preset) ? 'border-primary bg-accent' : 'border-border hover:border-muted-foreground/30'"
+                                        @click="applySidebarPreset(preset)"
+                                    >
+                                        <!-- Mini sidebar preview -->
+                                        <div
+                                            class="flex h-10 w-full overflow-hidden rounded border"
+                                            :style="{
+                                                backgroundColor: preset.background || undefined,
+                                                borderColor: preset.background ? preset.accent || preset.background : undefined,
+                                            }"
+                                        >
+                                            <div class="flex w-1/3 flex-col gap-0.5 p-1">
+                                                <div
+                                                    class="h-1 w-full rounded-sm"
+                                                    :style="{ backgroundColor: preset.foreground || undefined }"
+                                                    :class="!preset.foreground ? 'bg-sidebar-foreground/30' : ''"
+                                                />
+                                                <div
+                                                    class="h-1.5 w-full rounded-sm"
+                                                    :style="{ backgroundColor: preset.accent || undefined }"
+                                                    :class="!preset.accent ? 'bg-sidebar-accent' : ''"
+                                                />
+                                                <div
+                                                    class="h-1 w-full rounded-sm"
+                                                    :style="{ backgroundColor: preset.foreground || undefined, opacity: 0.5 }"
+                                                    :class="!preset.foreground ? 'bg-sidebar-foreground/20' : ''"
+                                                />
+                                            </div>
+                                            <div class="flex-1 border-l" :style="{ borderColor: preset.accent || undefined }">
+                                            </div>
+                                        </div>
+                                        <span class="text-xs font-medium">{{ preset.label }}</span>
+                                    </button>
+                                </div>
+
+                                <!-- Individual color pickers -->
+                                <div class="space-y-3 rounded-lg border border-border bg-muted/30 p-4">
+                                    <p class="text-sm font-medium">Custom Colors</p>
+
+                                    <div class="grid gap-3 sm:grid-cols-3">
+                                        <!-- Background -->
+                                        <div class="space-y-1.5">
+                                            <Label class="text-xs">Background</Label>
+                                            <div class="flex items-center gap-2">
+                                                <input
+                                                    type="color"
+                                                    :value="sidebarBackground || '#f5f5f4'"
+                                                    class="h-8 w-10 cursor-pointer rounded border border-border"
+                                                    @input="sidebarBackground = ($event.target as HTMLInputElement).value; previewSidebarColors()"
+                                                />
+                                                <Input
+                                                    :model-value="sidebarBackground"
+                                                    placeholder="#f5f5f4"
+                                                    class="h-8 flex-1 font-mono text-xs"
+                                                    @update:model-value="sidebarBackground = String($event); if (/^#[0-9a-fA-F]{6}$/.test(String($event))) previewSidebarColors()"
+                                                />
+                                                <Button
+                                                    v-if="sidebarBackground"
+                                                    type="button"
+                                                    variant="ghost"
+                                                    size="icon"
+                                                    class="h-8 w-8 shrink-0"
+                                                    title="Reset"
+                                                    @click="sidebarBackground = ''; previewSidebarColors()"
+                                                >
+                                                    <RotateCcw class="size-3.5" />
+                                                </Button>
+                                            </div>
+                                        </div>
+
+                                        <!-- Text / Menu -->
+                                        <div class="space-y-1.5">
+                                            <Label class="text-xs">Text / Menu</Label>
+                                            <div class="flex items-center gap-2">
+                                                <input
+                                                    type="color"
+                                                    :value="sidebarForeground || '#1c1917'"
+                                                    class="h-8 w-10 cursor-pointer rounded border border-border"
+                                                    @input="sidebarForeground = ($event.target as HTMLInputElement).value; previewSidebarColors()"
+                                                />
+                                                <Input
+                                                    :model-value="sidebarForeground"
+                                                    placeholder="#1c1917"
+                                                    class="h-8 flex-1 font-mono text-xs"
+                                                    @update:model-value="sidebarForeground = String($event); if (/^#[0-9a-fA-F]{6}$/.test(String($event))) previewSidebarColors()"
+                                                />
+                                                <Button
+                                                    v-if="sidebarForeground"
+                                                    type="button"
+                                                    variant="ghost"
+                                                    size="icon"
+                                                    class="h-8 w-8 shrink-0"
+                                                    title="Reset"
+                                                    @click="sidebarForeground = ''; previewSidebarColors()"
+                                                >
+                                                    <RotateCcw class="size-3.5" />
+                                                </Button>
+                                            </div>
+                                        </div>
+
+                                        <!-- Active / Hover -->
+                                        <div class="space-y-1.5">
+                                            <Label class="text-xs">Active / Hover</Label>
+                                            <div class="flex items-center gap-2">
+                                                <input
+                                                    type="color"
+                                                    :value="sidebarAccent || '#e7e5e4'"
+                                                    class="h-8 w-10 cursor-pointer rounded border border-border"
+                                                    @input="sidebarAccent = ($event.target as HTMLInputElement).value; previewSidebarColors()"
+                                                />
+                                                <Input
+                                                    :model-value="sidebarAccent"
+                                                    placeholder="#e7e5e4"
+                                                    class="h-8 flex-1 font-mono text-xs"
+                                                    @update:model-value="sidebarAccent = String($event); if (/^#[0-9a-fA-F]{6}$/.test(String($event))) previewSidebarColors()"
+                                                />
+                                                <Button
+                                                    v-if="sidebarAccent"
+                                                    type="button"
+                                                    variant="ghost"
+                                                    size="icon"
+                                                    class="h-8 w-8 shrink-0"
+                                                    title="Reset"
+                                                    @click="sidebarAccent = ''; previewSidebarColors()"
+                                                >
+                                                    <RotateCcw class="size-3.5" />
+                                                </Button>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <p v-if="appearanceErrors.sidebar_background || appearanceErrors.sidebar_foreground || appearanceErrors.sidebar_accent" class="text-sm text-destructive">
+                                        {{ appearanceErrors.sidebar_background || appearanceErrors.sidebar_foreground || appearanceErrors.sidebar_accent }}
+                                    </p>
                                 </div>
                             </div>
 
@@ -708,6 +1032,33 @@ async function saveHomepage() {
 
                     <LoadingButton :loading="homepageProcessing">Save Homepage Settings</LoadingButton>
                 </form>
+            </TabsContent>
+
+            <TabsContent value="ai">
+                <SettingsCard title="AI Writing Assistant" description="Configure AI-powered writing assistance in rich text editors." :processing="aiForm.processing" @submit="saveAi">
+                    <FormFields :schema="aiSchema" :form="aiForm" />
+
+                    <template #after-fields>
+                        <div v-if="aiForm.enabled" class="flex flex-wrap items-center gap-3">
+                            <Button
+                                type="button"
+                                variant="outline"
+                                :disabled="aiTestLoading"
+                                @click="testAiConnection"
+                            >
+                                <Loader2 v-if="aiTestLoading" class="mr-2 size-4 animate-spin" />
+                                Test Connection
+                            </Button>
+                            <div v-if="aiTestResult" class="flex items-center gap-2 text-sm">
+                                <CheckCircle v-if="aiTestResult.success" class="size-4 text-success" />
+                                <XCircle v-else class="size-4 text-destructive" />
+                                <span :class="aiTestResult.success ? 'text-success' : 'text-destructive'">
+                                    {{ aiTestResult.message }}
+                                </span>
+                            </div>
+                        </div>
+                    </template>
+                </SettingsCard>
             </TabsContent>
         </Tabs>
     </AuthenticatedLayout>

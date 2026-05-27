@@ -5026,6 +5026,7 @@ VITE_FIREBASE_VAPID_KEY=BNx...</code></pre>
         <tbody>
             <tr><td><code>php artisan app:install</code></td><td>One-time setup: migrations, seeders (roles/permissions/settings/email templates), <code>shield:generate</code>, and an interactive super-admin account.</td></tr>
             <tr><td><code>php artisan shield:generate</code></td><td>Syncs Spatie permissions from <code>config/shield.php</code> (a <code>{module}.{ability}</code> per entry), ensures the super-admin/admin roles exist, and grants every permission to <code>admin</code>. Safe to re-run.</td></tr>
+            <tr><td><code>php artisan content:sanitize</code></td><td>Runs existing stored HTML (articles, pages, email templates) through the server-side <code>HtmlSanitizer</code>. Use <code>--dry-run</code> to preview. New content is sanitized on write; this backfills older rows.</td></tr>
             <tr><td><code>php artisan make:myra-page {Name}</code></td><td>Single admin page (controller + Vue page) + <code>{name}.view</code> permission + route + nav.</td></tr>
             <tr><td><code>php artisan make:myra-resource {Name}</code></td><td>Full CRUD (controller, service, 3 Vue pages) + 4 permissions + 6 routes + nav. <code>--model</code> also runs <code>make:model -m</code>.</td></tr>
             <tr><td><code>php artisan make:myra-component {Name} {keyword}</code></td><td>Clones a Feature Demo into a runnable page + controller (with sample data) + <code>{name}.view</code> permission + route + nav.</td></tr>

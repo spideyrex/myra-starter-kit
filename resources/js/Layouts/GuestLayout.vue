@@ -21,7 +21,7 @@ useFlashToasts();
                     {{ (page.props.siteSettings as any)?.site_name || 'Admin' }}
                 </div>
                 <blockquote class="mt-8 border-l-2 border-primary-foreground/30 pl-4 text-left text-lg italic text-primary-foreground/80">
-                    "The best admin experience starts with a great foundation."
+                    "{{ (page.props.siteSettings as any)?.login_tagline || 'The best admin experience starts with a great foundation.' }}"
                 </blockquote>
             </div>
         </div>

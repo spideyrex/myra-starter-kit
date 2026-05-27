@@ -11,10 +11,10 @@ use App\Models\User;
 use App\Services\UserService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use App\Models\Role;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 use Inertia\Response;
-use Spatie\Permission\Models\Role;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class UserController extends Controller
@@ -25,7 +25,7 @@ class UserController extends Controller
     {
         return Inertia::render('Admin/Users/Index', [
             'users' => UserResource::collection($this->userService->list($request)),
-            'roles' => Role::pluck('name'),
+            'roles' => $this->assignableRoleNames(),
             'filters' => $request->only(['search', 'status', 'role', 'sort', 'direction', 'trashed']),
         ]);
     }
@@ -33,7 +33,7 @@ class UserController extends Controller
     public function create(): Response
     {
         return Inertia::render('Admin/Users/Create', [
-            'roles' => Role::pluck('name'),
+            'roles' => $this->assignableRoleNames(),
         ]);
     }
 
@@ -46,6 +46,7 @@ class UserController extends Controller
 
     public function edit(User $user): Response
     {
+        $this->authorizeManage($user);
         $user->load('roles');
 
         return Inertia::render('Admin/Users/Edit', [
@@ -57,12 +58,13 @@ class UserController extends Controller
                 'status' => $user->status,
                 'roles' => $user->roles->pluck('name')->toArray(),
             ],
-            'roles' => Role::pluck('name'),
+            'roles' => $this->assignableRoleNames(),
         ]);
     }
 
     public function update(UserUpdateRequest $request, User $user): RedirectResponse
     {
+        $this->authorizeManage($user);
         $this->userService->update($user, UserData::fromRequest($request->validated()));
 
         return redirect()->route('admin.users.index')->with('success', 'User updated successfully.');
@@ -70,6 +72,7 @@ class UserController extends Controller
 
     public function destroy(User $user): RedirectResponse
     {
+        $this->authorizeManage($user);
         $this->userService->delete($user);
 
         return redirect()->route('admin.users.index')->with('success', 'User deleted successfully.');
@@ -212,5 +215,42 @@ class UserController extends Controller
         }
 
         return redirect()->route('admin.users.index')->with('success', 'Stopped impersonating.');
+    }
+
+    /** Role names the current user is allowed to assign / filter by. */
+    private function assignableRoleNames(): \Illuminate\Support\Collection
+    {
+        $isSuper = Auth::user()?->hasRole(config('shield.super_admin_role', 'super-admin'));
+
+        return Role::query()
+            ->when(! $isSuper, fn ($q) => $q
+                ->where('is_active', true)
+                ->where('visible', true)
+                ->whereNotIn('name', config('shield.privileged_roles', ['super-admin', 'admin'])))
+            ->orderBy('name')
+            ->pluck('name');
+    }
+
+    /**
+     * Guard direct management of a user: super-admins are unrestricted; everyone
+     * else cannot touch super-admins, an admin cannot manage another admin, and
+     * non-super-admins may only manage users they created.
+     */
+    private function authorizeManage(User $target): void
+    {
+        $current = Auth::user();
+
+        if ($current->hasRole(config('shield.super_admin_role', 'super-admin'))) {
+            return;
+        }
+
+        abort_if($target->hasRole(config('shield.super_admin_role', 'super-admin')), 403, 'You cannot manage a super-admin account.');
+
+        $adminRole = config('shield.admin_role', 'admin');
+        if ($target->id !== $current->id && $target->hasRole($adminRole) && $current->hasRole($adminRole)) {
+            abort(403, 'Admins cannot manage other admins.');
+        }
+
+        abort_unless($target->created_by === $current->id || $target->id === $current->id, 403, 'You can only manage users you created.');
     }
 }

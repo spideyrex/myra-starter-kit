@@ -261,6 +261,8 @@ const generalSchema = [
     Textarea.make('site_description').colSpan(2),
     TextInput.make('site_url'),
     TextInput.make('timezone'),
+    TextInput.make('login_tagline').colSpan(2).label('Login Tagline').placeholder('Shown on the login screen'),
+    Toggle.make('registration_enabled').label('Enable public sign up'),
 ];
 
 const seoSchema = [

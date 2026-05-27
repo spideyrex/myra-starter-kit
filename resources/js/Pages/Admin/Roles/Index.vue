@@ -18,7 +18,7 @@ import {
     Plus, Shield, ShieldAlert, ShieldCheck, Check, Minus, ChevronRight,
     Pencil, Trash2, Copy, Users, KeyRound, UserCog, Lock, Settings,
     Mail, Activity, Image, HeartPulse, Database, Key, Bell, Flame,
-    Smartphone, FileText, Newspaper, FolderOpen, Search,
+    Smartphone, FileText, Newspaper, FolderOpen, Search, Power, Eye, EyeOff,
 } from 'lucide-vue-next';
 
 interface RoleItem {
@@ -26,6 +26,10 @@ interface RoleItem {
     name: string;
     users_count: number;
     permissions: string[];
+    is_active: boolean;
+    visible: boolean;
+    is_locked: boolean;
+    is_privileged: boolean;
     created_at: string;
 }
 
@@ -36,6 +40,7 @@ const props = defineProps<{
     rolePermissions: Record<string, string[]>;
     totalUsersWithRoles: number;
     totalPermissions: number;
+    isSuperAdmin: boolean;
 }>();
 
 const { can } = usePermissions();
@@ -66,6 +71,14 @@ function getModuleIcon(module: string) {
 
 function cloneRole(roleId: number) {
     router.post(route('admin.roles.clone', roleId));
+}
+
+function toggleActive(roleId: number) {
+    router.post(route('admin.roles.toggle-active', roleId), {}, { preserveScroll: true });
+}
+
+function toggleVisible(roleId: number) {
+    router.post(route('admin.roles.toggle-visible', roleId), {}, { preserveScroll: true });
 }
 
 const totalModules = computed(() => Object.keys(props.permissionMatrix).length);
@@ -168,6 +181,7 @@ function getModuleStatus(roleName: string, module: string): { label: string; cla
                                 <th class="px-4 py-3 text-left font-medium">Role</th>
                                 <th class="px-4 py-3 text-center font-medium">Users</th>
                                 <th class="hidden px-4 py-3 text-left font-medium sm:table-cell">Permissions</th>
+                                <th v-if="isSuperAdmin" class="px-4 py-3 text-center font-medium">Status</th>
                                 <th class="px-4 py-3 text-right font-medium">Actions</th>
                             </tr>
                         </thead>
@@ -196,6 +210,35 @@ function getModuleStatus(roleName: string, module: string): { label: string; cla
                                             :model-value="getRolePermissionPercent(role)"
                                             class="h-1.5 w-24"
                                         />
+                                    </div>
+                                </td>
+                                <td v-if="isSuperAdmin" class="px-4 py-3">
+                                    <div class="flex items-center justify-center gap-1.5">
+                                        <Badge v-if="!role.is_active" variant="outline" class="text-xs text-destructive">Disabled</Badge>
+                                        <Badge v-if="!role.visible" variant="outline" class="text-xs">Hidden</Badge>
+                                        <template v-if="!role.is_locked">
+                                            <TooltipProvider>
+                                                <Tooltip>
+                                                    <TooltipTrigger as-child>
+                                                        <Button variant="ghost" size="icon" class="size-7" @click="toggleActive(role.id)">
+                                                            <Power class="size-3.5" :class="role.is_active ? 'text-success' : 'text-muted-foreground'" />
+                                                        </Button>
+                                                    </TooltipTrigger>
+                                                    <TooltipContent>{{ role.is_active ? 'Disable (block assignment)' : 'Enable role' }}</TooltipContent>
+                                                </Tooltip>
+                                            </TooltipProvider>
+                                            <TooltipProvider>
+                                                <Tooltip>
+                                                    <TooltipTrigger as-child>
+                                                        <Button variant="ghost" size="icon" class="size-7" @click="toggleVisible(role.id)">
+                                                            <component :is="role.visible ? Eye : EyeOff" class="size-3.5" :class="role.visible ? 'text-muted-foreground' : 'text-warning'" />
+                                                        </Button>
+                                                    </TooltipTrigger>
+                                                    <TooltipContent>{{ role.visible ? 'Hide from non-super-admins' : 'Show to everyone' }}</TooltipContent>
+                                                </Tooltip>
+                                            </TooltipProvider>
+                                        </template>
+                                        <Lock v-else class="size-3.5 text-muted-foreground/40" />
                                     </div>
                                 </td>
                                 <td class="px-4 py-3 text-right">

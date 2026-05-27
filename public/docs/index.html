@@ -543,6 +543,10 @@
         <div class="nav-group">Backend</div>
         <a href="#app-install">App Install</a>
         <a href="#scaffold-commands">Scaffold Commands</a>
+        <a href="#myra-cli">Artisan Commands</a>
+        <a href="#shield-rbac">RBAC / Shield</a>
+        <a href="#data-isolation">Data Isolation</a>
+        <a href="#role-protections">Role Protections</a>
         <a href="#php-backend">PHP Backend</a>
         <a href="#searchable-query">SearchableQuery Trait</a>
         <a href="#route-conventions">Route Conventions</a>
@@ -4354,6 +4358,12 @@ Notification::send($recipients, $notification);</code></pre>
         <div class="screenshot-caption">Homepage tab with hero section, features, testimonials, pricing, and CTA configuration</div>
     </div>
 
+    <h4>General Tab Highlights</h4>
+    <ul class="inline-list">
+        <li><strong>Login tagline</strong> &mdash; editable copy shown on the login screen's branding panel (<code>general.login_tagline</code>).</li>
+        <li><strong>Enable Sign Up</strong> &mdash; a server-enforced toggle (<code>general.registration_enabled</code>). When off, the <code>register</code> routes are blocked by the <code>registration</code> middleware (GET redirects to login, POST returns 403) and the "Sign up" link is hidden.</li>
+    </ul>
+
     <h4>Settings Groups</h4>
     <p>Each settings group is a separate <code>SettingsCard</code> with its own form and schema:</p>
     <pre><code class="language-xml">&lt;SettingsCard title="General" description="Basic site configuration." :processing="generalForm.processing" @submit="save('general', generalForm)"&gt;
@@ -4884,6 +4894,7 @@ VITE_FIREBASE_VAPID_KEY=BNx...</code></pre>
         <li>Validates environment variables (APP_KEY, APP_URL, DB_CONNECTION)</li>
         <li>Runs <code>migrate --force</code></li>
         <li>Seeds roles &amp; permissions (<code>RoleAndPermissionSeeder</code>)</li>
+        <li>Runs <code>shield:generate</code> to sync all module permissions from <code>config/shield.php</code></li>
         <li>Seeds application settings (<code>SettingsSeeder</code>)</li>
         <li>Seeds email templates (<code>EmailTemplateSeeder</code>)</li>
         <li>Prompts for admin name, email, and password</li>
@@ -4998,6 +5009,127 @@ VITE_FIREBASE_VAPID_KEY=BNx...</code></pre>
             <li>Add sidebar navigation &mdash; Add the menu item to the sidebar config</li>
         </ol>
     </div>
+</section>
+
+<section id="myra-cli">
+    <h2>Artisan Command Reference <span class="version-badge">v1.2</span></h2>
+    <p>Myra ships a Filament-style code generator. The <code>make:myra-*</code> commands scaffold admin pages from stubs or from any Feature Demo, and <strong>auto-wire everything</strong>: they create the Spatie permissions, register the route, and add the sidebar nav item &mdash; so a new module is live (and assignable to any role by a super-admin) without touching a single file by hand.</p>
+
+    <div class="callout callout-info">
+        <div class="callout-title">&#8505; Auto-wiring &amp; the <code>--print</code> flag</div>
+        Auto-wiring uses idempotent markers: <code>// myra:routes</code> in <code>routes/web.php</code>, <code>/* myra:nav */</code> in a "Custom" sidebar group in <code>AuthenticatedLayout.vue</code>, and <code>/* myra:modules */</code> in <code>config/shield.php</code>. Re-running a command skips files/routes/nav that already exist. Pass <code>--print</code> to print the route + nav snippets instead of editing source files.
+    </div>
+
+    <h3>Command Summary</h3>
+    <table>
+        <thead><tr><th>Command</th><th>What it does</th></tr></thead>
+        <tbody>
+            <tr><td><code>php artisan app:install</code></td><td>One-time setup: migrations, seeders (roles/permissions/settings/email templates), <code>shield:generate</code>, and an interactive super-admin account.</td></tr>
+            <tr><td><code>php artisan shield:generate</code></td><td>Syncs Spatie permissions from <code>config/shield.php</code> (a <code>{module}.{ability}</code> per entry), ensures the super-admin/admin roles exist, and grants every permission to <code>admin</code>. Safe to re-run.</td></tr>
+            <tr><td><code>php artisan make:myra-page {Name}</code></td><td>Single admin page (controller + Vue page) + <code>{name}.view</code> permission + route + nav.</td></tr>
+            <tr><td><code>php artisan make:myra-resource {Name}</code></td><td>Full CRUD (controller, service, 3 Vue pages) + 4 permissions + 6 routes + nav. <code>--model</code> also runs <code>make:model -m</code>.</td></tr>
+            <tr><td><code>php artisan make:myra-component {Name} {keyword}</code></td><td>Clones a Feature Demo into a runnable page + controller (with sample data) + <code>{name}.view</code> permission + route + nav.</td></tr>
+            <tr><td><code>php artisan myra:page</code> / <code>myra:resource</code></td><td>Legacy generators from the <code>myra/framework</code> package. They scaffold from the same stubs but <em>print</em> routes and do <strong>not</strong> create permissions or nav. Prefer the <code>make:myra-*</code> commands.</td></tr>
+        </tbody>
+    </table>
+
+    <h3>make:myra-page</h3>
+    <p>For dashboards, analytics, or settings-style screens with no CRUD.</p>
+    <pre><code class="language-bash">php artisan make:myra-page Analytics --icon=ChartBar</code></pre>
+    <p><strong>Generates &amp; wires:</strong> <code>AnalyticsController</code>, <code>Pages/Admin/Analytics/Index.vue</code>, permission <code>analytics.view</code>, route <code>admin.analytics.index</code> (gated by <code>permission:analytics.view</code>), and a "Custom" sidebar item. Options: <code>--icon</code> (lucide name, auto-imported), <code>--group</code>, <code>--print</code>.</p>
+
+    <h3>make:myra-resource</h3>
+    <p>For full create/read/update/delete modules.</p>
+    <pre><code class="language-bash">php artisan make:myra-resource Product --model</code></pre>
+    <p><strong>Generates &amp; wires:</strong> controller + <code>ProductService</code> (with the <code>SearchableQuery</code> trait) + <code>Index/Create/Edit.vue</code>, the four permissions <code>products.view|create|edit|delete</code>, all six CRUD routes, and a nav item. With <code>--model</code> it also creates the Eloquent model and migration. Remember to fill in the migration columns and validation rules.</p>
+
+    <h3>make:myra-component &mdash; clone a Feature Demo</h3>
+    <p>The fastest way to a working page: clone any of the 18 Feature Demos, renamed for your resource. The page ships with realistic sample data (from the <code>HasSampleData</code> trait) and runs immediately &mdash; swap in your model when ready.</p>
+    <pre><code class="language-bash"># Student page built from the Form Builder demo
+php artisan make:myra-component Student form-builder
+
+# A data table with bulk actions
+php artisan make:myra-component Invoice data-table</code></pre>
+    <p><strong>Arguments:</strong> <code>Name</code> = page/controller name (PascalCase); <code>keyword</code> = a component from the catalog below. Unknown keywords print the valid list.</p>
+
+    <h4>Component Keyword Catalog</h4>
+    <p>Defined in <code>config/myra.php</code> &mdash; extend it to add your own. Each keyword clones the matching <code>resources/js/Pages/Admin/Demo/*.vue</code>.</p>
+    <table>
+        <thead><tr><th>Keyword</th><th>Clones</th><th>Produces</th></tr></thead>
+        <tbody>
+            <tr><td><code>form-builder</code></td><td>FormBuilder</td><td>Schema-driven form with every field type</td></tr>
+            <tr><td><code>rich-text-editor</code></td><td>RichTextEditor</td><td>TipTap editor page</td></tr>
+            <tr><td><code>repeater-field</code></td><td>RepeaterField</td><td>Dynamic add/remove field groups</td></tr>
+            <tr><td><code>conditional-fields</code></td><td>ConditionalFields</td><td>Show/hide fields by condition</td></tr>
+            <tr><td><code>wizard</code></td><td>WizardDemo</td><td>Multi-step wizard with per-step validation</td></tr>
+            <tr><td><code>field-types</code></td><td>FieldTypes</td><td>TimePicker, CheckboxList, KeyValue, Markdown</td></tr>
+            <tr><td><code>global-search</code></td><td>GlobalSearch</td><td>Command-palette search demo</td></tr>
+            <tr><td><code>data-table</code> / <code>bulk-actions</code></td><td>BulkActions</td><td>DataTable with selection + bulk operations</td></tr>
+            <tr><td><code>advanced-filters</code></td><td>AdvancedFilters</td><td>Select/ternary/date-range/query-builder filters</td></tr>
+            <tr><td><code>inline-editing</code></td><td>InlineEditing</td><td>Editable table cells</td></tr>
+            <tr><td><code>grouping</code></td><td>Grouping</td><td>Row grouping with summaries</td></tr>
+            <tr><td><code>import-export</code></td><td>ImportExport</td><td>CSV import preview + export</td></tr>
+            <tr><td><code>action-modals</code></td><td>ActionModals</td><td>Modal-based inline CRUD</td></tr>
+            <tr><td><code>soft-deletes</code></td><td>SoftDeletes</td><td>Trash / restore / force-delete workflow</td></tr>
+            <tr><td><code>infolist</code></td><td>Infolist</td><td>Read-only detail (show) page</td></tr>
+            <tr><td><code>relation-manager</code></td><td>RelationManager</td><td>Detail page with related-record tables</td></tr>
+            <tr><td><code>widgets</code></td><td>Widgets</td><td>Dashboard with stat/chart/table widgets</td></tr>
+            <tr><td><code>reordering</code></td><td>Reordering</td><td>Drag-and-drop ordering</td></tr>
+        </tbody>
+    </table>
+
+    <div class="callout callout-tip">
+        <div class="callout-title">&#9889; Assign to roles instantly</div>
+        Generated permissions are grouped by module in <strong>Roles &amp; Permissions</strong>, so a super-admin can tick a new page on for any role straight away &mdash; the page appears in those users' sidebars automatically.
+    </div>
+</section>
+
+<section id="shield-rbac">
+    <h2>RBAC &mdash; Shield Layer</h2>
+    <p>Permissions follow a strict <code>{module}.{ability}</code> convention, declared once in <code>config/shield.php</code> and materialised by <code>php artisan shield:generate</code>. The super-admin role bypasses all checks via the <code>Gate::before</code> callback in <code>AppServiceProvider</code>; the admin role receives every generated permission.</p>
+    <pre><code class="language-php">// config/shield.php
+return [
+    'super_admin_role' =&gt; 'super-admin',
+    'admin_role' =&gt; 'admin',
+    'privileged_roles' =&gt; ['super-admin', 'admin'], // assignable only by a super-admin
+    'modules' =&gt; [
+        'users' =&gt; ['view', 'create', 'edit', 'delete'],
+        // …
+        'demo' =&gt; ['view'],
+        'search' =&gt; ['view'],
+        /* myra:modules */ // scaffolding commands append here
+    ],
+];</code></pre>
+    <h3>Convention middleware (<code>shield</code>)</h3>
+    <p>The <code>shield</code> alias (<code>App\Http\Middleware\ShieldPermission</code>) derives the required permission from the route name: <code>admin.{prefix}.index</code> &rarr; <code>{prefix}.view</code>, <code>create/store</code> &rarr; <code>create</code>, <code>edit/update</code> &rarr; <code>edit</code>, <code>destroy/force-delete/bulk-action</code> &rarr; <code>delete</code> (anything else &rarr; <code>view</code>). It's intended for scaffolded pages whose route prefix matches their module; modules whose route name differs from the permission prefix (e.g. <code>email-templates</code> &rarr; <code>email</code>) keep their explicit <code>permission:</code> gate.</p>
+    <p>The previously open <code>/admin/demo/*</code> and <code>/admin/search</code> routes are now gated by <code>demo.view</code> and <code>search.view</code>.</p>
+</section>
+
+<section id="data-isolation">
+    <h2>Per-User Data Isolation</h2>
+    <p>The <code>App\Models\Traits\OwnedByUser</code> trait stamps an owner column (<code>created_by</code>) on create and adds an <code>owned</code> global scope: authenticated non-super-admins see only their own rows, super-admins see everything, and unauthenticated requests are unaffected (so the public blog still works).</p>
+    <table>
+        <thead><tr><th>Model</th><th>Isolation</th></tr></thead>
+        <tbody>
+            <tr><td>Article, Page, Category</td><td><code>OwnedByUser</code> global scope on <code>created_by</code></td></tr>
+            <tr><td>Media</td><td>Manager scoped to the uploader (media attached to the user); deletes ownership-checked</td></tr>
+            <tr><td>Users, Email Templates</td><td>Query-level scoping (a global scope here would break auth/session and system email lookups)</td></tr>
+        </tbody>
+    </table>
+    <div class="callout callout-warning">
+        <div class="callout-title">&#9888; Public views &amp; legacy rows</div>
+        Public controllers (<code>PublicArticleController</code>, <code>PublicPageController</code>) call <code>withoutGlobalScope('owned')</code> so logged-in non-super users still see the full public site. Rows created before this feature have <code>created_by = null</code> and are visible only to super-admins until backfilled.
+    </div>
+</section>
+
+<section id="role-protections">
+    <h2>Role &amp; User Protections</h2>
+    <ul class="inline-list">
+        <li>Non-super-admins never see or manage <strong>super-admin</strong> accounts; an <strong>admin</strong> cannot manage another admin.</li>
+        <li>Non-super-admins only see/manage users they created.</li>
+        <li>Only a super-admin can assign the <strong>privileged roles</strong> (<code>admin</code>, <code>super-admin</code>); other roles are filtered out of the assignment dropdown server-side.</li>
+        <li>Roles carry <code>is_active</code> and <code>visible</code> flags (custom <code>App\Models\Role</code>). A super-admin toggles them from <strong>Roles &amp; Permissions</strong>: a <strong>disabled</strong> role cannot be assigned (rejected server-side); a <strong>hidden</strong> role is removed from non-super-admin pickers and lists. The super-admin role is locked (always active &amp; visible).</li>
+    </ul>
 </section>
 
 <hr class="section-divider">

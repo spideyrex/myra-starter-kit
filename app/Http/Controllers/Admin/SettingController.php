@@ -54,7 +54,7 @@ class SettingController extends Controller
 
         // Explicit whitelist of allowed fields per settings group
         $allowedFields = match ($group) {
-            'general' => ['site_name', 'site_description', 'site_email', 'site_phone', 'site_address', 'timezone', 'locale', 'date_format', 'time_format', 'registration_enabled'],
+            'general' => ['site_name', 'site_description', 'site_email', 'site_phone', 'site_address', 'timezone', 'locale', 'date_format', 'time_format', 'login_tagline', 'registration_enabled'],
             'seo' => ['meta_title', 'meta_description', 'meta_keywords', 'google_analytics_id', 'robots_txt', 'og_image_path'],
             'appearance' => ['primary_color', 'theme'],
             'social' => ['facebook_url', 'twitter_url', 'instagram_url', 'linkedin_url', 'youtube_url', 'github_url'],
@@ -62,9 +62,14 @@ class SettingController extends Controller
             default => [],
         };
 
+        // Boolean settings must be cast (typed bool properties reject loose input).
+        $booleanFields = ['registration_enabled'];
+
         foreach ($allowedFields as $key) {
             if ($request->has($key) && property_exists($settings, $key)) {
-                $settings->$key = $request->input($key);
+                $settings->$key = in_array($key, $booleanFields, true)
+                    ? $request->boolean($key)
+                    : $request->input($key);
             }
         }
 

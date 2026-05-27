@@ -12,7 +12,7 @@ class PublicPageController extends Controller
 {
     public function show(string $slug): Response|HttpResponse
     {
-        $page = Page::where('slug', $slug)->published()->firstOrFail();
+        $page = Page::withoutGlobalScope('owned')->where('slug', $slug)->published()->firstOrFail();
 
         if (!$page->is_public && !Auth::check()) {
             return redirect()->route('login');

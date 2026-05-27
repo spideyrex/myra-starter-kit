@@ -91,6 +91,7 @@ import {
     Smartphone,
     AlertTriangle,
     FlaskConical,
+    LayoutGrid,
 } from 'lucide-vue-next';
 
 defineProps<{
@@ -190,6 +191,13 @@ const navGroups = computed(() => [
         label: t('navGroups.demo'),
         items: [
             { title: t('nav.featureDemos'), href: route('admin.demo.index'), icon: FlaskConical, permission: null },
+        ],
+    },
+    {
+        // Scaffolded pages (make:myra-* commands insert items at the marker below).
+        label: 'Custom',
+        items: [
+            /* myra:nav */
         ],
     },
 ]);

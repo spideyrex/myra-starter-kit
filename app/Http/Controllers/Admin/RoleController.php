@@ -3,20 +3,26 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Role;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Inertia\Inertia;
 use Inertia\Response;
 use Spatie\Permission\Models\Permission;
-use Spatie\Permission\Models\Role;
 
 class RoleController extends Controller
 {
-    public function index(): Response
+    public function index(Request $request): Response
     {
+        $isSuper = $this->isSuperAdmin($request);
+
         $roles = Role::withCount('users')
             ->with('permissions')
+            // Non-super-admins never see the super-admin role or any hidden role.
+            ->when(! $isSuper, fn ($q) => $q
+                ->where('name', '!=', config('shield.super_admin_role', 'super-admin'))
+                ->where('visible', true))
             ->get();
 
         $allPermissions = Permission::all();
@@ -43,6 +49,10 @@ class RoleController extends Controller
             'name' => $role->name,
             'users_count' => $role->users_count,
             'permissions' => $role->permissions->pluck('name'),
+            'is_active' => $role->is_active,
+            'visible' => $role->visible,
+            'is_locked' => $role->isLocked(),
+            'is_privileged' => $role->isPrivileged(),
             'created_at' => $role->created_at->toDateTimeString(),
         ]);
 
@@ -53,7 +63,39 @@ class RoleController extends Controller
             'rolePermissions' => $rolePermissions,
             'totalUsersWithRoles' => $totalUsersWithRoles,
             'totalPermissions' => $allPermissions->count(),
+            'isSuperAdmin' => $isSuper,
         ]);
+    }
+
+    public function toggleActive(Request $request, Role $role): RedirectResponse
+    {
+        abort_unless($this->isSuperAdmin($request), 403);
+
+        if ($role->isLocked()) {
+            return back()->with('error', 'The super-admin role cannot be disabled.');
+        }
+
+        $role->update(['is_active' => ! $role->is_active]);
+
+        return back()->with('success', "Role \"{$role->name}\" " . ($role->is_active ? 'enabled' : 'disabled') . '.');
+    }
+
+    public function toggleVisible(Request $request, Role $role): RedirectResponse
+    {
+        abort_unless($this->isSuperAdmin($request), 403);
+
+        if ($role->isLocked()) {
+            return back()->with('error', 'The super-admin role cannot be hidden.');
+        }
+
+        $role->update(['visible' => ! $role->visible]);
+
+        return back()->with('success', "Role \"{$role->name}\" " . ($role->visible ? 'shown' : 'hidden') . '.');
+    }
+
+    private function isSuperAdmin(Request $request): bool
+    {
+        return $request->user()?->hasRole(config('shield.super_admin_role', 'super-admin')) ?? false;
     }
 
     public function create(): Response

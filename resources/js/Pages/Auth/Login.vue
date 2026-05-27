@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { Head, Link, useForm } from '@inertiajs/vue3';
+import { computed } from 'vue';
+import { Head, Link, useForm, usePage } from '@inertiajs/vue3';
 import GuestLayout from '@/Layouts/GuestLayout.vue';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -11,6 +12,9 @@ defineProps<{
     canResetPassword: boolean;
     status?: string;
 }>();
+
+const page = usePage();
+const registrationEnabled = computed(() => (page.props.siteSettings as any)?.registration_enabled ?? true);
 
 const form = useForm({
     email: '',
@@ -66,7 +70,7 @@ function submit() {
                     Log in
                 </LoadingButton>
 
-                <p class="text-center text-sm text-muted-foreground">
+                <p v-if="registrationEnabled" class="text-center text-sm text-muted-foreground">
                     Don't have an account?
                     <Link :href="route('register')" class="text-foreground underline hover:text-foreground/80">Sign up</Link>
                 </p>

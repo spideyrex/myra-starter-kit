@@ -21,6 +21,8 @@ class SettingsSeeder extends Seeder
             ['group' => 'general', 'name' => 'site_url', 'payload' => json_encode(config('app.url'))],
             ['group' => 'general', 'name' => 'admin_email', 'payload' => json_encode('admin@admin.com')],
             ['group' => 'general', 'name' => 'timezone', 'payload' => json_encode('UTC')],
+            ['group' => 'general', 'name' => 'login_tagline', 'payload' => json_encode('The best admin experience starts with a great foundation.')],
+            ['group' => 'general', 'name' => 'registration_enabled', 'payload' => json_encode(true)],
 
             ['group' => 'seo', 'name' => 'meta_title', 'payload' => json_encode('Myra Dashboard')],
             ['group' => 'seo', 'name' => 'meta_description', 'payload' => json_encode('Admin panel for managing your application')],

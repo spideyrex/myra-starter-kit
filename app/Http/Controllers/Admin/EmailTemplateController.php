@@ -12,10 +12,15 @@ use Inertia\Response;
 
 class EmailTemplateController extends Controller
 {
-    public function index(): Response
+    public function index(Request $request): Response
     {
+        $user = $request->user();
+
         return Inertia::render('Admin/Email/Templates/Index', [
-            'templates' => EmailTemplate::latest()->get(),
+            'templates' => EmailTemplate::query()
+                ->when(! $this->isSuperAdmin($user), fn ($q) => $q->where('created_by', $user->id))
+                ->latest()
+                ->get(),
         ]);
     }
 
@@ -36,13 +41,17 @@ class EmailTemplateController extends Controller
             'variables' => 'nullable|array',
         ]);
 
+        $validated['created_by'] = $request->user()->id;
+
         EmailTemplate::create($validated);
 
         return redirect()->route('admin.email-templates.index')->with('success', 'Template created.');
     }
 
-    public function edit(EmailTemplate $emailTemplate): Response
+    public function edit(Request $request, EmailTemplate $emailTemplate): Response
     {
+        $this->authorizeTemplate($request->user(), $emailTemplate);
+
         return Inertia::render('Admin/Email/Templates/Edit', [
             'template' => $emailTemplate,
         ]);
@@ -50,6 +59,8 @@ class EmailTemplateController extends Controller
 
     public function update(Request $request, EmailTemplate $emailTemplate): RedirectResponse
     {
+        $this->authorizeTemplate($request->user(), $emailTemplate);
+
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'subject' => 'required|string|max:255',
@@ -62,8 +73,10 @@ class EmailTemplateController extends Controller
         return redirect()->route('admin.email-templates.index')->with('success', 'Template updated.');
     }
 
-    public function destroy(EmailTemplate $emailTemplate): RedirectResponse
+    public function destroy(Request $request, EmailTemplate $emailTemplate): RedirectResponse
     {
+        $this->authorizeTemplate($request->user(), $emailTemplate);
+
         $emailTemplate->delete();
 
         return redirect()->route('admin.email-templates.index')->with('success', 'Template deleted.');
@@ -71,6 +84,8 @@ class EmailTemplateController extends Controller
 
     public function sendTest(Request $request, EmailTemplate $emailTemplate): RedirectResponse
     {
+        $this->authorizeTemplate($request->user(), $emailTemplate);
+
         $request->validate([
             'email' => 'required|email',
             'variables' => 'nullable|array',
@@ -87,5 +102,20 @@ class EmailTemplateController extends Controller
         } catch (\Exception $e) {
             return back()->with('error', 'Failed to send: ' . $e->getMessage());
         }
+    }
+
+    private function isSuperAdmin(?\App\Models\User $user): bool
+    {
+        return $user?->hasRole(config('shield.super_admin_role', 'super-admin')) ?? false;
+    }
+
+    /** Non-super-admins may only manage templates they created (legacy null = super-admin only). */
+    private function authorizeTemplate(?\App\Models\User $user, EmailTemplate $template): void
+    {
+        if ($this->isSuperAdmin($user)) {
+            return;
+        }
+
+        abort_unless($template->created_by !== null && (int) $template->created_by === (int) $user?->id, 403);
     }
 }

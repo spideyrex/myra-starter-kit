@@ -15,6 +15,7 @@ class EmailTemplate extends Model
         'subject',
         'body_html',
         'variables',
+        'created_by',
     ];
 
     protected function casts(): array

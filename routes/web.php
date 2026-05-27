@@ -122,6 +122,8 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->name('admin.')->group(
     Route::put('/roles/{role}', [RoleController::class, 'update'])->middleware('permission:roles.edit')->name('roles.update');
     Route::post('/roles', [RoleController::class, 'store'])->middleware('permission:roles.create')->name('roles.store');
     Route::post('/roles/{role}/clone', [RoleController::class, 'clone'])->middleware('permission:roles.create')->name('roles.clone');
+    Route::post('/roles/{role}/toggle-active', [RoleController::class, 'toggleActive'])->middleware('permission:roles.edit')->name('roles.toggle-active');
+    Route::post('/roles/{role}/toggle-visible', [RoleController::class, 'toggleVisible'])->middleware('permission:roles.edit')->name('roles.toggle-visible');
     Route::delete('/roles/{role}', [RoleController::class, 'destroy'])->middleware('permission:roles.delete')->name('roles.destroy');
 
     // Permissions
@@ -219,9 +221,10 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->name('admin.')->group(
     Route::delete('/categories/{category}', [CategoryController::class, 'destroy'])->middleware('permission:categories.delete')->name('categories.destroy');
 
     // Global Search
-    Route::get('/search', [SearchController::class, 'index'])->name('search');
+    Route::get('/search', [SearchController::class, 'index'])->middleware('permission:search.view')->name('search');
 
-    // Demo / Feature Showcase
+    // Demo / Feature Showcase (all gated by demo.view)
+    Route::middleware('permission:demo.view')->group(function () {
     Route::get('/demo', [DemoController::class, 'index'])->name('demo.index');
     Route::get('/demo/rich-text-editor', [DemoController::class, 'richTextEditor'])->name('demo.rich-text-editor');
     Route::get('/demo/repeater-field', [DemoController::class, 'repeaterField'])->name('demo.repeater-field');
@@ -255,6 +258,9 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->name('admin.')->group(
     Route::get('/demo/field-types', [DemoController::class, 'fieldTypes'])->name('demo.field-types');
     Route::get('/demo/advanced-filters', [DemoController::class, 'advancedFilters'])->name('demo.advanced-filters');
     Route::get('/demo/wizard', [DemoController::class, 'wizardDemo'])->name('demo.wizard');
+    }); // end demo group
+
+    // myra:routes — make:myra-* commands insert generated routes above this line. Do not remove.
 });
 
 require __DIR__.'/auth.php';

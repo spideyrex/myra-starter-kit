@@ -41,6 +41,10 @@ class AppInstallCommand extends Command
             $this->callSilently('db:seed', ['--class' => 'Database\\Seeders\\RoleAndPermissionSeeder', '--force' => true]);
         });
 
+        $this->components->task('Syncing Shield permissions', function () {
+            $this->callSilently('shield:generate');
+        });
+
         $this->components->task('Seeding application settings', function () {
             $this->callSilently('db:seed', ['--class' => 'Database\\Seeders\\SettingsSeeder', '--force' => true]);
         });

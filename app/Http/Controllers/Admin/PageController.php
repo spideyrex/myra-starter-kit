@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\PageResource;
 use App\Models\Page;
 use App\Services\PageService;
+use App\Support\HtmlSanitizer;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -48,6 +49,7 @@ class PageController extends Controller
         ]);
 
         $validated['created_by'] = Auth::id();
+        $validated['body_html'] = HtmlSanitizer::clean($validated['body_html']);
 
         if ($validated['status'] === 'published' && empty($validated['published_at'])) {
             $validated['published_at'] = now();
@@ -99,6 +101,7 @@ class PageController extends Controller
         ]);
 
         $validated['updated_by'] = Auth::id();
+        $validated['body_html'] = HtmlSanitizer::clean($validated['body_html']);
 
         if ($validated['status'] === 'published' && empty($validated['published_at']) && !$page->published_at) {
             $validated['published_at'] = now();

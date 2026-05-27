@@ -42,10 +42,10 @@ Route::get('/blog', [PublicArticleController::class, 'index'])->name('articles.i
 Route::get('/blog/{slug}', [PublicArticleController::class, 'show'])->name('articles.show');
 
 Route::get('/dashboard', [DashboardController::class, 'index'])
-    ->middleware(['auth', 'verified'])
+    ->middleware(['auth', 'verified', 'active', '2fa'])
     ->name('dashboard');
 
-Route::middleware('auth')->group(function () {
+Route::middleware(['auth', 'active', '2fa'])->group(function () {
     // Profile
     Route::get('/profile', [ProfileController::class, 'show'])->name('profile.show');
     Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -67,10 +67,10 @@ Route::middleware('auth')->group(function () {
 
     // Two-Factor
     Route::post('/two-factor/enable', [TwoFactorController::class, 'enable'])->name('two-factor.enable');
-    Route::post('/two-factor/confirm', [TwoFactorController::class, 'confirm'])->name('two-factor.confirm');
+    Route::post('/two-factor/confirm', [TwoFactorController::class, 'confirm'])->middleware('throttle:6,1')->name('two-factor.confirm');
     Route::delete('/two-factor/disable', [TwoFactorController::class, 'disable'])->name('two-factor.disable');
     Route::get('/two-factor/challenge', [TwoFactorController::class, 'challenge'])->name('two-factor.challenge');
-    Route::post('/two-factor/verify', [TwoFactorController::class, 'verify'])->name('two-factor.verify');
+    Route::post('/two-factor/verify', [TwoFactorController::class, 'verify'])->middleware('throttle:6,1')->name('two-factor.verify');
 
     // Sessions
     Route::delete('/sessions/{session}', [SessionController::class, 'destroy'])->name('sessions.destroy');
@@ -97,7 +97,7 @@ Route::middleware('auth')->group(function () {
 });
 
 // Admin Routes
-Route::middleware(['auth', 'verified'])->prefix('admin')->name('admin.')->group(function () {
+Route::middleware(['auth', 'verified', 'active', '2fa'])->prefix('admin')->name('admin.')->group(function () {
     // Users
     Route::get('/users', [UserController::class, 'index'])->middleware('permission:users.view')->name('users.index');
     Route::get('/users/create', [UserController::class, 'create'])->middleware('permission:users.create')->name('users.create');

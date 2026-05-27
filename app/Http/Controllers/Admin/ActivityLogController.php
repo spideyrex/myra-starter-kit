@@ -62,14 +62,14 @@ class ActivityLogController extends Controller
             fputcsv($file, ['ID', 'Description', 'User', 'Subject', 'Event', 'Date']);
 
             foreach ($activities as $activity) {
-                fputcsv($file, [
+                fputcsv($file, \App\Support\Csv::row([
                     $activity->id,
                     $activity->description,
                     $activity->causer?->name ?? 'System',
                     $activity->subject_type,
                     $activity->event,
                     $activity->created_at->toDateTimeString(),
-                ]);
+                ]));
             }
 
             fclose($file);

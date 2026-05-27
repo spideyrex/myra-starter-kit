@@ -38,7 +38,8 @@ class MediaController extends Controller
     {
         $request->validate([
             'files' => 'required|array|max:20',
-            'files.*' => 'file|max:10240|mimes:jpg,jpeg,png,gif,webp,svg,pdf,doc,docx,xls,xlsx,csv,txt,zip,mp4,mp3,wav',
+            // SVG intentionally excluded — scriptable SVGs served same-origin are a stored-XSS vector.
+            'files.*' => 'file|max:10240|mimes:jpg,jpeg,png,gif,webp,pdf,doc,docx,xls,xlsx,csv,txt,zip,mp4,mp3,wav',
         ]);
 
         $user = $request->user();

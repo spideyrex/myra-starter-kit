@@ -132,7 +132,7 @@ class UserController extends Controller
             fputcsv($file, ['ID', 'Name', 'Email', 'Phone', 'Status', 'Roles', 'Created At']);
 
             foreach ($users as $user) {
-                fputcsv($file, [
+                fputcsv($file, \App\Support\Csv::row([
                     $user->id,
                     $user->name,
                     $user->email,
@@ -140,7 +140,7 @@ class UserController extends Controller
                     $user->status,
                     $user->roles->pluck('name')->join(', '),
                     $user->created_at->toDateTimeString(),
-                ]);
+                ]));
             }
 
             fclose($file);

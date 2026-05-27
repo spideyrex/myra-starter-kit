@@ -19,7 +19,6 @@
 /storage/*.key
 /storage/pail
 /vendor
-composer.lock
 Homestead.json
 Homestead.yaml
 Thumbs.db
@@ -28,3 +27,6 @@ oricode.zip
 /packages/
 todo.txt
 mysql_ddl.sql
+pentest_result.txt
+*.zip
+*.sql

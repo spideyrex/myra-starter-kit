@@ -58,14 +58,14 @@ class EmailLogController extends Controller
             fputcsv($file, ['ID', 'To', 'Subject', 'Template', 'Status', 'Sent At']);
 
             foreach ($logs as $log) {
-                fputcsv($file, [
+                fputcsv($file, \App\Support\Csv::row([
                     $log->id,
                     $log->to,
                     $log->subject,
                     $log->template_slug,
                     $log->status,
                     $log->sent_at,
-                ]);
+                ]));
             }
 
             fclose($file);

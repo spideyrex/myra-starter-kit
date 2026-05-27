@@ -49,6 +49,16 @@ class LoginRequest extends FormRequest
             ]);
         }
 
+        // Suspended/pending accounts must not gain a session even with valid credentials.
+        if (Auth::user()->status !== 'active') {
+            Auth::guard('web')->logout();
+            RateLimiter::hit($this->throttleKey());
+
+            throw ValidationException::withMessages([
+                'email' => 'Your account is not active. Please contact an administrator.',
+            ]);
+        }
+
         RateLimiter::clear($this->throttleKey());
     }
 

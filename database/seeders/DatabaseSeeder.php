@@ -9,11 +9,20 @@ class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
+        // Roles, settings, and email templates are always safe to (re)seed.
         $this->call([
             RoleAndPermissionSeeder::class,
             SettingsSeeder::class,
             EmailTemplateSeeder::class,
         ]);
+
+        // Demo users (factory password "password") must NEVER be created in
+        // production. Use `php artisan app:install` to create a real admin.
+        if (app()->isProduction() && ! env('ALLOW_DEMO_SEED', false)) {
+            $this->command?->warn('Production environment detected — skipping demo user seeding. Run `php artisan app:install` to create an admin.');
+
+            return;
+        }
 
         // Create super admin
         $admin = User::factory()->active()->create([

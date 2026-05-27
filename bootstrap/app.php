@@ -25,6 +25,8 @@ return Application::configure(basePath: dirname(__DIR__))
             'role_or_permission' => \Spatie\Permission\Middleware\RoleOrPermissionMiddleware::class,
             'shield' => \App\Http\Middleware\ShieldPermission::class,
             'registration' => \App\Http\Middleware\EnsureRegistrationEnabled::class,
+            'active' => \App\Http\Middleware\EnsureActiveUser::class,
+            '2fa' => \App\Http\Middleware\EnsureTwoFactorChallenged::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

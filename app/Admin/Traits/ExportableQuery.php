@@ -27,7 +27,7 @@ trait ExportableQuery
 
             $query->chunk(500, function ($records) use ($file, $rowMapper) {
                 foreach ($records as $record) {
-                    fputcsv($file, $rowMapper($record));
+                    fputcsv($file, \App\Support\Csv::row($rowMapper($record)));
                 }
             });
 

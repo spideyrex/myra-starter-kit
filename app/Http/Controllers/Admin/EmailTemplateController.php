@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\EmailTemplate;
 use App\Services\EmailService;
+use App\Support\HtmlSanitizer;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -42,6 +43,7 @@ class EmailTemplateController extends Controller
         ]);
 
         $validated['created_by'] = $request->user()->id;
+        $validated['body_html'] = HtmlSanitizer::clean($validated['body_html']);
 
         EmailTemplate::create($validated);
 
@@ -67,6 +69,8 @@ class EmailTemplateController extends Controller
             'body_html' => 'required|string',
             'variables' => 'nullable|array',
         ]);
+
+        $validated['body_html'] = HtmlSanitizer::clean($validated['body_html']);
 
         $emailTemplate->update($validated);
 

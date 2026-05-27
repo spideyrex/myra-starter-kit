@@ -6,9 +6,10 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use App\Models\Role;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
-use Spatie\Permission\Models\Role;
 
 class ImportController extends Controller
 {
@@ -126,13 +127,19 @@ class ImportController extends Controller
             'password' => Hash::make($data['password'] ?? \Illuminate\Support\Str::random(24)),
             'phone' => $data['phone'] ?? null,
             'status' => in_array($data['status'] ?? '', ['active', 'suspended', 'pending']) ? $data['status'] : 'pending',
+            'created_by' => Auth::id(),
         ]);
 
         if (!empty($data['role'])) {
-            // Validate role exists before assignment
-            $roleName = trim($data['role']);
-            if (Role::where('name', $roleName)->exists()) {
-                $user->assignRole($roleName);
+            $role = Role::where('name', trim($data['role']))->first();
+
+            // Only assign roles the importer is allowed to grant: must exist, be
+            // active, and not be a privileged role unless the actor is super-admin.
+            $isSuper = Auth::user()?->hasRole(config('shield.super_admin_role', 'super-admin'));
+            $privileged = config('shield.privileged_roles', ['super-admin', 'admin']);
+
+            if ($role && $role->is_active && ($isSuper || ! in_array($role->name, $privileged, true))) {
+                $user->assignRole($role->name);
             }
         }
 

@@ -39,9 +39,13 @@ class SecurityHeaders
                     "default-src 'self'",
                     "script-src 'self' 'unsafe-inline'",
                     "style-src 'self' 'unsafe-inline'",
-                    "img-src 'self' data: https:",
+                    "img-src 'self' data: https: blob:",
                     "font-src 'self' data:",
                     "connect-src 'self' https: wss:",
+                    // MapLibre GL parses tiles in a blob: web worker; without these
+                    // it falls back to default-src and the map renders blank.
+                    "worker-src 'self' blob:",
+                    "child-src 'self' blob:",
                     "object-src 'none'",
                     "base-uri 'self'",
                     "frame-ancestors 'self'",

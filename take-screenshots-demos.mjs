@@ -24,7 +24,7 @@ const demos = [
     { name: 'demo-field-types', path: '/admin/demo/field-types' },
     { name: 'demo-advanced-filters', path: '/admin/demo/advanced-filters' },
     { name: 'demo-wizard', path: '/admin/demo/wizard' },
-    { name: 'demo-map', path: '/admin/demo/map', wait: 5000 },
+    { name: 'demo-map', path: '/admin/demo/map', wait: 12000 },
 ];
 
 (async () => {

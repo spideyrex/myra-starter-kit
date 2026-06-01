@@ -258,6 +258,7 @@ Route::middleware(['auth', 'verified', 'active', '2fa'])->prefix('admin')->name(
     Route::get('/demo/field-types', [DemoController::class, 'fieldTypes'])->name('demo.field-types');
     Route::get('/demo/advanced-filters', [DemoController::class, 'advancedFilters'])->name('demo.advanced-filters');
     Route::get('/demo/wizard', [DemoController::class, 'wizardDemo'])->name('demo.wizard');
+    Route::get('/demo/map', [DemoController::class, 'map'])->name('demo.map');
     }); // end demo group
 
     // myra:routes — make:myra-* commands insert generated routes above this line. Do not remove.

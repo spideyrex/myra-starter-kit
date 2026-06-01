@@ -157,6 +157,7 @@ php artisan content:sanitize   # backfill-sanitize existing stored HTML (--dry-r
 | **Tables** | TanStack Vue Table |
 | **Rich Text** | Tiptap |
 | **Charts** | Chart.js via vue-chartjs |
+| **Maps** | MapLibre GL (shadcn-vue wrappers) |
 | **Forms** | Vee-Validate + Zod |
 | **Auth / RBAC** | Sanctum, Google2FA, Spatie Permission |
 | **Media / Settings / Backups / Health / Activity** | Spatie packages |

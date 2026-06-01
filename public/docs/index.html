@@ -828,6 +828,7 @@ php artisan app:install</code></pre>
         <span class="tech-pill"><strong>CSS:</strong> Tailwind CSS v4 + oklch</span>
         <span class="tech-pill"><strong>Toasts:</strong> vue-sonner</span>
         <span class="tech-pill"><strong>Charts:</strong> vue-chartjs</span>
+        <span class="tech-pill"><strong>Maps:</strong> MapLibre GL</span>
     </div>
 </section>
 
@@ -5076,6 +5077,7 @@ php artisan make:myra-component Invoice data-table</code></pre>
             <tr><td><code>relation-manager</code></td><td>RelationManager</td><td>Detail page with related-record tables</td></tr>
             <tr><td><code>widgets</code></td><td>Widgets</td><td>Dashboard with stat/chart/table widgets</td></tr>
             <tr><td><code>reordering</code></td><td>Reordering</td><td>Drag-and-drop ordering</td></tr>
+            <tr><td><code>map</code></td><td>Map</td><td>MapLibre map with markers, popups, route, and clustering</td></tr>
         </tbody>
     </table>
 
@@ -6427,6 +6429,26 @@ class Project extends Model
         <li>Image crop, tags input, and slider fields</li>
         <li>Final review step summarizing all entered data</li>
     </ul>
+
+    <!-- Map -->
+    <h4 id="demo-map">Map</h4>
+    <p><strong>Route:</strong> <code>/admin/demo/map</code></p>
+    <p>Interactive maps powered by <strong>MapLibre GL JS</strong>, wrapped as shadcn-vue components in <code>resources/js/components/ui/map/</code> (the same copy-paste, project-owned philosophy as mapcn, authored for Vue). The basemap follows the app's light/dark theme automatically.</p>
+    <div class="screenshot">
+        <img src="screenshots/demo-map.png" alt="Map Demo" loading="lazy">
+        <div class="screenshot-caption">MapLibre map with controls, markers + popups, a route line, and marker clustering</div>
+    </div>
+    <ul class="inline-list">
+        <li><code>Map</code> + <code>MapControls</code> — vector basemap with zoom/compass, geolocate, fullscreen, and scale</li>
+        <li><code>MapMarker</code> + <code>MapPopup</code> — point markers with click-to-open popups</li>
+        <li><code>MapRoute</code> — polyline through ordered waypoints</li>
+        <li><code>MapCluster</code> — many points grouped into zoom-aware clusters (click to expand)</li>
+        <li>Theme-aware basemap that swaps light/dark live; coordinates are <code>[lng, lat]</code></li>
+    </ul>
+    <div class="callout callout-warning">
+        <div class="callout-title">&#9888; Basemap licensing</div>
+        The default <strong>CARTO</strong> basemap is free for <strong>non-commercial use only</strong>. For production/commercial use, pass a custom <code>map-style</code> to <code>&lt;Map&gt;</code> (MapTiler, Protomaps, Stadia, or self-hosted tiles). Scaffold a map page with <code>php artisan make:myra-component {Name} map</code>.
+    </div>
 </section>
 
 <section id="dark-mode">

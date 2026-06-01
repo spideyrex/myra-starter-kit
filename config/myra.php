@@ -56,6 +56,7 @@ return [
         'relation-manager'   => ['demo' => 'RelationManager', 'method' => 'forRelationManager', 'request' => true,  'label' => 'Relation Manager'],
         'widgets'            => ['demo' => 'Widgets',         'method' => 'forWidgets',         'request' => false, 'label' => 'Dashboard Widgets'],
         'reordering'         => ['demo' => 'Reordering',      'method' => 'forReordering',      'request' => false, 'label' => 'Reordering'],
+        'map'                => ['demo' => 'Map',             'method' => null,                 'request' => false, 'label' => 'Map'],
     ],
 
 ];

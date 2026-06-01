@@ -61,6 +61,11 @@ class DemoController extends Controller
         return Inertia::render('Admin/Demo/FieldTypes');
     }
 
+    public function map()
+    {
+        return Inertia::render('Admin/Demo/Map');
+    }
+
     public function advancedFilters(Request $request)
     {
         $this->seedFaker();

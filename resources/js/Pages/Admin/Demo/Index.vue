@@ -25,6 +25,7 @@ import {
     ListChecks,
     SlidersHorizontal,
     Wand2,
+    MapPin,
 } from 'lucide-vue-next';
 
 const demos = [
@@ -156,6 +157,13 @@ const demos = [
         icon: Wand2,
         route: 'admin.demo.wizard',
         badge: '5 Features',
+    },
+    {
+        title: 'Map',
+        description: 'Theme-aware MapLibre GL maps with controls, markers, popups, route lines, and marker clustering.',
+        icon: MapPin,
+        route: 'admin.demo.map',
+        badge: 'MapLibre',
     },
 ];
 </script>

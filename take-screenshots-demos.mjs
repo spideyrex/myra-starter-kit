@@ -24,6 +24,7 @@ const demos = [
     { name: 'demo-field-types', path: '/admin/demo/field-types' },
     { name: 'demo-advanced-filters', path: '/admin/demo/advanced-filters' },
     { name: 'demo-wizard', path: '/admin/demo/wizard' },
+    { name: 'demo-map', path: '/admin/demo/map', wait: 5000 },
 ];
 
 (async () => {
@@ -55,8 +56,8 @@ const demos = [
         try {
             console.log(`Capturing: ${d.name} (${d.path})`);
             await page.goto(`${BASE}${d.path}`, { waitUntil: 'networkidle2', timeout: 30000 });
-            // Wait for animations and lazy content
-            await new Promise(r => setTimeout(r, 2000));
+            // Wait for animations and lazy content (longer for map tiles)
+            await new Promise(r => setTimeout(r, d.wait ?? 2000));
             await page.screenshot({
                 path: `${OUT}/${d.name}.png`,
                 fullPage: true,

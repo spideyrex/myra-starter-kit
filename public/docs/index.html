@@ -6433,14 +6433,15 @@ class Project extends Model
     <!-- Map -->
     <h4 id="demo-map">Map</h4>
     <p><strong>Route:</strong> <code>/admin/demo/map</code></p>
-    <p>Interactive maps powered by <strong>MapLibre GL JS</strong>, wrapped as shadcn-vue components in <code>resources/js/components/ui/map/</code> (the same copy-paste, project-owned philosophy as mapcn, authored for Vue). The basemap follows the app's light/dark theme automatically.</p>
+    <p>Interactive maps powered by <strong>MapLibre GL JS</strong>, wrapped as shadcn-vue components in <code>resources/js/components/ui/map/</code> (the same copy-paste, project-owned philosophy as <a href="https://www.mapcn.dev/docs" target="_blank" rel="noopener">mapcn</a>, authored for Vue). The demo is themed around <strong>Malaysia</strong> — KL-hub flight arcs, major cities, a KL&ndash;Penang route, and nationwide clustering. The basemap follows the app's light/dark theme automatically.</p>
     <div class="screenshot">
         <img src="screenshots/demo-map.png" alt="Map Demo" loading="lazy">
-        <div class="screenshot-caption">MapLibre map with controls, markers + popups, a route line, and marker clustering</div>
+        <div class="screenshot-caption">Malaysia map demo — flight arcs from a KL hub, city markers + popups, a route line, and marker clustering</div>
     </div>
     <ul class="inline-list">
         <li><code>Map</code> + <code>MapControls</code> — vector basemap with zoom/compass, geolocate, fullscreen, and scale</li>
         <li><code>MapMarker</code> + <code>MapPopup</code> — point markers with click-to-open popups</li>
+        <li><code>MapArc</code> — curved connection arcs between point pairs (e.g. flight routes from a hub), with hover highlighting</li>
         <li><code>MapRoute</code> — polyline through ordered waypoints</li>
         <li><code>MapCluster</code> — many points grouped into zoom-aware clusters (click to expand)</li>
         <li>Theme-aware basemap that swaps light/dark live; coordinates are <code>[lng, lat]</code></li>

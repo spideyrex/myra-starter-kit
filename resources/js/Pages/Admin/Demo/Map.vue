@@ -3,30 +3,42 @@ import { Head } from '@inertiajs/vue3';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import PageHeader from '@/components/PageHeader.vue';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
-import { Map, MapControls, MapMarker, MapPopup, MapRoute, MapCluster } from '@/components/ui/map';
-import { MapPin } from 'lucide-vue-next';
+import { Map, MapControls, MapMarker, MapPopup, MapRoute, MapArc, MapCluster } from '@/components/ui/map';
+import { MapPin, Plane } from 'lucide-vue-next';
 
-// Sample store locations around Kuala Lumpur (lng, lat).
-const stores = [
-    { id: 1, name: 'Myra HQ', address: 'KLCC, Kuala Lumpur', lng: 101.7117, lat: 3.1578 },
-    { id: 2, name: 'Bangsar Branch', address: 'Bangsar, KL', lng: 101.6711, lat: 3.1283 },
-    { id: 3, name: 'Mont Kiara Branch', address: 'Mont Kiara, KL', lng: 101.6500, lat: 3.1726 },
-    { id: 4, name: 'Cheras Branch', address: 'Cheras, KL', lng: 101.7440, lat: 3.0904 },
+// Major Malaysian cities (lng, lat).
+const cities = [
+    { id: 'kul', name: 'Kuala Lumpur', state: 'Federal Territory', lng: 101.6869, lat: 3.1390 },
+    { id: 'png', name: 'George Town', state: 'Penang', lng: 100.3293, lat: 5.4141 },
+    { id: 'jhb', name: 'Johor Bahru', state: 'Johor', lng: 103.7414, lat: 1.4927 },
+    { id: 'bki', name: 'Kota Kinabalu', state: 'Sabah', lng: 116.0735, lat: 5.9804 },
+    { id: 'kch', name: 'Kuching', state: 'Sarawak', lng: 110.3592, lat: 1.5535 },
+    { id: 'lgk', name: 'Langkawi', state: 'Kedah', lng: 99.8000, lat: 6.3500 },
+    { id: 'mkz', name: 'Malacca City', state: 'Malacca', lng: 102.2501, lat: 2.1896 },
+    { id: 'iph', name: 'Ipoh', state: 'Perak', lng: 101.0901, lat: 4.5975 },
 ];
 
-// A delivery route (ordered waypoints).
-const route: [number, number][] = [
-    [101.7117, 3.1578],
-    [101.6869, 3.1390],
-    [101.6711, 3.1283],
-    [101.6500, 3.1726],
+// KLIA hub → domestic destinations, as mapcn-style flight arcs.
+const hub = cities[0]; // Kuala Lumpur
+const arcs = cities
+    .filter((c) => c.id !== 'kul')
+    .map((c) => ({ id: c.id, from: [hub.lng, hub.lat] as [number, number], to: [c.lng, c.lat] as [number, number] }));
+
+// North–South road trip: KL → Ipoh → George Town.
+const roadTrip: [number, number][] = [
+    [101.6869, 3.1390], // KL
+    [101.0901, 4.5975], // Ipoh
+    [100.6500, 5.1500], // approaching mainland Penang
+    [100.3293, 5.4141], // George Town
 ];
 
-// ~60 deterministic points scattered around KL for the clustering demo.
-const clusterPoints = Array.from({ length: 60 }, (_, i) => ({
-    lng: 101.60 + ((i * 37) % 100) / 500,
-    lat: 3.05 + ((i * 53) % 100) / 500,
-}));
+// ~70 deterministic points across Peninsular + East Malaysia for clustering.
+const clusterPoints = Array.from({ length: 70 }, (_, i) => {
+    const peninsular = i % 3 !== 0;
+    return peninsular
+        ? { lng: 100.3 + ((i * 31) % 100) / 33, lat: 1.5 + ((i * 47) % 100) / 20 }
+        : { lng: 109.5 + ((i * 53) % 100) / 14, lat: 1.3 + ((i * 29) % 100) / 22 };
+});
 </script>
 
 <template>
@@ -34,45 +46,45 @@ const clusterPoints = Array.from({ length: 60 }, (_, i) => ({
         <Head title="Map" />
 
         <PageHeader
-            title="Map"
-            description="Interactive maps with MapLibre GL — theme-aware shadcn-vue components (markers, popups, routes, clustering)."
+            title="Map — Malaysia"
+            description="MapLibre GL maps (mapcn-style shadcn-vue components) showcased across Malaysia: flight arcs, markers, routes, and clustering."
         />
 
         <div class="mt-6 space-y-6">
-            <!-- 1. Base map + controls -->
+            <!-- 1. Flight arcs from KL hub -->
             <Card>
                 <CardHeader>
-                    <CardTitle class="text-base">Base Map & Controls</CardTitle>
+                    <CardTitle class="flex items-center gap-2 text-base">
+                        <Plane class="size-4" /> Flight Connections (Arcs)
+                    </CardTitle>
                     <CardDescription>
-                        Vector basemap with zoom/compass, geolocate, fullscreen, and scale controls.
-                        The basemap follows your light/dark theme automatically.
+                        Curved arcs from the Kuala Lumpur hub to domestic destinations — hover an arc to highlight it.
                     </CardDescription>
                 </CardHeader>
                 <CardContent>
-                    <div class="h-[360px] w-full overflow-hidden rounded-lg border">
-                        <Map :center="[101.6869, 3.139]" :zoom="11">
-                            <MapControls />
-                        </Map>
-                    </div>
-                </CardContent>
-            </Card>
-
-            <!-- 2. Markers + popups -->
-            <Card>
-                <CardHeader>
-                    <CardTitle class="text-base">Markers & Popups</CardTitle>
-                    <CardDescription>Click a marker to open its popup.</CardDescription>
-                </CardHeader>
-                <CardContent>
-                    <div class="h-[360px] w-full overflow-hidden rounded-lg border">
-                        <Map :center="[101.6869, 3.139]" :zoom="11">
-                            <MapControls :geolocate="false" :fullscreen="false" />
-                            <MapMarker v-for="s in stores" :key="s.id" :lng="s.lng" :lat="s.lat">
+                    <div class="h-[420px] w-full overflow-hidden rounded-lg border">
+                        <Map :center="[108.5, 4.0]" :zoom="5">
+                            <MapControls :geolocate="false" />
+                            <MapArc
+                                :data="arcs"
+                                :paint="{ 'line-color': '#6366f1', 'line-width': 2, 'line-dasharray': [2, 2] }"
+                                :hover-paint="{ 'line-color': '#ef4444', 'line-width': 4 }"
+                            />
+                            <MapMarker :lng="hub.lng" :lat="hub.lat" color="#ef4444">
                                 <MapPopup>
-                                    <p class="flex items-center gap-1 font-medium">
-                                        <MapPin class="size-3.5" /> {{ s.name }}
-                                    </p>
-                                    <p class="text-muted-foreground">{{ s.address }}</p>
+                                    <p class="font-medium">{{ hub.name }} (Hub)</p>
+                                    <p class="text-muted-foreground">{{ hub.state }}</p>
+                                </MapPopup>
+                            </MapMarker>
+                            <MapMarker
+                                v-for="c in cities.filter((c) => c.id !== 'kul')"
+                                :key="c.id"
+                                :lng="c.lng"
+                                :lat="c.lat"
+                            >
+                                <MapPopup>
+                                    <p class="font-medium">{{ c.name }}</p>
+                                    <p class="text-muted-foreground">{{ c.state }}</p>
                                 </MapPopup>
                             </MapMarker>
                         </Map>
@@ -80,37 +92,60 @@ const clusterPoints = Array.from({ length: 60 }, (_, i) => ({
                 </CardContent>
             </Card>
 
-            <!-- 3. Route line -->
+            <!-- 2. City markers + popups -->
             <Card>
                 <CardHeader>
-                    <CardTitle class="text-base">Route Line</CardTitle>
-                    <CardDescription>A polyline drawn through ordered waypoints.</CardDescription>
+                    <CardTitle class="text-base">City Markers & Popups</CardTitle>
+                    <CardDescription>Major Malaysian cities — click a marker for its state.</CardDescription>
                 </CardHeader>
                 <CardContent>
-                    <div class="h-[360px] w-full overflow-hidden rounded-lg border">
-                        <Map :center="[101.68, 3.145]" :zoom="11">
+                    <div class="h-[420px] w-full overflow-hidden rounded-lg border">
+                        <Map :center="[108.5, 4.0]" :zoom="5">
                             <MapControls :geolocate="false" :fullscreen="false" />
-                            <MapRoute :coordinates="route" />
-                            <MapMarker :lng="route[0][0]" :lat="route[0][1]" color="#22c55e">
-                                <MapPopup>Start</MapPopup>
-                            </MapMarker>
-                            <MapMarker :lng="route[route.length - 1][0]" :lat="route[route.length - 1][1]" color="#ef4444">
-                                <MapPopup>Destination</MapPopup>
+                            <MapMarker v-for="c in cities" :key="c.id" :lng="c.lng" :lat="c.lat">
+                                <MapPopup>
+                                    <p class="flex items-center gap-1 font-medium">
+                                        <MapPin class="size-3.5" /> {{ c.name }}
+                                    </p>
+                                    <p class="text-muted-foreground">{{ c.state }}</p>
+                                </MapPopup>
                             </MapMarker>
                         </Map>
                     </div>
                 </CardContent>
             </Card>
 
-            <!-- 4. Clustering -->
+            <!-- 3. Road-trip route -->
+            <Card>
+                <CardHeader>
+                    <CardTitle class="text-base">Route Line — KL to Penang</CardTitle>
+                    <CardDescription>A polyline along the North–South corridor: Kuala Lumpur → Ipoh → George Town.</CardDescription>
+                </CardHeader>
+                <CardContent>
+                    <div class="h-[420px] w-full overflow-hidden rounded-lg border">
+                        <Map :center="[100.9, 4.3]" :zoom="6">
+                            <MapControls :geolocate="false" :fullscreen="false" />
+                            <MapRoute :coordinates="roadTrip" color="#6366f1" />
+                            <MapMarker :lng="roadTrip[0][0]" :lat="roadTrip[0][1]" color="#22c55e">
+                                <MapPopup>Start — Kuala Lumpur</MapPopup>
+                            </MapMarker>
+                            <MapMarker :lng="roadTrip[roadTrip.length - 1][0]" :lat="roadTrip[roadTrip.length - 1][1]" color="#ef4444">
+                                <MapPopup>End — George Town</MapPopup>
+                            </MapMarker>
+                        </Map>
+                    </div>
+                </CardContent>
+            </Card>
+
+            <!-- 4. Clustering across Malaysia -->
             <Card>
                 <CardHeader>
                     <CardTitle class="text-base">Marker Clustering</CardTitle>
-                    <CardDescription>{{ clusterPoints.length }} points grouped into clusters — click a cluster to zoom in.</CardDescription>
+                    <CardDescription>{{ clusterPoints.length }} outlets across Peninsular &amp; East Malaysia — click a cluster to zoom in.</CardDescription>
                 </CardHeader>
                 <CardContent>
-                    <div class="h-[360px] w-full overflow-hidden rounded-lg border">
-                        <Map :center="[101.69, 3.14]" :zoom="10">
+                    <div class="h-[420px] w-full overflow-hidden rounded-lg border">
+                        <Map :center="[108.5, 4.0]" :zoom="5">
                             <MapControls :geolocate="false" :fullscreen="false" />
                             <MapCluster :points="clusterPoints" />
                         </Map>

@@ -160,7 +160,7 @@ const demos = [
     },
     {
         title: 'Map',
-        description: 'Theme-aware MapLibre GL maps with controls, markers, popups, route lines, and marker clustering.',
+        description: 'Theme-aware MapLibre GL maps across Malaysia: flight arcs, markers, popups, route lines, and clustering.',
         icon: MapPin,
         route: 'admin.demo.map',
         badge: 'MapLibre',

@@ -34,8 +34,12 @@ const demos = [
         args: [
             '--no-sandbox',
             '--disable-setuid-sandbox',
-            '--disable-gpu',
             '--disable-dev-shm-usage',
+            // Software WebGL so MapLibre GL renders in headless Chromium.
+            '--use-gl=angle',
+            '--use-angle=swiftshader',
+            '--enable-unsafe-swiftshader',
+            '--ignore-gpu-blocklist',
             '--window-size=1440,900',
         ],
     });

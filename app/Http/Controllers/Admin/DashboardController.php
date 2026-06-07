@@ -64,9 +64,17 @@ class DashboardController extends Controller
                 'created_at' => $u->created_at->toISOString(),
             ]);
 
-        $userGrowth = User::selectRaw("DATE_FORMAT(created_at, '%Y-%m') as month, COUNT(*) as count")
+        // Group registrations by month — driver-agnostic so the dashboard works
+        // on MySQL, PostgreSQL, and SQLite alike.
+        $monthExpr = match (DB::connection()->getDriverName()) {
+            'sqlite' => "strftime('%Y-%m', created_at)",
+            'pgsql' => "to_char(created_at, 'YYYY-MM')",
+            default => "DATE_FORMAT(created_at, '%Y-%m')",
+        };
+
+        $userGrowth = User::selectRaw("{$monthExpr} as month, COUNT(*) as count")
             ->where('created_at', '>=', now()->subMonths(6))
-            ->groupByRaw("DATE_FORMAT(created_at, '%Y-%m')")
+            ->groupByRaw($monthExpr)
             ->orderBy('month')
             ->get();
 

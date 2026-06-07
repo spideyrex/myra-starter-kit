@@ -31,6 +31,13 @@ jobs:
       - name: Copy environment file
         run: cp .env.example .env
 
+      # myra/framework lives in a private GitHub repo. Provide a token (PAT with
+      # read access, stored as the COMPOSER_TOKEN secret) so Composer can fetch
+      # it. If the package repo is made public this step is harmless/no-op.
+      - name: Configure Composer auth for private packages
+        if: ${{ secrets.COMPOSER_TOKEN != '' }}
+        run: composer config --global github-oauth.github.com "${{ secrets.COMPOSER_TOKEN }}"
+
       - name: Install Composer dependencies
         run: composer install --no-interaction --prefer-dist --no-progress
 
@@ -57,9 +64,13 @@ jobs:
 
       - name: Type check
         run: npm run type-check
+        env:
+          NODE_OPTIONS: --max-old-space-size=4096
 
       - name: Build assets
         run: npm run build
+        env:
+          NODE_OPTIONS: --max-old-space-size=4096
 
   audit:
     name: Dependency Audit (non-blocking)

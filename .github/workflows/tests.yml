@@ -33,10 +33,15 @@ jobs:
 
       # myra/framework lives in a private GitHub repo. Provide a token (PAT with
       # read access, stored as the COMPOSER_TOKEN secret) so Composer can fetch
-      # it. If the package repo is made public this step is harmless/no-op.
+      # it. No-op if the secret is absent or the package repo is made public.
+      # NB: the `secrets` context cannot be used in `if:`, so guard in shell.
       - name: Configure Composer auth for private packages
-        if: ${{ secrets.COMPOSER_TOKEN != '' }}
-        run: composer config --global github-oauth.github.com "${{ secrets.COMPOSER_TOKEN }}"
+        env:
+          COMPOSER_TOKEN: ${{ secrets.COMPOSER_TOKEN }}
+        run: |
+          if [ -n "$COMPOSER_TOKEN" ]; then
+            composer config --global github-oauth.github.com "$COMPOSER_TOKEN"
+          fi
 
       - name: Install Composer dependencies
         run: composer install --no-interaction --prefer-dist --no-progress

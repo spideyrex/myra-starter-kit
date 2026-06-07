@@ -23,7 +23,7 @@ class UserFactory extends Factory
             'remember_token' => Str::random(10),
             'phone' => fake()->phoneNumber(),
             'avatar' => null,
-            'status' => fake()->randomElement(['active', 'active', 'active', 'suspended', 'pending']),
+            'status' => 'active',
         ];
     }
 
@@ -45,6 +45,13 @@ class UserFactory extends Factory
     {
         return $this->state(fn (array $attributes) => [
             'status' => 'suspended',
+        ]);
+    }
+
+    public function pending(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'status' => 'pending',
         ]);
     }
 }

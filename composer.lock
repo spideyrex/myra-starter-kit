@@ -3821,65 +3821,6 @@
             "time": "2024-09-04T18:46:31+00:00"
         },
         {
-            "name": "myra/framework",
-            "version": "v1.0.1",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/spideyrex/myra-framework.git",
-                "reference": "a259f146ff3b83c847556f3f54667f1eeb0a1346"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/spideyrex/myra-framework/zipball/a259f146ff3b83c847556f3f54667f1eeb0a1346",
-                "reference": "a259f146ff3b83c847556f3f54667f1eeb0a1346",
-                "shasum": ""
-            },
-            "require": {
-                "illuminate/console": "^11.0|^12.0",
-                "illuminate/filesystem": "^11.0|^12.0",
-                "illuminate/support": "^11.0|^12.0",
-                "php": "^8.2"
-            },
-            "type": "library",
-            "extra": {
-                "laravel": {
-                    "providers": [
-                        "Myra\\Framework\\MyraServiceProvider"
-                    ]
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Myra\\Framework\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Myra",
-                    "homepage": "https://github.com/spideyrex"
-                }
-            ],
-            "description": "A Laravel + Inertia.js + Vue 3 admin framework with schema-driven forms, tables, and Artisan scaffolding.",
-            "homepage": "https://github.com/spideyrex/myra-framework",
-            "keywords": [
-                "admin",
-                "dashboard",
-                "inertia",
-                "laravel",
-                "myra",
-                "vue"
-            ],
-            "support": {
-                "issues": "https://github.com/spideyrex/myra-framework/issues",
-                "source": "https://github.com/spideyrex/myra-framework"
-            },
-            "time": "2026-03-03T00:52:59+00:00"
-        },
-        {
             "name": "nesbot/carbon",
             "version": "3.11.1",
             "source": {

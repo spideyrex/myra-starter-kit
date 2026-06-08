@@ -180,20 +180,34 @@ php artisan content:sanitize   # backfill-sanitize existing stored HTML (--dry-r
 
 ## Installation
 
+Clone the repository and install dependencies — everything needed is committed, so it installs with no private access or tokens:
+
 ```bash
-composer create-project myra/starter-kit my-app
+# 1. Get the code
+git clone https://github.com/spideyrex/myra-starter-kit.git my-app
 cd my-app
 
+# 2. PHP + JS dependencies
+composer install
+npm install
+
+# 3. Environment
 cp .env.example .env
 php artisan key:generate
-# configure your database in .env, then:
-php artisan app:install   # migrations, seeders, shield:generate, interactive admin
 
-npm install
-composer dev               # Laravel + Vite + queue worker + log viewer
+# 4. Configure your database in .env (MySQL/PostgreSQL/SQLite), then run setup
+#    (migrations + seeders + shield:generate + interactive admin account)
+php artisan app:install
+
+# 5. Run it (Laravel server + Vite dev server + queue worker + log viewer)
+composer dev
 ```
 
-Visit `http://localhost:8000` and sign in with the admin you created.
+Visit `http://localhost:8000` and sign in with the admin account you created in step 4.
+
+> **Quickest start (SQLite, zero DB config):** set `DB_CONNECTION=sqlite` in `.env`, run `touch database/database.sqlite`, then `php artisan app:install`.
+
+For production, build assets instead of `composer dev`: `npm run build`, and set `APP_ENV=production`, `APP_DEBUG=false`, `SESSION_ENCRYPT=true`, `SESSION_SECURE_COOKIE=true` in `.env`.
 
 ---
 

@@ -31,13 +31,8 @@ jobs:
       - name: Copy environment file
         run: cp .env.example .env
 
-      # myra/framework is a private package providing only the legacy
-      # myra:resource / myra:page generators (superseded by the app's own
-      # make:myra-* commands). It isn't needed to run the test suite, so we drop
-      # it for CI — `composer remove` re-resolves the graph WITHOUT fetching it,
-      # which avoids needing any private-repo token.
-      - name: Install Composer dependencies (excluding private myra/framework)
-        run: composer remove myra/framework --no-interaction --no-progress
+      - name: Install Composer dependencies
+        run: composer install --no-interaction --prefer-dist --no-progress
 
       - name: Generate application key
         run: php artisan key:generate

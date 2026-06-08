@@ -677,9 +677,13 @@
         <li>A database (MySQL, PostgreSQL, or SQLite)</li>
     </ul>
 
-    <h3>Step 1: Create a New Myra Project</h3>
-    <pre><code class="language-bash">composer create-project myra/starter-kit my-app
-cd my-app</code></pre>
+    <h3>Step 1: Clone &amp; Install Dependencies</h3>
+    <p>Everything needed is committed to the repository &mdash; it installs with no private access or tokens.</p>
+    <pre><code class="language-bash">git clone https://github.com/spideyrex/myra-starter-kit.git my-app
+cd my-app
+
+composer install
+npm install</code></pre>
 
     <h3>Step 2: Configure Your Database</h3>
     <p>Update your <code>.env</code> file with your database credentials:</p>

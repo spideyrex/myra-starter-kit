@@ -31,20 +31,13 @@ jobs:
       - name: Copy environment file
         run: cp .env.example .env
 
-      # myra/framework lives in a private GitHub repo. Provide a token (PAT with
-      # read access, stored as the COMPOSER_TOKEN secret) so Composer can fetch
-      # it. No-op if the secret is absent or the package repo is made public.
-      # NB: the `secrets` context cannot be used in `if:`, so guard in shell.
-      - name: Configure Composer auth for private packages
-        env:
-          COMPOSER_TOKEN: ${{ secrets.COMPOSER_TOKEN }}
-        run: |
-          if [ -n "$COMPOSER_TOKEN" ]; then
-            composer config --global github-oauth.github.com "$COMPOSER_TOKEN"
-          fi
-
-      - name: Install Composer dependencies
-        run: composer install --no-interaction --prefer-dist --no-progress
+      # myra/framework is a private package providing only the legacy
+      # myra:resource / myra:page generators (superseded by the app's own
+      # make:myra-* commands). It isn't needed to run the test suite, so we drop
+      # it for CI — `composer remove` re-resolves the graph WITHOUT fetching it,
+      # which avoids needing any private-repo token.
+      - name: Install Composer dependencies (excluding private myra/framework)
+        run: composer remove myra/framework --no-interaction --no-progress
 
       - name: Generate application key
         run: php artisan key:generate

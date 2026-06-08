@@ -76,7 +76,10 @@ class ProfileTest extends TestCase
             ->assertRedirect('/');
 
         $this->assertGuest();
-        $this->assertNull($user->fresh());
+        // User uses SoftDeletes (the app's trash/restore workflow), so the
+        // account is soft-deleted rather than removed. fresh() bypasses the
+        // soft-delete scope, so assert against the trashed state instead.
+        $this->assertSoftDeleted($user);
     }
 
     public function test_correct_password_must_be_provided_to_delete_account(): void

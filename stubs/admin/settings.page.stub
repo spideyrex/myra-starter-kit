@@ -1,0 +1,38 @@
+<script setup lang="ts">
+import { Head, useForm } from '@inertiajs/vue3';
+import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+import PageHeader from '@/components/PageHeader.vue';
+import SettingsCard from '@/components/admin/SettingsCard.vue';
+import FormFields from '@/components/admin/FormFields.vue';
+import { TextInput, Toggle } from '@/composables/useFormSchema';
+
+const props = defineProps<{ settings: Record<string, any> }>();
+
+const form = useForm({
+    enabled: props.settings.enabled ?? false,
+    label: props.settings.label ?? '',
+});
+
+const schema = [
+    Toggle.make('enabled').label('Enabled'),
+    TextInput.make('label').label('Label'),
+];
+
+function save() {
+    form.put(route('admin.{{ routePrefix }}.update'), { preserveScroll: true });
+}
+</script>
+
+<template>
+    <AuthenticatedLayout :breadcrumbs="[{ label: '{{ model }} Settings' }]">
+        <Head title="{{ model }} Settings" />
+
+        <PageHeader title="{{ model }} Settings" description="Manage {{ modelVariable }} settings." />
+
+        <div class="mt-6 max-w-2xl">
+            <SettingsCard title="{{ model }}" description="Configure {{ modelVariable }} options." :processing="form.processing" @submit="save">
+                <FormFields :schema="schema" :form="form" />
+            </SettingsCard>
+        </div>
+    </AuthenticatedLayout>
+</template>

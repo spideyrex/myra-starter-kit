@@ -1,7 +1,15 @@
 import type { Component } from 'vue';
 import type { SelectOption } from '@/types/admin';
 
-export type FieldType = 'text' | 'email' | 'password' | 'number' | 'textarea' | 'select' | 'switch' | 'checkbox' | 'tel' | 'url' | 'date' | 'datetime-local' | 'radio' | 'color' | 'hidden' | 'file' | 'richtext' | 'repeater' | 'slider' | 'number-field' | 'pin-input' | 'tags-input' | 'toggle-group' | 'calendar' | 'time' | 'checkbox-list' | 'key-value' | 'markdown';
+export type FieldType = 'text' | 'email' | 'password' | 'number' | 'textarea' | 'select' | 'switch' | 'checkbox' | 'tel' | 'url' | 'date' | 'datetime-local' | 'radio' | 'color' | 'hidden' | 'file' | 'richtext' | 'repeater' | 'builder' | 'slider' | 'number-field' | 'pin-input' | 'tags-input' | 'toggle-group' | 'calendar' | 'time' | 'checkbox-list' | 'key-value' | 'markdown';
+
+/** A block definition for the Builder field — a named, labelled group of fields. */
+export interface BuilderBlock {
+    name: string;
+    label: string;
+    icon?: string;
+    schema: SchemaItem[];
+}
 
 export type VisibilityCondition = string | ((form: Record<string, any>) => boolean);
 
@@ -40,6 +48,8 @@ export interface FieldSchema {
     addLabel?: string;
     reorderable?: boolean;
     repeaterCollapsible?: boolean;
+    // Builder field (multi-type repeatable blocks)
+    blocks?: BuilderBlock[];
     // Slider / NumberField
     min?: number;
     max?: number;
@@ -967,6 +977,112 @@ export class Repeater extends BaseField {
         return {
             ...super.toProps(),
             subSchema: this._subSchema,
+            minItems: this._minItems,
+            maxItems: this._maxItems,
+            addLabel: this._addLabel,
+            reorderable: this._reorderable,
+            repeaterCollapsible: this._collapsibleItems,
+        };
+    }
+}
+
+// --- Block Builder (multi-type repeatable blocks, Filament-style) ---
+
+export class Block {
+    private _name: string;
+    private _label?: string;
+    private _icon?: string;
+    private _schema: SchemaItem[] = [];
+
+    constructor(name: string) {
+        this._name = name;
+    }
+
+    static make(name: string): Block {
+        return new Block(name);
+    }
+
+    label(text: string): this {
+        this._label = text;
+        return this;
+    }
+
+    /** lucide-vue-next icon name shown in the add-block menu. */
+    icon(name: string): this {
+        this._icon = name;
+        return this;
+    }
+
+    schema(fields: SchemaItem[]): this {
+        this._schema = fields;
+        return this;
+    }
+
+    toBlock(): BuilderBlock {
+        return {
+            name: this._name,
+            label: this._label ?? humanize(this._name),
+            icon: this._icon,
+            schema: this._schema,
+        };
+    }
+}
+
+/**
+ * Builder — a repeatable list where each item can be a different "block" type.
+ * Stored value shape: `[{ type: blockName, data: { ...fields } }, ...]`.
+ */
+export class Builder extends BaseField {
+    private _blocks: Block[] = [];
+    private _minItems?: number;
+    private _maxItems?: number;
+    private _addLabel = 'Add Block';
+    private _reorderable = true;
+    private _collapsibleItems = false;
+
+    constructor(name: string) {
+        super(name);
+        this._type = 'builder';
+    }
+
+    static make(name: string): Builder {
+        return new Builder(name);
+    }
+
+    blocks(blocks: Block[]): this {
+        this._blocks = blocks;
+        return this;
+    }
+
+    minItems(n: number): this {
+        this._minItems = n;
+        return this;
+    }
+
+    maxItems(n: number): this {
+        this._maxItems = n;
+        return this;
+    }
+
+    addLabel(text: string): this {
+        this._addLabel = text;
+        return this;
+    }
+
+    reorderable(value = true): this {
+        this._reorderable = value;
+        return this;
+    }
+
+    collapsible(value = true): this {
+        this._collapsibleItems = value;
+        return this;
+    }
+
+    toProps(): FieldSchema {
+        return {
+            ...super.toProps(),
+            blocks: this._blocks.map(b => b.toBlock()),
             minItems: this._minItems,
             maxItems: this._maxItems,
             addLabel: this._addLabel,

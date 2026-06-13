@@ -28,6 +28,8 @@ import {
     FileUpload,
     RichEditor,
     Repeater,
+    Builder,
+    Block,
     Slider,
     NumberField,
     PinInput,
@@ -256,6 +258,34 @@ const schema: SchemaItem[] = [
                 .maxItems(6)
                 .collapsible()
                 .addLabel('Add Social Link'),
+        ]),
+
+    // --- Block Builder (multi-type repeatable blocks) ---
+    Section.make('Block Builder')
+        .description('Build page content from mixed block types — each block has its own fields. Value is stored as [{ type, data }].')
+        .columns(1)
+        .schema([
+            Builder.make('content')
+                .label('Page Content')
+                .blocks([
+                    Block.make('heading').label('Heading').icon('Heading').schema([
+                        TextInput.make('text').label('Heading text').required(),
+                        Select.make('level').label('Level').options({ h2: 'H2', h3: 'H3', h4: 'H4' }),
+                    ]),
+                    Block.make('paragraph').label('Paragraph').icon('Text').schema([
+                        Textarea.make('body').label('Body').rows(4).required(),
+                    ]),
+                    Block.make('image').label('Image').icon('Image').schema([
+                        TextInput.make('url').label('Image URL').url().required(),
+                        TextInput.make('alt').label('Alt text'),
+                    ]),
+                    Block.make('callout').label('Callout').icon('Megaphone').schema([
+                        Select.make('variant').label('Variant').options({ info: 'Info', warning: 'Warning', success: 'Success' }),
+                        Textarea.make('message').label('Message').rows(2).required(),
+                    ]),
+                ])
+                .collapsible()
+                .addLabel('Add Content Block'),
         ]),
 
     // --- New Field Types (shadcn-vue) ---

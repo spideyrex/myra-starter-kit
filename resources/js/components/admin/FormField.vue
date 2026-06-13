@@ -19,9 +19,10 @@ import { Button } from '@/components/ui/button';
 import PasswordInput from '@/components/PasswordInput.vue';
 import TipTapEditor from '@/components/TipTapEditor.vue';
 import RepeaterField from '@/components/admin/RepeaterField.vue';
+import BuilderField from '@/components/admin/BuilderField.vue';
 import ImageEditor from '@/components/ImageEditor.vue';
 import type { SelectOption } from '@/types/admin';
-import type { FieldType, SchemaItem } from '@/composables/useFormSchema';
+import type { FieldType, SchemaItem, BuilderBlock } from '@/composables/useFormSchema';
 import { CalendarDate, type DateValue, getLocalTimeZone, today } from '@internationalized/date';
 import { CalendarIcon, Plus, Trash2 } from 'lucide-vue-next';
 import { marked } from 'marked';
@@ -63,6 +64,8 @@ const props = withDefaults(defineProps<{
     addLabel?: string;
     reorderable?: boolean;
     repeaterCollapsible?: boolean;
+    // Builder field (multi-type blocks)
+    blocks?: BuilderBlock[];
     // Slider / NumberField
     min?: number;
     max?: number;
@@ -377,6 +380,20 @@ const renderedMarkdown = computed(() => {
                     v-else-if="type === 'repeater'"
                     v-model="model"
                     :sub-schema="subSchema || []"
+                    :min-items="minItems"
+                    :max-items="maxItems"
+                    :add-label="addLabel"
+                    :reorderable="reorderable"
+                    :collapsible="repeaterCollapsible"
+                    :disabled="disabled"
+                    :errors="error"
+                />
+
+                <!-- Builder field (multi-type blocks) -->
+                <BuilderField
+                    v-else-if="type === 'builder'"
+                    v-model="model"
+                    :blocks="blocks || []"
                     :min-items="minItems"
                     :max-items="maxItems"
                     :add-label="addLabel"

@@ -3479,7 +3479,13 @@ import { Button } from '@/components/ui/button';
     <h4>useFormSchema</h4>
     <p>Form builder API for defining field schemas and layouts with a fluent, chainable syntax.</p>
     <p><strong>File:</strong> <code>resources/js/composables/useFormSchema.ts</code></p>
-    <p><strong>Field exports:</strong> <code>TextInput</code>, <code>Select</code>, <code>Textarea</code>, <code>Toggle</code>, <code>Checkbox</code>, <code>DatePicker</code>, <code>DateTimePicker</code>, <code>Radio</code>, <code>ColorPicker</code>, <code>Hidden</code>, <code>FileUpload</code>, <code>RichEditor</code>, <code>Repeater</code>, <code>Slider</code>, <code>NumberField</code>, <code>PinInput</code>, <code>TagsInput</code>, <code>ToggleGroupField</code>, <code>CalendarPicker</code></p>
+    <p><strong>Field exports:</strong> <code>TextInput</code>, <code>Select</code>, <code>Textarea</code>, <code>Toggle</code>, <code>Checkbox</code>, <code>DatePicker</code>, <code>DateTimePicker</code>, <code>Radio</code>, <code>ColorPicker</code>, <code>Hidden</code>, <code>FileUpload</code>, <code>RichEditor</code>, <code>Repeater</code>, <code>Builder</code>, <code>Slider</code>, <code>NumberField</code>, <code>PinInput</code>, <code>TagsInput</code>, <code>ToggleGroupField</code>, <code>CalendarPicker</code>, <code>TimePicker</code>, <code>CheckboxList</code>, <code>KeyValue</code>, <code>MarkdownEditor</code></p>
+    <p><strong>Block Builder:</strong> <code>Builder</code> + <code>Block</code> create a repeatable list where each item can be a different block type (Filament-style). Each block has its own field schema; the stored value is <code>[{ type, data }]</code>:</p>
+    <pre><code class="language-typescript">Builder.make('content').label('Page Content').blocks([
+    Block.make('heading').icon('Heading').schema([ TextInput.make('text').required() ]),
+    Block.make('paragraph').icon('Text').schema([ Textarea.make('body').rows(4) ]),
+    Block.make('image').icon('Image').schema([ TextInput.make('url').url(), TextInput.make('alt') ]),
+]).collapsible().addLabel('Add Content Block')</code></pre>
     <p><strong>Layout exports:</strong> <code>Section</code>, <code>Grid</code>, <code>Tabs</code>, <code>Tab</code>, <code>Fieldset</code>, <code>Flex</code>, <code>Wizard</code>, <code>WizardStep</code>, <code>Callout</code></p>
     <p><strong>Type exports:</strong> <code>FieldSchema</code>, <code>LayoutSchema</code>, <code>SchemaItem</code>, <code>BaseField</code></p>
     <p>See <a href="#form-builder">Form Builder</a> and <a href="#form-layouts">Form Layouts</a> for full documentation.</p>
@@ -5035,6 +5041,7 @@ VITE_FIREBASE_VAPID_KEY=BNx...</code></pre>
             <tr><td><code>php artisan make:myra-page {Name}</code></td><td>Single admin page (controller + Vue page) + <code>{name}.view</code> permission + route + nav.</td></tr>
             <tr><td><code>php artisan make:myra-resource {Name}</code></td><td>Full CRUD (controller, service, 3 Vue pages) + 4 permissions + 6 routes + nav. <code>--model</code> also runs <code>make:model -m</code>.</td></tr>
             <tr><td><code>php artisan make:myra-component {Name} {keyword}</code></td><td>Clones a Feature Demo into a runnable page + controller (with sample data) + <code>{name}.view</code> permission + route + nav.</td></tr>
+            <tr><td><code>php artisan make:myra-setting {Name}</code></td><td>Scaffolds a Spatie settings group: a <code>{Name}Settings</code> class, a seeding migration, a controller, and an admin settings page (SettingsCard + FormFields) + <code>{name}-settings.view/edit</code> permissions + route + nav.</td></tr>
             <tr><td><code>php artisan myra:page</code> / <code>myra:resource</code></td><td>Legacy generators from the <code>myra/framework</code> package. They scaffold from the same stubs but <em>print</em> routes and do <strong>not</strong> create permissions or nav. Prefer the <code>make:myra-*</code> commands.</td></tr>
         </tbody>
     </table>
@@ -5089,6 +5096,22 @@ php artisan make:myra-component Invoice data-table</code></pre>
         <div class="callout-title">&#9889; Assign to roles instantly</div>
         Generated permissions are grouped by module in <strong>Roles &amp; Permissions</strong>, so a super-admin can tick a new page on for any role straight away &mdash; the page appears in those users' sidebars automatically.
     </div>
+
+    <h3>make:myra-setting &mdash; scaffold a settings group</h3>
+    <p>Generates a complete, persisted settings group backed by <a href="https://github.com/spatie/laravel-settings" target="_blank" rel="noopener">Spatie Laravel Settings</a> &mdash; no boilerplate.</p>
+    <pre><code class="language-bash">php artisan make:myra-setting Billing
+php artisan migrate        # seeds the defaults</code></pre>
+    <h4>Generated &amp; wired</h4>
+    <table>
+        <thead><tr><th>File</th><th>Purpose</th></tr></thead>
+        <tbody>
+            <tr><td><code>app/Settings/BillingSettings.php</code></td><td>Spatie <code>Settings</code> class (group <code>billing</code>) with typed properties</td></tr>
+            <tr><td><code>database/migrations/..._add_billing_settings.php</code></td><td>Seeds default values</td></tr>
+            <tr><td><code>app/Http/Controllers/Admin/BillingSettingsController.php</code></td><td><code>index</code> + validated <code>update</code></td></tr>
+            <tr><td><code>resources/js/Pages/Admin/BillingSettings/Index.vue</code></td><td>Settings page using <code>SettingsCard</code> + <code>FormFields</code></td></tr>
+        </tbody>
+    </table>
+    <p>Auto-wires GET/PUT routes at <code>/admin/billing-settings</code>, a sidebar item, and <code>billing-settings.view</code>/<code>billing-settings.edit</code> permissions. Edit the generated <code>Settings</code> class properties + the page schema to add your own fields.</p>
 </section>
 
 <section id="shield-rbac">

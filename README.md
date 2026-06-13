@@ -2,6 +2,7 @@
 
 A production-ready **Laravel 12 + Inertia.js + Vue 3** admin dashboard starter kit with a Filament-style code generator, role-based access control, per-user data isolation, a built-in CMS, an AI writing assistant, and 55+ UI components — so you can ship admin panels with very little hand-written code.
 
+![Version](https://img.shields.io/badge/version-2.0.0-6366f1)
 [![Tests](https://github.com/spideyrex/myra-starter-kit/actions/workflows/tests.yml/badge.svg)](https://github.com/spideyrex/myra-starter-kit/actions/workflows/tests.yml)
 ![Laravel](https://img.shields.io/badge/Laravel-12-FF2D20?logo=laravel&logoColor=white)
 ![Vue](https://img.shields.io/badge/Vue-3.5-4FC08D?logo=vuedotjs&logoColor=white)

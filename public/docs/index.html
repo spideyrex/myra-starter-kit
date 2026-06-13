@@ -571,7 +571,7 @@
 <!-- SECTION 1: OVERVIEW -->
 <!-- ============================================================ -->
 <section id="overview">
-    <h2>Myra Starter Kit Documentation <span class="version-badge">v1.1</span></h2>
+    <h2>Myra Starter Kit Documentation <span class="version-badge">v2.0</span></h2>
     <p>A production-ready starter kit built on Laravel + Inertia.js + Vue 3 (TypeScript) with shadcn-vue components. Schema-driven forms, reusable UI components, CMS with articles and pages, configurable marketing homepage, and Artisan scaffolding for rapid admin panel development.</p>
 
     <h4>Key Features</h4>
@@ -5023,7 +5023,7 @@ VITE_FIREBASE_VAPID_KEY=BNx...</code></pre>
 </section>
 
 <section id="myra-cli">
-    <h2>Artisan Command Reference <span class="version-badge">v1.2</span></h2>
+    <h2>Artisan Command Reference <span class="version-badge">v2.0</span></h2>
     <p>Myra ships a Filament-style code generator. The <code>make:myra-*</code> commands scaffold admin pages from stubs or from any Feature Demo, and <strong>auto-wire everything</strong>: they create the Spatie permissions, register the route, and add the sidebar nav item &mdash; so a new module is live (and assignable to any role by a super-admin) without touching a single file by hand.</p>
 
     <div class="callout callout-info">
@@ -5044,6 +5044,9 @@ VITE_FIREBASE_VAPID_KEY=BNx...</code></pre>
             <tr><td><code>php artisan make:myra-setting {Name}</code></td><td>Scaffolds a Spatie settings group: a <code>{Name}Settings</code> class, a seeding migration, a controller, and an admin settings page (SettingsCard + FormFields) + <code>{name}-settings.view/edit</code> permissions + route + nav.</td></tr>
             <tr><td><code>php artisan make:myra-export {Model}</code></td><td>Streaming CSV export controller for a model (uses the <code>ExportableQuery</code> trait) + a <code>{prefix}.export-csv</code> route gated by <code>{prefix}.view</code>.</td></tr>
             <tr><td><code>php artisan make:myra-import {Model}</code></td><td>CSV import controller (preview + execute with column mapping) for a model + <code>import-preview</code>/<code>import-execute</code> routes gated by <code>{prefix}.create</code>.</td></tr>
+            <tr><td><code>php artisan make:myra-policy {Model}</code></td><td>A Laravel policy whose abilities map to the Shield <code>{prefix}.view/create/edit/delete</code> permissions (auto-discovered).</td></tr>
+            <tr><td><code>php artisan make:myra-user</code></td><td>Create an active, verified user interactively (<code>--admin</code> for super-admin; <code>--name</code>/<code>--email</code> to skip prompts).</td></tr>
+            <tr><td><code>php artisan myra:about</code></td><td>Read-only status: framework version, RBAC modules, settings groups, generators, and record counts.</td></tr>
             <tr><td><code>php artisan myra:page</code> / <code>myra:resource</code></td><td>Legacy generators from the <code>myra/framework</code> package. They scaffold from the same stubs but <em>print</em> routes and do <strong>not</strong> create permissions or nav. Prefer the <code>make:myra-*</code> commands.</td></tr>
         </tbody>
     </table>

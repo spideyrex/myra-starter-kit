@@ -162,6 +162,20 @@ const schema: SchemaItem[] = [
                     qa: 'QA Engineer',
                     devops: 'DevOps',
                 }),
+            Select.make('timezone')
+                .label('Timezone (searchable)')
+                .hint('Type to filter — use .optionsUrl() for async relationship pickers.')
+                .searchable()
+                .options({
+                    'America/New_York': 'America/New_York',
+                    'America/Los_Angeles': 'America/Los_Angeles',
+                    'Europe/London': 'Europe/London',
+                    'Europe/Paris': 'Europe/Paris',
+                    'Asia/Kuala_Lumpur': 'Asia/Kuala_Lumpur',
+                    'Asia/Singapore': 'Asia/Singapore',
+                    'Asia/Tokyo': 'Asia/Tokyo',
+                    'Australia/Sydney': 'Australia/Sydney',
+                }),
             Radio.make('gender')
                 .options({
                     male: 'Male',

@@ -24,6 +24,9 @@ export interface FieldSchema {
     colSpan?: number;
     colStyle?: string;
     options?: SelectOption[];
+    // Select: searchable combobox + async options endpoint
+    searchable?: boolean;
+    optionsUrl?: string;
     rows?: number;
     // Date fields
     minDate?: string;
@@ -627,6 +630,8 @@ export class TextInput extends BaseField {
 
 export class Select extends BaseField {
     private _options: SelectOption[] = [];
+    private _searchable = false;
+    private _optionsUrl?: string;
 
     constructor(name: string) {
         super(name);
@@ -646,8 +651,30 @@ export class Select extends BaseField {
         return this;
     }
 
+    /** Render a searchable combobox instead of a plain select. */
+    searchable(value = true): this {
+        this._searchable = value;
+        return this;
+    }
+
+    /**
+     * Load options from an endpoint as the user types (implies searchable).
+     * The endpoint receives `?search=` and must return `[{ value, label }]`
+     * (or `{ data: [...] }`). Ideal for relationship pickers.
+     */
+    optionsUrl(url: string): this {
+        this._optionsUrl = url;
+        this._searchable = true;
+        return this;
+    }
+
     toProps(): FieldSchema {
-        return { ...super.toProps(), options: this._options };
+        return {
+            ...super.toProps(),
+            options: this._options,
+            searchable: this._searchable,
+            optionsUrl: this._optionsUrl,
+        };
     }
 }
 

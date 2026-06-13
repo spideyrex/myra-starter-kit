@@ -5042,6 +5042,8 @@ VITE_FIREBASE_VAPID_KEY=BNx...</code></pre>
             <tr><td><code>php artisan make:myra-resource {Name}</code></td><td>Full CRUD (controller, service, 3 Vue pages) + 4 permissions + 6 routes + nav. <code>--model</code> also runs <code>make:model -m</code>.</td></tr>
             <tr><td><code>php artisan make:myra-component {Name} {keyword}</code></td><td>Clones a Feature Demo into a runnable page + controller (with sample data) + <code>{name}.view</code> permission + route + nav.</td></tr>
             <tr><td><code>php artisan make:myra-setting {Name}</code></td><td>Scaffolds a Spatie settings group: a <code>{Name}Settings</code> class, a seeding migration, a controller, and an admin settings page (SettingsCard + FormFields) + <code>{name}-settings.view/edit</code> permissions + route + nav.</td></tr>
+            <tr><td><code>php artisan make:myra-export {Model}</code></td><td>Streaming CSV export controller for a model (uses the <code>ExportableQuery</code> trait) + a <code>{prefix}.export-csv</code> route gated by <code>{prefix}.view</code>.</td></tr>
+            <tr><td><code>php artisan make:myra-import {Model}</code></td><td>CSV import controller (preview + execute with column mapping) for a model + <code>import-preview</code>/<code>import-execute</code> routes gated by <code>{prefix}.create</code>.</td></tr>
             <tr><td><code>php artisan myra:page</code> / <code>myra:resource</code></td><td>Legacy generators from the <code>myra/framework</code> package. They scaffold from the same stubs but <em>print</em> routes and do <strong>not</strong> create permissions or nav. Prefer the <code>make:myra-*</code> commands.</td></tr>
         </tbody>
     </table>

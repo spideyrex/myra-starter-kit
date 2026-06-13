@@ -20,6 +20,7 @@ import PasswordInput from '@/components/PasswordInput.vue';
 import TipTapEditor from '@/components/TipTapEditor.vue';
 import RepeaterField from '@/components/admin/RepeaterField.vue';
 import BuilderField from '@/components/admin/BuilderField.vue';
+import SearchableSelect from '@/components/admin/SearchableSelect.vue';
 import ImageEditor from '@/components/ImageEditor.vue';
 import type { SelectOption } from '@/types/admin';
 import type { FieldType, SchemaItem, BuilderBlock } from '@/composables/useFormSchema';
@@ -39,6 +40,8 @@ const props = withDefaults(defineProps<{
     type?: FieldType;
     placeholder?: string;
     options?: SelectOption[];
+    searchable?: boolean;
+    optionsUrl?: string;
     disabled?: boolean;
     rows?: number;
     // Date fields
@@ -281,6 +284,15 @@ const renderedMarkdown = computed(() => {
                     :required="required"
                     :disabled="disabled"
                     :rows="rows"
+                />
+                <SearchableSelect
+                    v-else-if="type === 'select' && searchable"
+                    :id="fieldId"
+                    v-model="model"
+                    :options="options || []"
+                    :options-url="optionsUrl"
+                    :placeholder="placeholder"
+                    :disabled="disabled"
                 />
                 <Select
                     v-else-if="type === 'select'"

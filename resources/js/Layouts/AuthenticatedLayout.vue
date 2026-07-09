@@ -246,7 +246,7 @@ function handleCommandInput(value: string) {
             <SidebarHeader>
                 <SidebarMenu>
                     <SidebarMenuItem>
-                        <SidebarMenuButton v-if="logoPosition === 'sidebar'" size="lg" as-child>
+                        <SidebarMenuButton v-if="logoPosition === 'sidebar'" size="lg" as-child class="hover:bg-transparent hover:text-sidebar-foreground active:bg-transparent">
                             <Link :href="route('dashboard')">
                                 <div v-if="page.props.siteSettings?.logo_url" class="flex aspect-square size-8 items-center justify-center rounded-lg overflow-hidden">
                                     <img :src="page.props.siteSettings.logo_url" alt="Logo" class="size-full object-contain" />

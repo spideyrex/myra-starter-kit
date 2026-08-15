@@ -7,7 +7,6 @@ import type { ColumnSchema, FilterSchema, ActionSchema, ActionGroupSchema, BulkA
 import { BaseColumn } from '@/composables/useTableSchema';
 import { BaseFilter } from '@/composables/useTableFilters';
 import { Action, BulkAction, ActionGroup, ActionDivider, ActionSectionLabel } from '@/composables/useTableActions';
-import { toast } from 'vue-sonner';
 import {
     Table,
     TableBody,
@@ -625,20 +624,28 @@ async function runInlineUpdate(col: ColumnSchema, row: any, value: any) {
     const previous = row[col.key];
     if (c.optimistic !== false) row[col.key] = value;
     inFlight.add(key);
+    let succeeded = false;
 
     router.patch(
-        route(c.updateRoute, row.id),
+        route(c.updateRoute as string, row.id),
         { field: c.updateField ?? col.key, value },
         {
             preserveState: true,
             preserveScroll: true,
             only: [],
-            onSuccess: () => { if (c.optimistic === false) row[col.key] = value; },
-            onError: () => {
-                if (c.optimistic !== false) row[col.key] = previous;
-                toast.error('Update failed.');
+            onSuccess: () => {
+                succeeded = true;
+                if (c.optimistic === false) row[col.key] = value;
             },
-            onFinish: () => inFlight.delete(key),
+            // onError only fires for validation responses, so roll back in
+            // onFinish instead — a 403 or 500 never reaches onError.
+            onFinish: () => {
+                inFlight.delete(key);
+                if (!succeeded) {
+                    if (c.optimistic !== false) row[col.key] = previous;
+                    toast.error('Update failed.');
+                }
+            },
         },
     );
 }

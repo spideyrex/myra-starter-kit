@@ -4,6 +4,7 @@ namespace App\Admin\Traits;
 
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Rule;
 
 /**
@@ -29,7 +30,9 @@ trait HandlesInlineUpdates
         ]);
 
         $model = $this->modelClass()::findOrFail($id);
-        $this->authorize('update', $model);
+        // Gate:: rather than $this->authorize() — the base Controller does not
+        // compose AuthorizesRequests, so the latter fatals on adoption.
+        Gate::authorize('update', $model);
 
         $cast = $fields[$data['field']];
 

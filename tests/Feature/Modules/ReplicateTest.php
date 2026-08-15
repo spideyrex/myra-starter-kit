@@ -108,6 +108,22 @@ class ReplicateTest extends TestCase
         $this->assertContains('Release checklist (copy 2)', $titles);
     }
 
+    public function test_replicate_cannot_repoint_ownership_via_overrides(): void
+    {
+        $victim = $this->makeUser();
+        $actor = $this->actingAsUserWith(['articles.view', 'articles.create']);
+        $article = Article::factory()->create(['created_by' => $actor->id]);
+
+        $this->post(route('admin.articles.replicate', $article->id), $this->payload([
+            'overrides' => ['created_by' => $victim->id],
+        ]));
+
+        $replica = Article::withoutGlobalScopes()->where('id', '!=', $article->id)->firstOrFail();
+
+        $this->assertSame($actor->id, $replica->created_by);
+        $this->assertNotSame($victim->id, $replica->created_by);
+    }
+
     public function test_replicate_is_ownership_scoped(): void
     {
         $owner = $this->makeUser();

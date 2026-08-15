@@ -29,7 +29,9 @@ trait Replicates
     /** Never copied. */
     protected function replicateGuarded(): array
     {
-        return ['id', 'created_at', 'updated_at', 'deleted_at'];
+        // created_by is guarded so the replica is re-stamped with the acting user
+        // rather than inheriting — or being repointed to — another owner.
+        return ['id', 'created_by', 'created_at', 'updated_at', 'deleted_at'];
     }
 
     /** Columns carrying a unique index — regenerated on the clone. */
@@ -99,9 +101,12 @@ trait Replicates
             ));
         }
 
-        // Overrides are whitelisted against the model's fillable set, so an
-        // attacker cannot repoint foreign keys or ownership columns.
-        $replica->forceFill(array_intersect_key($overrides, array_flip($record->getFillable())));
+        // Overrides are whitelisted against fillable MINUS the guarded set, so an
+        // attacker cannot repoint ownership columns.
+        $replica->forceFill(array_intersect_key(
+            $overrides,
+            array_flip(array_diff($record->getFillable(), $guarded)),
+        ));
 
         $suffixField = $suffix['field'] ?? null;
 

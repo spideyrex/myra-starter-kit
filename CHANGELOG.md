@@ -2,7 +2,23 @@
 
 All notable changes to the Myra Starter Kit are documented here.
 
-## Unreleased
+## v2.1.0 — 2026-08
+
+Filament v5 parity cluster: the remaining form fields, table columns, infolist entries and record
+actions, plus a JS test suite (vitest) alongside the PHP one.
+
+### Security
+- `Replicates` — `overrides` was whitelisted against the model's full `$fillable`, which includes
+  `created_by`. Any user with `{module}.create` could replicate their own record and hand ownership
+  to another user, bypassing the `OwnedByUser` isolation. `created_by` is now guarded and the
+  override whitelist is `fillable` minus the guarded set; the replica is re-stamped with the acting
+  user. Covered by `ReplicateTest::test_replicate_cannot_repoint_ownership_via_overrides`.
+- `HandlesInlineUpdates` used `$this->authorize()`, which fatals because the base `Controller` does
+  not compose `AuthorizesRequests`; now `Gate::authorize()`.
+
+### Fixed
+- Inline-edit optimistic writes were never rolled back on a 403/500 — Inertia's `onError` only fires
+  for validation responses, so the rollback moved to `onFinish` behind a success flag.
 
 ### Added — Table columns
 - **`ColorColumn`** — validated colour swatch + copyable value. Values are matched against a strict colour regex before reaching an inline `style`; anything else renders as plain text. Alpha colours sit on a themed checkerboard. `.swatchOnly()`, `.circular()`, `.swatchSize(px)`, `.copyable()`, `.copyMessage()`.

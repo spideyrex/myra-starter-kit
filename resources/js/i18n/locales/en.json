@@ -58,7 +58,8 @@
         "copyFailed": "Could not copy to clipboard",
         "showAll": "Show all {count} lines",
         "showLess": "Show less",
-        "linesTruncated": "Showing {shown} of {total} lines."
+        "linesTruncated": "Showing {shown} of {total} lines.",
+        "copiedToClipboard": "Copied to clipboard"
     },
     "status": {
         "active": "Active",
@@ -87,7 +88,8 @@
         "email": "Please enter a valid email address",
         "minLength": "{field} must be at least {min} characters",
         "maxLength": "{field} must not exceed {max} characters",
-        "confirmed": "{field} confirmation does not match"
+        "confirmed": "{field} confirmation does not match",
+        "selectBetween": "Select between {min} and {max} options."
     },
     "fields": {
         "copied": "Copied to clipboard",
@@ -124,6 +126,20 @@
             "uploadFailed": "Image upload failed",
             "boldSample": "bold text",
             "italicSample": "italic text"
+        }
+    },
+    "table": {
+        "active": "Active:",
+        "filters": "Filters",
+        "scope": {
+            "page": "Page"
+        },
+        "updateFailed": "Update failed.",
+        "upload": {
+            "badType": "That file type is not supported.",
+            "notAnImage": "That file is not a valid image.",
+            "tooLarge": "That image is larger than {max} KB.",
+            "uploading": "Uploading image..."
         }
     }
 }

@@ -66,4 +66,20 @@ return [
         'map'                => ['demo' => 'Map',             'method' => null,                 'request' => false, 'label' => 'Map'],
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Inline uploads
+    |--------------------------------------------------------------------------
+    |
+    | Limits for the markdown editor's paste/drop image endpoint. Files are
+    | stored on the private `local` disk and served back through a
+    | permission-gated route.
+    |
+    */
+
+    'uploads' => [
+        'max_kb' => 5120,
+        'accept' => ['image/jpeg', 'image/png', 'image/gif', 'image/webp'],
+    ],
+
 ];

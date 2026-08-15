@@ -58,7 +58,8 @@
         "copyFailed": "Gagal menyalin ke papan keratan",
         "showAll": "Tunjuk semua {count} baris",
         "showLess": "Tunjuk kurang",
-        "linesTruncated": "Memaparkan {shown} daripada {total} baris."
+        "linesTruncated": "Memaparkan {shown} daripada {total} baris.",
+        "copiedToClipboard": "Disalin ke papan keratan"
     },
     "status": {
         "active": "Aktif",
@@ -87,7 +88,8 @@
         "email": "Sila masukkan alamat e-mel yang sah",
         "minLength": "{field} mestilah sekurang-kurangnya {min} aksara",
         "maxLength": "{field} tidak boleh melebihi {max} aksara",
-        "confirmed": "Pengesahan {field} tidak sepadan"
+        "confirmed": "Pengesahan {field} tidak sepadan",
+        "selectBetween": "Pilih antara {min} dan {max} pilihan."
     },
     "fields": {
         "copied": "Disalin ke papan keratan",
@@ -124,6 +126,20 @@
             "uploadFailed": "Muat naik imej gagal",
             "boldSample": "teks tebal",
             "italicSample": "teks condong"
+        }
+    },
+    "table": {
+        "active": "Aktif:",
+        "filters": "Penapis",
+        "scope": {
+            "page": "Halaman"
+        },
+        "updateFailed": "Kemas kini gagal.",
+        "upload": {
+            "badType": "Jenis fail itu tidak disokong.",
+            "notAnImage": "Fail itu bukan imej yang sah.",
+            "tooLarge": "Imej itu melebihi {max} KB.",
+            "uploading": "Memuat naik imej..."
         }
     }
 }

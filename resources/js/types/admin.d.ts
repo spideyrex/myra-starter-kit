@@ -163,7 +163,8 @@ export interface TextInputColumnSchema extends ColumnSchemaBase, InlineEditableS
 export interface ColorColumnSchema extends ColumnSchemaBase {
     type: 'color';
     copyable: boolean;
-    copyMessage: string;
+    /** Undefined falls back to the `common.copiedToClipboard` translation. */
+    copyMessage?: string;
     swatchShowValue: boolean;
     swatchSize: number;
     swatchShape: 'square' | 'circle';
@@ -289,6 +290,8 @@ export interface ActionGroupSchema {
     maxHeight: string;
     collapseAfter?: number;
     permission?: string;
+    visibleFn?: (row: any) => boolean;
+    hiddenFn?: (row: any) => boolean;
     items: Array<ActionSchema | ActionGroupSchema>;
 }
 

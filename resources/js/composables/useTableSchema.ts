@@ -560,7 +560,8 @@ export class TextInputColumn extends InlineEditableColumn<string> {
 export class ColorColumn extends BaseColumn {
     protected _type: ColumnType = 'color';
     private _copyable = true;
-    private _copyMessage = 'Copied to clipboard';
+    /** Undefined resolves to `common.copiedToClipboard` at render time. */
+    private _copyMessage?: string;
     private _showValue = true;
     private _swatchSize = 16;
     private _swatchShape: 'square' | 'circle' = 'square';

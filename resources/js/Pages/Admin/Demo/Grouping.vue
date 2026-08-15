@@ -5,8 +5,9 @@ import PageHeader from '@/components/PageHeader.vue';
 import DataTable from '@/components/DataTable.vue';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { TextColumn, BadgeColumn, DateColumn } from '@/composables/useTableSchema';
+import { TextColumn, BadgeColumn, DateColumn, ToggleColumn, CheckboxColumn } from '@/composables/useTableSchema';
 import { ArrowLeft } from 'lucide-vue-next';
+import { toast } from 'vue-sonner';
 import type { PaginatedData } from '@/types';
 
 const props = defineProps<{
@@ -24,8 +25,22 @@ const columns = [
         pending: 'outline',
         cancelled: 'destructive',
     }),
+    // Inline-editable columns render correctly inside groups too.
+    CheckboxColumn.make('is_paid')
+        .label('Paid')
+        .rowLabel(row => `Mark ${row.order_number} paid`)
+        .onUpdate((row, value) => { row.is_paid = value; toast.success(`${row.order_number} paid: ${value}`); }),
+    ToggleColumn.make('is_rush')
+        .label('Rush')
+        .rowLabel(row => `Rush ${row.order_number}`)
+        .onUpdate((row, value) => { row.is_rush = value; toast.success(`${row.order_number} rush: ${value}`); }),
     TextColumn.make('quantity').label('Qty').alignEnd().summarize('sum'),
-    TextColumn.make('price').label('Price').money().alignEnd().sortable().summarize('sum'),
+    TextColumn.make('price').label('Price').money().alignEnd().sortable()
+        .summary({ type: 'sum', label: 'Total', currency: 'USD' }),
+    TextColumn.make('rating').label('Rating').alignEnd()
+        .summary({ type: 'median', label: 'Median', decimals: 1 }),
+    TextColumn.make('delivery_days').label('Delivery').alignEnd().suffix(' d')
+        .summary({ type: 'range', label: 'Range', separator: ' to ', decimals: 0 }),
     DateColumn.make('created_at').label('Date').format('date').sortable(),
 ];
 </script>
@@ -52,7 +67,11 @@ const columns = [
             <Card>
                 <CardHeader>
                     <CardTitle>Orders Grouped by Status</CardTitle>
-                    <CardDescription>Click group headers to expand/collapse. Summary rows show aggregated totals per group.</CardDescription>
+                    <CardDescription>
+                        Click group headers to expand/collapse. Summary rows aggregate each group: <code>sum</code>,
+                        <code>median</code> and a formatted <code>range</code>. The Paid and Rush columns are
+                        inline-editable and render correctly inside groups.
+                    </CardDescription>
                 </CardHeader>
                 <CardContent>
                     <DataTable

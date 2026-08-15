@@ -5,10 +5,17 @@ import DataTable from '@/components/DataTable.vue';
 import PageHeader from '@/components/PageHeader.vue';
 import { Button } from '@/components/ui/button';
 import { TextColumn, BadgeColumn, DateColumn } from '@/composables/useTableSchema';
-import { Action, DeleteAction } from '@/composables/useTableActions';
+import {
+    Action,
+    ActionDivider,
+    ActionGroup,
+    ActionSectionLabel,
+    DeleteAction,
+    ReplicateAction,
+} from '@/composables/useTableActions';
 import { TextInput, Select, Textarea } from '@/composables/useFormSchema';
 import type { PaginatedData } from '@/types';
-import { ArrowLeft, Pencil } from 'lucide-vue-next';
+import { ArrowLeft, Pencil, Archive, Sparkles } from 'lucide-vue-next';
 
 const props = defineProps<{
     tasks: PaginatedData<any>;
@@ -87,6 +94,56 @@ const actions = [
     // Delete
     DeleteAction.make('admin.demo.delete-task'),
 ];
+
+// Grouped variant: section headings, a divider, a nested submenu, a badge on the
+// trigger, and collapseAfter — one ActionGroup, no per-page markup.
+const groupedActions = [
+    ActionGroup.make([
+        ActionSectionLabel.make('Edit'),
+        Action.make('Edit')
+            .icon(Pencil)
+            .action(() => {}),
+        Action.make('Archive')
+            .icon(Archive)
+            .color('warning')
+            .route('admin.demo.archive-task', 'post')
+            .requiresConfirmation('Archive task', 'The task is hidden from the active board.')
+            .successMessage('Task archived.'),
+
+        ActionSectionLabel.make('Duplicate'),
+        // Payload-driven: the server owns the copy.
+        ReplicateAction.make('admin.demo.replicate-task')
+            .except(['assignee'])
+            .withRelations(['comments'])
+            .suffix('title')
+            .successMessage('Task duplicated.'),
+        // Edit-before-save: rides the existing ActionModal path.
+        ReplicateAction.make('admin.demo.replicate-task')
+            .label('Duplicate and edit…')
+            .icon(Sparkles)
+            .schema([
+                TextInput.make('title').label('New title').required(),
+                Select.make('priority').options({ low: 'Low', medium: 'Medium', high: 'High' }).required(),
+            ])
+            .overrides((row: any) => ({ title: `${row.title} (copy)`, status: 'open' })),
+
+        ActionDivider.make(),
+        ActionSectionLabel.make('More'),
+        ActionGroup.make([
+            Action.make('Copy link').action(() => {}),
+            Action.make('Open in new tab')
+                .url((row: any) => `/demo/tasks/${row.id}`)
+                .external(),
+        ]).label('Share').icon(Sparkles),
+
+        ActionDivider.make(),
+        DeleteAction.make('admin.demo.delete-task'),
+    ])
+        .tooltip('Task actions')
+        .badge((row: any) => (row.priority === 'high' ? '!' : null))
+        .width('lg')
+        .collapseAfter(3),
+];
 </script>
 
 <template>
@@ -113,6 +170,24 @@ const actions = [
                 route-name="admin.demo.action-modals"
                 search-placeholder="Search tasks..."
             />
+        </div>
+
+        <div class="mt-10">
+            <h2 class="text-lg font-semibold">Action grouping</h2>
+            <p class="mt-1 text-sm text-muted-foreground">
+                Section headings, dividers, a nested submenu, a trigger badge and
+                <code>collapseAfter(3)</code> — all declared in one <code>ActionGroup</code>.
+            </p>
+            <div class="mt-4">
+                <DataTable
+                    :columns="columns"
+                    :data="tasks"
+                    :filters="filters"
+                    :actions="groupedActions"
+                    :searchable="false"
+                    route-name="admin.demo.action-modals"
+                />
+            </div>
         </div>
     </AuthenticatedLayout>
 </template>

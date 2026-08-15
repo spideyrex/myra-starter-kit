@@ -61,6 +61,11 @@ class DemoController extends Controller
         return Inertia::render('Admin/Demo/FieldTypes');
     }
 
+    public function codeEditor()
+    {
+        return Inertia::render('Admin/Demo/CodeEditor');
+    }
+
     public function map()
     {
         return Inertia::render('Admin/Demo/Map');
@@ -386,8 +391,14 @@ class DemoController extends Controller
 
     public function inlineEditing(Request $request)
     {
-        $products = $this->generateProducts()->map(function ($item) {
+        // Demo has no database — inline edits live in the session for this demo only.
+        $edits = $request->session()->get('demo.inline', []);
+
+        $products = $this->generateProducts()->map(function ($item) use ($edits) {
             $item['is_active'] = $item['status'] === 'active';
+            foreach ($edits[$item['id']] ?? [] as $field => $value) {
+                $item[$field] = $value;
+            }
             return $item;
         });
 
@@ -401,7 +412,32 @@ class DemoController extends Controller
 
     public function demoInlineUpdate(Request $request, int $id)
     {
-        return back()->with('success', "Product #{$id}: {$request->get('field')} updated to \"{$request->get('value')}\".");
+        // Client-supplied field names are always whitelisted server-side.
+        $casts = [
+            'category' => 'string',
+            'price' => 'string',
+            'stock' => 'integer',
+            'is_active' => 'boolean',
+            'is_featured' => 'boolean',
+            'brand_color' => 'string',
+        ];
+
+        $data = $request->validate([
+            'field' => ['required', 'string', \Illuminate\Validation\Rule::in(array_keys($casts))],
+            'value' => ['present'],
+        ]);
+
+        $value = match ($casts[$data['field']]) {
+            'boolean' => $request->boolean('value'),
+            'integer' => (int) $data['value'],
+            default => (string) $data['value'],
+        };
+
+        $edits = $request->session()->get('demo.inline', []);
+        $edits[$id][$data['field']] = $value;
+        $request->session()->put('demo.inline', $edits);
+
+        return back()->with('success', "Product #{$id}: {$data['field']} updated.");
     }
 
     // --- Feature 3: Infolist ---
@@ -438,6 +474,36 @@ class DemoController extends Controller
                 ['action' => 'Changed password', 'date' => now()->subDays(3)->toDateTimeString(), 'ip' => '192.168.1.42'],
                 ['action' => 'Logged in', 'date' => now()->subDays(5)->toDateTimeString(), 'ip' => '10.0.0.1'],
             ],
+            // ColorEntry demo values: hex, alpha (checkerboard), and an invalid value.
+            'primary_color' => '#6366f1',
+            'accent_color' => '#f59e0b',
+            'overlay_color' => 'rgba(0, 0, 0, 0.4)',
+            'legacy_color' => 'red; background-image: url(x)',
+            // CodeEntry demo values.
+            'webhook_response' => json_encode([
+                'id' => 'evt_8Fq2Lb',
+                'status' => 'delivered',
+                'attempts' => 2,
+                'error' => null,
+                'endpoint' => 'https://hooks.example.com/myra',
+                'headers' => ['content-type' => 'application/json', 'x-signature' => 'sha256=…'],
+            ], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES),
+            'deploy_script' => implode("\n", [
+                '#!/usr/bin/env bash',
+                'set -euo pipefail',
+                '',
+                'php artisan down --render="errors::503"',
+                'composer install --no-dev --optimize-autoloader',
+                'php artisan migrate --force',
+                'npm ci && npm run build',
+                'php artisan up',
+            ]),
+            // Object value: CodeBlock stringifies it and forces JSON.
+            'raw_payload' => ['event' => 'user.updated', 'data' => ['id' => 1, 'name' => 'Jane Cooper']],
+            // Long document to exercise maxLines + Expand.
+            'access_log' => collect(range(1, 900))
+                ->map(fn ($i) => sprintf('10.0.0.%d - - [%s] "GET /api/users?page=%d HTTP/1.1" 200 %d', $i % 255, now()->toDateTimeString(), $i, 400 + $i))
+                ->implode("\n"),
         ];
 
         return Inertia::render('Admin/Demo/Infolist', ['user' => $user]);
@@ -513,6 +579,10 @@ class DemoController extends Controller
             'status' => $statuses[($i - 1) % 4],
             'quantity' => (($i * 7) % 20) + 1,
             'price' => round((($i * 137 + 999) % 49000 + 999) / 100, 2),
+            'rating' => round((($i * 13) % 40 + 10) / 10, 1),
+            'delivery_days' => (($i * 3) % 9) + 1,
+            'is_paid' => $i % 3 !== 0,
+            'is_rush' => $i % 5 === 0,
             'created_at' => now()->subDays($i * 2)->toDateTimeString(),
         ]);
 
@@ -623,6 +693,16 @@ class DemoController extends Controller
         return back()->with('success', "Task #{$id} deleted.");
     }
 
+    public function demoReplicateTask(int $id)
+    {
+        return back()->with('success', "Task #{$id} duplicated.");
+    }
+
+    public function demoArchiveTask(int $id)
+    {
+        return back()->with('success', "Task #{$id} archived.");
+    }
+
     public function exportCsv()
     {
         $this->seedFaker(300);
@@ -712,6 +792,10 @@ class DemoController extends Controller
         $categories = ['Electronics', 'Clothing', 'Books', 'Home & Garden'];
         $statuses = ['active', 'draft', 'archived'];
 
+        // Deliberately mixed: hex, rgba, 8-digit hex (alpha) and one invalid value
+        // so the ColorColumn demo exercises the checkerboard and the safe fallback.
+        $palette = ['#2563eb', '#16a34a', 'rgba(220, 38, 38, 0.4)', '#f59e0bcc', '#7c3aed', 'not-a-color'];
+
         // Deterministic price tiers: mix of cheap, mid, and expensive items
         $priceTiers = [9.99, 14.50, 24.99, 39.95, 49.99, 79.00, 99.99, 149.95, 199.00, 249.50,
                        299.99, 349.00, 399.95, 449.99, 499.00, 599.99, 699.00, 799.95, 999.99, 1299.00];
@@ -725,6 +809,8 @@ class DemoController extends Controller
             'price' => $priceTiers[($i - 1) % count($priceTiers)],
             'stock' => $i % 7 === 0 ? 0 : (($i * 23) % 500) + 1, // every 7th item is out of stock
             'status' => $statuses[($i - 1) % 3],
+            'brand_color' => $palette[($i - 1) % count($palette)],
+            'is_featured' => $i % 5 === 0,
             'created_at' => now()->subDays($i * 7)->toDateTimeString(),
         ]);
     }

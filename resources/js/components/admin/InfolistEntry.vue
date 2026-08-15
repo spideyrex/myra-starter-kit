@@ -1,9 +1,14 @@
 <script setup lang="ts">
+import { defineAsyncComponent } from 'vue';
 import type { EntrySchema } from '@/composables/useInfolistSchema';
 import { Badge } from '@/components/ui/badge';
 import DateCell from './DateCell.vue';
+import ColorSwatch from './ColorSwatch.vue';
 import { Check, X, Copy } from 'lucide-vue-next';
 import { toast } from 'vue-sonner';
+
+// Read-only highlighter chunk is only fetched when a `code` entry mounts.
+const LazyCodeBlock = defineAsyncComponent(() => import('@/components/admin/CodeBlock.vue'));
 
 const props = defineProps<{
     entry: EntrySchema;
@@ -178,6 +183,34 @@ function isEntryVisible(): boolean {
                     </div>
                 </div>
                 <span v-else class="text-muted-foreground">—</span>
+            </template>
+
+            <!-- Color entry -->
+            <template v-else-if="entry.type === 'color'">
+                <ColorSwatch
+                    :value="getValue()"
+                    :size="entry.swatchSize ?? 24"
+                    :shape="entry.swatchShape ?? 'square'"
+                    :show-value="entry.swatchShowValue ?? true"
+                    :copyable="entry.copyable ?? true"
+                    :copy-message="entry.copyMessage ?? 'Copied to clipboard'"
+                />
+            </template>
+
+            <!-- Code entry -->
+            <template v-else-if="entry.type === 'code'">
+                <LazyCodeBlock
+                    :value="getValue()"
+                    :label="entry.label"
+                    :code-language="entry.codeLanguage ?? 'plaintext'"
+                    :code-line-numbers="entry.codeLineNumbers ?? true"
+                    :code-wrap="entry.codeWrap ?? true"
+                    :code-max-lines="entry.codeMaxLines ?? 400"
+                    :code-start-line="entry.codeStartLine ?? 1"
+                    :code-highlight-lines="entry.codeHighlightLines ?? []"
+                    :code-filename="entry.codeFilename"
+                    :copyable="entry.copyable ?? true"
+                />
             </template>
         </dd>
     </div>

@@ -472,6 +472,9 @@
         <a href="#sticky-header">Sticky Header</a>
         <a href="#column-manager">Column Manager</a>
         <a href="#table-actions">Table Actions</a>
+        <a href="#soft-delete-actions">Restore &amp; Force Delete</a>
+        <a href="#replicate-action">Replicate Action</a>
+        <a href="#action-grouping">Action Grouping</a>
 
         <div class="nav-group">Advanced Features</div>
         <a href="#websocket-notifications">WebSocket Notifications</a>
@@ -1255,20 +1258,118 @@ TagsInput.make('skills').hint('Up to 10 skills')</code></pre>
         </tbody>
     </table>
 
-    <h4>ToggleGroupField</h4>
-    <p>Group of toggle buttons for single or multiple selection.</p>
+    <h4>ToggleGroupField / ToggleButtons</h4>
+    <p>
+        Group of toggle buttons for single or multiple selection. <code>ToggleButtons</code> is a
+        subclass of <code>ToggleGroupField</code> with a Filament-familiar name — both render the
+        <code>'toggle-group'</code> field type, so there is exactly one literal to learn.
+    </p>
     <pre><code class="language-typescript">ToggleGroupField.make('alignment').options({
     left: 'Left', center: 'Center', right: 'Right',
 })
-ToggleGroupField.make('features').options({...}).multiple().variant('outline')</code></pre>
+
+// One descriptor object per option carries icon, colour, description,
+// tooltip, disabled and hidden — no parallel keyed arrays to keep in sync.
+ToggleButtons.make('status')
+    .options([
+        { value: 'draft',     label: 'Draft',     icon: Pencil, color: 'muted',
+          description: 'Only you can see it' },
+        { value: 'reviewing', label: 'In review', icon: Eye,    color: 'warning' },
+        { value: 'published', label: 'Published', icon: Check,  color: 'success',
+          disabled: !can('articles.publish'),
+          tooltip: 'Requires the articles.publish permission' },
+    ])
+    .inline()
+    .hint('Drafts are excluded from the sitemap.')
+
+ToggleButtons.make('channels')
+    .options({ email: 'Email', sms: 'SMS', push: 'Push' })
+    .multiple().min(1).max(2).columns(3)
+
+ToggleButtons.make('is_featured').boolean('Featured', 'Standard')</code></pre>
     <table>
         <thead><tr><th>Method</th><th>Description</th></tr></thead>
         <tbody>
-            <tr><td><code>.options(opts)</code></td><td>Toggle options (same format as Select)</td></tr>
-            <tr><td><code>.multiple()</code></td><td>Allow multiple selections (model becomes array)</td></tr>
+            <tr><td><code>.options(opts)</code></td><td><code>ToggleOption[]</code>, <code>SelectOption[]</code> or a <code>Record&lt;string,string&gt;</code>. Values are coerced to strings.</td></tr>
+            <tr><td><code>.multiple(v = true)</code></td><td>Allow multiple selections. The model is <strong>always</strong> an array — a scalar is normalised on read, so no Eloquent <code>array</code> cast is required.</td></tr>
             <tr><td><code>.variant(v)</code></td><td><code>'default'</code> or <code>'outline'</code> (default: outline)</td></tr>
+            <tr><td><code>.size(s)</code></td><td><code>'sm' | 'default' | 'lg'</code></td></tr>
+            <tr><td><code>.inline(v = true)</code></td><td>Lay the buttons out on one wrapping row instead of full width</td></tr>
+            <tr><td><code>.columns(n)</code></td><td>Render as an <code>n</code>-column grid</td></tr>
+            <tr><td><code>.hideLabels(v = true)</code></td><td>Icon-only buttons. The option label becomes the <code>aria-label</code>.</td></tr>
+            <tr><td><code>.min(n)</code></td><td>Block a change that would drop below <code>n</code> selections</td></tr>
+            <tr><td><code>.max(n)</code></td><td>Disable unselected options once <code>n</code> are selected</td></tr>
+            <tr><td><code>.boolean(trueLabel?, falseLabel?)</code></td><td>Preset that <em>writes</em> two options, <code>'1'</code> / <code>'0'</code>, coloured success / danger</td></tr>
         </tbody>
     </table>
+    <h5><code>ToggleOption</code></h5>
+    <table>
+        <thead><tr><th>Key</th><th>Type</th><th>Description</th></tr></thead>
+        <tbody>
+            <tr><td><code>value</code></td><td><code>string</code></td><td>Stored value (always a string)</td></tr>
+            <tr><td><code>label</code></td><td><code>string</code></td><td>Visible label and accessible name</td></tr>
+            <tr><td><code>icon</code></td><td><code>Component</code></td><td>lucide-vue-next icon</td></tr>
+            <tr><td><code>color</code></td><td><code>SemanticColor</code></td><td><code>muted | primary | info | success | warning | danger</code> — applied to the selected state</td></tr>
+            <tr><td><code>description</code></td><td><code>string</code></td><td>Secondary line under the label</td></tr>
+            <tr><td><code>tooltip</code></td><td><code>string</code></td><td><code>title</code> plus a visually-hidden description</td></tr>
+            <tr><td><code>disabled</code></td><td><code>boolean</code></td><td>Renders but cannot be selected</td></tr>
+            <tr><td><code>hidden</code></td><td><code>boolean</code></td><td>Dropped from the schema entirely</td></tr>
+        </tbody>
+    </table>
+
+    <h4>CodeEditor</h4>
+    <p>
+        Syntax-highlighted code field backed by CodeMirror 6. The editor is behind a
+        <code>defineAsyncComponent</code> and each grammar is a separate dynamic import, so a form
+        without a code field downloads none of it and a form with one downloads only its language.
+        Colours come from the <code>--code-*</code> CSS custom properties, so light/dark and every
+        colour preset repaint with no remount and no re-highlight.
+    </p>
+    <pre><code class="language-typescript">CodeEditor.make('webhook_payload')
+    .label('Sample payload')
+    .language('json')
+    .filename('payload.json')
+    .minHeight('20rem')
+    .maxHeight('40rem')
+    .tabSize(2)
+    .copyable()
+    .hint('Sent verbatim to your endpoint.')
+    .hintAction({ label: 'Format', icon: Sparkles, onClick: (f) => {
+        f.webhook_payload = JSON.stringify(JSON.parse(f.webhook_payload), null, 2);
+    } })</code></pre>
+    <table>
+        <thead><tr><th>Method</th><th>Default</th><th>Description</th></tr></thead>
+        <tbody>
+            <tr><td><code>.language(lang)</code></td><td><code>'plaintext'</code></td><td>One of <code>CodeLanguage</code> (below)</td></tr>
+            <tr><td><code>.lineNumbers(v = true)</code></td><td><code>true</code></td><td>Show the gutter</td></tr>
+            <tr><td><code>.wrap(v = true)</code></td><td><code>true</code></td><td>Soft-wrap long lines; <code>false</code> gives horizontal scroll</td></tr>
+            <tr><td><code>.readOnly(v = true)</code></td><td><code>false</code></td><td>Highlighting and selection stay, edits are blocked</td></tr>
+            <tr><td><code>.indentWithTab(v = true)</code></td><td><code>false</code></td><td>Opt-in Tab indentation. When on, <kbd>Escape</kbd> releases focus so Tab is never trapped.</td></tr>
+            <tr><td><code>.autocomplete(v = true)</code></td><td><code>false</code></td><td>Opt-in; lazily pulls <code>@codemirror/autocomplete</code> plus bracket closing</td></tr>
+            <tr><td><code>.copyable(v = true)</code></td><td><code>false</code></td><td>Copy button in the header (works over plain HTTP too)</td></tr>
+            <tr><td><code>.tabSize(n)</code></td><td><code>2</code></td><td>Indent width</td></tr>
+            <tr><td><code>.minHeight(css)</code></td><td><code>'12rem'</code></td><td>Any CSS length</td></tr>
+            <tr><td><code>.maxHeight(css)</code></td><td>—</td><td>Above this the viewport scrolls</td></tr>
+            <tr><td><code>.filename(name)</code></td><td>—</td><td>Shown in the header bar</td></tr>
+        </tbody>
+    </table>
+    <p>
+        <strong><code>CodeLanguage</code></strong>:
+        <code>plaintext</code>, <code>javascript</code>, <code>typescript</code>, <code>json</code>,
+        <code>html</code>, <code>css</code>, <code>php</code>, <code>sql</code>,
+        <code>markdown</code>, <code>yaml</code>, <code>xml</code>, <code>python</code>,
+        <code>bash</code>, <code>vue</code>. The same union is re-exported by the infolist engine,
+        so a <code>CodeEntry</code> and a <code>CodeEditor</code> speak one vocabulary.
+    </p>
+    <div class="callout callout-info">
+        <div class="callout-title">&#8505; Accessibility</div>
+        CodeMirror's contenteditable is not a labelable element, so the field passes
+        <code>role="textbox"</code>, <code>aria-multiline</code>,
+        <code>aria-labelledby="{fieldId}-label"</code>, <code>aria-describedby</code> and
+        <code>aria-invalid</code> directly onto the editable node. With
+        <code>indentWithTab()</code> on, the header shows an <kbd>Esc</kbd> chip and the keymap
+        binds Escape to blur.
+    </div>
 
     <h4>CalendarPicker</h4>
     <p>Date picker rendered as a shadcn Calendar inside a Popover. Model value is a date string (<code>YYYY-MM-DD</code>).</p>
@@ -1334,14 +1435,43 @@ TimePicker.make('start_time').minTime('08:00').maxTime('18:00')</code></pre>
     </table>
 
     <h4>MarkdownEditor</h4>
-    <p>Split-pane markdown editor with live preview. Uses the <code>marked</code> library for rendering. Model value is a markdown string.</p>
-    <pre><code class="language-typescript">MarkdownEditor.make('readme').rows(12)</code></pre>
+    <p>
+        Markdown editor with a toolbar, a live split preview, an optional counter and an optional
+        fullscreen dialog. Rendering uses <code>marked</code>, and the output always passes through
+        <code>sanitizeHtml</code> before it reaches <code>v-html</code>. Model value is a markdown
+        string. The whole editor — <code>marked</code> and <code>dompurify</code> included — is a
+        lazy chunk, so forms without a markdown field never download it.
+    </p>
+    <pre><code class="language-typescript">MarkdownEditor.make('readme')
+    .rows(14)
+    .withoutToolbar(['image', 'table'])   // removing ONE button is one call
+    .fullscreen()
+    .maxLength(5000)
+    .hint('GitHub-flavoured markdown. Output is sanitised before display.')</code></pre>
     <table>
-        <thead><tr><th>Method</th><th>Description</th></tr></thead>
+        <thead><tr><th>Method</th><th>Default</th><th>Description</th></tr></thead>
         <tbody>
-            <tr><td><code>.rows(n)</code></td><td>Height of the editor textarea</td></tr>
+            <tr><td><code>.rows(n)</code></td><td><code>10</code></td><td>Height of the editor textarea</td></tr>
+            <tr><td><code>.toolbar(buttons)</code></td><td>full set</td><td><strong>Replaces</strong> the default button set</td></tr>
+            <tr><td><code>.withoutToolbar(buttons)</code></td><td><code>[]</code></td><td><strong>Subtracts</strong> from whatever set is active. Resolved at <code>toProps()</code>, so the call order does not matter.</td></tr>
+            <tr><td><code>.mode(m)</code></td><td><code>'split'</code></td><td><code>'split' | 'edit' | 'preview'</code>. Below the <code>md</code> breakpoint split degrades to the switcher.</td></tr>
+            <tr><td><code>.modeSwitcher(v = true)</code></td><td><code>true</code></td><td>Show the edit / split / preview toggle</td></tr>
+            <tr><td><code>.fullscreen(v = true)</code></td><td><code>false</code></td><td>Fullscreen dialog; Escape closes and focus returns to the trigger</td></tr>
+            <tr><td><code>.counter(v = true)</code></td><td><code>false</code></td><td>Word and character count, <code>aria-live="polite"</code></td></tr>
+            <tr><td><code>.maxLength(n)</code></td><td>—</td><td>Implies <code>.counter()</code>; the counter turns destructive past the limit</td></tr>
+            <tr><td><code>.minHeight(css)</code> / <code>.maxHeight(css)</code></td><td>—</td><td>Pane sizing, any CSS length</td></tr>
+            <tr><td><code>.uploadRoute(name)</code></td><td>—</td><td>Route that accepts a pasted/dropped image and returns <code>{ url }</code>. Return a signed temporary URL from a private disk — never a public-disk path.</td></tr>
         </tbody>
     </table>
+    <p>
+        <strong>Toolbar buttons</strong> (<code>MarkdownButton</code>): <code>bold</code>,
+        <code>italic</code>, <code>strike</code>, <code>link</code>, <code>heading</code>,
+        <code>quote</code>, <code>code</code>, <code>codeBlock</code>, <code>bulletList</code>,
+        <code>orderedList</code>, <code>table</code>, <code>image</code>, <code>undo</code>,
+        <code>redo</code>, <code>mode</code>, plus the opt-in <code>hr</code> and
+        <code>fullscreen</code>. <code>DEFAULT_MARKDOWN_TOOLBAR</code> is exported from
+        <code>useFormSchema</code>.
+    </p>
     <div class="callout callout-info">
         <div class="callout-title">&#8505; Note</div>
         MarkdownEditor is distinct from <code>RichEditor</code> (TipTap HTML). Use MarkdownEditor when you want raw markdown input/output, and RichEditor for WYSIWYG HTML editing.
@@ -1356,15 +1486,39 @@ TimePicker.make('start_time').minTime('08:00').maxTime('18:00')</code></pre>
         <tbody>
             <tr><td><code>.label(text)</code></td><td>Set explicit label</td><td><code>.label('Full Name')</code></td></tr>
             <tr><td><code>.required()</code></td><td>Mark as required (shows asterisk)</td><td><code>.required()</code></td></tr>
-            <tr><td><code>.hint(text)</code></td><td>Helper text below field</td><td><code>.hint('Min 8 characters')</code></td></tr>
+            <tr><td><code>.hint(text)</code></td><td>Helper text below field. The <em>only</em> helper-text method — there is no <code>helperText()</code> alias (Filament equivalent: <code>helperText()</code>).</td><td><code>.hint('Min 8 characters')</code></td></tr>
+            <tr><td><code>.hintIcon(icon, tooltip?)</code></td><td>Icon before the hint, with an optional tooltip that is also exposed to screen readers</td><td><code>.hintIcon(Link2, 'Used in the public URL')</code></td></tr>
+            <tr><td><code>.hintColor(color)</code></td><td><code>muted</code> (default), <code>primary</code>, <code>info</code>, <code>success</code>, <code>warning</code>, <code>danger</code></td><td><code>.hintColor('warning')</code></td></tr>
+            <tr><td><code>.hintAction(action)</code></td><td>Inline action button beside the hint. <code>onClick</code> receives the owning form object.</td><td><code>.hintAction({ label: 'Regenerate', icon: Sparkles, onClick: (f) =&gt; { f.slug = slugify(f.title) } })</code></td></tr>
             <tr><td><code>.placeholder(text)</code></td><td>Input placeholder text</td><td><code>.placeholder('Enter name')</code></td></tr>
-            <tr><td><code>.disabled()</code></td><td>Disable the field</td><td><code>.disabled()</code></td></tr>
+            <tr><td><code>.disabled(v = true)</code></td><td>Disable the field. <code>.disabled()</code> still means <code>true</code>; pass <code>false</code> to re-enable conditionally.</td><td><code>.disabled(!can('articles.edit'))</code></td></tr>
             <tr><td><code>.colSpan(n)</code></td><td>Grid column span</td><td><code>.colSpan(2)</code></td></tr>
             <tr><td><code>.visibleWhen(cond)</code></td><td>Show field only when condition is met</td><td><code>.visibleWhen('type:business')</code></td></tr>
             <tr><td><code>.hiddenWhen(cond)</code></td><td>Hide field when condition is met</td><td><code>.hiddenWhen('role:viewer')</code></td></tr>
         </tbody>
     </table>
     <p>See <a href="#conditional-visibility">Conditional Field Visibility</a> for full condition syntax (string patterns and function callbacks).</p>
+
+    <h4>Hints and errors</h4>
+    <p>
+        The hint cluster lives on <code>BaseField</code>, so all field types get it with no renderer
+        branch of their own — including <code>switch</code> and <code>checkbox</code>, which
+        previously dropped both hint and error. Hint and error render together, hint above error.
+    </p>
+    <pre><code class="language-typescript">TextInput.make('slug')
+    .required()
+    .hint('Lowercase, hyphen-separated. Changing this breaks existing links.')
+    .hintIcon(Link2, 'Used in the public URL')
+    .hintColor('warning')
+    .hintAction({ label: 'Regenerate', icon: Sparkles,
+                  onClick: (form) =&gt; { form.slug = slugify(form.title); } })</code></pre>
+    <p>
+        The rendered ids are load-bearing and stable: the hint is
+        <code>{fieldId}-hint</code>, the error is <code>{fieldId}-error</code> with
+        <code>role="alert"</code>, and the field's label is <code>{fieldId}-label</code>. Every
+        control binds <code>aria-describedby</code> to whichever of those exist and
+        <code>aria-invalid</code> to the presence of an error.
+    </p>
 
     <h4>Auto-derived Labels</h4>
     <p>If <code>.label()</code> is not called, the label is derived from the field name:</p>
@@ -1704,9 +1858,11 @@ const actions = [
             <tr><td><code>BooleanColumn</code></td><td>Check/X icons</td><td><code>.trueIcon(icon)</code>, <code>.falseIcon(icon)</code>, <code>.trueColor()</code>, <code>.falseColor()</code></td></tr>
             <tr><td><code>ImageColumn</code></td><td><code>&lt;img&gt;</code> tag</td><td><code>.circular()</code>, <code>.size(n)</code>, <code>.defaultUrl(url)</code></td></tr>
             <tr><td><code>IconColumn</code></td><td>Lucide icon</td><td><code>.icon(fn)</code>, <code>.color(fn)</code></td></tr>
-            <tr><td><code>ToggleColumn</code></td><td><code>&lt;Switch&gt;</code></td><td><code>.onUpdate(fn)</code> &mdash; inline editable boolean</td></tr>
-            <tr><td><code>SelectColumn</code></td><td><code>&lt;Select&gt;</code> dropdown</td><td><code>.options(obj|arr)</code>, <code>.onUpdate(fn)</code>, <code>.placeholder(text)</code> &mdash; inline editable select</td></tr>
-            <tr><td><code>TextInputColumn</code></td><td><code>&lt;Input&gt;</code></td><td><code>.onUpdate(fn)</code>, <code>.placeholder(text)</code>, <code>.debounce(ms)</code> &mdash; inline editable text (default 500ms debounce)</td></tr>
+            <tr><td><code>ToggleColumn</code></td><td><code>&lt;Switch&gt;</code></td><td>Inline editable boolean &mdash; see <a href="#inline-editing">inline editing methods</a></td></tr>
+            <tr><td><code>CheckboxColumn</code></td><td><code>&lt;Checkbox&gt;</code></td><td>Inline editable boolean, plus <code>.indeterminateWhen(fn)</code></td></tr>
+            <tr><td><code>SelectColumn</code></td><td><code>&lt;Select&gt;</code> dropdown</td><td><code>.options(obj|arr)</code>, <code>.placeholder(text)</code> + inline editing methods</td></tr>
+            <tr><td><code>TextInputColumn</code></td><td><code>&lt;Input&gt;</code></td><td><code>.placeholder(text)</code>, <code>.debounce(ms)</code> + inline editing methods (default 500ms debounce)</td></tr>
+            <tr><td><code>ColorColumn</code></td><td>Colour swatch + value</td><td><code>.copyable(bool)</code>, <code>.copyMessage(text)</code>, <code>.showValue(bool)</code>, <code>.swatchOnly()</code>, <code>.swatchSize(px)</code>, <code>.circular()</code></td></tr>
         </tbody>
     </table>
 
@@ -1724,9 +1880,26 @@ const actions = [
             <tr><td><code>.tooltip(text)</code></td><td>Add tooltip text</td></tr>
             <tr><td><code>.toggleable()</code></td><td>User can show/hide this column</td></tr>
             <tr><td><code>.grow()</code></td><td>Column takes available space</td></tr>
-            <tr><td><code>.summarize(type, fn?)</code></td><td>Add column summary. Types: <code>'sum'</code>, <code>'average'</code>, <code>'count'</code>, <code>'range'</code>, <code>'custom'</code>. Custom fn receives values array.</td></tr>
+            <tr><td><code>.summarize(type, fn?)</code></td><td>Add column summary. Types: <code>'sum'</code>, <code>'average'</code>, <code>'count'</code>, <code>'min'</code>, <code>'max'</code>, <code>'median'</code>, <code>'range'</code>, <code>'custom'</code>. Custom fn receives values array.</td></tr>
+            <tr><td><code>.summary(config)</code></td><td>Rich form of <code>.summarize()</code> &mdash; label, formatting, scope. See <a href="#table-summaries">Summaries</a>.</td></tr>
         </tbody>
     </table>
+
+    <h4>ColorColumn</h4>
+    <p>Renders a validated colour swatch next to the literal value, with a copy button. Values are matched against a
+       strict colour regex before they ever reach an inline <code>style</code>; anything else (including
+       <code>red; background-image:url(x)</code>) renders as plain text. Alpha colours (8-digit hex,
+       <code>rgba()</code>, <code>hsla()</code>) sit on a themed checkerboard so transparency is visible.</p>
+
+    <pre><code class="language-typescript">import { ColorColumn } from '@/composables/useTableSchema';
+
+ColorColumn.make('brand_color').copyable().copyMessage('Brand colour copied'),
+ColorColumn.make('accent_color').swatchOnly().circular().swatchSize(24),</code></pre>
+
+    <p><strong>Accessibility:</strong> with <code>.showValue()</code> (the default) the swatch is
+       <code>aria-hidden</code> and the value is read as text; with <code>.swatchOnly()</code> the swatch becomes
+       <code>role="img"</code> with the value as its <code>aria-label</code>. Colour is never the only carrier of
+       information.</p>
 </section>
 
 <section id="table-filters">
@@ -1875,7 +2048,13 @@ QueryBuilderFilter.make('query_builder')
             <tr><td><code>EditAction.make(routeName)</code></td><td>Pencil icon + navigates to route</td></tr>
             <tr><td><code>ViewAction.make(routeName)</code></td><td>Eye icon + navigates to route</td></tr>
             <tr><td><code>DeleteAction.make(routeName)</code></td><td>Trash icon + confirms + deletes</td></tr>
-            <tr><td><code>Action.make(label)</code></td><td>Custom action with <code>.icon()</code>, <code>.url(fn)</code>, <code>.action(fn)</code>, <code>.permission()</code>, <code>.destructive()</code></td></tr>
+            <tr><td><code>RestoreAction.make(routeName)</code></td><td>Rotate icon + confirms + POSTs. Visible only when <code>row.deleted_at</code> is set</td></tr>
+            <tr><td><code>ForceDeleteAction.make(routeName)</code></td><td>Destructive + confirms + DELETEs. Visible only when <code>row.deleted_at</code> is set</td></tr>
+            <tr><td><code>ReplicateAction.make(routeName)</code></td><td>Copy icon + duplicates the record, optionally through a form modal</td></tr>
+            <tr><td><code>ActionGroup.make(items)</code></td><td>Dropdown cluster with dividers, section headings and submenus</td></tr>
+            <tr><td><code>ActionDivider.make()</code> / <code>ActionSectionLabel.make(text)</code></td><td>A rule / a heading inside a group</td></tr>
+            <tr><td><code>softDeleteActions(prefix, opts?)</code></td><td>Edit + Delete + Restore + Delete permanently, permission-gated</td></tr>
+            <tr><td><code>Action.make(label)</code></td><td>Custom action with <code>.icon()</code>, <code>.url(fn)</code>, <code>.action(fn)</code>, <code>.route(name, method)</code>, <code>.permission()</code>, <code>.destructive()</code></td></tr>
             <tr><td><code>BulkAction.make(label)</code></td><td>Bulk action with <code>.action(fn)</code>, <code>.requiresConfirmation()</code>, <code>.destructive()</code></td></tr>
         </tbody>
     </table>
@@ -1893,6 +2072,164 @@ const bulkActions = [
         .destructive()
         .action((ids) => router.post(route('admin.products.bulk-action'), { ids, action: 'delete' })),
 ];</code></pre>
+
+    <h4>Action &mdash; full method list</h4>
+    <p>Every method below is available on <code>Action</code> and on all of its subclasses.</p>
+    <table>
+        <thead><tr><th>Method</th><th>Effect</th></tr></thead>
+        <tbody>
+            <tr><td><code>label(text)</code></td><td>Overrides the menu label</td></tr>
+            <tr><td><code>icon(component)</code></td><td>Leading lucide icon</td></tr>
+            <tr><td><code>color(color)</code></td><td><code>muted | primary | info | success | warning | danger</code>, or any Tailwind class</td></tr>
+            <tr><td><code>url(fn)</code></td><td>Renders a link instead of a button</td></tr>
+            <tr><td><code>external(value?)</code></td><td>Opens the URL in a new tab (<code>rel="noopener noreferrer"</code> plus an sr-only note)</td></tr>
+            <tr><td><code>action(fn)</code></td><td>Client-side callback &mdash; the escape hatch</td></tr>
+            <tr><td><code>route(name, method?)</code></td><td>Framework-owned request. <code>method</code> defaults to <code>post</code></td></tr>
+            <tr><td><code>routeParams(fn)</code></td><td>Route params for that request. Defaults to <code>row.id</code></td></tr>
+            <tr><td><code>payload(fn)</code></td><td>Request body</td></tr>
+            <tr><td><code>successMessage(text)</code></td><td>Toast shown on a successful response</td></tr>
+            <tr><td><code>modal(config)</code></td><td>Opens an <code>ActionModal</code> form instead of firing a request</td></tr>
+            <tr><td><code>requiresConfirmation(title?, description?)</code></td><td>Confirmation dialog &mdash; honoured for <em>every</em> action, not just deletes</td></tr>
+            <tr><td><code>confirmTitle(text)</code> / <code>confirmDescription(text)</code></td><td>Individual confirmation copy</td></tr>
+            <tr><td><code>permission(perm)</code></td><td>Hides the item without the Shield ability</td></tr>
+            <tr><td><code>destructive(value?)</code></td><td>Destructive styling and destructive confirm variant</td></tr>
+            <tr><td><code>visible(fn)</code> / <code>hidden(fn)</code></td><td>Per-row visibility</td></tr>
+            <tr><td><code>separator(value?)</code></td><td>Draws a rule above the item</td></tr>
+            <tr><td><code>badge(fn)</code></td><td>Per-row badge on the item</td></tr>
+            <tr><td><code>tooltip(text)</code></td><td>Native tooltip on the item</td></tr>
+        </tbody>
+    </table>
+
+    <h3 id="soft-delete-actions">Restore, force-delete and the soft-delete preset</h3>
+    <p><code>RestoreAction</code> and <code>ForceDeleteAction</code> are first-class actions. Both default to <code>visible(row =&gt; !!row.deleted_at)</code>; <code>DeleteAction</code> defaults to the inverse, so a table shows the right trio without any branching in the page.</p>
+
+    <pre><code class="language-typescript">import { softDeleteActions, softDeleteBulkActions } from '@/composables/useTableActions';
+import { trashedFilter } from '@/composables/useTableFilters';
+
+const actions      = softDeleteActions('admin.articles');
+const bulkActions  = softDeleteBulkActions('admin.articles');
+const tableFilters = [trashedFilter()];</code></pre>
+
+    <p><code>softDeleteActions(prefix, opts?)</code> returns <code>Edit</code>, <code>Delete</code>, <code>Restore</code> and <code>Delete permanently</code>, wired to <code>{prefix}.edit|destroy|restore|force-delete</code> and gated on <code>{module}.edit|delete</code>, where <code>module</code> is the last segment of the prefix.</p>
+    <table>
+        <thead><tr><th>Option</th><th>Effect</th></tr></thead>
+        <tbody>
+            <tr><td><code>module</code></td><td>Shield module slug. <code>false</code> attaches no permissions (demo tables)</td></tr>
+            <tr><td><code>view</code></td><td>Prepends a <code>ViewAction</code> on <code>{prefix}.show</code></td></tr>
+            <tr><td><code>edit</code></td><td>Set <code>false</code> to omit the edit action</td></tr>
+            <tr><td><code>viewRoute</code>, <code>editRoute</code>, <code>deleteRoute</code>, <code>restoreRoute</code>, <code>forceDeleteRoute</code></td><td>Override any individual route name</td></tr>
+        </tbody>
+    </table>
+    <p><code>softDeleteBulkActions(prefix, module?)</code> returns Restore and Delete permanently, posting <code>{ ids, action }</code> to <code>{prefix}.bulk-action</code>.</p>
+
+    <div class="callout callout-info">
+        <div class="callout-title">&#8505; Server side</div>
+        Bulk endpoints are gated on <code>{module}.edit</code> but accept destructive verbs, so every <code>bulkAction()</code> calls
+        <code>$this-&gt;authorizeBulkVerb($request-&gt;action, 'articles')</code> from <code>App\Admin\Traits\HandlesSoftDeletes</code>.
+        <code>force_delete</code> and <code>delete</code> map to <code>{module}.delete</code>; every other verb to <code>{module}.edit</code>.
+        The single restore / force-delete endpoints re-check the ability with <code>authorizeAbility()</code> in addition to the route middleware.
+    </div>
+
+    <h3 id="replicate-action">ReplicateAction</h3>
+    <p>Duplicates a record from the row menu. The client sends a <em>hint</em>; the server whitelists every part of it.</p>
+
+    <pre><code class="language-typescript">import { ReplicateAction } from '@/composables/useTableActions';
+
+ReplicateAction.make('admin.articles.replicate')
+    .permission('articles.create')
+    .except(['published_at'])          // deny-list
+    .suffix('title')                   // "X" -> "X (copy)" -> "X (copy 2)"
+    .withRelations(['tags'])           // one level deep, re-whitelisted server-side
+    .overrides(() => ({ status: 'draft', is_public: false })),
+
+// Edit before saving - rides the existing ActionModal path.
+ReplicateAction.make('admin.articles.replicate')
+    .label('Duplicate and edit')
+    .schema([TextInput.make('title').required()]),</code></pre>
+
+    <table>
+        <thead><tr><th>Method</th><th>Effect</th></tr></thead>
+        <tbody>
+            <tr><td><code>except(cols)</code></td><td>Columns that are not copied</td></tr>
+            <tr><td><code>only(cols)</code></td><td>Allow-list. Wins over <code>except()</code></td></tr>
+            <tr><td><code>withRelations(names)</code></td><td>Clones <code>belongsToMany</code> pivots and <code>hasMany</code> rows, one level deep</td></tr>
+            <tr><td><code>overrides(fn)</code></td><td>Attribute overrides, filtered against the model's <code>$fillable</code></td></tr>
+            <tr><td><code>suffix(field, template?)</code></td><td>Template defaults to <code>:value (copy)</code>; uniqueness is resolved against the column</td></tr>
+            <tr><td><code>schema(items)</code></td><td>Opens a form modal instead of posting immediately</td></tr>
+            <tr><td><code>redirectTo(routeName)</code></td><td>Passed through to the server as <code>redirect_to</code></td></tr>
+        </tbody>
+    </table>
+
+    <p>Server side, add the <code>Replicates</code> trait to the controller:</p>
+    <pre><code class="language-php">use App\Admin\Traits\Replicates;
+
+class ArticleController extends Controller
+{
+    use Replicates;
+
+    protected function replicateModel(): string { return Article::class; }
+    protected function replicateModule(): string { return 'articles'; }
+
+    /** Columns carrying a unique index - regenerated on the clone. */
+    protected function replicateUniqueColumns(): array { return ['slug']; }
+}</code></pre>
+    <pre><code class="language-php">Route::post('/articles/{article}/replicate', [ArticleController::class, 'replicate'])
+    -&gt;middleware('permission:articles.create')-&gt;name('articles.replicate');</code></pre>
+
+    <div class="callout callout-warning">
+        <div class="callout-title">&#9888; Whitelists, not blacklists</div>
+        Relation names are intersected with the model's <code>public static array $replicable</code> (absent means &ldquo;none&rdquo;),
+        overrides are intersected with <code>$fillable</code>, and the record is fetched through the model's global scopes so
+        ownership still applies. Nested grandchildren are deliberately not cloned &mdash; unbounded recursion from one click is a denial of service.
+    </div>
+
+    <h3 id="action-grouping">Action grouping</h3>
+    <p><code>ActionGroup</code> clusters row actions into a configurable dropdown. Pass a single group as the table's only action and it configures the trigger itself; nest one inside another and it renders as a submenu.</p>
+
+    <pre><code class="language-typescript">import { ActionGroup, ActionDivider, ActionSectionLabel } from '@/composables/useTableActions';
+
+const actions = [
+    ActionGroup.make([
+        EditAction.make('admin.articles.edit'),
+        ActionSectionLabel.make('Duplicate'),
+        ReplicateAction.make('admin.articles.replicate').suffix('title'),
+        ActionDivider.make(),
+        ActionSectionLabel.make('Danger zone'),
+        ...softDeleteActions('admin.articles').slice(1),
+    ])
+        .tooltip('Article actions')
+        .badge((row) => (row.flagged ? '!' : null))
+        .width('lg')
+        .collapseAfter(3),
+];</code></pre>
+
+    <table>
+        <thead><tr><th>Method</th><th>Default</th><th>Effect</th></tr></thead>
+        <tbody>
+            <tr><td><code>label(text)</code></td><td><code>'Actions'</code></td><td>Trigger label and its <code>aria-label</code></td></tr>
+            <tr><td><code>icon(component)</code></td><td><code>MoreHorizontal</code></td><td>Trigger icon</td></tr>
+            <tr><td><code>color(color)</code></td><td>&mdash;</td><td>Semantic colour</td></tr>
+            <tr><td><code>size(s)</code></td><td><code>'sm'</code></td><td><code>sm | default | lg</code></td></tr>
+            <tr><td><code>button(value?)</code></td><td><code>false</code></td><td>Labelled button trigger instead of an icon button</td></tr>
+            <tr><td><code>buttonGroup(value?)</code></td><td><code>false</code></td><td>Renders every item inline as a joined button group &mdash; no dropdown</td></tr>
+            <tr><td><code>tooltip(text)</code></td><td>&mdash;</td><td>Tooltip on the trigger</td></tr>
+            <tr><td><code>badge(fn)</code></td><td>&mdash;</td><td>Per-row badge on the trigger</td></tr>
+            <tr><td><code>placement(p)</code></td><td><code>'bottom-end'</code></td><td><code>bottom-start | bottom-end | top-start | top-end</code></td></tr>
+            <tr><td><code>width(w)</code></td><td><code>'md'</code></td><td><code>sm | md | lg</code></td></tr>
+            <tr><td><code>maxHeight(css)</code></td><td><code>'20rem'</code></td><td>Scroll cap on the menu</td></tr>
+            <tr><td><code>collapseAfter(n)</code></td><td>&mdash;</td><td>Below <code>n</code> visible items render inline; at or above, collapse to a dropdown</td></tr>
+            <tr><td><code>permission(perm)</code></td><td>&mdash;</td><td>Hides the whole group</td></tr>
+        </tbody>
+    </table>
+
+    <table>
+        <thead><tr><th>Item</th><th>Renders as</th></tr></thead>
+        <tbody>
+            <tr><td><code>ActionDivider.make()</code></td><td><code>DropdownMenuSeparator</code>. Leading, trailing and duplicate dividers collapse away after permission filtering, so a hidden action never leaves an orphan rule</td></tr>
+            <tr><td><code>ActionSectionLabel.make(text)</code></td><td><code>DropdownMenuLabel</code>. Not a focus stop</td></tr>
+            <tr><td>Nested <code>ActionGroup</code></td><td><code>DropdownMenuSub</code> submenu</td></tr>
+        </tbody>
+    </table>
 </section>
 
 <hr class="section-divider">
@@ -1903,54 +2240,85 @@ const bulkActions = [
 
 <section id="inline-editing">
     <h2>Inline Table Editing</h2>
-    <p>Edit cell values directly in the table without opening a form. Three inline-editable column types are available: <code>ToggleColumn</code>, <code>SelectColumn</code>, and <code>TextInputColumn</code>.</p>
+    <p>Edit cell values directly in the table without opening a form. Four inline-editable column types are available:
+       <code>ToggleColumn</code>, <code>CheckboxColumn</code>, <code>SelectColumn</code> and
+       <code>TextInputColumn</code>. They all extend <code>InlineEditableColumn</code> and therefore share one set of
+       methods.</p>
 
-    <h3>SelectColumn</h3>
-    <p>Renders an inline <code>&lt;Select&gt;</code> dropdown in each cell. Changes are emitted immediately via the <code>onUpdate</code> callback.</p>
-    <pre><code class="language-typescript">import { SelectColumn } from '@/composables/useTableSchema';
+    <h3>Shared Inline Methods</h3>
+    <table>
+        <thead><tr><th>Method</th><th>Description</th></tr></thead>
+        <tbody>
+            <tr><td><code>.updateRoute(name)</code></td><td><strong>Preferred.</strong> The table owns the request: it PATCHes <code>{ field, value }</code> to <code>route(name, row.id)</code>, paints optimistically and rolls back with a toast on error.</td></tr>
+            <tr><td><code>.field(name)</code></td><td>Column written server-side. Defaults to the column key.</td></tr>
+            <tr><td><code>.optimistic(bool)</code></td><td><code>false</code> waits for the server before showing the new value. Default <code>true</code>.</td></tr>
+            <tr><td><code>.permission(perm)</code></td><td>Client-side gate — the control is disabled and the request is skipped. The server check stays authoritative.</td></tr>
+            <tr><td><code>.disabledWhen(fn)</code></td><td>Per-row disable, e.g. <code>row =&gt; row.archived_at !== null</code>.</td></tr>
+            <tr><td><code>.confirmWhen(fn)</code></td><td>Return a message to require confirmation for that value only; return <code>false</code> to write straight through.</td></tr>
+            <tr><td><code>.rowLabel(fn)</code></td><td><strong>Required for toggle/checkbox.</strong> Per-row accessible name for the control.</td></tr>
+            <tr><td><code>.debounce(ms)</code></td><td>Text input only. Default 500ms.</td></tr>
+            <tr><td><code>.onUpdate(fn)</code></td><td>Escape hatch — the page owns the request. Ignored when <code>.updateRoute()</code> is set.</td></tr>
+        </tbody>
+    </table>
+
+    <h3>CheckboxColumn</h3>
+    <pre><code class="language-typescript">import { CheckboxColumn } from '@/composables/useTableSchema';
+
+CheckboxColumn.make('is_featured')
+    .label('Featured')
+    .updateRoute('admin.products.inline-update')
+    .permission('products.edit')
+    .rowLabel(row =&gt; `Feature ${row.name}`)
+    .disabledWhen(row =&gt; row.archived_at !== null)
+    .indeterminateWhen(row =&gt; row.stock === 0 &amp;&amp; !row.is_featured)
+    .confirmWhen((row, value) =&gt; value &amp;&amp; row.stock === 0
+        ? 'This product is out of stock. Feature it anyway?'
+        : false)</code></pre>
+
+    <h3>ToggleColumn / SelectColumn / TextInputColumn</h3>
+    <pre><code class="language-typescript">ToggleColumn.make('is_active')
+    .updateRoute('admin.products.inline-update')
+    .rowLabel(row =&gt; `Activate ${row.name}`),
 
 SelectColumn.make('status')
-    .label('Status')
     .options({ active: 'Active', draft: 'Draft', archived: 'Archived' })
-    .placeholder('Select...')
-    .onUpdate((row, value) => {
-        router.put(route('admin.products.inline-update', row.id), {
-            field: 'status', value,
-        });
-    })</code></pre>
-
-    <h3>TextInputColumn</h3>
-    <p>Renders an inline <code>&lt;Input&gt;</code> with built-in debounce (default 500ms). Changes fire after the user stops typing.</p>
-    <pre><code class="language-typescript">import { TextInputColumn } from '@/composables/useTableSchema';
+    .updateRoute('admin.products.inline-update'),
 
 TextInputColumn.make('stock')
-    .label('Stock')
     .placeholder('Qty')
-    .debounce(300)  // ms, default 500
-    .onUpdate((row, value) => {
-        router.put(route('admin.products.inline-update', row.id), {
-            field: 'stock', value,
-        });
-    })</code></pre>
+    .debounce(300)                       // ms, default 500
+    .updateRoute('admin.products.inline-update'),
 
-    <h3>ToggleColumn</h3>
-    <p>Renders an inline <code>&lt;Switch&gt;</code> toggle for boolean fields.</p>
-    <pre><code class="language-typescript">import { ToggleColumn } from '@/composables/useTableSchema';
+// Escape hatch — the page owns the request
+TextInputColumn.make('sku')
+    .onUpdate((row, value) =&gt; router.put(route('admin.products.sku', row.id), { value })),</code></pre>
 
-ToggleColumn.make('is_active')
-    .label('Active')
-    .onUpdate((row, value) => {
-        router.put(route('admin.products.toggle', row.id), { is_active: value });
-    })</code></pre>
+    <p>A second change to the same cell while a request is in flight is ignored, and pending debounced writes are
+       cancelled when the table unmounts.</p>
 
     <h3>Backend Pattern</h3>
-    <pre><code class="language-php">// Single endpoint handles all inline updates
-public function inlineUpdate(Request $request, int $id): RedirectResponse
+    <p>Use the <code>HandlesInlineUpdates</code> trait. The editable field list is a server-side literal, so a client
+       cannot write an unlisted column, and the model policy is re-checked on top of the route middleware.</p>
+    <pre><code class="language-php">use App\Admin\Traits\HandlesInlineUpdates;
+
+class ProductController extends Controller
 {
-    $product = Product::findOrFail($id);
-    $product->update([$request->field => $request->value]);
-    return back()->with('success', 'Updated successfully.');
+    use HandlesInlineUpdates;
+
+    protected function modelClass(): string
+    {
+        return Product::class;
+    }
+
+    protected function inlineEditableFields(): array
+    {
+        return ['is_featured' =&gt; 'boolean', 'status' =&gt; 'string', 'stock' =&gt; 'integer'];
+    }
 }</code></pre>
+    <pre><code class="language-php">// routes/web.php — middleware AND the in-controller authorize()
+Route::patch('/products/{product}/inline', [ProductController::class, 'inlineUpdate'])
+    -&gt;middleware('permission:products.edit')
+    -&gt;name('products.inline-update');</code></pre>
 </section>
 
 <section id="conditional-visibility">
@@ -2034,11 +2402,46 @@ const isVisible = evaluateVisibility('type:business', formData);</code></pre>
         <tbody>
             <tr><td><code>'sum'</code></td><td>Sum of numeric values. Respects <code>.money()</code> formatting.</td></tr>
             <tr><td><code>'average'</code></td><td>Average of numeric values</td></tr>
-            <tr><td><code>'count'</code></td><td>Count of non-null values</td></tr>
-            <tr><td><code>'range'</code></td><td>Shows <code>min &ndash; max</code></td></tr>
+            <tr><td><code>'count'</code></td><td>Count of non-null values (all rows when <code>excludeNull: false</code>)</td></tr>
+            <tr><td><code>'min'</code></td><td>Smallest numeric value</td></tr>
+            <tr><td><code>'max'</code></td><td>Largest numeric value</td></tr>
+            <tr><td><code>'median'</code></td><td>Middle value; the mean of the two middle values for an even count</td></tr>
+            <tr><td><code>'range'</code></td><td>Shows <code>min &ndash; max</code>, separator configurable</td></tr>
             <tr><td><code>'custom'</code></td><td>Custom function receives all values, returns display string</td></tr>
         </tbody>
     </table>
+    <p>Empty columns render <code>&mdash;</code> for <code>min</code>, <code>max</code>, <code>median</code> and
+       <code>range</code>. Each summarised column is accumulated in a single pass, so a full page of rows never
+       spreads an array into <code>Math.min()</code>.</p>
+
+    <h3>.summary(config) &mdash; labels, formatting and scope</h3>
+    <pre><code class="language-typescript">TextColumn.make('rating').alignEnd()
+    .summary({ type: 'median', label: 'Median', decimals: 1 }),
+
+TextColumn.make('delivery_days').alignEnd()
+    .summary({ type: 'range', label: 'Range', separator: ' to ', decimals: 0 }),
+
+TextColumn.make('revenue').money('MYR').alignEnd()
+    .summary({ type: 'sum', label: 'Company total', currency: 'MYR', scope: 'all' }),</code></pre>
+
+    <table>
+        <thead><tr><th>Key</th><th>Description</th></tr></thead>
+        <tbody>
+            <tr><td><code>type</code></td><td>Any summary type above (required)</td></tr>
+            <tr><td><code>label</code></td><td>Prefix shown before the value in the footer</td></tr>
+            <tr><td><code>prefix</code> / <code>suffix</code></td><td>Wrapped around the formatted value</td></tr>
+            <tr><td><code>decimals</code></td><td>Fixed decimal places. Defaults to 2 (0 for <code>count</code>) when a config is supplied.</td></tr>
+            <tr><td><code>currency</code> / <code>locale</code></td><td>Formats via <code>Intl.NumberFormat</code>. Locale defaults to <code>'en-US'</code>.</td></tr>
+            <tr><td><code>excludeNull</code></td><td><code>false</code> makes <code>count</code> include null rows. Default <code>true</code>.</td></tr>
+            <tr><td><code>separator</code></td><td><code>range</code> only. Default <code>' – '</code>.</td></tr>
+            <tr><td><code>scope</code></td><td><code>'all'</code> declares the value must come from the server <code>summaries</code> prop; a dev-build warning fires when it does not arrive.</td></tr>
+        </tbody>
+    </table>
+
+    <h3>Page vs. dataset scope</h3>
+    <p>A client-computed summary can only see the current page, so the footer marks it with a small
+       <strong>Page</strong> badge. Supplying the value in the <code>summaries</code> prop removes the badge &mdash;
+       the reader always knows which number they are looking at.</p>
 
     <h3>Server-Side Summaries</h3>
     <p>For large datasets, pass pre-computed summaries from the backend via the <code>summaries</code> prop. Server summaries take precedence over client-side calculation:</p>
@@ -2048,6 +2451,13 @@ const isVisible = evaluateVisibility('type:business', formData);</code></pre>
     :summaries="{ price: '$45,230.00', quantity: 1284 }"
     route-name="admin.orders.index"
 /&gt;</code></pre>
+    <p>The <code>SearchableQuery</code> trait ships a helper for this. The column spec is a server-side literal &mdash;
+       never derived from the request:</p>
+    <pre><code class="language-php">$summaries = $this-&gt;summarise($query, [
+    'price' =&gt; 'sum',
+    'stock' =&gt; 'min',
+    'rating' =&gt; 'range',
+]);</code></pre>
 
     <h3>Group + Summary Combined</h3>
     <p>When both <code>groupBy</code> and summaries are used, each group shows its own summary row plus an overall footer.</p>
@@ -2105,6 +2515,7 @@ CREATE INDEX `idx_sort_order` ON `tasks` (`sort_order`);</code></pre>
 import {
     TextEntry, BadgeEntry, DateEntry, BooleanEntry,
     ImageEntry, IconEntry, RepeatableEntry, KeyValueEntry,
+    ColorEntry, CodeEntry,
 } from '@/composables/useInfolistSchema';
 
 // Layout types (reused from form builder)
@@ -2125,6 +2536,8 @@ import { InfolistEntries } from '@/components/admin';</code></pre>
             <tr><td><code>IconEntry</code></td><td>Lucide icon</td><td><code>.icon(fn)</code>, <code>.color(fn)</code></td></tr>
             <tr><td><code>RepeatableEntry</code></td><td>List of sub-entries</td><td><code>.schema(entries[])</code></td></tr>
             <tr><td><code>KeyValueEntry</code></td><td>Key-value table</td><td>(none &mdash; renders object as key/value pairs)</td></tr>
+            <tr><td><code>ColorEntry</code></td><td>Colour swatch + value</td><td><code>.copyable()</code>, <code>.copyMessage(text)</code>, <code>.showValue()</code>, <code>.swatchOnly()</code>, <code>.swatchSize(px)</code>, <code>.circular()</code></td></tr>
+            <tr><td><code>CodeEntry</code></td><td>Read-only highlighted code block</td><td><code>.language(lang)</code>, <code>.lineNumbers()</code>, <code>.wrap()</code>, <code>.maxLines(n)</code>, <code>.startLine(n)</code>, <code>.highlightLines([n])</code>, <code>.filename(name)</code>, <code>.copyable()</code></td></tr>
         </tbody>
     </table>
 
@@ -2172,6 +2585,53 @@ const schema = [
         ]),
     ]),
 ];</code></pre>
+
+    <h3>ColorEntry</h3>
+    <p>Renders a colour swatch beside its literal value, with a copy button. Shares the <code>&lt;ColorSwatch&gt;</code> renderer with <code>ColorColumn</code>, so a colour looks identical in a table and on a show page.</p>
+    <table>
+        <thead><tr><th>Method</th><th>Default</th><th>Description</th></tr></thead>
+        <tbody>
+            <tr><td><code>.copyable(value = true)</code></td><td><code>true</code></td><td>Show the copy-to-clipboard button</td></tr>
+            <tr><td><code>.copyMessage(text)</code></td><td><code>'Copied to clipboard'</code></td><td>Toast shown after copying</td></tr>
+            <tr><td><code>.showValue(value = true)</code></td><td><code>true</code></td><td>Render the literal value next to the swatch</td></tr>
+            <tr><td><code>.swatchOnly()</code></td><td>&mdash;</td><td>Alias for <code>.showValue(false)</code></td></tr>
+            <tr><td><code>.swatchSize(px)</code></td><td><code>24</code></td><td>Swatch edge length in pixels</td></tr>
+            <tr><td><code>.circular(value = true)</code></td><td><code>false</code></td><td>Round swatch instead of a rounded square</td></tr>
+        </tbody>
+    </table>
+    <pre><code class="language-typescript">Section.make('Branding').icon(Palette).columns(3).schema([
+    ColorEntry.make('primary_color'),
+    ColorEntry.make('accent_color').swatchOnly().circular(),
+    TextEntry.make('updated_at').label('Last changed'),
+] as any),</code></pre>
+    <p><strong>Security.</strong> The value reaches an inline <code>style</code>, so it is matched against a strict hex/rgb/hsl regex first. Anything else (<code>red; background-image: url(x)</code>, <code>var(--x)</code>, <code>expression(1)</code>) renders as plain text and never as CSS.</p>
+    <p><strong>Accessibility.</strong> Colour is never the only carrier of information: with <code>.swatchOnly()</code> the swatch takes <code>role="img"</code> and an <code>aria-label</code> of the value; otherwise the value renders as adjacent text and the swatch is <code>aria-hidden</code>. An alpha value (8-digit hex, <code>rgba()</code>, <code>hsla()</code>) draws a checkerboard behind the swatch so transparency is visible.</p>
+
+    <h3>CodeEntry</h3>
+    <p>Read-only, syntax-highlighted code. Uses the <em>read-only</em> half of <code>useCodeMirror</code> (<code>highlightToHtml</code>) &mdash; grammar plus <code>@lezer/highlight</code> only, no <code>EditorView</code>, no contenteditable. The renderer (<code>CodeBlock.vue</code>) is loaded through <code>defineAsyncComponent</code>, and highlighting does not start until the block scrolls within 200px of the viewport.</p>
+    <table>
+        <thead><tr><th>Method</th><th>Default</th><th>Description</th></tr></thead>
+        <tbody>
+            <tr><td><code>.language(lang)</code></td><td><code>'plaintext'</code></td><td>One of the shared <code>CodeLanguage</code> values (same list as the <code>code</code> form field)</td></tr>
+            <tr><td><code>.lineNumbers(value = true)</code></td><td><code>true</code></td><td><code>aria-hidden</code> line-number gutter</td></tr>
+            <tr><td><code>.wrap(value = true)</code></td><td><code>true</code></td><td>Soft-wrap long lines instead of scrolling horizontally</td></tr>
+            <tr><td><code>.maxLines(n)</code></td><td><code>400</code></td><td>Lines highlighted eagerly; the rest sit behind an Expand button</td></tr>
+            <tr><td><code>.startLine(n)</code></td><td><code>1</code></td><td>First gutter number (for excerpts)</td></tr>
+            <tr><td><code>.highlightLines([n])</code></td><td><code>[]</code></td><td>Absolute line numbers to emphasise</td></tr>
+            <tr><td><code>.filename(name)</code></td><td>&mdash;</td><td>Filename shown in the header bar</td></tr>
+            <tr><td><code>.copyable(value = true)</code></td><td><code>true</code></td><td>Copy button in the header bar</td></tr>
+        </tbody>
+    </table>
+    <pre><code class="language-typescript">Section.make('Last webhook delivery').columns(1).schema([
+    CodeEntry.make('response_body')
+        .language('json')
+        .filename('response.json')
+        .maxLines(300)
+        .highlightLines([4, 5]),
+] as any),</code></pre>
+    <p>An object or array value is pretty-printed with <code>JSON.stringify(value, null, 2)</code> and the language is forced to <code>json</code>, so a raw payload column needs no formatting code.</p>
+    <p><strong>Accessibility.</strong> The block is <code>&lt;pre&gt;&lt;code class="language-x"&gt;</code> with <code>tabindex="0"</code>, <code>role="region"</code> and an <code>aria-label</code> (filename, entry label, or "&lt;language&gt; code"), so a scrollable region is reachable by keyboard. The gutter is <code>aria-hidden</code>, so a screen reader reads the code rather than "1 2 3 4". The Expand button carries <code>aria-expanded</code> and <code>aria-controls</code>.</p>
+    <p><strong>Security.</strong> Highlighted markup passes through <code>sanitizeHtml</code> before <code>v-html</code>. If the highlighter chunk fails to load, the block degrades to escaped plain text rather than raw HTML.</p>
 
     <h3>Rendering</h3>
     <pre><code class="language-xml">&lt;InfolistEntries :schema="schema" :record="user" /&gt;</code></pre>
@@ -3479,7 +3939,8 @@ import { Button } from '@/components/ui/button';
     <h4>useFormSchema</h4>
     <p>Form builder API for defining field schemas and layouts with a fluent, chainable syntax.</p>
     <p><strong>File:</strong> <code>resources/js/composables/useFormSchema.ts</code></p>
-    <p><strong>Field exports:</strong> <code>TextInput</code>, <code>Select</code>, <code>Textarea</code>, <code>Toggle</code>, <code>Checkbox</code>, <code>DatePicker</code>, <code>DateTimePicker</code>, <code>Radio</code>, <code>ColorPicker</code>, <code>Hidden</code>, <code>FileUpload</code>, <code>RichEditor</code>, <code>Repeater</code>, <code>Builder</code>, <code>Slider</code>, <code>NumberField</code>, <code>PinInput</code>, <code>TagsInput</code>, <code>ToggleGroupField</code>, <code>CalendarPicker</code>, <code>TimePicker</code>, <code>CheckboxList</code>, <code>KeyValue</code>, <code>MarkdownEditor</code></p>
+    <p><strong>Field exports:</strong> <code>TextInput</code>, <code>Select</code>, <code>Textarea</code>, <code>Toggle</code>, <code>Checkbox</code>, <code>DatePicker</code>, <code>DateTimePicker</code>, <code>Radio</code>, <code>ColorPicker</code>, <code>Hidden</code>, <code>FileUpload</code>, <code>RichEditor</code>, <code>Repeater</code>, <code>Builder</code>, <code>Slider</code>, <code>NumberField</code>, <code>PinInput</code>, <code>TagsInput</code>, <code>ToggleGroupField</code>, <code>CalendarPicker</code>, <code>TimePicker</code>, <code>CheckboxList</code>, <code>KeyValue</code>, <code>MarkdownEditor</code>, <code>ToggleButtons</code>, <code>CodeEditor</code></p>
+    <p><strong>Shared type exports:</strong> <code>SemanticColor</code>, <code>CodeLanguage</code>, <code>HintAction</code>, <code>ToggleOption</code>, <code>MarkdownButton</code>, <code>MarkdownMode</code>, <code>DEFAULT_MARKDOWN_TOOLBAR</code></p>
     <p><strong>Block Builder:</strong> <code>Builder</code> + <code>Block</code> create a repeatable list where each item can be a different block type (Filament-style). Each block has its own field schema; the stored value is <code>[{ type, data }]</code>:</p>
     <pre><code class="language-typescript">Builder.make('content').label('Page Content').blocks([
     Block.make('heading').icon('Heading').schema([ TextInput.make('text').required() ]),
@@ -3493,27 +3954,27 @@ import { Button } from '@/components/ui/button';
     <h4>useTableSchema</h4>
     <p>Table column builder API for defining DataTable columns with a fluent, chainable syntax.</p>
     <p><strong>File:</strong> <code>resources/js/composables/useTableSchema.ts</code></p>
-    <p><strong>Exports:</strong> <code>TextColumn</code>, <code>BadgeColumn</code>, <code>DateColumn</code>, <code>BooleanColumn</code>, <code>ImageColumn</code>, <code>IconColumn</code>, <code>ToggleColumn</code>, <code>BaseColumn</code></p>
+    <p><strong>Exports:</strong> <code>TextColumn</code>, <code>BadgeColumn</code>, <code>DateColumn</code>, <code>BooleanColumn</code>, <code>ImageColumn</code>, <code>IconColumn</code>, <code>ToggleColumn</code>, <code>CheckboxColumn</code>, <code>SelectColumn</code>, <code>TextInputColumn</code>, <code>ColorColumn</code>, <code>BaseColumn</code>, <code>InlineEditableColumn</code>, <code>SummaryType</code>, <code>SummaryConfig</code></p>
     <p>See <a href="#table-columns">Table Columns</a> for full documentation.</p>
 
     <h4>useTableFilters</h4>
     <p>Table filter builder API for defining DataTable filters.</p>
     <p><strong>File:</strong> <code>resources/js/composables/useTableFilters.ts</code></p>
-    <p><strong>Exports:</strong> <code>SelectFilter</code>, <code>TernaryFilter</code>, <code>Filter</code>, <code>BaseFilter</code></p>
+    <p><strong>Exports:</strong> <code>SelectFilter</code>, <code>TernaryFilter</code>, <code>Filter</code>, <code>DateRangeFilter</code>, <code>QueryBuilderFilter</code>, <code>BaseFilter</code>, <code>trashedFilter()</code></p>
     <p>See <a href="#table-filters">Table Filters</a> for full documentation.</p>
 
     <h4>useTableActions</h4>
     <p>Table action builder API for defining row actions and bulk actions.</p>
     <p><strong>File:</strong> <code>resources/js/composables/useTableActions.ts</code></p>
-    <p><strong>Exports:</strong> <code>Action</code>, <code>EditAction</code>, <code>ViewAction</code>, <code>DeleteAction</code>, <code>ActionGroup</code>, <code>BulkAction</code></p>
+    <p><strong>Exports:</strong> <code>Action</code>, <code>EditAction</code>, <code>ViewAction</code>, <code>DeleteAction</code>, <code>RestoreAction</code>, <code>ForceDeleteAction</code>, <code>ReplicateAction</code>, <code>ActionGroup</code>, <code>ActionDivider</code>, <code>ActionSectionLabel</code>, <code>BulkAction</code>, <code>softDeleteActions()</code>, <code>softDeleteBulkActions()</code></p>
     <p>See <a href="#table-actions">Table Actions</a> for full documentation.</p>
 
     <h4>useInfolistSchema</h4>
     <p>Infolist entry builder API for defining read-only detail views with a fluent, chainable syntax. Re-exports layout classes from <code>useFormSchema</code> for structural composition.</p>
     <p><strong>File:</strong> <code>resources/js/composables/useInfolistSchema.ts</code></p>
-    <p><strong>Entry exports:</strong> <code>TextEntry</code>, <code>BadgeEntry</code>, <code>DateEntry</code>, <code>BooleanEntry</code>, <code>ImageEntry</code>, <code>IconEntry</code>, <code>RepeatableEntry</code>, <code>KeyValueEntry</code></p>
+    <p><strong>Entry exports:</strong> <code>TextEntry</code>, <code>BadgeEntry</code>, <code>DateEntry</code>, <code>BooleanEntry</code>, <code>ImageEntry</code>, <code>IconEntry</code>, <code>RepeatableEntry</code>, <code>KeyValueEntry</code>, <code>ColorEntry</code>, <code>CodeEntry</code></p>
     <p><strong>Layout re-exports:</strong> <code>Section</code>, <code>Grid</code>, <code>Tabs</code>, <code>Tab</code>, <code>Fieldset</code>, <code>Flex</code></p>
-    <p><strong>Type exports:</strong> <code>EntrySchema</code>, <code>EntryType</code>, <code>InfolistSchemaItem</code></p>
+    <p><strong>Type exports:</strong> <code>EntrySchema</code>, <code>EntryType</code>, <code>InfolistSchemaItem</code>, <code>CodeLanguage</code> (re-exported from <code>useFormSchema</code> so entries and the <code>code</code> field share one language list)</p>
     <p>See <a href="#infolist-builder">Infolist Builder</a> for full documentation.</p>
 
     <h4>useDashboardWidgets</h4>
@@ -5607,9 +6068,15 @@ interface NavItem {
         | 'date' | 'datetime-local' | 'radio' | 'color'
         | 'hidden' | 'file' | 'richtext' | 'repeater'
         | 'slider' | 'number-field' | 'pin-input'
-        | 'tags-input' | 'toggle-group' | 'calendar';
+        | 'tags-input' | 'toggle-group' | 'calendar'
+        | 'time' | 'checkbox-list' | 'key-value' | 'builder'
+        | 'markdown' | 'code';
     required: boolean;
     hint?: string;
+    hintIcon?: Component;
+    hintIconTooltip?: string;
+    hintColor?: SemanticColor;
+    hintAction?: HintAction;
     placeholder?: string;
     disabled: boolean;
     colSpan?: number;
@@ -5712,8 +6179,22 @@ interface NavItem {
     tooltip?: string;
     toggleable: boolean;
     grow: boolean;
-    summarize?: 'sum' | 'average' | 'count' | 'range' | 'custom';
+    summarize?: SummaryType;   // 'sum'|'average'|'count'|'min'|'max'|'median'|'range'|'custom'
     summaryFn?: (rows: any[]) =&gt; string | number;
+    summaryConfig?: SummaryConfig;
+}
+
+// Shared by every inline-editable column
+interface InlineEditableSchema&lt;V&gt; {
+    updateRoute?: string;
+    updateField?: string;
+    optimistic?: boolean;
+    permission?: string;
+    disabledFn?: (row: any) =&gt; boolean;
+    confirmFn?: (row: any, value: V) =&gt; string | false;
+    rowLabelFn?: (row: any) =&gt; string;
+    debounceMs?: number;
+    onUpdateFn?: (row: any, value: V) =&gt; void;
 }
 
 type ColumnSchema =
@@ -5723,9 +6204,11 @@ type ColumnSchema =
     | BooleanColumnSchema   // type: 'boolean' + trueIcon, falseIcon, trueColor, falseColor
     | ImageColumnSchema     // type: 'image' + circular, size, defaultUrl
     | IconColumnSchema      // type: 'icon' + iconFn, colorFn
-    | ToggleColumnSchema    // type: 'toggle' + onUpdateFn
-    | SelectColumnSchema   // type: 'select' + options, onUpdateFn, placeholder
-    | TextInputColumnSchema; // type: 'textinput' + onUpdateFn, placeholder, debounceMs</code></pre>
+    | ToggleColumnSchema    // type: 'toggle' + InlineEditableSchema&lt;boolean&gt;
+    | CheckboxColumnSchema  // type: 'checkbox' + InlineEditableSchema&lt;boolean&gt; + indeterminateFn
+    | SelectColumnSchema    // type: 'select' + options, placeholder + InlineEditableSchema&lt;string&gt;
+    | TextInputColumnSchema // type: 'textinput' + placeholder + InlineEditableSchema&lt;string&gt;
+    | ColorColumnSchema;    // type: 'color' + copyable, copyMessage, swatchShowValue, swatchSize, swatchShape</code></pre>
 
     <h4>FilterSchema</h4>
     <pre><code class="language-typescript">type FilterSchema =
@@ -5783,7 +6266,7 @@ type SchemaItem = BaseField | LayoutItem; // Field or layout wrapper</code></pre
 
     <h4>EntrySchema (Infolist)</h4>
     <p>Used by infolist entry builders (<code>TextEntry</code>, <code>BadgeEntry</code>, <code>DateEntry</code>, etc.).</p>
-    <pre><code class="language-typescript">type EntryType = 'text' | 'badge' | 'date' | 'boolean' | 'image' | 'icon' | 'repeatable' | 'key-value';
+    <pre><code class="language-typescript">type EntryType = 'text' | 'badge' | 'date' | 'boolean' | 'image' | 'icon' | 'repeatable' | 'key-value' | 'color' | 'code';
 
 interface EntrySchema {
     key: string;
@@ -5818,6 +6301,19 @@ interface EntrySchema {
     // Icon
     iconFn?: (value: any, record: any) =&gt; Component;
     colorFn?: (value: any, record: any) =&gt; string;
+    // Color   (copyable is shared with Text, above)
+    copyMessage?: string;
+    swatchShowValue?: boolean;
+    swatchSize?: number;
+    swatchShape?: 'square' | 'circle';
+    // Code
+    codeLanguage?: CodeLanguage;
+    codeLineNumbers?: boolean;
+    codeWrap?: boolean;
+    codeMaxLines?: number;
+    codeStartLine?: number;
+    codeHighlightLines?: number[];
+    codeFilename?: string;
     // Repeatable
     subSchema?: EntrySchema[];
     // Visibility

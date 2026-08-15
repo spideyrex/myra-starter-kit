@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { ref, computed, defineAsyncComponent, h, type Component } from 'vue';
 import { usePage } from '@inertiajs/vue3';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
@@ -16,18 +16,28 @@ import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Button } from '@/components/ui/button';
+import { Skeleton } from '@/components/ui/skeleton';
 import PasswordInput from '@/components/PasswordInput.vue';
-import TipTapEditor from '@/components/TipTapEditor.vue';
 import RepeaterField from '@/components/admin/RepeaterField.vue';
 import BuilderField from '@/components/admin/BuilderField.vue';
 import SearchableSelect from '@/components/admin/SearchableSelect.vue';
-import ImageEditor from '@/components/ImageEditor.vue';
+import FieldHint from '@/components/admin/FieldHint.vue';
 import type { SelectOption } from '@/types/admin';
-import type { FieldType, SchemaItem, BuilderBlock } from '@/composables/useFormSchema';
-import { CalendarDate, type DateValue, getLocalTimeZone, today } from '@internationalized/date';
+import type {
+    FieldType, SchemaItem, BuilderBlock, HintAction, SemanticColor, ToggleOption,
+    CodeLanguage, MarkdownButton, MarkdownMode,
+} from '@/composables/useFormSchema';
+import { CalendarDate, type DateValue } from '@internationalized/date';
 import { CalendarIcon, Plus, Trash2 } from 'lucide-vue-next';
-import { marked } from 'marked';
-import { sanitizeHtml } from '@/composables/useSanitize';
+
+// Heavy branches load only when their arm actually mounts, so a form page no
+// longer ships tiptap / marked / dompurify / cropperjs in the shared chunk.
+const paneSkeleton = () => h(Skeleton, { class: 'h-40 w-full rounded-md' });
+
+const LazyTipTapEditor = defineAsyncComponent({ loader: () => import('@/components/TipTapEditor.vue'), loadingComponent: paneSkeleton, delay: 120 });
+const LazyImageEditor = defineAsyncComponent(() => import('@/components/ImageEditor.vue'));
+const LazyMarkdownEditor = defineAsyncComponent({ loader: () => import('@/components/admin/MarkdownEditorField.vue'), loadingComponent: paneSkeleton, delay: 120 });
+const LazyCodeEditor = defineAsyncComponent({ loader: () => import('@/components/admin/CodeEditorField.vue'), loadingComponent: paneSkeleton, delay: 120 });
 
 const page = usePage();
 
@@ -44,6 +54,8 @@ const props = withDefaults(defineProps<{
     optionsUrl?: string;
     disabled?: boolean;
     rows?: number;
+    /** Owning form state — needed by hintAction callbacks. */
+    form?: Record<string, any>;
     // Date fields
     minDate?: string;
     maxDate?: string;
@@ -81,9 +93,16 @@ const props = withDefaults(defineProps<{
     // TagsInput
     maxTags?: number;
     tagPlaceholder?: string;
-    // ToggleGroup
+    // ToggleGroup / ToggleButtons
     toggleMultiple?: boolean;
     toggleVariant?: 'default' | 'outline';
+    toggleOptions?: ToggleOption[];
+    toggleColumns?: number;
+    toggleSize?: 'sm' | 'default' | 'lg';
+    toggleInline?: boolean;
+    toggleHideLabels?: boolean;
+    toggleMin?: number;
+    toggleMax?: number;
     // Calendar date picker
     useCalendar?: boolean;
     dateFormat?: string;
@@ -98,15 +117,49 @@ const props = withDefaults(defineProps<{
     valueLabel?: string;
     keyPlaceholder?: string;
     valuePlaceholder?: string;
+    // Hint
+    hintIcon?: Component;
+    hintIconTooltip?: string;
+    hintColor?: SemanticColor;
+    hintAction?: HintAction;
+    // Code
+    codeLanguage?: CodeLanguage;
+    codeLineNumbers?: boolean;
+    codeWrap?: boolean;
+    codeReadOnly?: boolean;
+    codeIndentWithTab?: boolean;
+    codeAutocomplete?: boolean;
+    codeCopyable?: boolean;
+    codeTabSize?: number;
+    codeMinHeight?: string;
+    codeMaxHeight?: string;
+    codeFilename?: string;
+    // Markdown
+    mdToolbar?: MarkdownButton[];
+    mdMode?: MarkdownMode;
+    mdModeSwitcher?: boolean;
+    mdFullscreen?: boolean;
+    mdCounter?: boolean;
+    mdMaxLength?: number;
+    mdMinHeight?: string;
+    mdMaxHeight?: string;
+    mdUploadRoute?: string;
 }>(), {
     type: 'text',
     pinLength: 6,
     step: 1,
+    hintColor: 'muted',
+    codeMinHeight: '12rem',
 });
 
 const model = defineModel<any>();
 
 const fieldId = computed(() => `field-${props.name}`);
+
+const describedBy = computed(() => [
+    props.hint ? `${fieldId.value}-hint` : null,
+    props.error ? `${fieldId.value}-error` : null,
+].filter(Boolean).join(' ') || undefined);
 
 // Image editor state
 const imageEditorOpen = ref(false);
@@ -241,34 +294,90 @@ function updateKvPair(index: number, field: 'key' | 'value', value: string) {
     }
 }
 
-// --- Markdown helpers ---
-const renderedMarkdown = computed(() => {
-    if (!model.value) return '';
-    return sanitizeHtml(marked.parse(String(model.value)) as string);
+// --- ToggleGroup / ToggleButtons helpers ---
+const resolvedToggleOptions = computed<ToggleOption[]>(() => {
+    if (props.toggleOptions?.length) return props.toggleOptions;
+    return (props.options ?? []).map(o => ({ value: String(o.value), label: o.label }));
 });
+
+// Multi-select state is ALWAYS an array — no Eloquent `array` cast needed on the model.
+const normalisedToggleModel = computed(() => props.toggleMultiple
+    ? (Array.isArray(model.value) ? model.value : model.value == null ? [] : [model.value])
+    : model.value);
+
+function onToggleChange(v: any) {
+    if (!props.toggleMultiple) {
+        model.value = v;
+        return;
+    }
+    const next: string[] = Array.isArray(v) ? v : v == null ? [] : [v];
+    if (props.toggleMin != null && next.length < props.toggleMin) return;
+    model.value = next;
+}
+
+function atToggleMax(value: string): boolean {
+    if (!props.toggleMultiple || props.toggleMax == null) return false;
+    const cur = (normalisedToggleModel.value ?? []) as string[];
+    return cur.length >= props.toggleMax && !cur.includes(value);
+}
+
+const TOGGLE_COLOR_CLASS: Record<SemanticColor, string> = {
+    muted: '',
+    primary: 'data-[state=on]:bg-primary data-[state=on]:text-primary-foreground',
+    info: 'data-[state=on]:bg-info data-[state=on]:text-info-foreground',
+    success: 'data-[state=on]:bg-success data-[state=on]:text-success-foreground',
+    warning: 'data-[state=on]:bg-warning data-[state=on]:text-warning-foreground',
+    danger: 'data-[state=on]:bg-destructive data-[state=on]:text-white',
+};
+
+function toggleColorClass(color?: SemanticColor): string {
+    return color ? TOGGLE_COLOR_CLASS[color] ?? '' : '';
+}
+
+function toggleAriaLabel(opt: ToggleOption): string | undefined {
+    if (!props.toggleHideLabels) return undefined;
+    return opt.tooltip ? `${opt.label}. ${opt.tooltip}` : opt.label;
+}
 </script>
 
 <template>
     <!-- Hidden field — no visible element -->
     <input v-if="type === 'hidden'" type="hidden" :name="name" :value="model" />
 
-    <div v-else :class="type === 'switch' || type === 'checkbox' ? 'flex items-center gap-3' : 'space-y-2'">
+    <div v-else class="space-y-2">
         <template v-if="type === 'switch'">
-            <Switch :id="fieldId" v-model="model" :disabled="disabled" />
-            <Label :for="fieldId">{{ label }}</Label>
+            <div class="flex items-center gap-3">
+                <Switch
+                    :id="fieldId"
+                    v-model="model"
+                    :disabled="disabled"
+                    :aria-describedby="describedBy"
+                    :aria-invalid="!!error"
+                />
+                <Label :id="`${fieldId}-label`" :for="fieldId">{{ label }}</Label>
+            </div>
         </template>
         <template v-else-if="type === 'checkbox'">
-            <Checkbox :id="fieldId" :checked="model" :disabled="disabled" @update:checked="model = $event" />
-            <Label :for="fieldId">{{ label }}</Label>
+            <div class="flex items-center gap-3">
+                <Checkbox
+                    :id="fieldId"
+                    :model-value="model"
+                    :disabled="disabled"
+                    :aria-describedby="describedBy"
+                    :aria-invalid="!!error"
+                    @update:model-value="model = $event"
+                />
+                <Label :id="`${fieldId}-label`" :for="fieldId">{{ label }}</Label>
+            </div>
         </template>
         <template v-else>
-            <Label :for="fieldId">
+            <Label :id="`${fieldId}-label`" :for="fieldId">
                 {{ label }}
                 <span v-if="required" class="text-destructive">*</span>
             </Label>
 
             <slot>
-                <TipTapEditor
+                <LazyTipTapEditor
                     v-if="type === 'richtext'"
                     v-model="model"
                     :placeholder="editorPlaceholder || placeholder || 'Start writing...'"
@@ -284,6 +393,8 @@ const renderedMarkdown = computed(() => {
                     :required="required"
                     :disabled="disabled"
                     :rows="rows"
+                    :aria-describedby="describedBy"
+                    :aria-invalid="!!error"
                 />
                 <SearchableSelect
                     v-else-if="type === 'select' && searchable"
@@ -293,13 +404,15 @@ const renderedMarkdown = computed(() => {
                     :options-url="optionsUrl"
                     :placeholder="placeholder"
                     :disabled="disabled"
+                    :aria-describedby="describedBy"
+                    :aria-invalid="!!error"
                 />
                 <Select
                     v-else-if="type === 'select'"
                     v-model="model"
                     :disabled="disabled"
                 >
-                    <SelectTrigger :id="fieldId">
+                    <SelectTrigger :id="fieldId" :aria-describedby="describedBy" :aria-invalid="!!error">
                         <SelectValue :placeholder="placeholder" />
                     </SelectTrigger>
                     <SelectContent>
@@ -318,6 +431,31 @@ const renderedMarkdown = computed(() => {
                     v-model="model"
                     :placeholder="placeholder"
                     :required="required"
+                    :aria-describedby="describedBy"
+                    :aria-invalid="!!error"
+                />
+
+                <!-- Code editor (lazy: CodeMirror 6) -->
+                <LazyCodeEditor
+                    v-else-if="type === 'code'"
+                    :field-id="fieldId"
+                    :label="label"
+                    :error="error"
+                    :described-by="describedBy"
+                    :disabled="disabled"
+                    :model-value="model"
+                    :code-language="codeLanguage"
+                    :code-line-numbers="codeLineNumbers"
+                    :code-wrap="codeWrap"
+                    :code-read-only="codeReadOnly"
+                    :code-indent-with-tab="codeIndentWithTab"
+                    :code-autocomplete="codeAutocomplete"
+                    :code-copyable="codeCopyable"
+                    :code-tab-size="codeTabSize"
+                    :code-min-height="codeMinHeight"
+                    :code-max-height="codeMaxHeight"
+                    :code-filename="codeFilename"
+                    @update:model-value="model = $event"
                 />
 
                 <!-- Radio group (shadcn RadioGroup) -->
@@ -326,6 +464,8 @@ const renderedMarkdown = computed(() => {
                     :model-value="model"
                     :disabled="disabled"
                     :class="inline ? 'flex flex-wrap gap-4' : 'space-y-2'"
+                    :aria-describedby="describedBy"
+                    :aria-invalid="!!error"
                     @update:model-value="model = $event"
                 >
                     <div
@@ -347,12 +487,15 @@ const renderedMarkdown = computed(() => {
                         type="color"
                         :value="model || '#000000'"
                         :disabled="disabled"
+                        :aria-describedby="describedBy"
+                        :aria-invalid="!!error"
                         class="h-10 w-14 cursor-pointer rounded border border-border bg-background p-1"
                         @input="model = ($event.target as HTMLInputElement).value"
                     />
                     <Input
                         :model-value="model || ''"
                         :disabled="disabled"
+                        :aria-label="label"
                         placeholder="#000000"
                         class="max-w-[120px]"
                         @update:model-value="model = $event"
@@ -368,6 +511,8 @@ const renderedMarkdown = computed(() => {
                         :accept="accept"
                         :multiple="multiple"
                         :disabled="disabled"
+                        :aria-describedby="describedBy"
+                        :aria-invalid="!!error"
                         class="block w-full text-sm text-muted-foreground file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-medium file:bg-primary file:text-primary-foreground hover:file:bg-primary/90 cursor-pointer"
                         @change="handleFileChange"
                     />
@@ -375,7 +520,7 @@ const renderedMarkdown = computed(() => {
                     <div v-if="imagePreview" class="mt-2">
                         <img :src="imagePreview" alt="Cropped preview" class="h-24 w-auto rounded-md border object-cover" />
                     </div>
-                    <ImageEditor
+                    <LazyImageEditor
                         v-if="imageCrop"
                         v-model:open="imageEditorOpen"
                         :file="imageEditorFile"
@@ -423,6 +568,8 @@ const renderedMarkdown = computed(() => {
                         :max="max"
                         :step="step"
                         :disabled="disabled"
+                        :aria-describedby="describedBy"
+                        :aria-invalid="!!error"
                         class="flex-1"
                     />
                     <span v-if="showValue" class="min-w-[3ch] text-right text-sm font-medium tabular-nums">
@@ -444,7 +591,7 @@ const renderedMarkdown = computed(() => {
                 >
                     <NumberFieldContent>
                         <NumberFieldDecrement />
-                        <NumberFieldInput />
+                        <NumberFieldInput :aria-describedby="describedBy" :aria-invalid="!!error" />
                         <NumberFieldIncrement />
                     </NumberFieldContent>
                 </NumberField>
@@ -457,6 +604,8 @@ const renderedMarkdown = computed(() => {
                     :mask="pinMask"
                     :disabled="disabled"
                     :placeholder="placeholder || '○'"
+                    :aria-describedby="describedBy"
+                    :aria-invalid="!!error"
                 >
                     <PinInputGroup>
                         <PinInputSlot v-for="(_, i) in pinLength" :key="i" :index="i" />
@@ -468,6 +617,8 @@ const renderedMarkdown = computed(() => {
                     v-else-if="type === 'tags-input'"
                     :model-value="model || []"
                     :disabled="disabled"
+                    :aria-describedby="describedBy"
+                    :aria-invalid="!!error"
                     @update:model-value="model = $event"
                 >
                     <TagsInputItem v-for="tag in (model || [])" :key="tag" :value="tag">
@@ -480,21 +631,37 @@ const renderedMarkdown = computed(() => {
                     />
                 </TagsInput>
 
-                <!-- Toggle group -->
+                <!-- Toggle group / Toggle buttons -->
                 <ToggleGroup
                     v-else-if="type === 'toggle-group'"
+                    :id="fieldId"
                     :type="toggleMultiple ? 'multiple' : 'single'"
-                    :model-value="model"
+                    :model-value="normalisedToggleModel"
                     :variant="toggleVariant"
+                    :size="toggleSize"
+                    :spacing="toggleColumns ? 2 : 0"
                     :disabled="disabled"
-                    @update:model-value="model = $event"
+                    :class="toggleColumns ? 'grid w-full' : (toggleInline ? 'flex flex-wrap' : 'flex w-full flex-wrap')"
+                    :style="toggleColumns ? `grid-template-columns: repeat(${toggleColumns}, minmax(0,1fr))` : undefined"
+                    :aria-describedby="describedBy"
+                    :aria-invalid="!!error"
+                    @update:model-value="onToggleChange"
                 >
                     <ToggleGroupItem
-                        v-for="opt in options"
+                        v-for="opt in resolvedToggleOptions"
                         :key="opt.value"
                         :value="opt.value"
+                        :disabled="disabled || opt.disabled || atToggleMax(opt.value)"
+                        :aria-label="toggleAriaLabel(opt)"
+                        :title="opt.tooltip"
+                        :class="['h-auto py-2', toggleColorClass(opt.color)]"
                     >
-                        {{ opt.label }}
+                        <component :is="opt.icon" v-if="opt.icon" class="size-4" :class="toggleHideLabels ? '' : 'mr-2'" aria-hidden="true" />
+                        <span v-if="!toggleHideLabels" class="flex flex-col items-start text-left">
+                            <span>{{ opt.label }}</span>
+                            <span v-if="opt.description" class="text-xs opacity-70">{{ opt.description }}</span>
+                            <span v-if="opt.tooltip" class="sr-only">{{ opt.tooltip }}</span>
+                        </span>
                     </ToggleGroupItem>
                 </ToggleGroup>
 
@@ -508,6 +675,8 @@ const renderedMarkdown = computed(() => {
                     :max="maxTime"
                     :required="required"
                     :disabled="disabled"
+                    :aria-describedby="describedBy"
+                    :aria-invalid="!!error"
                 />
 
                 <!-- CheckboxList -->
@@ -516,21 +685,27 @@ const renderedMarkdown = computed(() => {
                         v-if="checkboxSearchable"
                         v-model="checkboxSearch"
                         placeholder="Search options..."
+                        :aria-label="`Search ${label}`"
                         class="h-8"
                     />
                     <div class="flex gap-2 text-xs">
                         <button type="button" class="text-primary hover:underline" @click="model = (options || []).map(o => o.value)">Select all</button>
                         <button type="button" class="text-primary hover:underline" @click="model = []">Deselect all</button>
                     </div>
-                    <div class="max-h-48 overflow-y-auto rounded-md border p-2" :class="`grid gap-2 grid-cols-${checkboxColumns || 1}`">
+                    <div
+                        class="max-h-48 overflow-y-auto rounded-md border p-2 grid gap-2"
+                        :style="`grid-template-columns: repeat(${checkboxColumns || 1}, minmax(0, 1fr))`"
+                        :aria-describedby="describedBy"
+                    >
                         <label
                             v-for="opt in filteredCheckboxOptions"
                             :key="opt.value"
                             class="flex items-center gap-2 text-sm"
                         >
                             <Checkbox
-                                :checked="Array.isArray(model) && model.includes(opt.value)"
-                                @update:checked="(v: boolean | 'indeterminate') => toggleCheckboxOption(opt.value, v)"
+                                :model-value="Array.isArray(model) && model.includes(opt.value)"
+                                :disabled="disabled"
+                                @update:model-value="(v: boolean | 'indeterminate') => toggleCheckboxOption(opt.value, v)"
                             />
                             {{ opt.label }}
                         </label>
@@ -552,12 +727,14 @@ const renderedMarkdown = computed(() => {
                         <Input
                             :model-value="pair.key"
                             :placeholder="keyPlaceholder || 'Enter key...'"
+                            :aria-label="`${keyLabel || 'Key'} ${i + 1}`"
                             class="h-8"
                             @update:model-value="(v: any) => updateKvPair(i, 'key', String(v))"
                         />
                         <Input
                             :model-value="pair.value"
                             :placeholder="valuePlaceholder || 'Enter value...'"
+                            :aria-label="`${valueLabel || 'Value'} ${i + 1}`"
                             class="h-8"
                             @update:model-value="(v: any) => updateKvPair(i, 'value', String(v))"
                         />
@@ -577,29 +754,42 @@ const renderedMarkdown = computed(() => {
                     </Button>
                 </div>
 
-                <!-- Markdown Editor -->
-                <div v-else-if="type === 'markdown'" class="grid grid-cols-2 gap-0 rounded-md border overflow-hidden">
-                    <Textarea
-                        :id="fieldId"
-                        v-model="model"
-                        :placeholder="placeholder || 'Write markdown...'"
-                        :rows="rows || 10"
-                        :disabled="disabled"
-                        class="rounded-none border-0 border-r font-mono text-sm resize-none"
-                    />
-                    <div class="overflow-auto p-3 prose prose-sm dark:prose-invert max-w-none" :style="`max-height: ${(rows || 10) * 1.5 + 1.5}rem`" v-html="renderedMarkdown" />
-                </div>
+                <!-- Markdown editor (lazy: marked + dompurify) -->
+                <LazyMarkdownEditor
+                    v-else-if="type === 'markdown'"
+                    :field-id="fieldId"
+                    :label="label"
+                    :error="error"
+                    :described-by="describedBy"
+                    :disabled="disabled"
+                    :placeholder="placeholder"
+                    :model-value="model"
+                    :rows="rows"
+                    :md-toolbar="mdToolbar"
+                    :md-mode="mdMode"
+                    :md-mode-switcher="mdModeSwitcher"
+                    :md-fullscreen="mdFullscreen"
+                    :md-counter="mdCounter"
+                    :md-max-length="mdMaxLength"
+                    :md-min-height="mdMinHeight"
+                    :md-max-height="mdMaxHeight"
+                    :md-upload-route="mdUploadRoute"
+                    @update:model-value="model = $event"
+                />
 
                 <!-- Calendar / Calendar date picker -->
                 <Popover v-else-if="type === 'calendar' || (type === 'date' && useCalendar)">
                     <PopoverTrigger as-child>
                         <Button
+                            :id="fieldId"
                             variant="outline"
                             :class="[
                                 'w-full justify-start text-left font-normal',
                                 !model && 'text-muted-foreground',
                             ]"
                             :disabled="disabled"
+                            :aria-describedby="describedBy"
+                            :aria-invalid="!!error"
                         >
                             <CalendarIcon class="mr-2 size-4" />
                             {{ calendarDisplayText || placeholder || 'Pick a date' }}
@@ -624,11 +814,21 @@ const renderedMarkdown = computed(() => {
                     :disabled="disabled"
                     :min="minDate"
                     :max="maxDate"
+                    :aria-describedby="describedBy"
+                    :aria-invalid="!!error"
                 />
             </slot>
-
-            <p v-if="hint && !error" class="text-sm text-muted-foreground">{{ hint }}</p>
-            <p v-if="error" class="text-sm text-destructive">{{ error }}</p>
         </template>
+
+        <FieldHint
+            :field-id="fieldId"
+            :hint="hint"
+            :hint-icon="hintIcon"
+            :hint-icon-tooltip="hintIconTooltip"
+            :hint-color="hintColor"
+            :hint-action="hintAction"
+            :error="error"
+            :form="form"
+        />
     </div>
 </template>

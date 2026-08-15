@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Admin\Traits\HandlesSoftDeletes;
 use App\DTOs\UserData;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\UserStoreRequest;
@@ -19,6 +20,10 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class UserController extends Controller
 {
+    use HandlesSoftDeletes;
+
+    private const MODULE = 'users';
+
     public function __construct(private readonly UserService $userService) {}
 
     public function index(Request $request): Response
@@ -80,6 +85,8 @@ class UserController extends Controller
 
     public function restore(int $id): RedirectResponse
     {
+        $this->authorizeAbility(self::MODULE . '.edit');
+        $this->authorizeManage(User::withTrashed()->findOrFail($id));
         $this->userService->restore($id);
 
         return back()->with('success', 'User restored successfully.');
@@ -87,6 +94,8 @@ class UserController extends Controller
 
     public function forceDelete(int $id): RedirectResponse
     {
+        $this->authorizeAbility(self::MODULE . '.delete');
+        $this->authorizeManage(User::withTrashed()->findOrFail($id));
         $this->userService->forceDelete($id);
 
         return back()->with('success', 'User permanently deleted.');
@@ -100,22 +109,29 @@ class UserController extends Controller
             'action' => 'required|in:delete,suspend,activate,restore,force_delete',
         ]);
 
-        if (in_array($request->action, ['restore', 'force_delete'])) {
-            foreach ($request->ids as $id) {
-                match ($request->action) {
-                    'restore' => $this->userService->restore($id),
-                    'force_delete' => $this->userService->forceDelete($id),
-                };
-            }
-        } else {
-            $users = User::whereIn('id', $request->ids)->get();
-            foreach ($users as $user) {
-                match ($request->action) {
-                    'delete' => $this->userService->delete($user),
-                    'suspend' => $this->userService->suspend($user),
-                    'activate' => $this->userService->activate($user),
-                };
-            }
+        // The route is gated on users.edit; destructive verbs need their own ability.
+        $this->authorizeBulkVerb($request->action, self::MODULE);
+
+        $trashedVerb = in_array($request->action, ['restore', 'force_delete'], true);
+
+        // Bulk must honour the same per-user guard as the single-record path.
+        $users = User::query()
+            ->when($trashedVerb, fn ($q) => $q->withTrashed())
+            ->whereIn('id', $request->ids)
+            ->get();
+
+        foreach ($users as $user) {
+            $this->authorizeManage($user);
+        }
+
+        foreach ($users as $user) {
+            match ($request->action) {
+                'restore' => $this->userService->restore($user->id),
+                'force_delete' => $this->userService->forceDelete($user->id),
+                'delete' => $this->userService->delete($user),
+                'suspend' => $this->userService->suspend($user),
+                'activate' => $this->userService->activate($user),
+            };
         }
 
         return back()->with('success', 'Bulk action completed successfully.');

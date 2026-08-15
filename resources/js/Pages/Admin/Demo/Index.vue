@@ -26,6 +26,7 @@ import {
     SlidersHorizontal,
     Wand2,
     MapPin,
+    Code,
 } from 'lucide-vue-next';
 
 const demos = [
@@ -139,10 +140,17 @@ const demos = [
     // --- Medium Impact features ---
     {
         title: 'New Field Types',
-        description: 'TimePicker, CheckboxList, KeyValue editor, and Markdown editor with live preview.',
+        description: 'Hints, ToggleButtons, TimePicker, CheckboxList, KeyValue, and the Markdown editor with toolbar and split preview.',
         icon: ListChecks,
         route: 'admin.demo.field-types',
         badge: 'Fields',
+    },
+    {
+        title: 'Code Editor Field',
+        description: 'CodeMirror 6 behind a lazy import: per-field language, line numbers, wrapping, read-only and copy.',
+        icon: Code,
+        route: 'admin.demo.code-editor',
+        badge: 'CodeMirror',
     },
     {
         title: 'Advanced Filters',

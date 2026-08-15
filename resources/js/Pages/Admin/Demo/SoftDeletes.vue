@@ -6,18 +6,15 @@ import PageHeader from '@/components/PageHeader.vue';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { TextColumn, BadgeColumn, DateColumn } from '@/composables/useTableSchema';
-import { SelectFilter } from '@/composables/useTableFilters';
-import { BulkAction, Action, DeleteAction } from '@/composables/useTableActions';
-import { useConfirmAction } from '@/composables/useConfirmAction';
+import { trashedFilter } from '@/composables/useTableFilters';
+import { Action, ActionDivider, ActionGroup, ActionSectionLabel, BulkAction, softDeleteActions, softDeleteBulkActions } from '@/composables/useTableActions';
 import type { PaginatedData } from '@/types';
-import { ArrowLeft, Trash2, RotateCcw, Pencil } from 'lucide-vue-next';
+import { ArrowLeft, Trash2, Pencil } from 'lucide-vue-next';
 
-const props = defineProps<{
+defineProps<{
     users: PaginatedData<any>;
     filters: Record<string, string>;
 }>();
-
-const { confirmDelete, confirmPost } = useConfirmAction();
 
 const columns = [
     TextColumn.make('name').label('Name').sortable().grow(),
@@ -29,49 +26,27 @@ const columns = [
     DateColumn.make('created_at').label('Created').sortable().format('relative'),
 ];
 
-const tableFilters = [
-    SelectFilter.make('trashed').label('Trash Status').options({
-        '': 'Active Only',
-        only: 'Trashed Only',
-        with: 'All (Include Trashed)',
-    }),
-];
+const tableFilters = [trashedFilter()];
+
+// The whole trash workflow in one call — Delete / Restore / Delete permanently,
+// each with the right icon, confirmation and deleted_at visibility rule.
+const [deleteAction, restoreAction, forceDeleteAction] = softDeleteActions('admin.demo', {
+    module: false,
+    edit: false,
+    deleteRoute: 'admin.demo.soft-delete',
+});
 
 const actions = [
-    // Edit action — only for non-trashed
-    Action.make('Edit')
-        .icon(Pencil)
-        .action(() => {})
-        .visible((row: any) => !row.deleted_at),
-
-    // Restore — only for trashed
-    Action.make('Restore')
-        .icon(RotateCcw)
-        .action((row: any) => confirmPost(
-            'admin.demo.restore',
-            row.id,
-            {},
-            { title: 'Restore User', description: 'Restore this user from trash?', confirmText: 'Restore' },
-        ))
-        .visible((row: any) => !!row.deleted_at),
-
-    // Soft delete — only for non-trashed
-    DeleteAction.make('admin.demo.soft-delete')
-        .confirmTitle('Move to Trash')
-        .confirmDescription('This user will be moved to trash. You can restore them later.')
-        .visible((row: any) => !row.deleted_at),
-
-    // Force delete — only for trashed
-    Action.make('Force Delete')
-        .icon(Trash2)
-        .destructive()
-        .separator()
-        .action((row: any) => confirmDelete(
-            'admin.demo.force-delete',
-            row.id,
-            { title: 'Permanently Delete', description: 'This action cannot be undone. The user will be permanently removed.', confirmText: 'Delete Forever' },
-        ))
-        .visible((row: any) => !!row.deleted_at),
+    ActionGroup.make([
+        Action.make('Edit').icon(Pencil).action(() => {}).visible((row: any) => !row.deleted_at),
+        ActionDivider.make(),
+        ActionSectionLabel.make('Trash'),
+        deleteAction
+            .confirmTitle('Move to trash')
+            .confirmDescription('This user will be moved to trash. You can restore them later.'),
+        restoreAction,
+        forceDeleteAction,
+    ]).tooltip('Row actions'),
 ];
 
 const bulkActions = [
@@ -80,10 +55,7 @@ const bulkActions = [
         .destructive()
         .requiresConfirmation('Delete Users', 'Are you sure you want to delete the selected users?')
         .icon(Trash2),
-    BulkAction.make('Restore')
-        .action((ids) => router.post(route('admin.demo.bulk-action'), { ids, action: 'restore' }))
-        .requiresConfirmation('Restore Users', 'Restore the selected users from trash?')
-        .icon(RotateCcw),
+    ...softDeleteBulkActions('admin.demo', false),
 ];
 </script>
 

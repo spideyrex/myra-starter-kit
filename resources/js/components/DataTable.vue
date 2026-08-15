@@ -1,11 +1,12 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue';
-import { router, Link } from '@inertiajs/vue3';
+import { ref, computed, onBeforeUnmount } from 'vue';
+import { router } from '@inertiajs/vue3';
+import { toast } from 'vue-sonner';
 import type { PaginatedData } from '@/types';
-import type { ColumnSchema, FilterSchema, ActionSchema, BulkActionSchema, RowAction, QueryGroup, QueryRule } from '@/types/admin';
+import type { ColumnSchema, FilterSchema, ActionSchema, ActionGroupSchema, BulkActionSchema, RowAction, RowActionsConfig, QueryGroup, QueryRule } from '@/types/admin';
 import { BaseColumn } from '@/composables/useTableSchema';
 import { BaseFilter } from '@/composables/useTableFilters';
-import { Action, BulkAction, ActionGroup } from '@/composables/useTableActions';
+import { Action, BulkAction, ActionGroup, ActionDivider, ActionSectionLabel } from '@/composables/useTableActions';
 import {
     Table,
     TableBody,
@@ -17,21 +18,19 @@ import {
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
-import { Switch } from '@/components/ui/switch';
 import { Select as UiSelect, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Skeleton } from '@/components/ui/skeleton';
 import { usePermissions } from '@/composables/usePermissions';
-import { useConfirmAction } from '@/composables/useConfirmAction';
 import { useConfirm } from '@/composables/useConfirm';
-import DateCell from '@/components/admin/DateCell.vue';
-import StatusBadge from '@/components/StatusBadge.vue';
+import { accumulate, summariseAcc, computeSummary, type SummaryAccumulator } from '@/composables/useSummaries';
+import CellRenderer from '@/components/admin/TableCell.vue';
 import RowActions from '@/components/admin/RowActions.vue';
 import ActionModal from '@/components/ActionModal.vue';
 import QueryBuilderGroup from '@/components/admin/QueryBuilderGroup.vue';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Separator } from '@/components/ui/separator';
-import { Search, ChevronUp, ChevronDown, ChevronsUpDown, Check, X, Copy, Filter as FilterIcon, GripVertical, ChevronRight, Columns3, CalendarDays, Sparkles, RotateCcw } from 'lucide-vue-next';
+import { Search, ChevronUp, ChevronDown, ChevronsUpDown, Check, X, Filter as FilterIcon, GripVertical, ChevronRight, Columns3, CalendarDays, Sparkles, RotateCcw } from 'lucide-vue-next';
 
 export interface Column {
     key: string;
@@ -42,7 +41,7 @@ export interface Column {
 
 type ColumnInput = Column | BaseColumn;
 type FilterInput = BaseFilter | FilterSchema;
-type ActionInput = Action | ActionGroup;
+type ActionInput = Action | ActionGroup | ActionDivider | ActionSectionLabel;
 type BulkActionInput = BulkAction;
 
 const props = withDefaults(defineProps<{
@@ -75,7 +74,6 @@ const props = withDefaults(defineProps<{
 });
 
 const { can } = usePermissions();
-const { confirmDelete } = useConfirmAction();
 const { confirm } = useConfirm();
 
 function decodePaginationLabel(label: string): string {
@@ -149,25 +147,32 @@ const resolvedFilters = computed<FilterSchema[]>(() => {
 });
 
 // --- Normalize actions ---
-const resolvedActions = computed<ActionSchema[]>(() => {
+type AnyActionSchema = ActionSchema | ActionGroupSchema;
+
+const resolvedActions = computed<AnyActionSchema[]>(() => {
     if (!props.actions) return [];
-    const result: ActionSchema[] = [];
-    for (const a of props.actions) {
-        if (a instanceof ActionGroup) {
-            result.push(...a.toSchema());
-        } else if (a instanceof Action) {
-            result.push(a.toSchema());
-        }
-    }
-    return result;
+    return props.actions.map(a => a.toSchema());
 });
+
+/**
+ * A single top-level ActionGroup configures the trigger itself (label, icon,
+ * badge, collapseAfter…) rather than nesting a submenu inside a dropdown.
+ */
+const rootGroup = computed<ActionGroupSchema | null>(() => {
+    const items = resolvedActions.value;
+    return items.length === 1 && (items[0] as ActionGroupSchema).kind === 'group'
+        ? (items[0] as ActionGroupSchema)
+        : null;
+});
+
+const actionItems = computed<AnyActionSchema[]>(() => rootGroup.value?.items ?? resolvedActions.value);
 
 const resolvedBulkActions = computed<BulkActionSchema[]>(() => {
     if (!props.bulkActions) return [];
     return props.bulkActions.map(b => b instanceof BulkAction ? b.toSchema() : b);
 });
 
-const hasActions = computed(() => resolvedActions.value.length > 0);
+const hasActions = computed(() => actionItems.value.length > 0);
 
 // --- State ---
 const qp = props.queryPrefix || '';
@@ -364,28 +369,115 @@ function goToPage(url: string | null) {
 }
 
 // --- Action helpers ---
+
+/** One request path for every action — confirmation, route, payload, toast. */
+async function runAction(a: ActionSchema, row: any) {
+    if (a.requiresConfirmation) {
+        const ok = await confirm({
+            title: a.confirmTitle ?? 'Confirm',
+            description: a.confirmDescription ?? '',
+            confirmText: a.confirmTitle ?? 'Confirm',
+            variant: a.destructive ? 'destructive' : 'default',
+        });
+        if (!ok) return;
+    }
+
+    const name = a.routeName ?? a.deleteRouteName;
+    const method = a.routeName ? (a.method ?? 'post') : 'delete';
+
+    if (name && !a.urlFn) {
+        const params = a.routeParamsFn?.(row) ?? row.id;
+        const payload = a.payloadFn?.(row) ?? {};
+        const options = {
+            preserveScroll: true,
+            onSuccess: () => { if (a.successMessage) toast.success(a.successMessage); },
+        };
+        const url = route(name, params);
+        if (method === 'delete') {
+            // Inertia's delete() takes no data argument.
+            router.delete(url, { ...options, data: payload });
+        } else if (method === 'get') {
+            router.get(url, payload, options);
+        } else {
+            router[method](url, payload, options);
+        }
+        return;
+    }
+
+    a.actionFn?.(row);
+}
+
+function toRowAction(a: AnyActionSchema, row: any): RowAction | null {
+    if ((a as ActionGroupSchema).kind === 'group') {
+        const g = a as ActionGroupSchema;
+        const items = g.items.map(i => toRowAction(i, row)).filter((i): i is RowAction => i !== null);
+        if (items.length === 0) return null;
+        return {
+            kind: 'group',
+            label: g.label,
+            icon: g.icon,
+            color: g.color,
+            permission: g.permission,
+            badge: g.badgeFn?.(row) ?? null,
+            tooltip: g.tooltip,
+            items,
+        };
+    }
+
+    const action = a as ActionSchema;
+    if (action.kind === 'divider' || action.kind === 'section') {
+        return { kind: action.kind, label: action.label };
+    }
+    if (action.hiddenFn?.(row)) return null;
+    if (action.visibleFn && !action.visibleFn(row)) return null;
+
+    return {
+        kind: 'action',
+        label: action.label,
+        icon: action.icon,
+        permission: action.permission,
+        href: action.urlFn?.(row),
+        external: action.external,
+        color: action.color,
+        tooltip: action.tooltip,
+        badge: action.badgeFn?.(row) ?? null,
+        onClick: action.modalConfig
+            ? () => openModalAction(action, row)
+            : () => runAction(action, row),
+        destructive: action.destructive,
+        separator: action.separator,
+    };
+}
+
 function getRowActions(row: any): RowAction[] {
-    return resolvedActions.value
-        .filter(a => {
-            if (a.hiddenFn?.(row)) return false;
-            if (a.visibleFn && !a.visibleFn(row)) return false;
-            return true;
-        })
-        .map(a => ({
-            label: a.label,
-            icon: a.icon,
-            permission: a.permission,
-            href: a.urlFn?.(row),
-            onClick: a.modalConfig
-                ? () => openModalAction(a, row)
-                : a.deleteRouteName
-                    ? () => confirmDelete(a.deleteRouteName!, row.id)
-                    : a.actionFn
-                        ? () => a.actionFn!(row)
-                        : undefined,
-            destructive: a.destructive,
-            separator: a.separator,
-        }));
+    return actionItems.value
+        .map(a => toRowAction(a, row))
+        .filter((a): a is RowAction => a !== null);
+}
+
+const rowActionsConfig = computed<RowActionsConfig | undefined>(() => {
+    const g = rootGroup.value;
+    if (!g) return undefined;
+    return {
+        label: g.label,
+        icon: g.icon,
+        color: g.color,
+        size: g.size,
+        asButton: g.asButton,
+        buttonGroup: g.buttonGroup,
+        tooltip: g.tooltip,
+        placement: g.placement,
+        width: g.width,
+        maxHeight: g.maxHeight,
+        collapseAfter: g.collapseAfter,
+    };
+});
+
+function rowActionsConfigFor(row: any): RowActionsConfig | undefined {
+    const g = rootGroup.value;
+    const base = rowActionsConfig.value;
+    if (!g || !base) return undefined;
+    return { ...base, badge: g.badgeFn?.(row) ?? null };
 }
 
 async function handleBulkAction(bulk: BulkActionSchema) {
@@ -406,49 +498,6 @@ async function handleBulkAction(bulk: BulkActionSchema) {
     }
 }
 
-// --- Cell rendering helpers ---
-function formatTextValue(col: ColumnSchema, value: any, row: any): string {
-    if (col.type !== 'text') return String(value ?? '');
-
-    if (col.formatFn) return col.formatFn(value, row);
-
-    let result = value ?? col.defaultValue ?? '';
-
-    if (col.currency) {
-        const num = typeof result === 'number' ? result : parseFloat(result);
-        if (!isNaN(num)) {
-            return new Intl.NumberFormat('en-US', { style: 'currency', currency: col.currency }).format(num);
-        }
-    }
-
-    if (col.decimals !== undefined) {
-        const num = typeof result === 'number' ? result : parseFloat(result);
-        if (!isNaN(num)) {
-            result = num.toFixed(col.decimals);
-        }
-    }
-
-    result = String(result);
-
-    if (col.limit && result.length > col.limit) {
-        result = result.slice(0, col.limit) + '...';
-    }
-
-    if (col.prefix) result = col.prefix + result;
-    if (col.suffix) result = result + col.suffix;
-
-    return result;
-}
-
-function getBadgeVariant(col: ColumnSchema, value: string): string {
-    if (col.type !== 'badge') return 'secondary';
-    return col.colors[value] ?? 'secondary';
-}
-
-function copyToClipboard(text: string) {
-    navigator.clipboard.writeText(text);
-}
-
 // --- Modal action support ---
 const modalOpen = ref(false);
 const modalConfig = ref<any>(null);
@@ -460,7 +509,7 @@ function openModalAction(action: ActionSchema, row: any) {
         title: action.label,
         schema: mc.schema,
         routeName: mc.routeName,
-        routeParams: { id: row.id },
+        routeParams: mc.routeParamsFn ? mc.routeParamsFn(row) : { id: row.id },
         method: mc.method || 'put',
         defaults: mc.defaultsFn ? mc.defaultsFn(row) : {},
         submitLabel: mc.submitLabel || action.label,
@@ -495,43 +544,39 @@ const hasSummaries = computed(() => {
     return visibleColumns.value.some(c => c.summarize);
 });
 
-function computeSummary(col: ColumnSchema, rows?: any[]): string | number {
-    // Server-provided summaries take precedence
-    if (props.summaries && props.summaries[col.key] !== undefined) {
-        return props.summaries[col.key];
+// One traversal per summarised column, memoised on the current page of rows.
+const summaryCache = computed<Map<string, SummaryAccumulator>>(() => {
+    const m = new Map<string, SummaryAccumulator>();
+    for (const col of visibleColumns.value) {
+        if (!col.summarize) continue;
+        m.set(col.key, accumulate(props.data.data, col.key, { keepValues: !!col.summaryFn }));
     }
+    return m;
+});
 
-    if (!col.summarize) return '';
+function serverSummary(col: ColumnSchema): string | number | undefined {
+    return props.summaries?.[col.key];
+}
 
-    const data = rows || props.data.data;
-    const values = data.map(r => r[col.key]).filter(v => v !== null && v !== undefined);
-
-    if (col.summaryFn) return col.summaryFn(values);
-
-    const nums = values.map(v => typeof v === 'number' ? v : parseFloat(v)).filter(n => !isNaN(n));
-
-    switch (col.summarize) {
-        case 'sum': {
-            const total = nums.reduce((a, b) => a + b, 0);
-            if ((col as any).currency) {
-                return new Intl.NumberFormat('en-US', { style: 'currency', currency: (col as any).currency }).format(total);
-            }
-            return Math.round(total * 100) / 100;
-        }
-        case 'average': {
-            if (nums.length === 0) return 0;
-            const avg = nums.reduce((a, b) => a + b, 0) / nums.length;
-            return Math.round(avg * 100) / 100;
-        }
-        case 'count':
-            return values.length;
-        case 'range': {
-            if (nums.length === 0) return '—';
-            return `${Math.min(...nums)} – ${Math.max(...nums)}`;
-        }
-        default:
-            return '';
+/** Client-computed summaries only see the current page — say so in the footer. */
+function isPageScoped(col: ColumnSchema): boolean {
+    if (serverSummary(col) !== undefined) return false;
+    if (import.meta.env.DEV && col.summaryConfig?.scope === 'all') {
+        console.warn(`[DataTable] Column "${col.key}" declares summary scope 'all' but no server value arrived in the \`summaries\` prop.`);
     }
+    return true;
+}
+
+function summaryValue(col: ColumnSchema): string | number {
+    const fromServer = serverSummary(col);
+    if (fromServer !== undefined) return fromServer;
+    const acc = summaryCache.value.get(col.key);
+    return acc ? summariseAcc(col, acc) : '';
+}
+
+/** Per-group footers always aggregate their own rows. */
+function groupSummaryValue(col: ColumnSchema, rows: any[]): string | number {
+    return computeSummary(col, rows);
 }
 
 // --- Reordering ---
@@ -552,21 +597,82 @@ function handleReorder() {
 }
 
 // --- Inline editing ---
-function handleInlineUpdate(col: ColumnSchema, row: any, value: string) {
-    (col as any).onUpdateFn?.(row, value);
+// With `updateRoute` the table owns the write: optimistic paint, rollback on error.
+// Without it, the page's `onUpdate` callback is the escape hatch.
+const inFlight = new Set<string>();
+const inlineTimers = new Map<string, ReturnType<typeof setTimeout>>();
+
+async function runInlineUpdate(col: ColumnSchema, row: any, value: any) {
+    const c = col as any;
+    if (c.permission && !can(c.permission)) return;
+    if (c.disabledFn?.(row)) return;
+
+    const message = c.confirmFn?.(row, value);
+    if (message) {
+        const ok = await confirm({ title: 'Confirm', description: message });
+        if (!ok) return;
+    }
+
+    if (!c.updateRoute) {
+        c.onUpdateFn?.(row, value);
+        return;
+    }
+
+    const key = `${row.id}:${col.key}`;
+    if (inFlight.has(key)) return;
+
+    const previous = row[col.key];
+    if (c.optimistic !== false) row[col.key] = value;
+    inFlight.add(key);
+    let succeeded = false;
+
+    router.patch(
+        route(c.updateRoute as string, row.id),
+        { field: c.updateField ?? col.key, value },
+        {
+            preserveState: true,
+            preserveScroll: true,
+            only: [],
+            onSuccess: () => {
+                succeeded = true;
+                if (c.optimistic === false) row[col.key] = value;
+            },
+            // onError only fires for validation responses, so roll back in
+            // onFinish instead — a 403 or 500 never reaches onError.
+            onFinish: () => {
+                inFlight.delete(key);
+                if (!succeeded) {
+                    if (c.optimistic !== false) row[col.key] = previous;
+                    toast.error('Update failed.');
+                }
+            },
+        },
+    );
 }
 
-const inlineTimers = new Map<string, ReturnType<typeof setTimeout>>();
-function debouncedInlineUpdate(col: ColumnSchema, row: any, value: string) {
+function debouncedInlineUpdate(col: ColumnSchema, row: any, value: any) {
     const timerKey = `${row.id}-${col.key}`;
     const existing = inlineTimers.get(timerKey);
     if (existing) clearTimeout(existing);
     const ms = (col as any).debounceMs || 500;
     inlineTimers.set(timerKey, setTimeout(() => {
-        handleInlineUpdate(col, row, value);
+        runInlineUpdate(col, row, value);
         inlineTimers.delete(timerKey);
     }, ms));
 }
+
+function onInlineEvent(payload: { col: ColumnSchema; row: any; value: any }) {
+    if (payload.col.type === 'textinput') {
+        debouncedInlineUpdate(payload.col, payload.row, payload.value);
+    } else {
+        runInlineUpdate(payload.col, payload.row, payload.value);
+    }
+}
+
+onBeforeUnmount(() => {
+    inlineTimers.forEach(clearTimeout);
+    inlineTimers.clear();
+});
 
 defineExpose({ selectedIds });
 </script>
@@ -914,24 +1020,12 @@ defineExpose({ selectedIds });
                                             </TableCell>
                                             <TableCell v-for="col in visibleColumns" :key="col.key" :class="[col.class, { 'text-right': col.alignRight }]">
                                                 <slot :name="`cell-${col.key}`" :row="row" :value="row[col.key]">
-                                                        <template v-if="col.type === 'badge'">
-                                                        <StatusBadge v-if="!('colors' in col) || Object.keys((col as any).colors || {}).length === 0" :status="row[col.key]" />
-                                                        <Badge v-else :variant="getBadgeVariant(col, row[col.key]) as any">{{ row[col.key] }}</Badge>
-                                                    </template>
-                                                    <template v-else-if="col.type === 'date'">
-                                                        <DateCell :value="row[col.key]" :format="(col as any).dateFormat || 'date'" />
-                                                    </template>
-                                                    <template v-else-if="col.type === 'boolean'">
-                                                        <component :is="row[col.key] ? ((col as any).trueIcon || Check) : ((col as any).falseIcon || X)" class="size-4" :class="row[col.key] ? ((col as any).trueColor || 'text-success') : ((col as any).falseColor || 'text-muted-foreground')" />
-                                                    </template>
-                                                    <template v-else>
-                                                        <span>{{ formatTextValue(col, row[col.key], row) }}</span>
-                                                    </template>
+                                                    <CellRenderer :col="col" :row="row" @inline="onInlineEvent" />
                                                 </slot>
                                             </TableCell>
                                             <TableCell v-if="hasActions || $slots.actions" class="text-right">
                                                 <slot name="actions" :row="row">
-                                                    <RowActions v-if="hasActions" :actions="getRowActions(row)" />
+                                                    <RowActions v-if="hasActions" :actions="getRowActions(row)" :config="rowActionsConfigFor(row)" />
                                                 </slot>
                                             </TableCell>
                                         </TableRow>
@@ -941,7 +1035,10 @@ defineExpose({ selectedIds });
                                         <TableCell v-if="reorderable" />
                                         <TableCell v-if="isSelectable" />
                                         <TableCell v-for="col in visibleColumns" :key="`group-sum-${col.key}`" :class="[col.class, { 'text-right': col.alignRight }]">
-                                            <span v-if="col.summarize" class="text-xs">{{ computeSummary(col, groupRows) }}</span>
+                                            <span v-if="col.summarize" class="text-xs">
+                                                <span v-if="col.summaryConfig?.label" class="mr-1 font-normal text-muted-foreground">{{ col.summaryConfig.label }}:</span>
+                                                {{ groupSummaryValue(col, groupRows) }}
+                                            </span>
                                         </TableCell>
                                         <TableCell v-if="hasActions || $slots.actions" />
                                     </TableRow>
@@ -961,58 +1058,12 @@ defineExpose({ selectedIds });
                                     </TableCell>
                                     <TableCell v-for="col in visibleColumns" :key="col.key" :class="[col.class, { 'text-right': col.alignRight }]">
                                         <slot :name="`cell-${col.key}`" :row="row" :value="row[col.key]">
-                                            <!-- Auto-render based on column type -->
-                                            <template v-if="col.type === 'badge'">
-                                                <StatusBadge v-if="!('colors' in col) || Object.keys((col as any).colors || {}).length === 0" :status="row[col.key]" />
-                                                <Badge v-else :variant="getBadgeVariant(col, row[col.key]) as any">{{ row[col.key] }}</Badge>
-                                            </template>
-                                            <template v-else-if="col.type === 'date'">
-                                                <DateCell :value="row[col.key]" :format="(col as any).dateFormat || 'date'" />
-                                            </template>
-                                            <template v-else-if="col.type === 'boolean'">
-                                                <component :is="row[col.key] ? ((col as any).trueIcon || Check) : ((col as any).falseIcon || X)" class="size-4" :class="row[col.key] ? ((col as any).trueColor || 'text-success') : ((col as any).falseColor || 'text-muted-foreground')" />
-                                            </template>
-                                            <template v-else-if="col.type === 'image'">
-                                                <img :src="row[col.key] || (col as any).defaultUrl || ''" :class="{ 'rounded-full': (col as any).circular }" :style="{ width: `${(col as any).imageSize || 40}px`, height: `${(col as any).imageSize || 40}px` }" class="object-cover" :alt="col.label" />
-                                            </template>
-                                            <template v-else-if="col.type === 'icon'">
-                                                <component v-if="(col as any).iconFn" :is="(col as any).iconFn(row[col.key], row)" class="size-5" :class="(col as any).colorFn ? (col as any).colorFn(row[col.key], row) : ''" />
-                                            </template>
-                                            <template v-else-if="col.type === 'toggle'">
-                                                <Switch :model-value="!!row[col.key]" @update:model-value="(v: boolean) => (col as any).onUpdateFn?.(row, v)" />
-                                            </template>
-                                            <template v-else-if="col.type === 'select'">
-                                                <UiSelect :model-value="String(row[col.key] ?? '')" @update:model-value="(v: any) => handleInlineUpdate(col, row, String(v))">
-                                                    <SelectTrigger class="h-8 w-[140px]">
-                                                        <SelectValue :placeholder="(col as any).placeholder || 'Select...'" />
-                                                    </SelectTrigger>
-                                                    <SelectContent>
-                                                        <SelectItem v-for="opt in ((col as any).options || [])" :key="opt.value" :value="opt.value">{{ opt.label }}</SelectItem>
-                                                    </SelectContent>
-                                                </UiSelect>
-                                            </template>
-                                            <template v-else-if="col.type === 'textinput'">
-                                                <Input :model-value="row[col.key] ?? ''" :placeholder="(col as any).placeholder || ''" class="h-8 w-[160px]" @update:model-value="(v: any) => debouncedInlineUpdate(col, row, String(v))" />
-                                            </template>
-                                            <template v-else>
-                                                <div class="flex items-center gap-1">
-                                                    <template v-if="(col as any).urlFn">
-                                                        <Link :href="(col as any).urlFn(row)" class="text-primary hover:underline">{{ formatTextValue(col, row[col.key], row) }}</Link>
-                                                    </template>
-                                                    <template v-else>
-                                                        <span :class="{ 'whitespace-nowrap': !(col as any).wrap }">{{ formatTextValue(col, row[col.key], row) }}</span>
-                                                    </template>
-                                                    <button v-if="(col as any).copyable && row[col.key]" class="text-muted-foreground hover:text-foreground" @click.stop="copyToClipboard(String(row[col.key]))">
-                                                        <Copy class="size-3" />
-                                                    </button>
-                                                </div>
-                                                <p v-if="(col as any).descriptionFn" class="text-xs text-muted-foreground">{{ (col as any).descriptionFn(row) }}</p>
-                                            </template>
+                                            <CellRenderer :col="col" :row="row" @inline="onInlineEvent" />
                                         </slot>
                                     </TableCell>
                                     <TableCell v-if="hasActions || $slots.actions" class="text-right">
                                         <slot name="actions" :row="row">
-                                            <RowActions v-if="hasActions" :actions="getRowActions(row)" />
+                                            <RowActions v-if="hasActions" :actions="getRowActions(row)" :config="rowActionsConfigFor(row)" />
                                         </slot>
                                     </TableCell>
                                 </TableRow>
@@ -1025,7 +1076,16 @@ defineExpose({ selectedIds });
                             <TableCell v-if="reorderable" />
                             <TableCell v-if="isSelectable" />
                             <TableCell v-for="col in visibleColumns" :key="`sum-${col.key}`" :class="[col.class, { 'text-right': col.alignRight }]">
-                                <span v-if="col.summarize" class="text-sm">{{ computeSummary(col) }}</span>
+                                <span v-if="col.summarize" class="inline-flex items-center gap-1 text-sm">
+                                    <span v-if="col.summaryConfig?.label" class="font-normal text-muted-foreground">{{ col.summaryConfig.label }}:</span>
+                                    {{ summaryValue(col) }}
+                                    <Badge
+                                        v-if="isPageScoped(col)"
+                                        variant="outline"
+                                        class="ml-1 px-1 py-0 text-[10px] font-normal"
+                                        title="Computed from the current page only"
+                                    >Page</Badge>
+                                </span>
                             </TableCell>
                             <TableCell v-if="hasActions || $slots.actions" />
                         </TableRow>

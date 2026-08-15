@@ -8,15 +8,21 @@ import StatusBadge from '@/components/StatusBadge.vue';
 import ImportModal from '@/components/ImportModal.vue';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { RowActions, DateCell } from '@/components/admin';
-import { useConfirmAction } from '@/composables/useConfirmAction';
-import { useConfirm } from '@/composables/useConfirm';
+import { DateCell } from '@/components/admin';
 import { usePermissions } from '@/composables/usePermissions';
-import { SelectFilter } from '@/composables/useTableFilters';
-import { BulkAction } from '@/composables/useTableActions';
+import { SelectFilter, trashedFilter } from '@/composables/useTableFilters';
+import {
+    Action,
+    ActionDivider,
+    ActionSectionLabel,
+    ActionGroup,
+    BulkAction,
+    softDeleteActions,
+    softDeleteBulkActions,
+} from '@/composables/useTableActions';
 import type { PaginatedData } from '@/types';
 import { ref } from 'vue';
-import { Plus, Pencil, Trash2, Download, Upload, UserCog, RotateCcw, AlertTriangle } from 'lucide-vue-next';
+import { Plus, Trash2, Download, Upload, UserCog } from 'lucide-vue-next';
 
 const props = defineProps<{
     users: PaginatedData<any>;
@@ -25,8 +31,6 @@ const props = defineProps<{
 }>();
 
 const { can } = usePermissions();
-const { confirmDelete } = useConfirmAction();
-const { confirm } = useConfirm();
 const showImport = ref(false);
 
 const tableFilters = [
@@ -38,11 +42,7 @@ const tableFilters = [
     SelectFilter.make('role').label('Role').options(
         props.roles.map(r => ({ label: r, value: r })),
     ),
-    SelectFilter.make('trashed').label('Trash').options({
-        '': 'Active Only',
-        only: 'Trashed Only',
-        with: 'All (incl. Trashed)',
-    }),
+    trashedFilter(),
 ];
 
 const columns: Column[] = [
@@ -73,36 +73,27 @@ const bulkActions = [
         .requiresConfirmation('Delete Users', 'Are you sure you want to delete the selected users?')
         .icon(Trash2)
         .permission('users.delete'),
-    ...(isTrashedView ? [
-        BulkAction.make('Restore')
-            .action((ids) => bulkAction('restore', ids))
-            .icon(RotateCcw)
-            .permission('users.edit'),
-        BulkAction.make('Force Delete')
-            .action((ids) => bulkAction('force_delete', ids))
-            .destructive()
-            .requiresConfirmation('Permanently Delete', 'This action cannot be undone. These users will be permanently removed.')
-            .icon(AlertTriangle)
-            .permission('users.delete'),
-    ] : []),
+    ...(isTrashedView ? softDeleteBulkActions('admin.users') : []),
 ];
 
-function getRowActions(row: any) {
-    if (row.deleted_at) {
-        return [
-            { label: 'Restore', icon: RotateCcw, permission: 'users.edit', onClick: () => router.post(route('admin.users.restore', row.id)) },
-            { label: 'Force Delete', icon: AlertTriangle, permission: 'users.delete', destructive: true, separator: true, onClick: async () => {
-                const confirmed = await confirm({ title: 'Permanently Delete', description: 'This user will be permanently removed and cannot be recovered.', variant: 'destructive', confirmText: 'Delete Forever' });
-                if (confirmed) router.delete(route('admin.users.force-delete', row.id));
-            }},
-        ];
-    }
-    return [
-        { label: 'Edit', icon: Pencil, href: route('admin.users.edit', row.id), permission: 'users.edit' },
-        { label: 'Impersonate', icon: UserCog, permission: 'users.edit', onClick: () => router.post(route('admin.users.impersonate', row.id)) },
-        { label: 'Delete', icon: Trash2, permission: 'users.delete', destructive: true, separator: true, onClick: () => confirmDelete('admin.users.destroy', row.id, { title: 'Delete User', description: 'Are you sure you want to delete this user? This action cannot be undone.' }) },
-    ];
-}
+const [editAction, deleteAction, restoreAction, forceDeleteAction] = softDeleteActions('admin.users');
+
+const actions = [
+    ActionGroup.make([
+        editAction,
+        Action.make('Impersonate')
+            .icon(UserCog)
+            .route('admin.users.impersonate', 'post')
+            .permission('users.edit')
+            .requiresConfirmation('Impersonate user', 'You will be signed in as this user until you stop impersonating.')
+            .visible((row: any) => !row.deleted_at),
+        ActionDivider.make(),
+        ActionSectionLabel.make('Danger zone'),
+        deleteAction.confirmTitle('Delete user').confirmDescription('The account is moved to trash. You can restore it later.'),
+        restoreAction,
+        forceDeleteAction,
+    ]).tooltip('User actions'),
+];
 </script>
 
 <template>
@@ -136,6 +127,7 @@ function getRowActions(row: any) {
                 :table-filters="tableFilters"
                 :selectable="true"
                 :bulk-actions="bulkActions"
+                :actions="actions"
                 route-name="admin.users.index"
                 search-placeholder="Search users..."
             >
@@ -160,9 +152,6 @@ function getRowActions(row: any) {
                     <DateCell :value="value" />
                 </template>
 
-                <template #actions="{ row }">
-                    <RowActions :actions="getRowActions(row)" />
-                </template>
             </DataTable>
         </div>
 

@@ -1,6 +1,8 @@
 import type { Component } from 'vue';
 
 export type { FieldSchema, LayoutSchema, SchemaItem } from '@/composables/useFormSchema';
+export type { SummaryType, SummaryConfig } from '@/composables/useTableSchema';
+import type { SummaryType, SummaryConfig } from '@/composables/useTableSchema';
 import type { ModalConfig } from '@/composables/useTableActions';
 
 export interface FormFieldProps {
@@ -17,6 +19,8 @@ export interface SelectOption {
 }
 
 export interface RowAction {
+    /** 'action' (default), 'divider', 'section' heading, or a nested 'group' submenu. */
+    kind?: 'action' | 'divider' | 'section' | 'group';
     label: string;
     icon?: Component;
     permission?: string;
@@ -25,6 +29,31 @@ export interface RowAction {
     destructive?: boolean;
     separator?: boolean;
     show?: boolean;
+    color?: SemanticColor | string;
+    /** Renders an <a target="_blank"> instead of an Inertia <Link>. */
+    external?: boolean;
+    badge?: string | number | null;
+    tooltip?: string;
+    /** Only for kind: 'group'. */
+    items?: RowAction[];
+    /** Trigger configuration for kind: 'group'. */
+    group?: RowActionsConfig;
+}
+
+/** Trigger + menu configuration produced by ActionGroup. */
+export interface RowActionsConfig {
+    label: string;
+    icon?: Component;
+    color?: SemanticColor | string;
+    size: 'sm' | 'default' | 'lg';
+    asButton: boolean;
+    buttonGroup: boolean;
+    tooltip?: string;
+    badge?: string | number | null;
+    placement: 'bottom-start' | 'bottom-end' | 'top-start' | 'top-end';
+    width: 'sm' | 'md' | 'lg';
+    maxHeight: string;
+    collapseAfter?: number;
 }
 
 export interface SimpleTableColumn {
@@ -47,8 +76,22 @@ export interface ColumnSchemaBase {
     tooltip?: string;
     toggleable: boolean;
     grow: boolean;
-    summarize?: 'sum' | 'average' | 'count' | 'range' | 'custom';
+    summarize?: SummaryType;
     summaryFn?: (values: any[]) => string | number;
+    summaryConfig?: SummaryConfig;
+}
+
+/** Keys every inline-editable column carries (toggle, checkbox, select, textinput). */
+export interface InlineEditableSchema<V = any> {
+    updateRoute?: string;
+    updateField?: string;
+    optimistic?: boolean;
+    permission?: string;
+    disabledFn?: (row: any) => boolean;
+    confirmFn?: (row: any, value: V) => string | false;
+    rowLabelFn?: (row: any) => string;
+    debounceMs?: number;
+    onUpdateFn?: (row: any, value: V) => void;
 }
 
 export interface TextColumnSchema extends ColumnSchemaBase {
@@ -97,23 +140,33 @@ export interface IconColumnSchema extends ColumnSchemaBase {
     colorFn?: (value: any, row: any) => string;
 }
 
-export interface ToggleColumnSchema extends ColumnSchemaBase {
+export interface ToggleColumnSchema extends ColumnSchemaBase, InlineEditableSchema<boolean> {
     type: 'toggle';
-    onUpdateFn?: (row: any, value: boolean) => void;
 }
 
-export interface SelectColumnSchema extends ColumnSchemaBase {
+export interface CheckboxColumnSchema extends ColumnSchemaBase, InlineEditableSchema<boolean> {
+    type: 'checkbox';
+    indeterminateFn?: (row: any) => boolean;
+}
+
+export interface SelectColumnSchema extends ColumnSchemaBase, InlineEditableSchema<string> {
     type: 'select';
     options: Array<{ label: string; value: string }>;
-    onUpdateFn?: (row: any, value: string) => void;
     placeholder?: string;
 }
 
-export interface TextInputColumnSchema extends ColumnSchemaBase {
+export interface TextInputColumnSchema extends ColumnSchemaBase, InlineEditableSchema<string> {
     type: 'textinput';
-    onUpdateFn?: (row: any, value: string) => void;
     placeholder?: string;
-    debounceMs: number;
+}
+
+export interface ColorColumnSchema extends ColumnSchemaBase {
+    type: 'color';
+    copyable: boolean;
+    copyMessage: string;
+    swatchShowValue: boolean;
+    swatchSize: number;
+    swatchShape: 'square' | 'circle';
 }
 
 export type ColumnSchema =
@@ -124,8 +177,10 @@ export type ColumnSchema =
     | ImageColumnSchema
     | IconColumnSchema
     | ToggleColumnSchema
+    | CheckboxColumnSchema
     | SelectColumnSchema
-    | TextInputColumnSchema;
+    | TextInputColumnSchema
+    | ColorColumnSchema;
 
 // --- Table Filter Schema ---
 
@@ -186,10 +241,15 @@ export type FilterSchema = SelectFilterSchema | TernaryFilterSchema | CheckboxFi
 
 // --- Table Action Schema ---
 
+/** Semantic colour tokens. Mirrors SemanticColor in useFormSchema. */
+export type SemanticColor = 'muted' | 'primary' | 'info' | 'success' | 'warning' | 'danger';
+
 export interface ActionSchema {
+    /** Defaults to 'action'. */
+    kind?: 'action' | 'divider' | 'section';
     label: string;
     icon?: Component;
-    color?: string;
+    color?: SemanticColor | string;
     urlFn?: (row: any) => string;
     actionFn?: (row: any) => void;
     requiresConfirmation: boolean;
@@ -200,8 +260,36 @@ export interface ActionSchema {
     hiddenFn?: (row: any) => boolean;
     visibleFn?: (row: any) => boolean;
     separator: boolean;
+    external?: boolean;
+    tooltip?: string;
+    badgeFn?: (row: any) => string | number | null;
+    // Generic route path — supersedes deleteRouteName.
+    routeName?: string;
+    method?: 'get' | 'post' | 'put' | 'patch' | 'delete';
+    routeParamsFn?: (row: any) => any;
+    payloadFn?: (row: any) => Record<string, any>;
+    successMessage?: string;
+    /** BC alias for { routeName, method: 'delete' }. */
     deleteRouteName?: string;
     modalConfig?: ModalConfig;
+}
+
+export interface ActionGroupSchema {
+    kind: 'group';
+    label: string;
+    icon?: Component;
+    color?: SemanticColor | string;
+    size: 'sm' | 'default' | 'lg';
+    asButton: boolean;
+    buttonGroup: boolean;
+    tooltip?: string;
+    badgeFn?: (row: any) => string | number | null;
+    placement: 'bottom-start' | 'bottom-end' | 'top-start' | 'top-end';
+    width: 'sm' | 'md' | 'lg';
+    maxHeight: string;
+    collapseAfter?: number;
+    permission?: string;
+    items: Array<ActionSchema | ActionGroupSchema>;
 }
 
 export interface BulkActionSchema {

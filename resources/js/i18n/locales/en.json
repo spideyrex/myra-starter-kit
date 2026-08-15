@@ -52,7 +52,13 @@
         "security": "Security",
         "logout": "Log Out",
         "darkMode": "Dark Mode",
-        "lightMode": "Light Mode"
+        "lightMode": "Light Mode",
+        "copy": "Copy",
+        "copied": "Copied to clipboard",
+        "copyFailed": "Could not copy to clipboard",
+        "showAll": "Show all {count} lines",
+        "showLess": "Show less",
+        "linesTruncated": "Showing {shown} of {total} lines."
     },
     "status": {
         "active": "Active",
@@ -82,5 +88,42 @@
         "minLength": "{field} must be at least {min} characters",
         "maxLength": "{field} must not exceed {max} characters",
         "confirmed": "{field} confirmation does not match"
+    },
+    "fields": {
+        "copied": "Copied to clipboard",
+        "copyFailed": "Copy failed",
+        "copyCode": "Copy code",
+        "tabMovesFocus": "moves focus",
+        "escLeaves": "then Tab leaves the editor",
+        "tabHint": "Press Tab to move to the next field.",
+        "escapeHint": "Press Escape, then Tab, to leave the editor.",
+        "md": {
+            "bold": "Bold",
+            "italic": "Italic",
+            "strike": "Strikethrough",
+            "link": "Link",
+            "heading": "Heading",
+            "quote": "Blockquote",
+            "code": "Inline code",
+            "codeBlock": "Code block",
+            "bulletList": "Bulleted list",
+            "orderedList": "Numbered list",
+            "table": "Table",
+            "image": "Image",
+            "hr": "Horizontal rule",
+            "undo": "Undo",
+            "redo": "Redo",
+            "mode": "View mode",
+            "edit": "Edit only",
+            "split": "Split view",
+            "preview": "Preview only",
+            "fullscreen": "Fullscreen",
+            "renderedPreview": "Rendered preview",
+            "placeholder": "Write markdown...",
+            "words": "{count} words",
+            "uploadFailed": "Image upload failed",
+            "boldSample": "bold text",
+            "italicSample": "italic text"
+        }
     }
 }

@@ -202,6 +202,7 @@ Route::middleware(['auth', 'verified', 'active', '2fa'])->prefix('admin')->name(
     Route::post('/pages/bulk-action', [PageController::class, 'bulkAction'])->middleware('permission:pages.edit')->name('pages.bulk-action');
     Route::post('/pages/{page}/restore', [PageController::class, 'restore'])->middleware('permission:pages.edit')->name('pages.restore');
     Route::delete('/pages/{page}/force-delete', [PageController::class, 'forceDelete'])->middleware('permission:pages.delete')->name('pages.force-delete');
+    Route::post('/pages/{page}/replicate', [PageController::class, 'replicate'])->middleware('permission:pages.create')->name('pages.replicate');
 
     // Articles
     Route::get('/articles', [ArticleController::class, 'index'])->middleware('permission:articles.view')->name('articles.index');
@@ -213,6 +214,7 @@ Route::middleware(['auth', 'verified', 'active', '2fa'])->prefix('admin')->name(
     Route::post('/articles/bulk-action', [ArticleController::class, 'bulkAction'])->middleware('permission:articles.edit')->name('articles.bulk-action');
     Route::post('/articles/{article}/restore', [ArticleController::class, 'restore'])->middleware('permission:articles.edit')->name('articles.restore');
     Route::delete('/articles/{article}/force-delete', [ArticleController::class, 'forceDelete'])->middleware('permission:articles.delete')->name('articles.force-delete');
+    Route::post('/articles/{article}/replicate', [ArticleController::class, 'replicate'])->middleware('permission:articles.create')->name('articles.replicate');
 
     // Categories
     Route::get('/categories', [CategoryController::class, 'index'])->middleware('permission:categories.view')->name('categories.index');
@@ -238,6 +240,8 @@ Route::middleware(['auth', 'verified', 'active', '2fa'])->prefix('admin')->name(
     Route::get('/demo/action-modals', [DemoController::class, 'actionModals'])->name('demo.action-modals');
     Route::put('/demo/action-modals/{id}', [DemoController::class, 'demoUpdateTask'])->name('demo.update-task');
     Route::delete('/demo/action-modals/{id}', [DemoController::class, 'demoDeleteTask'])->name('demo.delete-task');
+    Route::post('/demo/action-modals/{id}/replicate', [DemoController::class, 'demoReplicateTask'])->name('demo.replicate-task');
+    Route::post('/demo/action-modals/{id}/archive', [DemoController::class, 'demoArchiveTask'])->name('demo.archive-task');
     Route::get('/demo/import-export', [DemoController::class, 'importExport'])->name('demo.import-export');
     Route::get('/demo/export-csv', [DemoController::class, 'exportCsv'])->name('demo.export-csv');
     Route::post('/demo/import/preview', [DemoController::class, 'demoImportPreview'])->name('demo.import-preview');
@@ -246,7 +250,7 @@ Route::middleware(['auth', 'verified', 'active', '2fa'])->prefix('admin')->name(
 
     // Advanced Feature Demos
     Route::get('/demo/inline-editing', [DemoController::class, 'inlineEditing'])->name('demo.inline-editing');
-    Route::put('/demo/inline-update/{id}', [DemoController::class, 'demoInlineUpdate'])->name('demo.inline-update');
+    Route::match(['put', 'patch'], '/demo/inline-update/{id}', [DemoController::class, 'demoInlineUpdate'])->name('demo.inline-update');
     Route::get('/demo/conditional-fields', [DemoController::class, 'conditionalFields'])->name('demo.conditional-fields');
     Route::get('/demo/infolist', [DemoController::class, 'infolist'])->name('demo.infolist');
     Route::get('/demo/relation-manager', [DemoController::class, 'relationManager'])->name('demo.relation-manager');
@@ -256,6 +260,7 @@ Route::middleware(['auth', 'verified', 'active', '2fa'])->prefix('admin')->name(
     Route::post('/demo/reorder', [DemoController::class, 'demoReorder'])->name('demo.reorder');
     Route::get('/demo/widgets', [DemoController::class, 'widgets'])->name('demo.widgets');
     Route::get('/demo/field-types', [DemoController::class, 'fieldTypes'])->name('demo.field-types');
+    Route::get('/demo/code-editor', [DemoController::class, 'codeEditor'])->name('demo.code-editor');
     Route::get('/demo/advanced-filters', [DemoController::class, 'advancedFilters'])->name('demo.advanced-filters');
     Route::get('/demo/wizard', [DemoController::class, 'wizardDemo'])->name('demo.wizard');
     Route::get('/demo/map', [DemoController::class, 'map'])->name('demo.map');

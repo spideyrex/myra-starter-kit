@@ -328,6 +328,128 @@
         "title": "Lajur",
         "visible": "Kelihatan"
     },
+    "charts": {
+        "a11y": {
+            "canvas": "{chart} dengan {rows} titik data.",
+            "delta": "{direction} {percent} ({absolute}) — {verdict} berbanding tempoh sebelumnya.",
+            "gauge": "{measure}: {value} daripada sasaran {goal} ({percent}%).",
+            "gaugeNoGoal": "{measure}: {value}. Tiada sasaran ditetapkan.",
+            "loading": "Memuatkan data carta…",
+            "segment": "{label}: {measure} {value}.",
+            "summary": "{chart} bagi {measure} merentas {rows} kumpulan, berjumlah {total}."
+        },
+        "compare": {
+            "none": "Tiada perbandingan",
+            "previous": "berbanding tempoh sebelumnya",
+            "year": "berbanding tempoh sama tahun lalu"
+        },
+        "comparison": "Tempoh sebelumnya",
+        "dashboard": {
+            "activity": "Aktiviti Terkini",
+            "activityDescription": "Tindakan terbaharu merentas sistem",
+            "activityEmpty": "Tiada aktiviti terkini.",
+            "addUser": "Tambah Pengguna",
+            "byStatus": "Pengguna mengikut Status",
+            "byStatusDescription": "Taburan mengikut status",
+            "greeting": "Selamat kembali, {name}",
+            "growth": "Pertumbuhan Pengguna",
+            "growthDescription": "Pendaftaran baharu sepanjang 6 bulan lepas",
+            "manageRoles": "Urus Peranan",
+            "month": "Bulan",
+            "newUsers": "Pengguna Baharu",
+            "newUsersThisMonth": "pengguna baharu bulan ini | pengguna baharu bulan ini",
+            "quickActions": "Tindakan Pantas",
+            "recentUsers": "Pengguna Terkini",
+            "recentUsersDescription": "Pendaftaran terbaharu",
+            "settings": "Tetapan",
+            "status": "Status",
+            "statusEmpty": "Tiada data status tersedia.",
+            "suspended": "Digantung",
+            "systemHealth": "Kesihatan Sistem",
+            "users": "Pengguna",
+            "usersEmpty": "Tiada pengguna lagi.",
+            "viewAllUsers": "Lihat semua pengguna"
+        },
+        "delta": {
+            "better": "lebih baik",
+            "down": "Turun",
+            "flat": "Tidak berubah",
+            "none": "Tiada perbandingan",
+            "up": "Naik",
+            "worse": "lebih buruk"
+        },
+        "demo": {
+            "back": "Kembali ke Demo",
+            "closureDescription": "ChartWidget.make().data() mengekalkan laluan sisi klien untuk data yang sedia ada pada halaman.",
+            "closureTitle": "Carta berasaskan penutupan",
+            "col": {
+                "customer": "Pelanggan",
+                "order": "Pesanan",
+                "product": "Produk",
+                "revenue": "Hasil",
+                "sales": "Jualan",
+                "status": "Status",
+                "total": "Jumlah"
+            },
+            "compareDescription": "Tempoh perbandingan menjadi siri kedua bergaris putus; lencana delta diwarnakan mengikut keputusan, bukan arah.",
+            "compareTitle": "Tempoh perbandingan",
+            "description": "Pembina widget boleh dikonfigurasi untuk kad statistik, carta dan jadual, sama ada melalui penutupan atau laporan pelayan.",
+            "dim": {
+                "month": "Bulan",
+                "product": "Produk"
+            },
+            "measure": {
+                "churn": "Kadar Keciciran",
+                "revenue": "Hasil",
+                "sales": "Jualan"
+            },
+            "reportDescription": "ChartWidget.make().report() menghantar pengikatan, bukan penutupan — pengurangan kekal dalam SQL dan pelayar hanya menerima baldi.",
+            "reportTitle": "Carta berasaskan laporan",
+            "sample": {
+                "badUp": "Naik, dan itu buruk (aliran songsang)",
+                "flat": "Tidak berubah",
+                "goodDown": "Turun, dan itu baik (aliran songsang)",
+                "goodUp": "Naik, dan itu baik",
+                "noPrevious": "Tempoh sebelumnya kosong",
+                "none": "Tiada tempoh perbandingan"
+            },
+            "statDescription": "StatWidget.make() dengan pembina nilai, ikon, aliran dan penerangan.",
+            "statTitle": "Widget statistik",
+            "tableDescription": "TableWidget.make() dengan pembina lajur, data dan pautan pengaki.",
+            "tableTitle": "Widget jadual",
+            "title": "Sistem Widget Papan Pemuka",
+            "typesDescription": "Setiap penerjemah dimuatkan secara malas: carta SVG tidak membawa sebarang pustaka, dan jenis Chart.js berkongsi satu ketulan.",
+            "typesTitle": "Pustaka carta"
+        },
+        "empty": {
+            "description": "Tiada apa-apa direkodkan bagi tempoh ini. Luaskan julat atau kosongkan penapis.",
+            "heading": "Tiada data untuk dicartakan",
+            "noData": "Tiada data tersedia."
+        },
+        "goalOf": "daripada {goal}",
+        "goalProgress": "{percent}% daripada sasaran",
+        "other": "Lain-lain",
+        "truncated": "Memaparkan {shown} teratas daripada {total}+",
+        "type": {
+            "area": "Carta kawasan",
+            "bar": "Carta bar",
+            "doughnut": "Carta donat",
+            "funnel": "Carta corong",
+            "gauge": "Tolok",
+            "heatmap": "Peta haba",
+            "horizontalBar": "Carta bar mendatar",
+            "line": "Carta garis",
+            "pie": "Carta pai",
+            "polarArea": "Carta kawasan polar",
+            "radar": "Carta radar",
+            "scatter": "Plot serakan",
+            "sparkline": "Garis kilat",
+            "stackedArea": "Carta kawasan bertindan",
+            "stackedBar": "Carta bar bertindan"
+        },
+        "viewAsChart": "Lihat sebagai carta",
+        "viewAsTable": "Lihat sebagai jadual"
+    },
     "transfer": {
         "export": {
             "button": "Eksport",

@@ -328,6 +328,128 @@
         "title": "列",
         "visible": "显示"
     },
+    "charts": {
+        "a11y": {
+            "canvas": "{chart}，包含 {rows} 个数据点。",
+            "delta": "{direction} {percent}（{absolute}）—— 比上一周期{verdict}。",
+            "gauge": "{measure}：{value}，目标 {goal}（{percent}%）。",
+            "gaugeNoGoal": "{measure}：{value}。未设定目标。",
+            "loading": "正在加载图表数据…",
+            "segment": "{label}：{measure} {value}。",
+            "summary": "{chart}，展示 {rows} 组{measure}，合计 {total}。"
+        },
+        "compare": {
+            "none": "不对比",
+            "previous": "对比上一周期",
+            "year": "对比去年同期"
+        },
+        "comparison": "上一周期",
+        "dashboard": {
+            "activity": "最近活动",
+            "activityDescription": "系统内的最新操作",
+            "activityEmpty": "暂无最近活动。",
+            "addUser": "新增用户",
+            "byStatus": "按状态分组的用户",
+            "byStatusDescription": "各状态的分布",
+            "greeting": "欢迎回来，{name}",
+            "growth": "用户增长",
+            "growthDescription": "过去 6 个月的新注册",
+            "manageRoles": "管理角色",
+            "month": "月份",
+            "newUsers": "新用户",
+            "newUsersThisMonth": "位本月新用户 | 位本月新用户",
+            "quickActions": "快捷操作",
+            "recentUsers": "最近用户",
+            "recentUsersDescription": "最新注册",
+            "settings": "设置",
+            "status": "状态",
+            "statusEmpty": "暂无状态数据。",
+            "suspended": "已停用",
+            "systemHealth": "系统健康",
+            "users": "用户",
+            "usersEmpty": "暂无用户。",
+            "viewAllUsers": "查看全部用户"
+        },
+        "delta": {
+            "better": "更好",
+            "down": "下降",
+            "flat": "持平",
+            "none": "不对比",
+            "up": "上升",
+            "worse": "更差"
+        },
+        "demo": {
+            "back": "返回演示",
+            "closureDescription": "ChartWidget.make().data() 保留了页面已有数据的客户端路径。",
+            "closureTitle": "基于闭包的图表",
+            "col": {
+                "customer": "客户",
+                "order": "订单",
+                "product": "产品",
+                "revenue": "收入",
+                "sales": "销量",
+                "status": "状态",
+                "total": "合计"
+            },
+            "compareDescription": "对比周期会成为第二条虚线序列；差值徽标按结论而非方向上色。",
+            "compareTitle": "对比周期",
+            "description": "可配置的统计卡、图表与表格小组件构建器，支持闭包或服务端报表。",
+            "dim": {
+                "month": "月份",
+                "product": "产品"
+            },
+            "measure": {
+                "churn": "流失率",
+                "revenue": "收入",
+                "sales": "销量"
+            },
+            "reportDescription": "ChartWidget.make().report() 传递绑定而非闭包 —— 聚合留在 SQL 中，浏览器只会收到分组结果。",
+            "reportTitle": "基于报表的图表",
+            "sample": {
+                "badUp": "上升，而且是坏事（反向趋势）",
+                "flat": "持平",
+                "goodDown": "下降，而且是好事（反向趋势）",
+                "goodUp": "上升，而且是好事",
+                "noPrevious": "上一周期为零",
+                "none": "无对比周期"
+            },
+            "statDescription": "StatWidget.make() 提供数值、图标、趋势与描述构建器。",
+            "statTitle": "统计小组件",
+            "tableDescription": "TableWidget.make() 提供列、数据与页脚链接构建器。",
+            "tableTitle": "表格小组件",
+            "title": "仪表盘小组件系统",
+            "typesDescription": "每个渲染器都是懒加载：SVG 图表不引入任何库，Chart.js 类型共享同一个分块。",
+            "typesTitle": "图表库"
+        },
+        "empty": {
+            "description": "本周期没有任何记录。请扩大时间范围或清除筛选。",
+            "heading": "没有可绘制的数据",
+            "noData": "暂无数据。"
+        },
+        "goalOf": "目标 {goal}",
+        "goalProgress": "已达目标的 {percent}%",
+        "other": "其他",
+        "truncated": "显示前 {shown} 项，共 {total}+",
+        "type": {
+            "area": "面积图",
+            "bar": "柱状图",
+            "doughnut": "环形图",
+            "funnel": "漏斗图",
+            "gauge": "仪表盘图",
+            "heatmap": "热力图",
+            "horizontalBar": "横向柱状图",
+            "line": "折线图",
+            "pie": "饼图",
+            "polarArea": "极坐标面积图",
+            "radar": "雷达图",
+            "scatter": "散点图",
+            "sparkline": "迷你图",
+            "stackedArea": "堆叠面积图",
+            "stackedBar": "堆叠柱状图"
+        },
+        "viewAsChart": "以图表查看",
+        "viewAsTable": "以表格查看"
+    },
     "transfer": {
         "export": {
             "button": "导出",

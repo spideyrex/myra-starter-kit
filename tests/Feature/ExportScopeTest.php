@@ -103,6 +103,23 @@ class ExportScopeTest extends TestCase
         $this->assertStringNotContainsString('@example', $response->getContent());
     }
 
+    public function test_the_row_cap_refusal_is_a_clean_payload_not_a_rendered_error_page(): void
+    {
+        config(['myra.exports.max_rows' => 1]);
+
+        $manager = $this->actingAsRole('manager');
+        User::factory()->count(3)->create(['created_by' => $manager->id]);
+
+        $this->getJson(route('admin.users.export-csv'))
+            ->assertStatus(422)
+            ->assertJsonPath('max', 1);
+
+        $html = $this->get(route('admin.users.export-csv'));
+        $html->assertStatus(422);
+        $this->assertStringNotContainsString('<html', $html->getContent());
+        $this->assertStringNotContainsString('text/csv', (string) $html->headers->get('Content-Type'));
+    }
+
     public function test_an_undeclared_column_key_is_dropped(): void
     {
         $manager = $this->actingAsRole('manager');

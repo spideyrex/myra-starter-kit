@@ -7,7 +7,9 @@ use App\Admin\Export\ExportDefinition;
 use App\Admin\Export\XlsxRowWriter;
 use App\Support\Csv;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 trait ExportableQuery
@@ -78,12 +80,12 @@ trait ExportableQuery
 
         // Refuse rather than hand back a truncated file the user mistakes for
         // complete. Checked before streamDownload() so no partial body is emitted.
+        // COUNT only — the result set is never materialised.
         $count = (clone $query)->toBase()->getCountForPagination();
-        abort_if(
-            $count > $definition->getMaxRows(),
-            422,
-            __('transfer.export.tooManyRows', ['max' => $definition->getMaxRows()]),
-        );
+
+        if ($count > $definition->getMaxRows()) {
+            throw new HttpResponseException($this->exportRefusal($request, $definition->getMaxRows()));
+        }
 
         return response()->streamDownload(function () use ($query, $columns, $definition, $format) {
             @set_time_limit(0);
@@ -114,6 +116,25 @@ trait ExportableQuery
             'X-Content-Type-Options' => 'nosniff',
             'Cache-Control' => 'no-store',
             'X-Accel-Buffering' => 'no',
+        ]);
+    }
+
+    /**
+     * A refusal must not be rendered by the exception handler: the debug renderer
+     * returns a full HTML page carrying request/user context, which is both a leak
+     * and indistinguishable from a body the download link just wrote to disk.
+     */
+    private function exportRefusal(Request $request, int $max): Response
+    {
+        $message = __('transfer.export.tooManyRows', ['max' => $max]);
+
+        $response = $request->expectsJson()
+            ? response()->json(['message' => $message, 'max' => $max], 422)
+            : response($message, 422, ['Content-Type' => 'text/plain; charset=UTF-8']);
+
+        return $response->withHeaders([
+            'X-Content-Type-Options' => 'nosniff',
+            'Cache-Control' => 'no-store',
         ]);
     }
 

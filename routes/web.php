@@ -252,7 +252,11 @@ Route::middleware(['auth', 'verified', 'active', '2fa'])->prefix('admin')->name(
     // <<< MYRA v2.2 [B] END
 
     // Global Search
-    Route::get('/search', [SearchController::class, 'index'])->middleware('permission:search.view')->name('search');
+    // >>> MYRA v2.2 [D] START
+    Route::get('/search', [SearchController::class, 'index'])
+        ->middleware(['permission:search.view', 'throttle:60,1'])
+        ->name('search');
+    // <<< MYRA v2.2 [D] END
 
     // Demo / Feature Showcase (all gated by demo.view)
     Route::middleware('permission:demo.view')->group(function () {

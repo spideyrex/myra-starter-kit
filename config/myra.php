@@ -138,4 +138,34 @@ return [
         ],
     ],
 
+    // >>> MYRA v2.2 [D] START
+    /*
+    |--------------------------------------------------------------------------
+    | Query builder
+    |--------------------------------------------------------------------------
+    |
+    | Server-side ceilings for a submitted rule tree. A tree above any of these
+    | is a 422 — never a silently ignored constraint.
+    |
+    */
+
+    'filters' => [
+        'max_rules' => 25,
+        'max_depth' => 3,
+        'max_bytes' => 16384,
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Global search
+    |--------------------------------------------------------------------------
+    */
+
+    'search' => [
+        'max_results' => 40,
+        'min_term' => 2,
+        'max_term' => 100,
+    ],
+    // <<< MYRA v2.2 [D] END
+
 ];

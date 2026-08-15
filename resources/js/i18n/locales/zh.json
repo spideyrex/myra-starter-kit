@@ -225,6 +225,94 @@
             "tooManyRows": "该文件的行数超过 {max} 行。",
             "upload": "上传",
             "validate": "检查行"
-        }
+    },
+    "filters": {
+        "a11y": {
+            "condition": "条件 {n}",
+            "conjunction": "切换匹配方式",
+            "valueFrom": "起始值",
+            "valueList": "取值",
+            "valueTo": "结束值"
+        },
+        "addGroup": "分组",
+        "addRule": "条件",
+        "and": "并且",
+        "applyQuery": "应用查询",
+        "clearQuery": "清除查询",
+        "depthLimit": "嵌套最多 {max} 层。",
+        "enterValue": "输入值…",
+        "errors": {
+            "badValue": "该值不适用于此条件。",
+            "malformed": "无法解析该查询。",
+            "tooDeep": "查询嵌套层级过深。",
+            "tooManyRules": "查询条件过多。",
+            "unknownField": "查询中包含未知字段。",
+            "unknownOperator": "查询中包含未知运算符。"
+        },
+        "field": {
+            "createdAt": "创建时间",
+            "email": "邮箱",
+            "name": "姓名",
+            "phone": "电话",
+            "roles": "角色",
+            "status": "状态",
+            "verifiedAt": "验证时间"
+        },
+        "matchAll": "满足全部条件",
+        "matchAny": "满足任一条件",
+        "op": {
+            "between": "介于",
+            "contains": "包含",
+            "count_eq": "数量等于",
+            "count_gte": "数量不少于",
+            "count_lte": "数量不多于",
+            "date_after": "晚于",
+            "date_before": "早于",
+            "date_between": "介于",
+            "date_is": "等于",
+            "ends_with": "结尾为",
+            "eq": "等于",
+            "gt": "大于",
+            "gte": "不小于",
+            "in": "属于",
+            "in_month": "所在月份",
+            "in_year": "所在年份",
+            "is_blank": "为空",
+            "is_false": "为否",
+            "is_filled": "不为空",
+            "is_true": "为是",
+            "lt": "小于",
+            "lte": "不大于",
+            "neq": "不等于",
+            "not_contains": "不包含",
+            "not_in": "不属于",
+            "not_related_to": "不关联于",
+            "related_to": "关联于",
+            "starts_with": "开头为"
+        },
+        "or": "或者",
+        "removeGroup": "删除分组",
+        "removeRule": "删除条件",
+        "removeValue": "删除取值",
+        "ruleCount": "{n} 个条件",
+        "ruleLimit": "最多 {max} 个条件。",
+        "selectField": "选择字段",
+        "selectOperator": "选择运算符"
+    },
+    "search": {
+        "a11y": {
+            "hint": "输入以搜索。使用方向键在结果间移动，按 Enter 打开。",
+            "results": "{n} 条结果"
+        },
+        "commands": "命令",
+        "groups": {
+            "activity": "操作日志",
+            "pages": "页面",
+            "roles": "角色",
+            "users": "用户"
+        },
+        "noResults": "没有找到匹配项。",
+        "placeholder": "搜索全部…",
+        "recent": "最近"
     }
 }

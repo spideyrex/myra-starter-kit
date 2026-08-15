@@ -225,6 +225,94 @@
             "tooManyRows": "Fail ini mempunyai lebih daripada {max} baris.",
             "upload": "Muat naik",
             "validate": "Semak baris"
-        }
+    },
+    "filters": {
+        "a11y": {
+            "condition": "Syarat {n}",
+            "conjunction": "Tukar mod padanan",
+            "valueFrom": "Nilai dari",
+            "valueList": "Nilai",
+            "valueTo": "Nilai hingga"
+        },
+        "addGroup": "Kumpulan",
+        "addRule": "Syarat",
+        "and": "dan",
+        "applyQuery": "Guna pertanyaan",
+        "clearQuery": "Kosongkan pertanyaan",
+        "depthLimit": "Sarangan terhad kepada {max} peringkat.",
+        "enterValue": "Masukkan nilai…",
+        "errors": {
+            "badValue": "Nilai itu tidak dibenarkan untuk syarat ini.",
+            "malformed": "Pertanyaan tidak dapat dibaca.",
+            "tooDeep": "Pertanyaan disarang terlalu dalam.",
+            "tooManyRules": "Pertanyaan mempunyai terlalu banyak syarat.",
+            "unknownField": "Medan tidak dikenali dalam pertanyaan.",
+            "unknownOperator": "Operator tidak dikenali dalam pertanyaan."
+        },
+        "field": {
+            "createdAt": "Dicipta",
+            "email": "E-mel",
+            "name": "Nama",
+            "phone": "Telefon",
+            "roles": "Peranan",
+            "status": "Status",
+            "verifiedAt": "Disahkan"
+        },
+        "matchAll": "Padan semua syarat",
+        "matchAny": "Padan mana-mana syarat",
+        "op": {
+            "between": "antara",
+            "contains": "mengandungi",
+            "count_eq": "mempunyai tepat",
+            "count_gte": "mempunyai sekurang-kurangnya",
+            "count_lte": "mempunyai paling banyak",
+            "date_after": "selepas",
+            "date_before": "sebelum",
+            "date_between": "antara",
+            "date_is": "pada",
+            "ends_with": "berakhir dengan",
+            "eq": "sama dengan",
+            "gt": "lebih besar daripada",
+            "gte": "sekurang-kurangnya",
+            "in": "salah satu daripada",
+            "in_month": "dalam bulan",
+            "in_year": "dalam tahun",
+            "is_blank": "kosong",
+            "is_false": "palsu",
+            "is_filled": "berisi",
+            "is_true": "benar",
+            "lt": "kurang daripada",
+            "lte": "paling banyak",
+            "neq": "tidak sama dengan",
+            "not_contains": "tidak mengandungi",
+            "not_in": "bukan salah satu daripada",
+            "not_related_to": "tidak berkaitan dengan",
+            "related_to": "berkaitan dengan",
+            "starts_with": "bermula dengan"
+        },
+        "or": "atau",
+        "removeGroup": "Buang kumpulan",
+        "removeRule": "Buang syarat",
+        "removeValue": "Buang nilai",
+        "ruleCount": "{n} syarat",
+        "ruleLimit": "Paling banyak {max} syarat.",
+        "selectField": "Pilih medan",
+        "selectOperator": "Pilih operator"
+    },
+    "search": {
+        "a11y": {
+            "hint": "Taip untuk mencari. Guna kekunci anak panah untuk bergerak antara keputusan dan Enter untuk membuka.",
+            "results": "{n} keputusan"
+        },
+        "commands": "Perintah",
+        "groups": {
+            "activity": "Log Aktiviti",
+            "pages": "Halaman",
+            "roles": "Peranan",
+            "users": "Pengguna"
+        },
+        "noResults": "Tiada padanan ditemui.",
+        "placeholder": "Cari semua…",
+        "recent": "Terkini"
     }
 }

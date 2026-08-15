@@ -225,6 +225,94 @@
             "tooManyRows": "The file has more than {max} rows.",
             "upload": "Upload",
             "validate": "Check rows"
-        }
+    },
+    "filters": {
+        "a11y": {
+            "condition": "Condition {n}",
+            "conjunction": "Toggle match mode",
+            "valueFrom": "From value",
+            "valueList": "Values",
+            "valueTo": "To value"
+        },
+        "addGroup": "Group",
+        "addRule": "Rule",
+        "and": "and",
+        "applyQuery": "Apply query",
+        "clearQuery": "Clear query",
+        "depthLimit": "Nesting is limited to {max} levels.",
+        "enterValue": "Enter value…",
+        "errors": {
+            "badValue": "That value is not allowed for this condition.",
+            "malformed": "The query could not be read.",
+            "tooDeep": "The query is nested too deeply.",
+            "tooManyRules": "The query has too many conditions.",
+            "unknownField": "Unknown field in the query.",
+            "unknownOperator": "Unknown operator in the query."
+        },
+        "field": {
+            "createdAt": "Created",
+            "email": "Email",
+            "name": "Name",
+            "phone": "Phone",
+            "roles": "Roles",
+            "status": "Status",
+            "verifiedAt": "Verified"
+        },
+        "matchAll": "Match all conditions",
+        "matchAny": "Match any condition",
+        "op": {
+            "between": "is between",
+            "contains": "contains",
+            "count_eq": "has exactly",
+            "count_gte": "has at least",
+            "count_lte": "has at most",
+            "date_after": "is after",
+            "date_before": "is before",
+            "date_between": "is between",
+            "date_is": "is on",
+            "ends_with": "ends with",
+            "eq": "equals",
+            "gt": "is greater than",
+            "gte": "is at least",
+            "in": "is one of",
+            "in_month": "is in month",
+            "in_year": "is in year",
+            "is_blank": "is blank",
+            "is_false": "is false",
+            "is_filled": "is filled",
+            "is_true": "is true",
+            "lt": "is less than",
+            "lte": "is at most",
+            "neq": "does not equal",
+            "not_contains": "does not contain",
+            "not_in": "is not one of",
+            "not_related_to": "is not related to",
+            "related_to": "is related to",
+            "starts_with": "starts with"
+        },
+        "or": "or",
+        "removeGroup": "Remove group",
+        "removeRule": "Remove condition",
+        "removeValue": "Remove value",
+        "ruleCount": "{n} conditions",
+        "ruleLimit": "At most {max} conditions.",
+        "selectField": "Select field",
+        "selectOperator": "Select operator"
+    },
+    "search": {
+        "a11y": {
+            "hint": "Type to search. Use the arrow keys to move between results and Enter to open one.",
+            "results": "{n} results"
+        },
+        "commands": "Commands",
+        "groups": {
+            "activity": "Activity Log",
+            "pages": "Pages",
+            "roles": "Roles",
+            "users": "Users"
+        },
+        "noResults": "No matches found.",
+        "placeholder": "Search everything…",
+        "recent": "Recent"
     }
 }

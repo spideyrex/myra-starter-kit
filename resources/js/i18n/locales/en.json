@@ -180,6 +180,128 @@
         "title": "Columns",
         "visible": "Visible"
     },
+    "charts": {
+        "a11y": {
+            "canvas": "{chart} with {rows} data points.",
+            "delta": "{direction} {percent} ({absolute}) — {verdict} than the previous period.",
+            "gauge": "{measure}: {value} of a {goal} goal ({percent}%).",
+            "gaugeNoGoal": "{measure}: {value}. No goal set.",
+            "loading": "Loading chart data…",
+            "segment": "{label}: {measure} {value}.",
+            "summary": "{chart} of {measure} across {rows} groups, totalling {total}."
+        },
+        "compare": {
+            "none": "No comparison",
+            "previous": "vs previous period",
+            "year": "vs same period last year"
+        },
+        "comparison": "Previous period",
+        "dashboard": {
+            "activity": "Recent Activity",
+            "activityDescription": "Latest actions across the system",
+            "activityEmpty": "No recent activity.",
+            "addUser": "Add User",
+            "byStatus": "Users by Status",
+            "byStatusDescription": "Distribution across statuses",
+            "greeting": "Welcome back, {name}",
+            "growth": "User Growth",
+            "growthDescription": "New registrations over the last 6 months",
+            "manageRoles": "Manage Roles",
+            "month": "Month",
+            "newUsers": "New Users",
+            "newUsersThisMonth": "new user this month | new users this month",
+            "quickActions": "Quick Actions",
+            "recentUsers": "Recent Users",
+            "recentUsersDescription": "Latest registrations",
+            "settings": "Settings",
+            "status": "Status",
+            "statusEmpty": "No status data available.",
+            "suspended": "Suspended",
+            "systemHealth": "System Health",
+            "users": "Users",
+            "usersEmpty": "No users yet.",
+            "viewAllUsers": "View all users"
+        },
+        "delta": {
+            "better": "better",
+            "down": "Down",
+            "flat": "Unchanged",
+            "none": "No comparison",
+            "up": "Up",
+            "worse": "worse"
+        },
+        "demo": {
+            "back": "Back to Demos",
+            "closureDescription": "ChartWidget.make().data() keeps the client-side path for data already on the page.",
+            "closureTitle": "Closure-bound charts",
+            "col": {
+                "customer": "Customer",
+                "order": "Order",
+                "product": "Product",
+                "revenue": "Revenue",
+                "sales": "Sales",
+                "status": "Status",
+                "total": "Total"
+            },
+            "compareDescription": "A comparison period becomes a second dashed series; the delta badge is coloured by verdict, not by direction.",
+            "compareTitle": "Comparison periods",
+            "description": "Configurable widget builders for stat cards, charts and tables, on closures or on a server report.",
+            "dim": {
+                "month": "Month",
+                "product": "Product"
+            },
+            "measure": {
+                "churn": "Churn",
+                "revenue": "Revenue",
+                "sales": "Sales"
+            },
+            "reportDescription": "ChartWidget.make().report() sends a binding, not a closure — the reduction stays in SQL and the browser only ever sees buckets.",
+            "reportTitle": "Report-bound charts",
+            "sample": {
+                "badUp": "Up, and that is bad (inverted trend)",
+                "flat": "Unchanged",
+                "goodDown": "Down, and that is good (inverted trend)",
+                "goodUp": "Up, and that is good",
+                "noPrevious": "Previous period was zero",
+                "none": "No comparison period"
+            },
+            "statDescription": "StatWidget.make() with value, icon, trend and description builders.",
+            "statTitle": "Stat widgets",
+            "tableDescription": "TableWidget.make() with columns, data and footer link builders.",
+            "tableTitle": "Table widgets",
+            "title": "Dashboard Widget System",
+            "typesDescription": "Every renderer is lazy: SVG charts ship no library at all, and the Chart.js types share one chunk.",
+            "typesTitle": "Chart library"
+        },
+        "empty": {
+            "description": "Nothing was recorded for this period. Widen the range or clear a filter.",
+            "heading": "No data to chart",
+            "noData": "No data available."
+        },
+        "goalOf": "of {goal}",
+        "goalProgress": "{percent}% of goal",
+        "other": "Other",
+        "truncated": "Showing top {shown} of {total}+",
+        "type": {
+            "area": "Area chart",
+            "bar": "Bar chart",
+            "doughnut": "Doughnut chart",
+            "funnel": "Funnel chart",
+            "gauge": "Gauge",
+            "heatmap": "Heatmap",
+            "horizontalBar": "Horizontal bar chart",
+            "line": "Line chart",
+            "pie": "Pie chart",
+            "polarArea": "Polar area chart",
+            "radar": "Radar chart",
+            "scatter": "Scatter plot",
+            "sparkline": "Sparkline",
+            "stackedArea": "Stacked area chart",
+            "stackedBar": "Stacked bar chart"
+        },
+        "viewAsChart": "View as chart",
+        "viewAsTable": "View as table"
+    },
     "transfer": {
         "export": {
             "button": "Export",

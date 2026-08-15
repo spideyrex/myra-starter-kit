@@ -1,58 +1,92 @@
 <script setup lang="ts">
-import { computed } from 'vue';
-import type { WidgetSchema } from '@/composables/useDashboardWidgets';
+import { computed, defineAsyncComponent, h, provide, type Component } from 'vue';
+import {
+    DASHBOARD_SEGMENT, resolveWidgets, spanClasses,
+    type SegmentHandler, type WidgetInput, type WidgetSchema, type WidgetType,
+} from '@/composables/useDashboardWidgets';
+import type { ReportResultPayload, ReportRow, StatResultPayload } from './charts/types';
+import LazyMount from './charts/LazyMount.vue';
 import StatWidgetVue from './widgets/StatWidget.vue';
-import ChartWidgetVue from './widgets/ChartWidget.vue';
 import TableWidgetVue from './widgets/TableWidget.vue';
 
-type WidgetInput = WidgetSchema | { toSchema(): WidgetSchema };
-
-const props = defineProps<{
+const props = withDefaults(defineProps<{
     widgets: WidgetInput[];
     pageProps: any;
-}>();
-
-const resolvedWidgets = computed(() => {
-    return props.widgets.map(w => {
-        if ('toSchema' in w && typeof w.toSchema === 'function') {
-            return w.toSchema();
-        }
-        return w as WidgetSchema;
-    });
+    /** Server results keyed by widget key. Absent until a report backs the widget. */
+    results?: Record<string, ReportResultPayload | StatResultPayload>;
+    loading?: Record<string, boolean>;
+    /** Override the permission check; defaults to pageProps.auth.user. */
+    can?: (ability: string) => boolean;
+    /** Bundle D supplies cross-filter / drill-through. Default is a no-op. */
+    onSegment?: SegmentHandler;
+}>(), {
+    results: () => ({}),
+    loading: () => ({}),
 });
+
+/**
+ * Adding a widget type no longer edits this file, and a stat-only dashboard
+ * never loads chart.js — `chart` resolves lazily.
+ */
+const CustomWidgetHost: Component = {
+    name: 'CustomWidgetHost',
+    inheritAttrs: false,
+    props: { widget: { type: Object, required: true }, pageProps: { type: null, default: null } },
+    setup(hostProps: any) {
+        return () => hostProps.widget.component
+            ? h(hostProps.widget.component, hostProps.widget.propsFn?.(hostProps.pageProps) ?? {})
+            : null;
+    },
+};
+
+const widgetComponents: Record<WidgetType, Component> = {
+    stat: StatWidgetVue,
+    chart: defineAsyncComponent(() => import('./widgets/ChartWidget.vue')),
+    table: TableWidgetVue,
+    custom: CustomWidgetHost,
+};
+
+function canDefault(ability: string): boolean {
+    const user = props.pageProps?.auth?.user;
+    // No auth context (demo pages) — the server still authorises the data.
+    if (!user) return true;
+    if (user.roles?.includes('super-admin')) return true;
+    return user.permissions?.includes(ability) ?? false;
+}
+
+const resolved = computed<WidgetSchema[]>(() =>
+    resolveWidgets(props.widgets, props.pageProps, props.can ?? canDefault),
+);
+
+provide<SegmentHandler>(DASHBOARD_SEGMENT, (widgetKey, row, measureKey) => {
+    props.onSegment?.(widgetKey, row, measureKey);
+});
+
+function widgetProps(widget: WidgetSchema): Record<string, any> {
+    return {
+        widget,
+        pageProps: props.pageProps,
+        result: props.results?.[widget.key] ?? null,
+        loading: props.loading?.[widget.key] ?? false,
+    };
+}
+
+function onSegmentFrom(widget: WidgetSchema, row: ReportRow, measureKey: string): void {
+    props.onSegment?.(widget.key, row, measureKey);
+}
 </script>
 
 <template>
-    <div class="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
-        <template v-for="widget in resolvedWidgets" :key="widget.key">
-            <div :style="widget.colSpan > 1 ? `grid-column: span ${widget.colSpan}` : ''">
-                <!-- Stat widget -->
-                <StatWidgetVue
-                    v-if="widget.type === 'stat'"
-                    :widget="widget"
-                    :page-props="pageProps"
-                />
-
-                <!-- Chart widget -->
-                <ChartWidgetVue
-                    v-else-if="widget.type === 'chart'"
-                    :widget="widget"
-                    :page-props="pageProps"
-                />
-
-                <!-- Table widget -->
-                <TableWidgetVue
-                    v-else-if="widget.type === 'table'"
-                    :widget="widget"
-                    :page-props="pageProps"
-                />
-
-                <!-- Custom widget -->
-                <component
-                    v-else-if="widget.type === 'custom' && widget.component"
-                    :is="widget.component"
-                    v-bind="widget.propsFn?.(pageProps) ?? {}"
-                />
+    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <template v-for="widget in resolved" :key="widget.key">
+            <div :class="spanClasses(widget.colSpan, widget.rowSpan)">
+                <LazyMount :enabled="widget.lazy !== false" :min-height="widget.height ?? 160">
+                    <component
+                        :is="widgetComponents[widget.type]"
+                        v-bind="widgetProps(widget)"
+                        @segment="(row, measureKey) => onSegmentFrom(widget, row, measureKey)"
+                    />
+                </LazyMount>
             </div>
         </template>
     </div>

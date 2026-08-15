@@ -206,6 +206,7 @@
             "done": "Import complete.",
             "downloadSample": "Download a sample CSV",
             "expected": "Expected columns: {columns}",
+            "failed": "The import could not be completed. Please try again.",
             "failuresCsv": "Download failed rows",
             "file": "CSV file",
             "invalidRows": "{count} row(s) contain errors.",

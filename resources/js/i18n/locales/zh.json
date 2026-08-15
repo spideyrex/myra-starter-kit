@@ -206,6 +206,7 @@
             "done": "导入完成。",
             "downloadSample": "下载示例 CSV",
             "expected": "预期列：{columns}",
+            "failed": "导入未能完成，请重试。",
             "failuresCsv": "下载失败行",
             "file": "CSV 文件",
             "invalidRows": "{count} 行存在错误。",

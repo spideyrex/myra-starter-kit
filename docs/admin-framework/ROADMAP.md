@@ -84,20 +84,21 @@ The "view, filter, search, export, import" stability mandate.
 
 ## C2b — C2 follow-ups (carried from the v2.2.0 sweep)
 
-- [ ] **Unescaped LIKE patterns outside the query builder.** Six call sites still interpolate raw
-      user input into a LIKE pattern with no escaping on any driver — a `%` in the search box
-      matches everything: `app/Services/UserService.php:~55`,
-      `app/Http/Controllers/Admin/AdminNotificationController.php:27-30`,
-      `ActivityLogController.php:29-30`, `EmailLogController.php:29`, `MediaController.php:25-26`,
-      `app/Admin/Traits/HasRelationManagers.php:36`. Migrate all six to `Sql::whereLike()`.
-- [ ] `ImportController.php:80,146` still use `abort()`, so a refusal renders an HTML error page
-      instead of a clean payload — the same bug just fixed in the export path.
-- [ ] `Sql::LIKE_ESCAPE` is dead code; `escapeLiteral()` re-derives the literal itself.
+- [x] **Unescaped LIKE patterns outside the query builder.** All six call sites migrated to
+      `Sql::whereLike()`/`orWhereLike()`: `UserService::exportQuery()`,
+      `AdminNotificationController`, `ActivityLogController`, `EmailLogController`,
+      `MediaController` (including the prefix match on `mime_type`) and `HasRelationManagers`.
+      Covered by `tests/Feature/Security/LikeEscapingTest.php`.
+- [x] `ImportController` row-cap refusals go through `App\Admin\Http\Refusal` — the same clean
+      payload as the export path, extracted out of `ExportableQuery::exportRefusal()`.
+- [x] `Sql::LIKE_ESCAPE` removed; `escapeLiteral()` remains the single source of the literal.
+- [x] `HasRelationManagers::paginateRelation()` whitelists `sort`; an unlisted column falls back
+      to `$defaultSort` instead of reaching `orderBy()` as raw client input.
 - [ ] MySQL `sql_mode=NO_BACKSLASH_ESCAPES` would break the emitted `ESCAPE '\\'` literal.
       `escapeLiteral()` needs a third case if any deployment runs that mode.
 - [ ] `Sql::like()` is still public and can be misused without its `ESCAPE` clause — only a
       docblock guards it. Consider making it internal.
-- [ ] `InlineUploadController::show()` dereferences `$request->user()->id` without a null guard.
+- [x] `InlineUploadController::show()` null-guards `$request->user()` and answers 404, not a fatal.
 - [ ] The inline-upload public URL contains a doubled segment (`/uploads/inline/inline/{id}/`),
       now enshrined by an assertion. Cosmetic, but worth a clean route.
 - [ ] 100k+ row performance (virtualised rows, cursor pagination) — deliberately deferred from

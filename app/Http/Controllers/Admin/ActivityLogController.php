@@ -7,6 +7,7 @@ use App\Admin\Export\ExportDefinition;
 use App\Admin\Traits\ExportableQuery;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\ActivityResource;
+use App\Support\Sql;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -26,8 +27,8 @@ class ActivityLogController extends Controller
         return Activity::query()
             ->when($request->search, function ($q, $search) {
                 $q->where(function ($q) use ($search) {
-                    $q->where('description', 'like', "%{$search}%")
-                      ->orWhere('subject_type', 'like', "%{$search}%");
+                    Sql::whereLike($q, 'description', (string) $search);
+                    Sql::orWhereLike($q, 'subject_type', (string) $search);
                 });
             })
             ->when($request->log_name, fn ($q, $name) => $q->where('log_name', $name));

@@ -61,6 +61,11 @@ class DemoController extends Controller
         return Inertia::render('Admin/Demo/FieldTypes');
     }
 
+    public function codeEditor()
+    {
+        return Inertia::render('Admin/Demo/CodeEditor');
+    }
+
     public function map()
     {
         return Inertia::render('Admin/Demo/Map');

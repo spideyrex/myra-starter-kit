@@ -82,5 +82,42 @@
         "minLength": "{field} mestilah sekurang-kurangnya {min} aksara",
         "maxLength": "{field} tidak boleh melebihi {max} aksara",
         "confirmed": "Pengesahan {field} tidak sepadan"
+    },
+    "fields": {
+        "copied": "Disalin ke papan keratan",
+        "copyFailed": "Gagal menyalin",
+        "copyCode": "Salin kod",
+        "tabMovesFocus": "mengalih fokus",
+        "escLeaves": "kemudian Tab keluar dari editor",
+        "tabHint": "Tekan Tab untuk ke medan seterusnya.",
+        "escapeHint": "Tekan Escape, kemudian Tab, untuk keluar dari editor.",
+        "md": {
+            "bold": "Tebal",
+            "italic": "Condong",
+            "strike": "Garis lorek",
+            "link": "Pautan",
+            "heading": "Tajuk",
+            "quote": "Petikan",
+            "code": "Kod sebaris",
+            "codeBlock": "Blok kod",
+            "bulletList": "Senarai bulet",
+            "orderedList": "Senarai bernombor",
+            "table": "Jadual",
+            "image": "Imej",
+            "hr": "Garis pemisah",
+            "undo": "Buat asal",
+            "redo": "Buat semula",
+            "mode": "Mod paparan",
+            "edit": "Sunting sahaja",
+            "split": "Paparan belah",
+            "preview": "Pratonton sahaja",
+            "fullscreen": "Skrin penuh",
+            "renderedPreview": "Pratonton terhasil",
+            "placeholder": "Tulis markdown...",
+            "words": "{count} perkataan",
+            "uploadFailed": "Muat naik imej gagal",
+            "boldSample": "teks tebal",
+            "italicSample": "teks condong"
+        }
     }
 }

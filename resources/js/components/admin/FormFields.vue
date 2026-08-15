@@ -394,6 +394,7 @@ const calloutConfig: Record<string, { classes: string; icon: typeof Info }> = {
             <FormField
                 v-show="isFieldVisible(entry.field)"
                 v-bind="entry.field"
+                :form="form"
                 :model-value="form[entry.field.name]"
                 :error="form.errors[entry.field.name]"
                 :style="entry.field.colStyle"

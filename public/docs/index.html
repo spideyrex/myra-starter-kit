@@ -1255,20 +1255,118 @@ TagsInput.make('skills').hint('Up to 10 skills')</code></pre>
         </tbody>
     </table>
 
-    <h4>ToggleGroupField</h4>
-    <p>Group of toggle buttons for single or multiple selection.</p>
+    <h4>ToggleGroupField / ToggleButtons</h4>
+    <p>
+        Group of toggle buttons for single or multiple selection. <code>ToggleButtons</code> is a
+        subclass of <code>ToggleGroupField</code> with a Filament-familiar name — both render the
+        <code>'toggle-group'</code> field type, so there is exactly one literal to learn.
+    </p>
     <pre><code class="language-typescript">ToggleGroupField.make('alignment').options({
     left: 'Left', center: 'Center', right: 'Right',
 })
-ToggleGroupField.make('features').options({...}).multiple().variant('outline')</code></pre>
+
+// One descriptor object per option carries icon, colour, description,
+// tooltip, disabled and hidden — no parallel keyed arrays to keep in sync.
+ToggleButtons.make('status')
+    .options([
+        { value: 'draft',     label: 'Draft',     icon: Pencil, color: 'muted',
+          description: 'Only you can see it' },
+        { value: 'reviewing', label: 'In review', icon: Eye,    color: 'warning' },
+        { value: 'published', label: 'Published', icon: Check,  color: 'success',
+          disabled: !can('articles.publish'),
+          tooltip: 'Requires the articles.publish permission' },
+    ])
+    .inline()
+    .hint('Drafts are excluded from the sitemap.')
+
+ToggleButtons.make('channels')
+    .options({ email: 'Email', sms: 'SMS', push: 'Push' })
+    .multiple().min(1).max(2).columns(3)
+
+ToggleButtons.make('is_featured').boolean('Featured', 'Standard')</code></pre>
     <table>
         <thead><tr><th>Method</th><th>Description</th></tr></thead>
         <tbody>
-            <tr><td><code>.options(opts)</code></td><td>Toggle options (same format as Select)</td></tr>
-            <tr><td><code>.multiple()</code></td><td>Allow multiple selections (model becomes array)</td></tr>
+            <tr><td><code>.options(opts)</code></td><td><code>ToggleOption[]</code>, <code>SelectOption[]</code> or a <code>Record&lt;string,string&gt;</code>. Values are coerced to strings.</td></tr>
+            <tr><td><code>.multiple(v = true)</code></td><td>Allow multiple selections. The model is <strong>always</strong> an array — a scalar is normalised on read, so no Eloquent <code>array</code> cast is required.</td></tr>
             <tr><td><code>.variant(v)</code></td><td><code>'default'</code> or <code>'outline'</code> (default: outline)</td></tr>
+            <tr><td><code>.size(s)</code></td><td><code>'sm' | 'default' | 'lg'</code></td></tr>
+            <tr><td><code>.inline(v = true)</code></td><td>Lay the buttons out on one wrapping row instead of full width</td></tr>
+            <tr><td><code>.columns(n)</code></td><td>Render as an <code>n</code>-column grid</td></tr>
+            <tr><td><code>.hideLabels(v = true)</code></td><td>Icon-only buttons. The option label becomes the <code>aria-label</code>.</td></tr>
+            <tr><td><code>.min(n)</code></td><td>Block a change that would drop below <code>n</code> selections</td></tr>
+            <tr><td><code>.max(n)</code></td><td>Disable unselected options once <code>n</code> are selected</td></tr>
+            <tr><td><code>.boolean(trueLabel?, falseLabel?)</code></td><td>Preset that <em>writes</em> two options, <code>'1'</code> / <code>'0'</code>, coloured success / danger</td></tr>
         </tbody>
     </table>
+    <h5><code>ToggleOption</code></h5>
+    <table>
+        <thead><tr><th>Key</th><th>Type</th><th>Description</th></tr></thead>
+        <tbody>
+            <tr><td><code>value</code></td><td><code>string</code></td><td>Stored value (always a string)</td></tr>
+            <tr><td><code>label</code></td><td><code>string</code></td><td>Visible label and accessible name</td></tr>
+            <tr><td><code>icon</code></td><td><code>Component</code></td><td>lucide-vue-next icon</td></tr>
+            <tr><td><code>color</code></td><td><code>SemanticColor</code></td><td><code>muted | primary | info | success | warning | danger</code> — applied to the selected state</td></tr>
+            <tr><td><code>description</code></td><td><code>string</code></td><td>Secondary line under the label</td></tr>
+            <tr><td><code>tooltip</code></td><td><code>string</code></td><td><code>title</code> plus a visually-hidden description</td></tr>
+            <tr><td><code>disabled</code></td><td><code>boolean</code></td><td>Renders but cannot be selected</td></tr>
+            <tr><td><code>hidden</code></td><td><code>boolean</code></td><td>Dropped from the schema entirely</td></tr>
+        </tbody>
+    </table>
+
+    <h4>CodeEditor</h4>
+    <p>
+        Syntax-highlighted code field backed by CodeMirror 6. The editor is behind a
+        <code>defineAsyncComponent</code> and each grammar is a separate dynamic import, so a form
+        without a code field downloads none of it and a form with one downloads only its language.
+        Colours come from the <code>--code-*</code> CSS custom properties, so light/dark and every
+        colour preset repaint with no remount and no re-highlight.
+    </p>
+    <pre><code class="language-typescript">CodeEditor.make('webhook_payload')
+    .label('Sample payload')
+    .language('json')
+    .filename('payload.json')
+    .minHeight('20rem')
+    .maxHeight('40rem')
+    .tabSize(2)
+    .copyable()
+    .hint('Sent verbatim to your endpoint.')
+    .hintAction({ label: 'Format', icon: Sparkles, onClick: (f) => {
+        f.webhook_payload = JSON.stringify(JSON.parse(f.webhook_payload), null, 2);
+    } })</code></pre>
+    <table>
+        <thead><tr><th>Method</th><th>Default</th><th>Description</th></tr></thead>
+        <tbody>
+            <tr><td><code>.language(lang)</code></td><td><code>'plaintext'</code></td><td>One of <code>CodeLanguage</code> (below)</td></tr>
+            <tr><td><code>.lineNumbers(v = true)</code></td><td><code>true</code></td><td>Show the gutter</td></tr>
+            <tr><td><code>.wrap(v = true)</code></td><td><code>true</code></td><td>Soft-wrap long lines; <code>false</code> gives horizontal scroll</td></tr>
+            <tr><td><code>.readOnly(v = true)</code></td><td><code>false</code></td><td>Highlighting and selection stay, edits are blocked</td></tr>
+            <tr><td><code>.indentWithTab(v = true)</code></td><td><code>false</code></td><td>Opt-in Tab indentation. When on, <kbd>Escape</kbd> releases focus so Tab is never trapped.</td></tr>
+            <tr><td><code>.autocomplete(v = true)</code></td><td><code>false</code></td><td>Opt-in; lazily pulls <code>@codemirror/autocomplete</code> plus bracket closing</td></tr>
+            <tr><td><code>.copyable(v = true)</code></td><td><code>false</code></td><td>Copy button in the header (works over plain HTTP too)</td></tr>
+            <tr><td><code>.tabSize(n)</code></td><td><code>2</code></td><td>Indent width</td></tr>
+            <tr><td><code>.minHeight(css)</code></td><td><code>'12rem'</code></td><td>Any CSS length</td></tr>
+            <tr><td><code>.maxHeight(css)</code></td><td>—</td><td>Above this the viewport scrolls</td></tr>
+            <tr><td><code>.filename(name)</code></td><td>—</td><td>Shown in the header bar</td></tr>
+        </tbody>
+    </table>
+    <p>
+        <strong><code>CodeLanguage</code></strong>:
+        <code>plaintext</code>, <code>javascript</code>, <code>typescript</code>, <code>json</code>,
+        <code>html</code>, <code>css</code>, <code>php</code>, <code>sql</code>,
+        <code>markdown</code>, <code>yaml</code>, <code>xml</code>, <code>python</code>,
+        <code>bash</code>, <code>vue</code>. The same union is re-exported by the infolist engine,
+        so a <code>CodeEntry</code> and a <code>CodeEditor</code> speak one vocabulary.
+    </p>
+    <div class="callout callout-info">
+        <div class="callout-title">&#8505; Accessibility</div>
+        CodeMirror's contenteditable is not a labelable element, so the field passes
+        <code>role="textbox"</code>, <code>aria-multiline</code>,
+        <code>aria-labelledby="{fieldId}-label"</code>, <code>aria-describedby</code> and
+        <code>aria-invalid</code> directly onto the editable node. With
+        <code>indentWithTab()</code> on, the header shows an <kbd>Esc</kbd> chip and the keymap
+        binds Escape to blur.
+    </div>
 
     <h4>CalendarPicker</h4>
     <p>Date picker rendered as a shadcn Calendar inside a Popover. Model value is a date string (<code>YYYY-MM-DD</code>).</p>
@@ -1334,14 +1432,43 @@ TimePicker.make('start_time').minTime('08:00').maxTime('18:00')</code></pre>
     </table>
 
     <h4>MarkdownEditor</h4>
-    <p>Split-pane markdown editor with live preview. Uses the <code>marked</code> library for rendering. Model value is a markdown string.</p>
-    <pre><code class="language-typescript">MarkdownEditor.make('readme').rows(12)</code></pre>
+    <p>
+        Markdown editor with a toolbar, a live split preview, an optional counter and an optional
+        fullscreen dialog. Rendering uses <code>marked</code>, and the output always passes through
+        <code>sanitizeHtml</code> before it reaches <code>v-html</code>. Model value is a markdown
+        string. The whole editor — <code>marked</code> and <code>dompurify</code> included — is a
+        lazy chunk, so forms without a markdown field never download it.
+    </p>
+    <pre><code class="language-typescript">MarkdownEditor.make('readme')
+    .rows(14)
+    .withoutToolbar(['image', 'table'])   // removing ONE button is one call
+    .fullscreen()
+    .maxLength(5000)
+    .hint('GitHub-flavoured markdown. Output is sanitised before display.')</code></pre>
     <table>
-        <thead><tr><th>Method</th><th>Description</th></tr></thead>
+        <thead><tr><th>Method</th><th>Default</th><th>Description</th></tr></thead>
         <tbody>
-            <tr><td><code>.rows(n)</code></td><td>Height of the editor textarea</td></tr>
+            <tr><td><code>.rows(n)</code></td><td><code>10</code></td><td>Height of the editor textarea</td></tr>
+            <tr><td><code>.toolbar(buttons)</code></td><td>full set</td><td><strong>Replaces</strong> the default button set</td></tr>
+            <tr><td><code>.withoutToolbar(buttons)</code></td><td><code>[]</code></td><td><strong>Subtracts</strong> from whatever set is active. Resolved at <code>toProps()</code>, so the call order does not matter.</td></tr>
+            <tr><td><code>.mode(m)</code></td><td><code>'split'</code></td><td><code>'split' | 'edit' | 'preview'</code>. Below the <code>md</code> breakpoint split degrades to the switcher.</td></tr>
+            <tr><td><code>.modeSwitcher(v = true)</code></td><td><code>true</code></td><td>Show the edit / split / preview toggle</td></tr>
+            <tr><td><code>.fullscreen(v = true)</code></td><td><code>false</code></td><td>Fullscreen dialog; Escape closes and focus returns to the trigger</td></tr>
+            <tr><td><code>.counter(v = true)</code></td><td><code>false</code></td><td>Word and character count, <code>aria-live="polite"</code></td></tr>
+            <tr><td><code>.maxLength(n)</code></td><td>—</td><td>Implies <code>.counter()</code>; the counter turns destructive past the limit</td></tr>
+            <tr><td><code>.minHeight(css)</code> / <code>.maxHeight(css)</code></td><td>—</td><td>Pane sizing, any CSS length</td></tr>
+            <tr><td><code>.uploadRoute(name)</code></td><td>—</td><td>Route that accepts a pasted/dropped image and returns <code>{ url }</code>. Return a signed temporary URL from a private disk — never a public-disk path.</td></tr>
         </tbody>
     </table>
+    <p>
+        <strong>Toolbar buttons</strong> (<code>MarkdownButton</code>): <code>bold</code>,
+        <code>italic</code>, <code>strike</code>, <code>link</code>, <code>heading</code>,
+        <code>quote</code>, <code>code</code>, <code>codeBlock</code>, <code>bulletList</code>,
+        <code>orderedList</code>, <code>table</code>, <code>image</code>, <code>undo</code>,
+        <code>redo</code>, <code>mode</code>, plus the opt-in <code>hr</code> and
+        <code>fullscreen</code>. <code>DEFAULT_MARKDOWN_TOOLBAR</code> is exported from
+        <code>useFormSchema</code>.
+    </p>
     <div class="callout callout-info">
         <div class="callout-title">&#8505; Note</div>
         MarkdownEditor is distinct from <code>RichEditor</code> (TipTap HTML). Use MarkdownEditor when you want raw markdown input/output, and RichEditor for WYSIWYG HTML editing.
@@ -1356,15 +1483,39 @@ TimePicker.make('start_time').minTime('08:00').maxTime('18:00')</code></pre>
         <tbody>
             <tr><td><code>.label(text)</code></td><td>Set explicit label</td><td><code>.label('Full Name')</code></td></tr>
             <tr><td><code>.required()</code></td><td>Mark as required (shows asterisk)</td><td><code>.required()</code></td></tr>
-            <tr><td><code>.hint(text)</code></td><td>Helper text below field</td><td><code>.hint('Min 8 characters')</code></td></tr>
+            <tr><td><code>.hint(text)</code></td><td>Helper text below field. The <em>only</em> helper-text method — there is no <code>helperText()</code> alias (Filament equivalent: <code>helperText()</code>).</td><td><code>.hint('Min 8 characters')</code></td></tr>
+            <tr><td><code>.hintIcon(icon, tooltip?)</code></td><td>Icon before the hint, with an optional tooltip that is also exposed to screen readers</td><td><code>.hintIcon(Link2, 'Used in the public URL')</code></td></tr>
+            <tr><td><code>.hintColor(color)</code></td><td><code>muted</code> (default), <code>primary</code>, <code>info</code>, <code>success</code>, <code>warning</code>, <code>danger</code></td><td><code>.hintColor('warning')</code></td></tr>
+            <tr><td><code>.hintAction(action)</code></td><td>Inline action button beside the hint. <code>onClick</code> receives the owning form object.</td><td><code>.hintAction({ label: 'Regenerate', icon: Sparkles, onClick: (f) =&gt; { f.slug = slugify(f.title) } })</code></td></tr>
             <tr><td><code>.placeholder(text)</code></td><td>Input placeholder text</td><td><code>.placeholder('Enter name')</code></td></tr>
-            <tr><td><code>.disabled()</code></td><td>Disable the field</td><td><code>.disabled()</code></td></tr>
+            <tr><td><code>.disabled(v = true)</code></td><td>Disable the field. <code>.disabled()</code> still means <code>true</code>; pass <code>false</code> to re-enable conditionally.</td><td><code>.disabled(!can('articles.edit'))</code></td></tr>
             <tr><td><code>.colSpan(n)</code></td><td>Grid column span</td><td><code>.colSpan(2)</code></td></tr>
             <tr><td><code>.visibleWhen(cond)</code></td><td>Show field only when condition is met</td><td><code>.visibleWhen('type:business')</code></td></tr>
             <tr><td><code>.hiddenWhen(cond)</code></td><td>Hide field when condition is met</td><td><code>.hiddenWhen('role:viewer')</code></td></tr>
         </tbody>
     </table>
     <p>See <a href="#conditional-visibility">Conditional Field Visibility</a> for full condition syntax (string patterns and function callbacks).</p>
+
+    <h4>Hints and errors</h4>
+    <p>
+        The hint cluster lives on <code>BaseField</code>, so all field types get it with no renderer
+        branch of their own — including <code>switch</code> and <code>checkbox</code>, which
+        previously dropped both hint and error. Hint and error render together, hint above error.
+    </p>
+    <pre><code class="language-typescript">TextInput.make('slug')
+    .required()
+    .hint('Lowercase, hyphen-separated. Changing this breaks existing links.')
+    .hintIcon(Link2, 'Used in the public URL')
+    .hintColor('warning')
+    .hintAction({ label: 'Regenerate', icon: Sparkles,
+                  onClick: (form) =&gt; { form.slug = slugify(form.title); } })</code></pre>
+    <p>
+        The rendered ids are load-bearing and stable: the hint is
+        <code>{fieldId}-hint</code>, the error is <code>{fieldId}-error</code> with
+        <code>role="alert"</code>, and the field's label is <code>{fieldId}-label</code>. Every
+        control binds <code>aria-describedby</code> to whichever of those exist and
+        <code>aria-invalid</code> to the presence of an error.
+    </p>
 
     <h4>Auto-derived Labels</h4>
     <p>If <code>.label()</code> is not called, the label is derived from the field name:</p>
@@ -3479,7 +3630,8 @@ import { Button } from '@/components/ui/button';
     <h4>useFormSchema</h4>
     <p>Form builder API for defining field schemas and layouts with a fluent, chainable syntax.</p>
     <p><strong>File:</strong> <code>resources/js/composables/useFormSchema.ts</code></p>
-    <p><strong>Field exports:</strong> <code>TextInput</code>, <code>Select</code>, <code>Textarea</code>, <code>Toggle</code>, <code>Checkbox</code>, <code>DatePicker</code>, <code>DateTimePicker</code>, <code>Radio</code>, <code>ColorPicker</code>, <code>Hidden</code>, <code>FileUpload</code>, <code>RichEditor</code>, <code>Repeater</code>, <code>Builder</code>, <code>Slider</code>, <code>NumberField</code>, <code>PinInput</code>, <code>TagsInput</code>, <code>ToggleGroupField</code>, <code>CalendarPicker</code>, <code>TimePicker</code>, <code>CheckboxList</code>, <code>KeyValue</code>, <code>MarkdownEditor</code></p>
+    <p><strong>Field exports:</strong> <code>TextInput</code>, <code>Select</code>, <code>Textarea</code>, <code>Toggle</code>, <code>Checkbox</code>, <code>DatePicker</code>, <code>DateTimePicker</code>, <code>Radio</code>, <code>ColorPicker</code>, <code>Hidden</code>, <code>FileUpload</code>, <code>RichEditor</code>, <code>Repeater</code>, <code>Builder</code>, <code>Slider</code>, <code>NumberField</code>, <code>PinInput</code>, <code>TagsInput</code>, <code>ToggleGroupField</code>, <code>CalendarPicker</code>, <code>TimePicker</code>, <code>CheckboxList</code>, <code>KeyValue</code>, <code>MarkdownEditor</code>, <code>ToggleButtons</code>, <code>CodeEditor</code></p>
+    <p><strong>Shared type exports:</strong> <code>SemanticColor</code>, <code>CodeLanguage</code>, <code>HintAction</code>, <code>ToggleOption</code>, <code>MarkdownButton</code>, <code>MarkdownMode</code>, <code>DEFAULT_MARKDOWN_TOOLBAR</code></p>
     <p><strong>Block Builder:</strong> <code>Builder</code> + <code>Block</code> create a repeatable list where each item can be a different block type (Filament-style). Each block has its own field schema; the stored value is <code>[{ type, data }]</code>:</p>
     <pre><code class="language-typescript">Builder.make('content').label('Page Content').blocks([
     Block.make('heading').icon('Heading').schema([ TextInput.make('text').required() ]),
@@ -5607,9 +5759,15 @@ interface NavItem {
         | 'date' | 'datetime-local' | 'radio' | 'color'
         | 'hidden' | 'file' | 'richtext' | 'repeater'
         | 'slider' | 'number-field' | 'pin-input'
-        | 'tags-input' | 'toggle-group' | 'calendar';
+        | 'tags-input' | 'toggle-group' | 'calendar'
+        | 'time' | 'checkbox-list' | 'key-value' | 'builder'
+        | 'markdown' | 'code';
     required: boolean;
     hint?: string;
+    hintIcon?: Component;
+    hintIconTooltip?: string;
+    hintColor?: SemanticColor;
+    hintAction?: HintAction;
     placeholder?: string;
     disabled: boolean;
     colSpan?: number;

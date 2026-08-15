@@ -1,7 +1,8 @@
 import type { Component } from 'vue';
 import type { SelectOption } from '@/types/admin';
+import { Check, X } from 'lucide-vue-next';
 
-export type FieldType = 'text' | 'email' | 'password' | 'number' | 'textarea' | 'select' | 'switch' | 'checkbox' | 'tel' | 'url' | 'date' | 'datetime-local' | 'radio' | 'color' | 'hidden' | 'file' | 'richtext' | 'repeater' | 'builder' | 'slider' | 'number-field' | 'pin-input' | 'tags-input' | 'toggle-group' | 'calendar' | 'time' | 'checkbox-list' | 'key-value' | 'markdown';
+export type FieldType = 'text' | 'email' | 'password' | 'number' | 'textarea' | 'select' | 'switch' | 'checkbox' | 'tel' | 'url' | 'date' | 'datetime-local' | 'radio' | 'color' | 'hidden' | 'file' | 'richtext' | 'repeater' | 'builder' | 'slider' | 'number-field' | 'pin-input' | 'tags-input' | 'toggle-group' | 'calendar' | 'time' | 'checkbox-list' | 'key-value' | 'markdown' | 'code';
 
 /** A block definition for the Builder field — a named, labelled group of fields. */
 export interface BuilderBlock {
@@ -12,6 +13,43 @@ export interface BuilderBlock {
 }
 
 export type VisibilityCondition = string | ((form: Record<string, any>) => boolean);
+
+// --- Shared vocabulary (fields, columns and infolist entries all use these) ---
+
+export type SemanticColor = 'muted' | 'primary' | 'info' | 'success' | 'warning' | 'danger';
+
+/** Closed union. The `code` FIELD and the `code` ENTRY share it. */
+export type CodeLanguage =
+    | 'plaintext' | 'javascript' | 'typescript' | 'json' | 'html' | 'css'
+    | 'php' | 'sql' | 'markdown' | 'yaml' | 'xml' | 'python' | 'bash' | 'vue';
+
+export interface HintAction {
+    label: string;
+    icon?: Component;
+    onClick: (form: Record<string, any>) => void;
+}
+
+export interface ToggleOption {
+    value: string;
+    label: string;
+    icon?: Component;
+    color?: SemanticColor;
+    description?: string;
+    tooltip?: string;
+    disabled?: boolean;
+    hidden?: boolean;
+}
+
+export const DEFAULT_MARKDOWN_TOOLBAR = [
+    'bold', 'italic', 'strike', 'link',
+    'heading', 'quote', 'code', 'codeBlock',
+    'bulletList', 'orderedList', 'table', 'image',
+    'undo', 'redo', 'mode',
+] as const;
+
+export type MarkdownButton = typeof DEFAULT_MARKDOWN_TOOLBAR[number] | 'hr' | 'fullscreen';
+
+export type MarkdownMode = 'split' | 'edit' | 'preview';
 
 export interface FieldSchema {
     name: string;
@@ -68,6 +106,13 @@ export interface FieldSchema {
     // ToggleGroup
     toggleMultiple?: boolean;
     toggleVariant?: 'default' | 'outline';
+    toggleOptions?: ToggleOption[];
+    toggleColumns?: number;
+    toggleSize?: 'sm' | 'default' | 'lg';
+    toggleInline?: boolean;
+    toggleHideLabels?: boolean;
+    toggleMin?: number;
+    toggleMax?: number;
     // Calendar date picker
     useCalendar?: boolean;
     dateFormat?: string;
@@ -82,6 +127,33 @@ export interface FieldSchema {
     valueLabel?: string;
     keyPlaceholder?: string;
     valuePlaceholder?: string;
+    // Hint
+    hintIcon?: Component;
+    hintIconTooltip?: string;
+    hintColor?: SemanticColor;
+    hintAction?: HintAction;
+    // Code
+    codeLanguage?: CodeLanguage;
+    codeLineNumbers?: boolean;
+    codeWrap?: boolean;
+    codeReadOnly?: boolean;
+    codeIndentWithTab?: boolean;
+    codeAutocomplete?: boolean;
+    codeCopyable?: boolean;
+    codeTabSize?: number;
+    codeMinHeight?: string;
+    codeMaxHeight?: string;
+    codeFilename?: string;
+    // Markdown
+    mdToolbar?: MarkdownButton[];
+    mdMode?: MarkdownMode;
+    mdModeSwitcher?: boolean;
+    mdFullscreen?: boolean;
+    mdCounter?: boolean;
+    mdMaxLength?: number;
+    mdMinHeight?: string;
+    mdMaxHeight?: string;
+    mdUploadRoute?: string;
     // Conditional visibility
     visibleWhen?: VisibilityCondition;
     hiddenWhen?: VisibilityCondition;
@@ -518,6 +590,10 @@ export class BaseField {
     protected _type: FieldType = 'text';
     protected _required = false;
     protected _hint?: string;
+    protected _hintIcon?: Component;
+    protected _hintIconTooltip?: string;
+    protected _hintColor: SemanticColor = 'muted';
+    protected _hintAction?: HintAction;
     protected _placeholder?: string;
     protected _disabled = false;
     protected _colSpan?: number;
@@ -546,8 +622,25 @@ export class BaseField {
         return this;
     }
 
+    /** Helper text below the control. THE helper-text concept — there is no `helperText()` alias. */
     hint(text: string): this {
         this._hint = text;
+        return this;
+    }
+
+    hintIcon(icon: Component, tooltip?: string): this {
+        this._hintIcon = icon;
+        if (tooltip) this._hintIconTooltip = tooltip;
+        return this;
+    }
+
+    hintColor(color: SemanticColor): this {
+        this._hintColor = color;
+        return this;
+    }
+
+    hintAction(action: HintAction): this {
+        this._hintAction = action;
         return this;
     }
 
@@ -556,8 +649,8 @@ export class BaseField {
         return this;
     }
 
-    disabled(): this {
-        this._disabled = true;
+    disabled(value = true): this {
+        this._disabled = value;
         return this;
     }
 
@@ -583,6 +676,10 @@ export class BaseField {
             type: this._type,
             required: this._required,
             hint: this._hint,
+            hintIcon: this._hintIcon,
+            hintIconTooltip: this._hintIconTooltip,
+            hintColor: this._hintColor,
+            hintAction: this._hintAction,
             placeholder: this._placeholder,
             disabled: this._disabled,
             colSpan: this._colSpan,
@@ -1272,9 +1369,16 @@ export class TagsInput extends BaseField {
 }
 
 export class ToggleGroupField extends BaseField {
-    private _options: SelectOption[] = [];
-    private _toggleMultiple = false;
-    private _toggleVariant: 'default' | 'outline' = 'outline';
+    protected _options: SelectOption[] = [];
+    protected _toggleMultiple = false;
+    protected _toggleVariant: 'default' | 'outline' = 'outline';
+    protected _toggleOptions: ToggleOption[] = [];
+    protected _toggleColumns?: number;
+    protected _toggleSize: 'sm' | 'default' | 'lg' = 'default';
+    protected _toggleInline = false;
+    protected _toggleHideLabels = false;
+    protected _toggleMin?: number;
+    protected _toggleMax?: number;
 
     constructor(name: string) {
         super(name);
@@ -1285,17 +1389,18 @@ export class ToggleGroupField extends BaseField {
         return new ToggleGroupField(name);
     }
 
-    options(opts: SelectOption[] | Record<string, string>): this {
-        if (Array.isArray(opts)) {
-            this._options = opts;
-        } else {
-            this._options = Object.entries(opts).map(([value, label]) => ({ label, value }));
-        }
+    /** Accepts the rich descriptor array, SelectOption[], or a record. */
+    options(opts: ToggleOption[] | SelectOption[] | Record<string, string>): this {
+        const normalised: ToggleOption[] = Array.isArray(opts)
+            ? (opts as any[]).map(o => ({ ...o, value: String(o.value), label: o.label ?? String(o.value) }))
+            : Object.entries(opts).map(([value, label]) => ({ value, label }));
+        this._toggleOptions = normalised;
+        this._options = normalised.map(o => ({ label: o.label, value: o.value }));
         return this;
     }
 
-    multiple(): this {
-        this._toggleMultiple = true;
+    multiple(value = true): this {
+        this._toggleMultiple = value;
         return this;
     }
 
@@ -1304,8 +1409,66 @@ export class ToggleGroupField extends BaseField {
         return this;
     }
 
+    size(s: 'sm' | 'default' | 'lg'): this {
+        this._toggleSize = s;
+        return this;
+    }
+
+    inline(value = true): this {
+        this._toggleInline = value;
+        return this;
+    }
+
+    columns(n: number): this {
+        this._toggleColumns = n;
+        return this;
+    }
+
+    /** Icon-only buttons. The option label becomes the accessible name. */
+    hideLabels(value = true): this {
+        this._toggleHideLabels = value;
+        return this;
+    }
+
+    min(n: number): this {
+        this._toggleMin = n;
+        return this;
+    }
+
+    max(n: number): this {
+        this._toggleMax = n;
+        return this;
+    }
+
+    /** Preset that WRITES options, so it composes instead of being a mode. */
+    boolean(trueLabel = 'Yes', falseLabel = 'No'): this {
+        return this.options([
+            { value: '1', label: trueLabel, color: 'success', icon: Check },
+            { value: '0', label: falseLabel, color: 'danger', icon: X },
+        ]).variant('outline');
+    }
+
     toProps(): FieldSchema {
-        return { ...super.toProps(), options: this._options, toggleMultiple: this._toggleMultiple, toggleVariant: this._toggleVariant };
+        return {
+            ...super.toProps(),
+            options: this._options,
+            toggleOptions: this._toggleOptions.filter(o => !o.hidden),
+            toggleMultiple: this._toggleMultiple,
+            toggleVariant: this._toggleVariant,
+            toggleColumns: this._toggleColumns,
+            toggleSize: this._toggleSize,
+            toggleInline: this._toggleInline,
+            toggleHideLabels: this._toggleHideLabels,
+            toggleMin: this._toggleMin,
+            toggleMax: this._toggleMax,
+        };
+    }
+}
+
+/** Filament-familiar name. A real subclass, so class.name matches in stack traces. */
+export class ToggleButtons extends ToggleGroupField {
+    static make(name: string): ToggleButtons {
+        return new ToggleButtons(name);
     }
 }
 
@@ -1466,6 +1629,16 @@ export class KeyValue extends BaseField {
 
 export class MarkdownEditor extends BaseField {
     private _rows = 10;
+    private _mdToolbar?: MarkdownButton[];
+    private _mdWithout: MarkdownButton[] = [];
+    private _mdMode: MarkdownMode = 'split';
+    private _mdModeSwitcher = true;
+    private _mdFullscreen = false;
+    private _mdCounter = false;
+    private _mdMaxLength?: number;
+    private _mdMinHeight?: string;
+    private _mdMaxHeight?: string;
+    private _mdUploadRoute?: string;
 
     constructor(name: string) {
         super(name);
@@ -1481,8 +1654,172 @@ export class MarkdownEditor extends BaseField {
         return this;
     }
 
+    /** REPLACES the default set. */
+    toolbar(buttons: MarkdownButton[]): this {
+        this._mdToolbar = buttons;
+        return this;
+    }
+
+    /** SUBTRACTS from whatever set is active. Resolved in toProps(), so order does not matter. */
+    withoutToolbar(buttons: MarkdownButton[]): this {
+        this._mdWithout = [...this._mdWithout, ...buttons];
+        return this;
+    }
+
+    mode(m: MarkdownMode): this {
+        this._mdMode = m;
+        return this;
+    }
+
+    modeSwitcher(value = true): this {
+        this._mdModeSwitcher = value;
+        return this;
+    }
+
+    fullscreen(value = true): this {
+        this._mdFullscreen = value;
+        return this;
+    }
+
+    counter(value = true): this {
+        this._mdCounter = value;
+        return this;
+    }
+
+    maxLength(n: number): this {
+        this._mdMaxLength = n;
+        this._mdCounter = true;
+        return this;
+    }
+
+    minHeight(css: string): this {
+        this._mdMinHeight = css;
+        return this;
+    }
+
+    maxHeight(css: string): this {
+        this._mdMaxHeight = css;
+        return this;
+    }
+
+    /** Signed-URL upload endpoint for pasted/dropped images. */
+    uploadRoute(routeName: string): this {
+        this._mdUploadRoute = routeName;
+        return this;
+    }
+
     toProps(): FieldSchema {
-        return { ...super.toProps(), rows: this._rows };
+        const base = this._mdToolbar ?? [...DEFAULT_MARKDOWN_TOOLBAR];
+        return {
+            ...super.toProps(),
+            rows: this._rows,
+            mdToolbar: base.filter(b => !this._mdWithout.includes(b)),
+            mdMode: this._mdMode,
+            mdModeSwitcher: this._mdModeSwitcher,
+            mdFullscreen: this._mdFullscreen,
+            mdCounter: this._mdCounter,
+            mdMaxLength: this._mdMaxLength,
+            mdMinHeight: this._mdMinHeight,
+            mdMaxHeight: this._mdMaxHeight,
+            mdUploadRoute: this._mdUploadRoute,
+        };
+    }
+}
+
+export class CodeEditor extends BaseField {
+    private _codeLanguage: CodeLanguage = 'plaintext';
+    private _codeLineNumbers = true;
+    private _codeWrap = true;
+    private _codeReadOnly = false;
+    private _codeIndentWithTab = false;
+    private _codeAutocomplete = false;
+    private _codeCopyable = false;
+    private _codeTabSize = 2;
+    private _codeMinHeight = '12rem';
+    private _codeMaxHeight?: string;
+    private _codeFilename?: string;
+
+    constructor(name: string) {
+        super(name);
+        this._type = 'code';
+    }
+
+    static make(name: string): CodeEditor {
+        return new CodeEditor(name);
+    }
+
+    language(lang: CodeLanguage): this {
+        this._codeLanguage = lang;
+        return this;
+    }
+
+    lineNumbers(value = true): this {
+        this._codeLineNumbers = value;
+        return this;
+    }
+
+    wrap(value = true): this {
+        this._codeWrap = value;
+        return this;
+    }
+
+    readOnly(value = true): this {
+        this._codeReadOnly = value;
+        return this;
+    }
+
+    /** OFF by default: Tab must keep traversing the form. */
+    indentWithTab(value = true): this {
+        this._codeIndentWithTab = value;
+        return this;
+    }
+
+    /** Opt-in; lazily pulls @codemirror/autocomplete. */
+    autocomplete(value = true): this {
+        this._codeAutocomplete = value;
+        return this;
+    }
+
+    copyable(value = true): this {
+        this._codeCopyable = value;
+        return this;
+    }
+
+    tabSize(n: number): this {
+        this._codeTabSize = n;
+        return this;
+    }
+
+    minHeight(css: string): this {
+        this._codeMinHeight = css;
+        return this;
+    }
+
+    maxHeight(css: string): this {
+        this._codeMaxHeight = css;
+        return this;
+    }
+
+    filename(name: string): this {
+        this._codeFilename = name;
+        return this;
+    }
+
+    toProps(): FieldSchema {
+        return {
+            ...super.toProps(),
+            codeLanguage: this._codeLanguage,
+            codeLineNumbers: this._codeLineNumbers,
+            codeWrap: this._codeWrap,
+            codeReadOnly: this._codeReadOnly,
+            codeIndentWithTab: this._codeIndentWithTab,
+            codeAutocomplete: this._codeAutocomplete,
+            codeCopyable: this._codeCopyable,
+            codeTabSize: this._codeTabSize,
+            codeMinHeight: this._codeMinHeight,
+            codeMaxHeight: this._codeMaxHeight,
+            codeFilename: this._codeFilename,
+        };
     }
 }
 

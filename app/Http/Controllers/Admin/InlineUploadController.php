@@ -67,8 +67,11 @@ class InlineUploadController extends Controller
             404,
         );
 
+        $user = $request->user();
+        abort_unless($user !== null, 404);
+
         // 404, not 403 — a 403 confirms the file exists.
-        abort_unless((int) $m[1] === $request->user()->id || $request->user()->can('media.view'), 404);
+        abort_unless((int) $m[1] === (int) $user->id || $user->can('media.view'), 404);
         abort_unless(Storage::disk('local')->exists($path), 404);
 
         return Storage::disk('local')->response($path, null, [

@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Notifications\SecurityAlertNotification;
 use App\Notifications\SystemNotification;
 use App\Notifications\UserActionNotification;
+use App\Support\Sql;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Notifications\DatabaseNotification;
@@ -24,11 +25,11 @@ class AdminNotificationController extends Controller
             ->with('notifiable:id,name,email')
             ->when($request->search, function ($q, $search) {
                 $q->where(function ($q) use ($search) {
-                    $q->where('data', 'like', "%{$search}%")
-                        ->orWhereHasMorph('notifiable', [User::class], function ($q) use ($search) {
-                            $q->where('name', 'like', "%{$search}%")
-                                ->orWhere('email', 'like', "%{$search}%");
-                        });
+                    Sql::whereLike($q, 'data', (string) $search);
+                    $q->orWhereHasMorph('notifiable', [User::class], function ($q) use ($search) {
+                        Sql::whereLike($q, 'name', (string) $search);
+                        Sql::orWhereLike($q, 'email', (string) $search);
+                    });
                 });
             })
             ->when($request->type, function ($q, $type) {

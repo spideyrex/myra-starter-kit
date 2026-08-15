@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\MediaResource;
 use App\Models\User;
+use App\Support\Sql;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -22,8 +23,8 @@ class MediaController extends Controller
             ->when(! $this->isSuperAdmin($user), fn ($q) => $q
                 ->where('model_type', User::class)
                 ->where('model_id', $user->id))
-            ->when($request->search, fn ($q, $s) => $q->where('file_name', 'like', "%{$s}%"))
-            ->when($request->type, fn ($q, $type) => $q->where('mime_type', 'like', "{$type}%"))
+            ->when($request->search, fn ($q, $s) => Sql::whereLike($q, 'file_name', (string) $s))
+            ->when($request->type, fn ($q, $t) => Sql::whereLike($q, 'mime_type', (string) $t, 'starts'))
             ->latest()
             ->paginate(24)
             ->withQueryString();

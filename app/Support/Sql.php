@@ -8,9 +8,6 @@ use InvalidArgumentException;
 
 final class Sql
 {
-    /** Escape character embedded in every pattern produced by like(). */
-    public const LIKE_ESCAPE = '\\';
-
     /**
      * Escape LIKE wildcards so a user's `%` or `_` cannot widen the match or
      * force a full table scan.

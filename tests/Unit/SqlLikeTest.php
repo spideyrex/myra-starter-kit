@@ -92,6 +92,12 @@ class SqlLikeTest extends TestCase
         $this->assertSame(['100% cotton', 'pure wool'], $matches->all());
     }
 
+    /** The escape literal is driver-dependent, so a public const was actively misleading. */
+    public function test_the_dead_escape_constant_is_gone(): void
+    {
+        $this->assertFalse(defined(Sql::class . '::LIKE_ESCAPE'));
+    }
+
     public function test_it_rejects_a_column_that_is_not_a_plain_identifier(): void
     {
         $this->expectException(InvalidArgumentException::class);

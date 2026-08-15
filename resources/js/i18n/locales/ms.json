@@ -206,6 +206,7 @@
             "done": "Import selesai.",
             "downloadSample": "Muat turun contoh CSV",
             "expected": "Lajur dijangka: {columns}",
+            "failed": "Import tidak dapat diselesaikan. Sila cuba lagi.",
             "failuresCsv": "Muat turun baris gagal",
             "file": "Fail CSV",
             "invalidRows": "{count} baris mengandungi ralat.",

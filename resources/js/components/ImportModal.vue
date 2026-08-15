@@ -15,6 +15,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { AlertCircle, ArrowLeft, ArrowRight, CheckCircle2, Download, Upload } from 'lucide-vue-next';
 import {
     canCommit,
+    importErrorMessage,
     useImportRunner,
     type CommitResponse,
     type ImportColumnSchema,
@@ -52,20 +53,23 @@ const skipInvalid = ref(false);
 
 const SKIP = '__skip__';
 
-const runner = useImportRunner(async ({ offset, line }) => {
-    const { data } = await axios.post<CommitResponse>(
-        route('admin.import.commit', { resource: props.resource }),
-        { token: token.value, offset, line, total_rows: totalRows.value, skip_invalid: skipInvalid.value },
-    );
-    return data;
-});
+const runner = useImportRunner(
+    async ({ offset, line }) => {
+        const { data } = await axios.post<CommitResponse>(
+            route('admin.import.commit', { resource: props.resource }),
+            { token: token.value, offset, line, total_rows: totalRows.value, skip_invalid: skipInvalid.value },
+        );
+        return data;
+    },
+    { fallback: () => t('transfer.import.failed') },
+);
 
 function handleFileChange(event: Event) {
     file.value = (event.target as HTMLInputElement).files?.[0] || null;
 }
 
 function messageOf(e: any, fallback: string): string {
-    return e?.response?.data?.message || e?.response?.data?.error || fallback;
+    return importErrorMessage(e, () => e?.response?.data?.error || fallback);
 }
 
 async function uploadAndPreview() {

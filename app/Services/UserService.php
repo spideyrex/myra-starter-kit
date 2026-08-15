@@ -6,6 +6,7 @@ use App\Admin\Traits\SearchableQuery;
 use App\DTOs\UserData;
 use App\Models\Role;
 use App\Models\User;
+use App\Support\Sql;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
@@ -52,7 +53,7 @@ class UserService
         if ($withSearch && $request->search) {
             $query->where(function ($q) use ($request) {
                 foreach (self::SEARCHABLE as $column) {
-                    $q->orWhere($column, 'like', '%' . $request->search . '%');
+                    Sql::orWhereLike($q, $column, (string) $request->search);
                 }
             });
         }

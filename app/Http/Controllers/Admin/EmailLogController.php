@@ -8,6 +8,7 @@ use App\Admin\Traits\ExportableQuery;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\EmailLogResource;
 use App\Models\EmailLog;
+use App\Support\Sql;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -26,7 +27,8 @@ class EmailLogController extends Controller
         return EmailLog::query()
             ->when($request->status, fn ($q, $status) => $q->where('status', $status))
             ->when($request->search, fn ($q, $search) => $q->where(function ($q) use ($search) {
-                $q->where('to', 'like', "%{$search}%")->orWhere('subject', 'like', "%{$search}%");
+                Sql::whereLike($q, 'to', (string) $search);
+                Sql::orWhereLike($q, 'subject', (string) $search);
             }));
     }
 

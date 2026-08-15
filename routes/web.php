@@ -14,6 +14,7 @@ use App\Http\Controllers\Admin\ImportController;
 use App\Http\Controllers\Admin\InlineUploadController;
 use App\Http\Controllers\Admin\MediaController;
 use App\Http\Controllers\Admin\PermissionController;
+use App\Http\Controllers\Admin\ReportScheduleController;
 use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Admin\SearchController;
 use App\Http\Controllers\Admin\SettingController;
@@ -302,6 +303,21 @@ Route::middleware(['auth', 'verified', 'active', '2fa'])->prefix('admin')->name(
     Route::get('/demo/wizard', [DemoController::class, 'wizardDemo'])->name('demo.wizard');
     Route::get('/demo/map', [DemoController::class, 'map'])->name('demo.map');
     }); // end demo group
+
+    // >>> MYRA v2.3 [D] START
+    // Scheduled report delivery. Per-schedule authority is the ReportSchedulePolicy;
+    // the middleware only keeps the whole surface behind the schedule ability.
+    Route::get('/report-schedules', [ReportScheduleController::class, 'index'])
+        ->middleware('permission:reports.schedule')->name('report-schedules.index');
+    Route::post('/report-schedules', [ReportScheduleController::class, 'store'])
+        ->middleware(['permission:reports.schedule', 'throttle:20,1'])->name('report-schedules.store');
+    Route::put('/report-schedules/{reportSchedule}', [ReportScheduleController::class, 'update'])
+        ->middleware(['permission:reports.schedule', 'throttle:20,1'])->name('report-schedules.update');
+    Route::delete('/report-schedules/{reportSchedule}', [ReportScheduleController::class, 'destroy'])
+        ->middleware('permission:reports.schedule')->name('report-schedules.destroy');
+    Route::post('/report-schedules/{reportSchedule}/test', [ReportScheduleController::class, 'test'])
+        ->middleware(['permission:reports.schedule', 'throttle:3,10'])->name('report-schedules.test');
+    // <<< MYRA v2.3 [D] END
 
     // myra:routes — make:myra-* commands insert generated routes above this line. Do not remove.
 });

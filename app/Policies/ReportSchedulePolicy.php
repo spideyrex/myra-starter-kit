@@ -44,7 +44,11 @@ class ReportSchedulePolicy
         return $this->update($user, $schedule);
     }
 
-    /** A test send mails the actor only, so read access is enough. */
+    /**
+     * A test send runs as, and mails, the actor only (SendScheduledReport's
+     * $testForUserId), so read access is enough — it can neither reach the
+     * schedule's recipient list nor read the owner's scoped rows.
+     */
     public function test(User $user, ReportSchedule $schedule): bool
     {
         return $this->view($user, $schedule);

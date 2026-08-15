@@ -13,7 +13,7 @@ use Tests\TestCase;
 class CrossFilterTest extends TestCase
 {
     /** @param array<string,mixed> $cross */
-    private function post(array $cross): \Illuminate\Testing\TestResponse
+    private function postCross(array $cross): \Illuminate\Testing\TestResponse
     {
         return $this->postJson(route('admin.reports.data', 'users'), [
             'state' => [
@@ -45,7 +45,7 @@ class CrossFilterTest extends TestCase
             $cross['widget-'.$i] = $this->chip('active');
         }
 
-        $this->post($cross)->assertOk();
+        $this->postCross($cross)->assertOk();
     }
 
     public function test_a_ninth_cross_filter_is_refused(): void
@@ -58,14 +58,14 @@ class CrossFilterTest extends TestCase
             $cross['widget-'.$i] = $this->chip('active');
         }
 
-        $this->post($cross)->assertStatus(422);
+        $this->postCross($cross)->assertStatus(422);
     }
 
     public function test_a_chip_naming_an_undeclared_field_is_refused(): void
     {
         $this->actingAsSuperAdmin();
 
-        $this->post([
+        $this->postCross([
             'rogue' => [
                 'conjunction' => 'and',
                 'rules' => [['field' => 'password', 'operator' => 'eq', 'value' => 'x']],

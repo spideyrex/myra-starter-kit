@@ -7,14 +7,15 @@ use App\Mail\ScheduledReportMail;
 use App\Models\EmailLog;
 use App\Models\EmailTemplate;
 use App\Settings\EmailSettings;
-use Illuminate\Contracts\Mail\Mailer;
+use Illuminate\Mail\Mailer;
 use Illuminate\Support\Facades\Mail;
+use RuntimeException;
 
 class EmailService
 {
     public function sendTemplate(string $slug, string $to, array $variables = []): void
     {
-        $template = EmailTemplate::where('slug', $slug)->firstOrFail();
+        $template = $this->template($slug);
 
         $subject = $this->replaceVariables($template->subject, $variables);
         $body = $this->replaceVariables($template->body_html, $variables);
@@ -39,15 +40,24 @@ class EmailService
      * Queued counterpart. The EmailLog row's 'queued' status finally means what
      * it says: nothing is transmitted inside the request.
      *
+     * Attachment bodies are base64-encoded on the way into the job payload: a
+     * queue payload is json_encode()d, and raw PDF/xlsx bytes are not valid
+     * UTF-8, so the push would fail outright. The worker decodes them again.
+     *
      * @param  string|array<int,string>  $to
-     * @param  array<int, array{data:string, name:string, mime?:string}>  $attachments
+     * @param  array<int, array{data:string, name:string, mime?:string}>  $attachments  raw bytes
      */
     public function queueTemplate(string $slug, string|array $to, array $variables = [], array $attachments = []): void
     {
-        $template = EmailTemplate::where('slug', $slug)->firstOrFail();
+        $template = $this->template($slug);
 
         $subject = $this->replaceVariables($template->subject, $variables);
         $body = $this->replaceVariables($template->body_html, $variables);
+
+        $encoded = array_map(
+            static fn (array $a) => array_merge($a, ['data' => base64_encode((string) $a['data'])]),
+            array_values($attachments),
+        );
 
         foreach ((array) $to as $address) {
             $log = EmailLog::create([
@@ -57,7 +67,7 @@ class EmailService
                 'status' => 'queued',
             ]);
 
-            SendQueuedTemplateMail::dispatch((string) $address, $subject, $body, $attachments, (int) $log->id);
+            SendQueuedTemplateMail::dispatch((string) $address, $subject, $body, $encoded, (int) $log->id);
         }
     }
 
@@ -96,18 +106,34 @@ class EmailService
      */
     private function mailerFor(EmailSettings $settings): Mailer
     {
-        return Mail::build([
+        $mailer = Mail::build([
             'transport' => $settings->mail_mailer ?: 'smtp',
             'host' => $settings->mail_host,
             'port' => $settings->mail_port,
             'encryption' => $settings->mail_encryption,
             'username' => $settings->mail_username,
             'password' => $settings->mail_password,
-            'from' => [
-                'address' => $settings->mail_from_address ?: config('mail.from.address'),
-                'name' => $settings->mail_from_name ?: config('mail.from.name'),
-            ],
         ]);
+
+        // MailManager::build() only wires the transport — the global addresses are
+        // set in resolve(), which build() never reaches. So apply "from" here.
+        $mailer->alwaysFrom(
+            (string) ($settings->mail_from_address ?: config('mail.from.address')),
+            $settings->mail_from_name ?: config('mail.from.name'),
+        );
+
+        return $mailer;
+    }
+
+    private function template(string $slug): EmailTemplate
+    {
+        $template = EmailTemplate::where('slug', $slug)->first();
+
+        if ($template === null) {
+            throw new RuntimeException(__('reportDelivery.errors.missingTemplate', ['slug' => $slug]));
+        }
+
+        return $template;
     }
 
     private function replaceVariables(string $content, array $variables): string

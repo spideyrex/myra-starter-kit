@@ -14,7 +14,7 @@ use Tests\TestCase;
 class ReportPdfTest extends TestCase
 {
     /** @return array{0: mixed, 1: mixed, 2: mixed} */
-    private function run(array $state = []): array
+    private function runReport(array $state = []): array
     {
         $actor = $this->actingAsSuperAdmin();
         User::factory()->count(3)->create(['status' => 'active']);
@@ -31,7 +31,7 @@ class ReportPdfTest extends TestCase
 
     public function test_it_streams_a_pdf_document(): void
     {
-        [$definition, $request, $result] = $this->run();
+        [$definition, $request, $result] = $this->runReport();
 
         $response = (new PdfReportWriter)->stream($definition, $request, $result);
 
@@ -48,7 +48,7 @@ class ReportPdfTest extends TestCase
     public function test_write_to_disk_produces_a_readable_file(): void
     {
         Storage::fake('local');
-        [$definition, $request, $result] = $this->run();
+        [$definition, $request, $result] = $this->runReport();
 
         $path = (new PdfReportWriter)->writeToDisk($definition, $request, $result, 'local');
 

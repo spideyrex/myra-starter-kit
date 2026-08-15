@@ -88,6 +88,17 @@ watch([open, () => props.schedule], () => {
 const showDayOfWeek = computed(() => form.value.frequency === 'weekly');
 const showDayOfMonth = computed(() => form.value.frequency === 'monthly' || form.value.frequency === 'quarterly');
 
+// Input/Textarea model `string | number`; these fields are nullable on the wire.
+const dayOfMonth = computed<string | number>({
+    get: () => form.value.day_of_month ?? 1,
+    set: (v) => { form.value.day_of_month = Number(v) || 1; },
+});
+
+const message = computed<string | number>({
+    get: () => form.value.message ?? '',
+    set: (v) => { form.value.message = String(v).trim() === '' ? null : String(v); },
+});
+
 const recipients = computed<ScheduleRecipient[]>(() => [
     ...userIds.value.map(id => ({ type: 'user', id }) as ScheduleRecipient),
     ...(props.canMailExternal ? emails.value.map(address => ({ type: 'email', address }) as ScheduleRecipient) : []),
@@ -168,7 +179,7 @@ function submit(): void {
 
                     <div v-if="showDayOfMonth" class="grid gap-2">
                         <Label for="schedule-dom">{{ t('reportDelivery.schedule.dayOfMonth') }}</Label>
-                        <Input id="schedule-dom" v-model="form.day_of_month" type="number" min="1" max="31" />
+                        <Input id="schedule-dom" v-model="dayOfMonth" type="number" min="1" max="31" />
                     </div>
 
                     <div class="grid gap-2">
@@ -231,7 +242,7 @@ function submit(): void {
 
                 <div class="grid gap-2">
                     <Label for="schedule-message">{{ t('reportDelivery.schedule.message') }}</Label>
-                    <Textarea id="schedule-message" v-model="form.message" rows="2" maxlength="2000" />
+                    <Textarea id="schedule-message" v-model="message" rows="2" maxlength="2000" />
                 </div>
 
                 <div class="flex items-center justify-between gap-4">

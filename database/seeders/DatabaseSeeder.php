@@ -14,6 +14,9 @@ class DatabaseSeeder extends Seeder
             RoleAndPermissionSeeder::class,
             SettingsSeeder::class,
             EmailTemplateSeeder::class,
+            // >>> MYRA v2.3 [D] START
+            ReportScheduleSeeder::class,
+            // <<< MYRA v2.3 [D] END
         ]);
 
         // Demo users (factory password "password") must NEVER be created in

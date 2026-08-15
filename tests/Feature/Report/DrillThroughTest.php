@@ -3,6 +3,8 @@
 namespace Tests\Feature\Report;
 
 use App\Admin\QueryBuilder\RuleTree;
+use App\Admin\Report\Bucket;
+use App\Admin\Report\DrillThrough;
 use App\Admin\Report\ReportRegistry;
 use App\Admin\Report\ReportRequest;
 use App\Admin\Report\ReportRunner;
@@ -116,6 +118,21 @@ class DrillThroughTest extends TestCase
         $this->expectExceptionMessage('filters.errors.unknownField');
 
         RuleTree::parse($forged, UserController::filterFieldSet(), auth()->user());
+    }
+
+    /**
+     * DateBetween is date-granular and bucketStart() truncates an hour key to its
+     * day, so a sub-day bucket must not have a whole day subtracted off the end —
+     * that produced an inverted range no row could ever match.
+     */
+    public function test_a_bucket_range_is_never_inverted(): void
+    {
+        $range = new \ReflectionMethod(DrillThrough::class, 'bucketRange');
+        $drill = new DrillThrough;
+
+        $this->assertSame(['2026-03-04', '2026-03-04'], $range->invoke($drill, Bucket::Hour, '2026-03-04 09:00'));
+        $this->assertSame(['2026-03-04', '2026-03-04'], $range->invoke($drill, Bucket::Day, '2026-03-04'));
+        $this->assertSame(['2026-03-01', '2026-03-31'], $range->invoke($drill, Bucket::Month, '2026-03'));
     }
 
     public function test_the_emitted_params_match_the_live_filter_wire_form(): void

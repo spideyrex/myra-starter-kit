@@ -9,6 +9,7 @@ use App\Admin\Report\ReportResult;
 use App\Admin\Report\ReportRunner;
 use App\Admin\Report\Schedule\RecipientResolver;
 use App\Models\ReportSchedule;
+use App\Models\User;
 use App\Notifications\SystemNotification;
 use App\Services\EmailService;
 use App\Support\Csv;
@@ -38,47 +39,79 @@ final class SendScheduledReport implements ShouldBeUnique, ShouldQueue
 
     public int $uniqueFor = 3600;
 
-    public function __construct(public readonly int $scheduleId) {}
+    /**
+     * @param  int|null  $testForUserId  "Send me one now": runs AS this user and
+     *   mails only them. Never the schedule's recipient list — the test ability
+     *   is granted at read level, and a teammate must not be able to fan a team
+     *   schedule out to everyone on it, nor receive the owner's scoped rows.
+     */
+    public function __construct(
+        public readonly int $scheduleId,
+        public readonly ?int $testForUserId = null,
+    ) {}
 
     public function uniqueId(): string
     {
-        return "report-schedule-{$this->scheduleId}";
+        return "report-schedule-{$this->scheduleId}"
+            .($this->testForUserId === null ? '' : "-test-{$this->testForUserId}");
+    }
+
+    private function isTest(): bool
+    {
+        return $this->testForUserId !== null;
     }
 
     public function handle(EmailService $mail): void
     {
         $schedule = ReportSchedule::with('user')->find($this->scheduleId);
 
-        if ($schedule === null || ! $schedule->is_active) {
+        if ($schedule === null || (! $schedule->is_active && ! $this->isTest())) {
             return;
         }
 
-        $owner = $schedule->user;
+        $actor = $this->isTest()
+            ? User::find($this->testForUserId)
+            : $schedule->user;
 
-        if ($owner === null || ! $owner->can('reports.view')) {
-            $this->pause($schedule, 'reportDelivery.errors.ownerLostAccess');
+        if ($actor === null || ! $actor->can('reports.view')) {
+            if (! $this->isTest()) {
+                $this->pause($schedule, 'reportDelivery.errors.ownerLostAccess');
+            }
+
+            return;
+        }
+
+        // Same authority the schedules picker uses — 'reports.view' alone says
+        // nothing about THIS report.
+        if (ReportRegistry::schemaFor([$schedule->report_key], $actor) === []) {
+            if (! $this->isTest()) {
+                $this->pause($schedule, 'reportDelivery.errors.ownerLostAccess');
+            }
 
             return;
         }
 
         $previous = Auth::user();
-        Auth::setUser($owner);
+        Auth::setUser($actor);
 
         $disk = (string) config('myra.report_schedules.pdf_disk', 'local');
         $path = null;
 
         try {
             $definition = ReportRegistry::resolve($schedule->report_key);
-            $request = $schedule->toReportRequest();
-            $result = (new ReportRunner($definition))->run($request, $owner);
+            $request = $schedule->toReportRequest($actor);
+            $result = (new ReportRunner($definition))->run($request, $actor);
 
-            if ($schedule->skip_if_empty && $result->rows() === []) {
+            // A test send always delivers: an empty report still proves the pipeline.
+            if ($schedule->skip_if_empty && ! $this->isTest() && $result->rows() === []) {
                 $this->finish($schedule, 'skipped');
 
                 return;
             }
 
-            $recipients = RecipientResolver::resolve($schedule, $owner);
+            $recipients = $this->isTest()
+                ? [['email' => (string) $actor->email, 'name' => (string) $actor->name]]
+                : RecipientResolver::resolve($schedule, $actor);
 
             if ($recipients === []) {
                 $this->finish($schedule, 'no_recipients');
@@ -113,7 +146,8 @@ final class SendScheduledReport implements ShouldBeUnique, ShouldQueue
     {
         $schedule = ReportSchedule::find($this->scheduleId);
 
-        if ($schedule === null) {
+        // A failed test send must not count towards the auto-pause budget.
+        if ($schedule === null || $this->isTest()) {
             return;
         }
 
@@ -220,7 +254,13 @@ final class SendScheduledReport implements ShouldBeUnique, ShouldQueue
         return [$labels, $rows];
     }
 
-    /** @return array<string,string> */
+    /**
+     * Every scalar is escaped here: replaceVariables() does a raw str_replace into
+     * the template's HTML body, so an unescaped schedule name is stored XSS in an
+     * outbound mail. {{kpi_table}} is the one deliberate HTML value.
+     *
+     * @return array<string,string>
+     */
     private function variables(ReportSchedule $schedule, ReportResult $result): array
     {
         $payload = $result->toArray();
@@ -233,19 +273,41 @@ final class SendScheduledReport implements ShouldBeUnique, ShouldQueue
             $kpis[] = '<tr><td>'.e($key).'</td><td>'.e((string) ($payload['totals'][$key] ?? '—')).'</td></tr>';
         }
 
+        $message = trim((string) ($schedule->message ?? ''));
+
         return [
-            'report_name' => $schedule->name,
-            'period' => $period,
-            'comparison' => $payload['comparison'] === null
+            'report_name' => e((string) $schedule->name),
+            'period' => e($period),
+            'comparison' => e($payload['comparison'] === null
                 ? '—'
-                : sprintf('%s – %s', $payload['comparison']['from'] ?? '', $payload['comparison']['to'] ?? ''),
+                : sprintf('%s – %s', $payload['comparison']['from'] ?? '', $payload['comparison']['to'] ?? '')),
+            'message' => $message === '' ? '' : '<p>'.nl2br(e($message)).'</p>',
             'kpi_table' => '<table>'.implode('', $kpis).'</table>',
-            'view_url' => $schedule->message ?? '',
+            'view_url' => e($this->viewUrl($schedule)),
         ];
+    }
+
+    /** Built server-side. The schedule's free-text message is never a URL. */
+    private function viewUrl(ReportSchedule $schedule): string
+    {
+        $router = app('router');
+
+        if ($router->has('admin.reports.show')) {
+            return route('admin.reports.show', $schedule->report_key);
+        }
+
+        return $router->has('admin.report-schedules.index')
+            ? route('admin.report-schedules.index')
+            : url('/');
     }
 
     private function finish(ReportSchedule $schedule, string $status): void
     {
+        // A test send reports nothing about the recurring run's health.
+        if ($this->isTest()) {
+            return;
+        }
+
         $schedule->forceFill([
             'last_run_at' => now(),
             'last_status' => $status,

@@ -33,5 +33,6 @@ return [
         'noRecipients' => '以您当前的权限，所选收件人均无法接收邮件。',
         'unknownReport' => '该报表不存在。',
         'badTimezone' => '无法识别该时区。',
+        'missingTemplate' => '缺少 ":slug" 邮件模板。请运行 `php artisan db:seed --class=ReportScheduleSeeder` 以恢复。',
     ],
 ];

@@ -5,12 +5,21 @@ namespace Tests\Feature\Report;
 use App\Admin\Report\Schedule\RecipientResolver;
 use App\Jobs\SendQueuedTemplateMail;
 use App\Jobs\SendScheduledReport;
+use App\Mail\ScheduledReportMail;
+use App\Models\EmailTemplate;
 use App\Models\ReportSchedule;
 use App\Models\User;
 use App\Services\EmailService;
+use App\Settings\EmailSettings;
 use Carbon\CarbonImmutable;
+use Database\Seeders\DatabaseSeeder;
 use Database\Seeders\ReportScheduleSeeder;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Mail\Events\MessageSent;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Queue;
+use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Tests\TestCase;
@@ -92,7 +101,9 @@ class ReportScheduleDispatchTest extends TestCase
         (new SendScheduledReport($schedule->id))->handle(app(EmailService::class));
 
         Queue::assertPushed(SendQueuedTemplateMail::class, function (SendQueuedTemplateMail $job) {
-            $csv = $job->attachments[0]['data'] ?? '';
+            // Attachment bytes are base64 in the payload: a queue payload is JSON
+            // and raw PDF/xlsx bytes are not valid UTF-8.
+            $csv = base64_decode((string) ($job->attachments[0]['data'] ?? ''), true);
             $total = 0;
 
             foreach (array_slice(preg_split('/\R/', trim($csv)) ?: [], 1) as $line) {
@@ -183,5 +194,136 @@ class ReportScheduleDispatchTest extends TestCase
         $schedule->advance(CarbonImmutable::now());
 
         $this->assertTrue($schedule->fresh()->next_run_at->isFuture());
+    }
+
+    public function test_every_route_the_schedules_page_calls_is_registered(): void
+    {
+        foreach (['index', 'store', 'update', 'destroy', 'test'] as $action) {
+            $this->assertTrue(
+                Route::has("admin.report-schedules.{$action}"),
+                "Route admin.report-schedules.{$action} is not registered.",
+            );
+        }
+    }
+
+    public function test_the_scheduled_report_template_ships_with_the_database_seeder(): void
+    {
+        $this->assertNull(EmailTemplate::where('slug', 'scheduled-report')->first());
+
+        $this->seed(DatabaseSeeder::class);
+
+        $this->assertNotNull(EmailTemplate::where('slug', 'scheduled-report')->first());
+    }
+
+    /** ShouldQueue would make Mailer::sendMailable() re-queue under the undefined "ondemand" mailer. */
+    public function test_the_scheduled_report_mailable_is_not_itself_queueable(): void
+    {
+        $this->assertNotInstanceOf(ShouldQueue::class, new ScheduledReportMail('s', '<p>b</p>'));
+    }
+
+    /**
+     * The whole delivery chain, end to end: the worker decodes the attachment,
+     * the on-demand mailer carries a From (Symfony rejects a message without one)
+     * and the mailable is transmitted rather than re-queued.
+     */
+    public function test_the_worker_actually_transmits_the_message(): void
+    {
+        Event::fake([MessageSent::class]);
+
+        app(EmailSettings::class)->mail_mailer = 'array';
+
+        (new SendQueuedTemplateMail(
+            'someone@example.test',
+            'Weekly signups',
+            '<p>Body</p>',
+            [['data' => base64_encode('a,b'), 'name' => 'report.csv', 'mime' => 'text/csv']],
+        ))->handle(app(EmailService::class));
+
+        Event::assertDispatched(MessageSent::class, function (MessageSent $event) {
+            $message = $event->message;
+
+            return $message->getFrom() !== []
+                && $message->getTo()[0]->getAddress() === 'someone@example.test'
+                && str_contains($message->toString(), base64_encode('a,b'));
+        });
+    }
+
+    public function test_the_settings_built_mailer_carries_a_from_address(): void
+    {
+        $from = (new \ReflectionProperty(\Illuminate\Mail\Mailer::class, 'from'))
+            ->getValue(app(EmailService::class)->mailer());
+
+        $this->assertNotEmpty($from['address'] ?? null);
+    }
+
+    public function test_next_run_at_is_persisted_in_the_app_timezone(): void
+    {
+        config(['app.timezone' => 'UTC']);
+
+        $owner = $this->actingAsRole('admin');
+        $schedule = $this->schedule($owner, [
+            'frequency' => 'daily',
+            'timezone' => 'Asia/Kuala_Lumpur',
+            'hour' => 8,
+            'minute' => 0,
+        ]);
+
+        $schedule->advance(CarbonImmutable::now());
+
+        // 08:00 in UTC+8 is 00:00 UTC. Storing the local wall clock verbatim would
+        // fire the schedule eight hours early.
+        $this->assertStringContainsString(
+            '00:00:00',
+            (string) DB::table('report_schedules')->where('id', $schedule->id)->value('next_run_at'),
+        );
+    }
+
+    public function test_a_test_send_reaches_only_the_actor_and_leaves_the_schedule_alone(): void
+    {
+        $this->seed(ReportScheduleSeeder::class);
+        Queue::fake([SendQueuedTemplateMail::class]);
+
+        $owner = $this->actingAsRole('admin');
+        $teammate = $this->makeUser(['created_by' => $owner->id, 'status' => 'active']);
+        $actor = $this->makeUser(['created_by' => $owner->id, 'status' => 'active']);
+        $actor->assignRole('admin');
+
+        $schedule = $this->schedule($owner, [
+            'recipients' => [
+                ['type' => 'user', 'id' => $owner->id],
+                ['type' => 'user', 'id' => $teammate->id],
+            ],
+        ]);
+
+        (new SendScheduledReport($schedule->id, $actor->id))->handle(app(EmailService::class));
+
+        Queue::assertPushed(SendQueuedTemplateMail::class, 1);
+        Queue::assertPushed(
+            SendQueuedTemplateMail::class,
+            fn (SendQueuedTemplateMail $job) => $job->to === $actor->email,
+        );
+
+        $this->assertNull($schedule->fresh()->last_status);
+    }
+
+    public function test_schedule_text_is_escaped_before_it_reaches_the_mail_body(): void
+    {
+        $this->seed(ReportScheduleSeeder::class);
+        Queue::fake([SendQueuedTemplateMail::class]);
+
+        $owner = $this->actingAsRole('admin');
+        $schedule = $this->schedule($owner, [
+            'name' => '<script>alert(1)</script>',
+            'message' => '<img src=x onerror=alert(1)>',
+        ]);
+
+        (new SendScheduledReport($schedule->id))->handle(app(EmailService::class));
+
+        Queue::assertPushed(SendQueuedTemplateMail::class, function (SendQueuedTemplateMail $job) {
+            return ! str_contains($job->body, '<script>')
+                && ! str_contains($job->body, '<img ')
+                && str_contains($job->body, '&lt;script&gt;')
+                && str_contains($job->body, '&lt;img ');
+        });
     }
 }

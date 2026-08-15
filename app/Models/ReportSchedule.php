@@ -74,15 +74,25 @@ class ReportSchedule extends Model
     public function advance(?CarbonImmutable $from = null): void
     {
         $this->forceFill([
-            'next_run_at' => $this->cadence()->nextRunAfter($from ?? CarbonImmutable::now()),
+            'next_run_at' => self::storableInstant($this->cadence()->nextRunAfter($from ?? CarbonImmutable::now())),
         ])->save();
     }
 
-    public function toReportRequest(): ReportRequest
+    /**
+     * Cadence works in the SCHEDULE's timezone, but Eloquent persists a
+     * DateTimeInterface at its own offset without converting. scopeDue()
+     * compares against now() in the app timezone, so normalise here.
+     */
+    public static function storableInstant(CarbonImmutable $at): CarbonImmutable
+    {
+        return $at->setTimezone((string) config('app.timezone', 'UTC'));
+    }
+
+    public function toReportRequest(?User $as = null): ReportRequest
     {
         $definition = ReportRegistry::resolve($this->report_key);
 
-        return ReportRequest::parse($this->state ?? [], $definition, $this->user);
+        return ReportRequest::parse($this->state ?? [], $definition, $as ?? $this->user);
     }
 
     /** @return array<string, mixed> The client shape the schedules page consumes. */

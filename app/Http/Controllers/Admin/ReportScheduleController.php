@@ -67,7 +67,9 @@ class ReportScheduleController extends Controller
         $schedule->user_id = $user->id;
         $schedule->team_id = $user->current_team_id;
         $schedule->slug = (string) Str::ulid();
-        $schedule->next_run_at = $schedule->cadence()->nextRunAfter(CarbonImmutable::now());
+        $schedule->next_run_at = ReportSchedule::storableInstant(
+            $schedule->cadence()->nextRunAfter(CarbonImmutable::now()),
+        );
 
         $this->assertDeliverable($schedule, $user);
         $schedule->save();
@@ -80,7 +82,9 @@ class ReportScheduleController extends Controller
         Gate::authorize('update', $reportSchedule);
 
         $reportSchedule->fill($this->validated($request));
-        $reportSchedule->next_run_at = $reportSchedule->cadence()->nextRunAfter(CarbonImmutable::now());
+        $reportSchedule->next_run_at = ReportSchedule::storableInstant(
+            $reportSchedule->cadence()->nextRunAfter(CarbonImmutable::now()),
+        );
         $reportSchedule->failure_count = 0;
 
         $this->assertDeliverable($reportSchedule, $request->user());
@@ -103,7 +107,8 @@ class ReportScheduleController extends Controller
     {
         Gate::authorize('test', $reportSchedule);
 
-        SendScheduledReport::dispatch($reportSchedule->id);
+        // Runs as, and mails, the actor only — never the schedule's recipients.
+        SendScheduledReport::dispatch($reportSchedule->id, (int) $request->user()->id);
 
         return back()->with('success', 'Test delivery queued.');
     }
@@ -114,7 +119,9 @@ class ReportScheduleController extends Controller
         $data = $request->validate([
             'report_key' => ['required', 'string', 'max:120'],
             'name' => ['required', 'string', 'max:60'],
-            'state' => ['required', 'array'],
+            // `present`, not `required`: an empty state legitimately means "the
+            // report's own defaults", and Laravel's required rejects [].
+            'state' => ['present', 'array'],
             'format' => ['required', 'string', 'in:pdf,xlsx,csv,inline'],
             'frequency' => ['required', 'string', 'in:daily,weekly,monthly,quarterly'],
             'day_of_week' => ['nullable', 'integer', 'between:0,6'],
@@ -132,7 +139,9 @@ class ReportScheduleController extends Controller
             'is_active' => ['boolean'],
         ]);
 
-        if (! ReportRegistry::has($data['report_key'])) {
+        // Visibility, not mere existence — the same authority index() builds the
+        // picker from. has() would let anyone schedule any declared report.
+        if (ReportRegistry::schemaFor([$data['report_key']], $request->user()) === []) {
             throw ValidationException::withMessages([
                 'report_key' => __('reportDelivery.errors.unknownReport'),
             ]);

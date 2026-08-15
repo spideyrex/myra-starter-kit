@@ -33,5 +33,6 @@ return [
         'noRecipients' => 'None of the chosen recipients can be mailed with your current permissions.',
         'unknownReport' => 'That report does not exist.',
         'badTimezone' => 'That timezone is not recognised.',
+        'missingTemplate' => 'The ":slug" email template is missing. Run `php artisan db:seed --class=ReportScheduleSeeder` to restore it.',
     ],
 ];

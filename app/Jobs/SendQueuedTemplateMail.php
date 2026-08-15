@@ -25,7 +25,11 @@ final class SendQueuedTemplateMail implements ShouldQueue
     /** @var int[] */
     public array $backoff = [60, 300, 900];
 
-    /** @param array<int, array{data:string, name:string, mime?:string}> $attachments */
+    /**
+     * @param  array<int, array{data:string, name:string, mime?:string}>  $attachments
+     *   `data` is base64 — a queue payload is JSON, and raw PDF/xlsx bytes are
+     *   not valid UTF-8. EmailService::queueTemplate() encodes; handle() decodes.
+     */
     public function __construct(
         public readonly string $to,
         public readonly string $subject,
@@ -36,7 +40,12 @@ final class SendQueuedTemplateMail implements ShouldQueue
 
     public function handle(EmailService $mail): void
     {
-        $mail->deliver($this->to, $this->subject, $this->body, $this->attachments);
+        $files = array_map(
+            static fn (array $a) => array_merge($a, ['data' => (string) base64_decode((string) $a['data'], true)]),
+            $this->attachments,
+        );
+
+        $mail->deliver($this->to, $this->subject, $this->body, $files);
 
         $this->markLog(['status' => 'sent', 'sent_at' => now()]);
     }

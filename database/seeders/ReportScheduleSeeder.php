@@ -18,11 +18,14 @@ class ReportScheduleSeeder extends Seeder
             [
                 'name' => 'Scheduled Report',
                 'subject' => '{{report_name}} — {{period}}',
+                // Only {{kpi_table}} is HTML; every other variable is escaped by
+                // SendScheduledReport::variables() before substitution.
                 'body_html' => '<h1>{{report_name}}</h1>'
                     .'<p>Covering {{period}}. Compared against {{comparison}}.</p>'
+                    .'{{message}}'
                     .'{{kpi_table}}'
                     .'<p><a href="{{view_url}}">Open the live report</a></p>',
-                'variables' => ['report_name', 'period', 'comparison', 'kpi_table', 'view_url'],
+                'variables' => ['report_name', 'period', 'comparison', 'message', 'kpi_table', 'view_url'],
             ],
         );
     }

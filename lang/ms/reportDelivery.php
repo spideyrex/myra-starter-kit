@@ -33,5 +33,6 @@ return [
         'noRecipients' => 'Tiada penerima yang dipilih boleh dihubungi dengan kebenaran anda sekarang.',
         'unknownReport' => 'Laporan itu tidak wujud.',
         'badTimezone' => 'Zon waktu itu tidak dikenali.',
+        'missingTemplate' => 'Templat e-mel ":slug" tiada. Jalankan `php artisan db:seed --class=ReportScheduleSeeder` untuk memulihkannya.',
     ],
 ];

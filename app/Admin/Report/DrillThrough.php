@@ -125,6 +125,12 @@ final class DrillThrough implements DrillResolver
 
         $end = $start->add(new \DateInterval($bucket->interval()))->subDay();
 
+        // Sub-day buckets (Hour) span less than a day, and bucketStart() already
+        // truncated to the day, so subDay() would emit an inverted range.
+        if ($end->lessThan($start)) {
+            $end = $start;
+        }
+
         return [$start->format('Y-m-d'), $end->format('Y-m-d')];
     }
 

@@ -2,6 +2,25 @@
 
 All notable changes to the Myra Starter Kit are documented here.
 
+## v2.2.1 — 2026-08
+
+Security and robustness follow-ups. No feature changes.
+
+### Security
+- **Unescaped LIKE patterns.** Six call sites interpolated raw user input into a LIKE pattern with
+  no escaping on any driver, so a `%` in a search box matched every row: `UserService::exportQuery()`,
+  `AdminNotificationController`, `ActivityLogController`, `EmailLogController`, `MediaController`
+  (including the `mime_type` prefix match) and `HasRelationManagers`. All migrated to
+  `Sql::whereLike()` / `orWhereLike()`. Covered by `tests/Feature/Security/LikeEscapingTest.php`.
+- **`HasRelationManagers::paginateRelation()`** passed the client-supplied `sort` straight to
+  `orderBy()`. It now whitelists the column and falls back to the default sort.
+- `InlineUploadController::show()` null-guards `$request->user()` and answers 404 instead of fatalling.
+
+### Fixed
+- `ImportController` row-cap refusals return the same clean payload as the export path, via the
+  extracted `App\Admin\Http\Refusal`.
+- Removed the dead `Sql::LIKE_ESCAPE` constant; `escapeLiteral()` is the single source of truth.
+
 ## v2.2.0 — 2026-08
 
 Table power features (saved views, column manager, streaming export, resumable import, nested

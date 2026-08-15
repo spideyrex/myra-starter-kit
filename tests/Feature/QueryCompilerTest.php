@@ -292,5 +292,22 @@ class QueryCompilerTest extends TestCase
 
         $this->assertTrue($spec->allows(Operator::Equals));
         $this->assertFalse($spec->allows(Operator::StartsWith));
+
+        $this->assertSame(['eq'], array_map(
+            fn (Operator $o) => $o->value,
+            $spec->allowedOperators(),
+        ));
+    }
+
+    public function test_allowed_operators_are_deduplicated(): void
+    {
+        $spec = FieldSpec::text('bio')
+            ->operators([Operator::Equals, Operator::Equals, Operator::Contains])
+            ->contains();
+
+        $this->assertSame(['eq', 'contains', 'not_contains'], array_map(
+            fn (Operator $o) => $o->value,
+            $spec->allowedOperators(),
+        ));
     }
 }

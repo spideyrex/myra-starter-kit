@@ -225,6 +225,7 @@
             "tooManyRows": "该文件的行数超过 {max} 行。",
             "upload": "上传",
             "validate": "检查行"
+        }
     },
     "filters": {
         "a11y": {

@@ -225,6 +225,7 @@
             "tooManyRows": "Fail ini mempunyai lebih daripada {max} baris.",
             "upload": "Muat naik",
             "validate": "Semak baris"
+        }
     },
     "filters": {
         "a11y": {

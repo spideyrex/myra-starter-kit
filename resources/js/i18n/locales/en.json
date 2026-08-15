@@ -225,6 +225,7 @@
             "tooManyRows": "The file has more than {max} rows.",
             "upload": "Upload",
             "validate": "Check rows"
+        }
     },
     "filters": {
         "a11y": {

@@ -674,6 +674,14 @@ onBeforeUnmount(() => {
     inlineTimers.clear();
 });
 
+// >>> MYRA v2.2 [D] START
+/** Total rules across a whole tree — the cap is global, not per group. */
+function countRules(group?: QueryGroup): number {
+    if (!group) return 0;
+    return group.rules.length + group.groups.reduce((n, g) => n + countRules(g), 0);
+}
+// <<< MYRA v2.2 [D] END
+
 defineExpose({ selectedIds });
 </script>
 
@@ -795,9 +803,10 @@ defineExpose({ selectedIds });
                         variant="secondary"
                         class="gap-1 pr-1 text-xs font-normal"
                     >
-                        {{ filter.label }} ({{ queryBuilderData[filter.name]?.rules.length || 0 }} rules)
-                        <button class="ml-0.5 rounded-sm p-0.5 hover:bg-muted" @click="removeFilter(filter.name)">
-                            <X class="size-3" />
+                        <!-- MYRA v2.2 [D] -->
+                        {{ filter.label }} ({{ $t('filters.ruleCount', { n: countRules(queryBuilderData[filter.name]) }) }})
+                        <button type="button" class="ml-0.5 rounded-sm p-0.5 hover:bg-muted focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2" :aria-label="$t('filters.removeRule')" @click="removeFilter(filter.name)">
+                            <X class="size-3" aria-hidden="true" />
                         </button>
                     </Badge>
                 </template>
@@ -916,34 +925,41 @@ defineExpose({ selectedIds });
                             </div>
 
                             <!-- Query builder filter -->
+                            <!-- >>> MYRA v2.2 [D] START -->
                             <div v-else-if="filter.type === 'query-builder'" class="space-y-2">
                                 <div class="flex items-center gap-1.5">
-                                    <Sparkles class="size-3.5 text-muted-foreground" />
+                                    <Sparkles class="size-3.5 text-muted-foreground" aria-hidden="true" />
                                     <label class="text-xs font-medium text-foreground">{{ filter.label }}</label>
                                 </div>
                                 <QueryBuilderGroup
                                     :group="queryBuilderData[filter.name] || { conjunction: 'and', rules: [], groups: [] }"
+                                    :constraints="(filter as any).constraints || []"
                                     :fields="(filter as any).fields || []"
                                     :depth="0"
+                                    :max-depth="(filter as any).maxDepth ?? 3"
+                                    :max-rules="(filter as any).maxRules ?? 25"
+                                    :rule-count="countRules(queryBuilderData[filter.name])"
                                     @update:group="(g: QueryGroup) => { queryBuilderData[filter.name] = g; queryBuilderDirty = true; }"
                                 />
                                 <div class="flex items-center gap-2">
-                                    <Button size="sm" class="h-7 text-xs" :disabled="!queryBuilderDirty" @click="queryBuilderDirty = false; applyFilters();">
-                                        <Check class="mr-1 size-3" />
-                                        Apply Query
+                                    <Button size="sm" type="button" class="h-7 text-xs focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2" :disabled="!queryBuilderDirty" @click="queryBuilderDirty = false; applyFilters();">
+                                        <Check class="mr-1 size-3" aria-hidden="true" />
+                                        {{ $t('filters.applyQuery') }}
                                     </Button>
                                     <Button
                                         v-if="queryBuilderData[filter.name]?.rules.length > 0 || queryBuilderData[filter.name]?.groups.length > 0"
                                         variant="ghost"
                                         size="sm"
-                                        class="h-7 text-xs text-muted-foreground"
+                                        type="button"
+                                        class="h-7 text-xs text-muted-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
                                         @click="queryBuilderData[filter.name] = { conjunction: 'and', rules: [], groups: [] }; queryBuilderDirty = false; applyFilters();"
                                     >
-                                        <RotateCcw class="mr-1 size-3" />
-                                        Clear Query
+                                        <RotateCcw class="mr-1 size-3" aria-hidden="true" />
+                                        {{ $t('filters.clearQuery') }}
                                     </Button>
                                 </div>
                             </div>
+                            <!-- <<< MYRA v2.2 [D] END -->
                         </template>
                     </div>
                 </div>

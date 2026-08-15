@@ -228,7 +228,7 @@ export interface QueryBuilderFilterSchema extends FilterSchemaBase {
 export interface QueryRule {
     field: string;
     operator: string;
-    value: string;
+    value: string | string[] | [string, string] | null;
 }
 
 export interface QueryGroup {

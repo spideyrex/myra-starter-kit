@@ -2,6 +2,53 @@
 
 All notable changes to the Myra Starter Kit are documented here.
 
+## [2.2.0]
+
+### D — query builder + global search
+
+**Added**
+- `App\Admin\QueryBuilder`: a closed `Operator` enum (28 cases), `FieldSpec`/`FieldSet` whitelist,
+  `RuleTree` parser and `RuleCompiler`. `HandlesQueryBuilder::applyQueryBuilder()` is the single
+  entry point; the field set is always a controller-side literal.
+- `App\Support\Sql::like()` — escapes `%`, `_` and `\` in all four match modes.
+- `App\Admin\Search`: `SearchSource`, `GlobalSearch`, `Scorer` and `Sources`, registered from
+  `GlobalSearchServiceProvider`. Weighted ranking (`max(weight × matchKind) + recency boost`),
+  per-source ownership scopes, per-source and global result caps, and command-palette page entries.
+- Client: `Constraint` classes (`Text/Number/Boolean/Date/Select/Relation`) with
+  `QueryBuilderFilter.constraints()` / `.fromColumns()` / `.maxRules()` / `.maxDepth()`;
+  `QueryBuilderRule.vue`, `QueryValueInput.vue`, `CommandPalette.vue`, `SearchHighlight.vue`;
+  `types/query-builder.d.ts`.
+- `filters.*` and `search.*` i18n namespaces in `en`, `ms` and `zh`.
+- Additive, driver-guarded migration `2026_08_16_000004_add_search_indexes`.
+
+**Security**
+- The query builder fails closed. An unknown field, an operator the field does not allow, a value
+  outside a `select`'s options, a bad cast, an arity mismatch, more than `maxRules` rules, nesting
+  past `maxDepth` or a tree over 16 KB is a **422** — never a silently unfiltered result set. A
+  field the actor lacks permission for reuses the unknown-field message so it cannot be used as an
+  enumeration oracle.
+- `RuleCompiler` wraps the whole tree in one outer `where()`, so a top-level `or` can never escape
+  an ownership scope already applied to the builder. Column names come only from
+  `FieldSpec::column()`, validated against an identifier regex at construction.
+- `SearchableQuery::applySearchAndPaginate()` now escapes LIKE wildcards and caps the requested page
+  number. The signature is unchanged.
+- `SearchController`'s unwrapped `orWhere` chain is replaced by a registry whose OR set is always
+  wrapped; term length is clamped to 2..100 and the route gains `throttle:60,1`.
+- Registering a search source on a model with a `created_by` column but no `scope()` throws
+  `MissingSearchScopeException` outside production.
+- Search-result highlighting is rendered from server-supplied offset ranges into `<mark>` runs —
+  never `v-html`.
+
+**Fixed**
+- `useGlobalSearch` had no request cancellation: a slow early response could overwrite a newer one.
+  Each keystroke now aborts the in-flight request and a sequence guard discards stale responses.
+- `QueryBuilderGroup` was capped at one nesting level, showed hardcoded English operator labels and
+  used a `<Badge @click>` for the conjunction. It is now depth-configurable, fully i18n'd, and the
+  conjunction is a `<button type="button" aria-pressed>`; every rule row is a labelled `role="group"`
+  and the Add Rule / Add Group buttons disable at their caps.
+- `DemoController::advancedFilters` filtered an in-memory Collection; it now runs against a real
+  Eloquent model through the compiler, and the Collection rule evaluators are deleted.
+
 ## v2.1.0 — 2026-08
 
 Filament v5 parity cluster: the remaining form fields, table columns, infolist entries and record

@@ -223,7 +223,11 @@ Route::middleware(['auth', 'verified', 'active', '2fa'])->prefix('admin')->name(
     Route::delete('/categories/{category}', [CategoryController::class, 'destroy'])->middleware('permission:categories.delete')->name('categories.destroy');
 
     // Global Search
-    Route::get('/search', [SearchController::class, 'index'])->middleware('permission:search.view')->name('search');
+    // >>> MYRA v2.2 [D] START
+    Route::get('/search', [SearchController::class, 'index'])
+        ->middleware(['permission:search.view', 'throttle:60,1'])
+        ->name('search');
+    // <<< MYRA v2.2 [D] END
 
     // Demo / Feature Showcase (all gated by demo.view)
     Route::middleware('permission:demo.view')->group(function () {

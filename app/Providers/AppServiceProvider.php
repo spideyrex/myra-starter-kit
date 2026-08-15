@@ -22,6 +22,26 @@ class AppServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->app->singleton(FirebaseService::class);
+
+        // >>> MYRA v2.3 [D] START
+        $this->app->bind(
+            \App\Admin\Report\Contracts\DrillResolver::class,
+            \App\Admin\Report\DrillThrough::class,
+        );
+        $this->app->bind(
+            \App\Admin\Report\Contracts\ReportDocumentRenderer::class,
+            \App\Admin\Report\Pdf\PdfReportWriter::class,
+        );
+
+        if (class_exists(\App\Admin\Export\WriterRegistry::class)) {
+            \App\Admin\Export\WriterRegistry::register(
+                'pdf',
+                static fn (string $key) => new \App\Admin\Export\PdfRowWriter($key),
+                'application/pdf',
+                static fn () => \App\Admin\Report\Pdf\PdfDocument::isSupported(),
+            );
+        }
+        // <<< MYRA v2.3 [D] END
     }
 
     public function boot(): void
@@ -33,6 +53,7 @@ class AppServiceProvider extends ServiceProvider
         });
 
         Gate::policy(\App\Models\TableView::class, \App\Policies\TableViewPolicy::class);
+        Gate::policy(\App\Models\ReportSchedule::class, \App\Policies\ReportSchedulePolicy::class);
 
         Event::listen(Login::class, LogSuccessfulLogin::class);
         Event::listen(Failed::class, LogFailedLogin::class);

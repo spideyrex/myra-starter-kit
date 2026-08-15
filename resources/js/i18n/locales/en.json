@@ -17,7 +17,9 @@
         "systemHealth": "System Health",
         "apiTokens": "API Tokens",
         "notifications": "Notifications",
-        "featureDemos": "Feature Demos"
+        "featureDemos": "Feature Demos",
+        "reports": "Reports",
+        "reportSchedules": "Report Schedules"
     },
     "navGroups": {
         "main": "Main",
@@ -26,7 +28,8 @@
         "email": "Email",
         "pushNotifications": "Push Notifications",
         "system": "System",
-        "demo": "Demo"
+        "demo": "Demo",
+        "reports": "Reports"
     },
     "common": {
         "save": "Save",
@@ -128,6 +131,151 @@
             "italicSample": "italic text"
         }
     },
+    "reports": {
+        "title": "Reports",
+        "subtitle": "Server-side aggregation — the database computes every number.",
+        "catalogue": "Available reports",
+        "open": "Open report",
+        "empty": "No reports are available to you yet.",
+        "noRows": "No data for this period.",
+        "other": "Other",
+        "truncated": "Showing top {shown} of {total}+",
+        "notApplicable": "—",
+        "total": "Total",
+        "loading": "Loading report…",
+        "updating": "Updating report…",
+        "refresh": "Refresh",
+        "groupCount": "{count} groups",
+        "viewAsTable": "View as table",
+        "backToReports": "All reports",
+        "toolbar": {
+            "dimension": "Group by",
+            "measures": "Measures",
+            "bucket": "Granularity",
+            "compare": "Compare",
+            "chart": "Chart type",
+            "export": "Export",
+            "views": "Views",
+            "filters": "Filters",
+            "period": "Period"
+        },
+        "period": {
+            "label": "Period",
+            "today": "Today",
+            "yesterday": "Yesterday",
+            "last_7_days": "Last 7 days",
+            "last_30_days": "Last 30 days",
+            "last_90_days": "Last 90 days",
+            "this_week": "This week",
+            "this_month": "This month",
+            "this_quarter": "This quarter",
+            "this_year": "This year",
+            "last_week": "Last week",
+            "last_month": "Last month",
+            "last_quarter": "Last quarter",
+            "last_year": "Last year",
+            "custom": "Custom range",
+            "from": "From",
+            "to": "To",
+            "apply": "Apply",
+            "range": "{from} – {to}"
+        },
+        "bucket": {
+            "hour": "Hourly",
+            "day": "Daily",
+            "week": "Weekly",
+            "month": "Monthly",
+            "quarter": "Quarterly",
+            "year": "Yearly"
+        },
+        "compare": {
+            "none": "No comparison",
+            "previous": "Previous period",
+            "year": "Same period last year",
+            "vs": "vs {period}"
+        },
+        "aggregate": {
+            "count": "Count",
+            "count_distinct": "Distinct count",
+            "sum": "Sum",
+            "avg": "Average",
+            "min": "Minimum",
+            "max": "Maximum"
+        },
+        "chart": {
+            "bar": "Bar",
+            "stackedBar": "Stacked bar",
+            "horizontalBar": "Horizontal bar",
+            "line": "Line",
+            "area": "Area",
+            "stackedArea": "Stacked area",
+            "pie": "Pie",
+            "doughnut": "Doughnut",
+            "table": "Table"
+        },
+        "export": {
+            "csv": "CSV",
+            "xlsx": "Excel",
+            "pdf": "PDF",
+            "previous": "Previous",
+            "change": "Change"
+        },
+        "dim": {
+            "signupDate": "Signup date",
+            "status": "Status",
+            "role": "Role",
+            "eventDate": "Event date",
+            "subjectType": "Subject type",
+            "event": "Event",
+            "createdAt": "Created"
+        },
+        "measure": {
+            "signups": "Signups",
+            "uniqueEmails": "Unique emails",
+            "events": "Events",
+            "actors": "Actors",
+            "total": "Total",
+            "count": "Count"
+        },
+        "field": {
+            "event": "Event",
+            "subjectType": "Subject type"
+        },
+        "users": {
+            "title": "User signups"
+        },
+        "activity": {
+            "title": "Activity volume"
+        },
+        "errors": {
+            "malformed": "That report request is malformed.",
+            "badPeriod": "That date range is not valid.",
+            "periodTooWide": "That date range is too wide. Narrow it and try again.",
+            "tooManyBuckets": "That period and granularity would produce too many groups. Choose a coarser granularity.",
+            "tooManyCrossFilters": "Too many cross-filters are active.",
+            "tooManyReports": "Too many reports were requested at once.",
+            "noMeasures": "No measure on this report is available to you.",
+            "formatUnavailable": "That export format is not available.",
+            "pdfUnsupportedCharset": "PDF export cannot render this locale’s characters. Export to Excel instead.",
+            "failed": "The report could not be refreshed."
+        },
+        "views": {
+            "save": "Save as view",
+            "name": "View name"
+        },
+        "demo": {
+            "title": "Reports & server-side aggregation",
+            "description": "Every number on this page is computed by the database. Nothing but the buckets reaches the browser.",
+            "period": "Change the period. The window is half-open, so the previous period is contiguous with no off-by-one.",
+            "bucket": "Switch granularity. The bucket expression is the only place a date becomes SQL.",
+            "compare": "Turn on a comparison. Two disjoint window scans aligned by ordinal — never one conditional aggregate spanning both.",
+            "dimension": "Switch the grouping axis: a date, a plain column, or a relation.",
+            "truncated": "A categorical dimension is capped by limit(). The tail folds into one SQL-computed Other row, and non-additive measures show an em dash rather than a fabricated number.",
+            "measures": "Toggle measures. Undeclared names are dropped rather than rejected, so there is no field-enumeration oracle.",
+            "views": "Save the current state. Report views reuse the table_views table with a report: prefix — zero new tables.",
+            "export": "Export the buckets, not the source rows. The result set is already capped."
+        }
+    },
     "table": {
         "active": "Active:",
         "filters": "Filters",
@@ -179,6 +327,128 @@
         "search": "Search columns",
         "title": "Columns",
         "visible": "Visible"
+    },
+    "charts": {
+        "a11y": {
+            "canvas": "{chart} with {rows} data points.",
+            "delta": "{direction} {percent} ({absolute}) — {verdict} than the previous period.",
+            "gauge": "{measure}: {value} of a {goal} goal ({percent}%).",
+            "gaugeNoGoal": "{measure}: {value}. No goal set.",
+            "loading": "Loading chart data…",
+            "segment": "{label}: {measure} {value}.",
+            "summary": "{chart} of {measure} across {rows} groups, totalling {total}."
+        },
+        "compare": {
+            "none": "No comparison",
+            "previous": "vs previous period",
+            "year": "vs same period last year"
+        },
+        "comparison": "Previous period",
+        "dashboard": {
+            "activity": "Recent Activity",
+            "activityDescription": "Latest actions across the system",
+            "activityEmpty": "No recent activity.",
+            "addUser": "Add User",
+            "byStatus": "Users by Status",
+            "byStatusDescription": "Distribution across statuses",
+            "greeting": "Welcome back, {name}",
+            "growth": "User Growth",
+            "growthDescription": "New registrations over the last 6 months",
+            "manageRoles": "Manage Roles",
+            "month": "Month",
+            "newUsers": "New Users",
+            "newUsersThisMonth": "new user this month | new users this month",
+            "quickActions": "Quick Actions",
+            "recentUsers": "Recent Users",
+            "recentUsersDescription": "Latest registrations",
+            "settings": "Settings",
+            "status": "Status",
+            "statusEmpty": "No status data available.",
+            "suspended": "Suspended",
+            "systemHealth": "System Health",
+            "users": "Users",
+            "usersEmpty": "No users yet.",
+            "viewAllUsers": "View all users"
+        },
+        "delta": {
+            "better": "better",
+            "down": "Down",
+            "flat": "Unchanged",
+            "none": "No comparison",
+            "up": "Up",
+            "worse": "worse"
+        },
+        "demo": {
+            "back": "Back to Demos",
+            "closureDescription": "ChartWidget.make().data() keeps the client-side path for data already on the page.",
+            "closureTitle": "Closure-bound charts",
+            "col": {
+                "customer": "Customer",
+                "order": "Order",
+                "product": "Product",
+                "revenue": "Revenue",
+                "sales": "Sales",
+                "status": "Status",
+                "total": "Total"
+            },
+            "compareDescription": "A comparison period becomes a second dashed series; the delta badge is coloured by verdict, not by direction.",
+            "compareTitle": "Comparison periods",
+            "description": "Configurable widget builders for stat cards, charts and tables, on closures or on a server report.",
+            "dim": {
+                "month": "Month",
+                "product": "Product"
+            },
+            "measure": {
+                "churn": "Churn",
+                "revenue": "Revenue",
+                "sales": "Sales"
+            },
+            "reportDescription": "ChartWidget.make().report() sends a binding, not a closure — the reduction stays in SQL and the browser only ever sees buckets.",
+            "reportTitle": "Report-bound charts",
+            "sample": {
+                "badUp": "Up, and that is bad (inverted trend)",
+                "flat": "Unchanged",
+                "goodDown": "Down, and that is good (inverted trend)",
+                "goodUp": "Up, and that is good",
+                "noPrevious": "Previous period was zero",
+                "none": "No comparison period"
+            },
+            "statDescription": "StatWidget.make() with value, icon, trend and description builders.",
+            "statTitle": "Stat widgets",
+            "tableDescription": "TableWidget.make() with columns, data and footer link builders.",
+            "tableTitle": "Table widgets",
+            "title": "Dashboard Widget System",
+            "typesDescription": "Every renderer is lazy: SVG charts ship no library at all, and the Chart.js types share one chunk.",
+            "typesTitle": "Chart library"
+        },
+        "empty": {
+            "description": "Nothing was recorded for this period. Widen the range or clear a filter.",
+            "heading": "No data to chart",
+            "noData": "No data available."
+        },
+        "goalOf": "of {goal}",
+        "goalProgress": "{percent}% of goal",
+        "other": "Other",
+        "truncated": "Showing top {shown} of {total}+",
+        "type": {
+            "area": "Area chart",
+            "bar": "Bar chart",
+            "doughnut": "Doughnut chart",
+            "funnel": "Funnel chart",
+            "gauge": "Gauge",
+            "heatmap": "Heatmap",
+            "horizontalBar": "Horizontal bar chart",
+            "line": "Line chart",
+            "pie": "Pie chart",
+            "polarArea": "Polar area chart",
+            "radar": "Radar chart",
+            "scatter": "Scatter plot",
+            "sparkline": "Sparkline",
+            "stackedArea": "Stacked area chart",
+            "stackedBar": "Stacked bar chart"
+        },
+        "viewAsChart": "View as chart",
+        "viewAsTable": "View as table"
     },
     "transfer": {
         "export": {
@@ -316,5 +586,96 @@
         "noResults": "No matches found.",
         "placeholder": "Search everything…",
         "recent": "Recent"
+    },
+    "reportDelivery": {
+        "crossFilter": {
+            "clear": "Clear all",
+            "hint": "Press Escape to clear every cross-filter.",
+            "remove": "Remove the {label} filter",
+            "title": "Filtered by"
+        },
+        "days": {
+            "sun": "Sunday",
+            "mon": "Monday",
+            "tue": "Tuesday",
+            "wed": "Wednesday",
+            "thu": "Thursday",
+            "fri": "Friday",
+            "sat": "Saturday"
+        },
+        "demo": {
+            "crossFilter": "Click a segment, choose “Filter dashboard”, and every sibling widget reloads from the server with the extra rule. One click is one batched request, not one per widget.",
+            "drill": "The server builds the drill URL. The landing table re-validates the rule tree through its own whitelist, so a hand-edited link is checked exactly like a typed filter.",
+            "schedule": "Schedule the state you are looking at: the dialog opens prefilled, and the delivery runs as you, with your ownership scope.",
+            "title": "Drill-down, cross-filter and delivery"
+        },
+        "describe": {
+            "daily": "Every day at {time} ({tz})",
+            "monthly": "Day {dayOfMonth} of each month at {time} ({tz})",
+            "quarterly": "Day {dayOfMonth} of each quarter at {time} ({tz})",
+            "weekly": "Every {day} at {time} ({tz})"
+        },
+        "format": {
+            "csv": "CSV",
+            "inline": "In the email body",
+            "pdf": "PDF",
+            "xlsx": "Excel"
+        },
+        "frequency": {
+            "daily": "Daily",
+            "monthly": "Monthly",
+            "quarterly": "Quarterly",
+            "weekly": "Weekly"
+        },
+        "pdf": {
+            "unsupportedLocale": "PDF cannot render this language. Excel keeps every character."
+        },
+        "schedule": {
+            "actions": "Actions",
+            "active": "Active",
+            "addEmail": "Add an email address…",
+            "allReports": "All reports",
+            "breadcrumb": "Report schedules",
+            "cadence": "Cadence",
+            "cancel": "Cancel",
+            "delete": "Delete",
+            "deleteDescription": "“{name}” will stop being delivered. This cannot be undone.",
+            "deleteTitle": "Delete this schedule?",
+            "description": "Pick when this report is sent and who receives it.",
+            "dayOfMonth": "Day of month",
+            "dayOfWeek": "Day of week",
+            "edit": "Edit schedule",
+            "empty": "No schedules yet.",
+            "externalDenied": "You are not allowed to mail addresses outside this workspace.",
+            "externalEmails": "External addresses",
+            "format": "Format",
+            "frequency": "Frequency",
+            "message": "Message",
+            "minute": "Minute",
+            "name": "Name",
+            "never": "Not scheduled",
+            "new": "New schedule",
+            "nextRun": "Next run",
+            "pause": "Pause",
+            "paused": "Paused",
+            "recipients": "Recipients",
+            "report": "Report",
+            "resume": "Resume",
+            "save": "Save",
+            "sendTest": "Send one now",
+            "skipIfEmpty": "Skip when there is no data",
+            "status": "Status",
+            "subtitle": "Reports that are rendered and emailed on a schedule.",
+            "time": "Time",
+            "timezone": "Timezone",
+            "title": "Report schedules"
+        },
+        "segment": {
+            "compare": "Compare to previous period",
+            "filter": "Filter dashboard by {label}",
+            "title": "Actions for {label}",
+            "view": "View {count} records",
+            "viewUnavailable": "This segment cannot be opened as a table."
+        }
     }
 }

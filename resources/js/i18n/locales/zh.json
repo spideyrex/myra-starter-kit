@@ -17,7 +17,9 @@
         "systemHealth": "系统健康",
         "apiTokens": "API 令牌",
         "notifications": "通知",
-        "featureDemos": "功能演示"
+        "featureDemos": "功能演示",
+        "reports": "报表",
+        "reportSchedules": "报表订阅"
     },
     "navGroups": {
         "main": "主要",
@@ -26,7 +28,8 @@
         "email": "邮件",
         "pushNotifications": "推送通知",
         "system": "系统",
-        "demo": "演示"
+        "demo": "演示",
+        "reports": "报表"
     },
     "common": {
         "save": "保存",
@@ -128,6 +131,151 @@
             "italicSample": "斜体文字"
         }
     },
+    "reports": {
+        "title": "报表",
+        "subtitle": "服务端聚合——每一个数字都由数据库计算。",
+        "catalogue": "可用报表",
+        "open": "打开报表",
+        "empty": "暂无可供你查看的报表。",
+        "noRows": "该时间段没有数据。",
+        "other": "其他",
+        "truncated": "显示前 {shown} 项，共 {total}+ 项",
+        "notApplicable": "—",
+        "total": "合计",
+        "loading": "正在加载报表…",
+        "updating": "正在更新报表…",
+        "refresh": "刷新",
+        "groupCount": "{count} 个分组",
+        "viewAsTable": "以表格查看",
+        "backToReports": "全部报表",
+        "toolbar": {
+            "dimension": "分组维度",
+            "measures": "度量",
+            "bucket": "粒度",
+            "compare": "对比",
+            "chart": "图表类型",
+            "export": "导出",
+            "views": "视图",
+            "filters": "筛选",
+            "period": "时间段"
+        },
+        "period": {
+            "label": "时间段",
+            "today": "今天",
+            "yesterday": "昨天",
+            "last_7_days": "最近 7 天",
+            "last_30_days": "最近 30 天",
+            "last_90_days": "最近 90 天",
+            "this_week": "本周",
+            "this_month": "本月",
+            "this_quarter": "本季度",
+            "this_year": "今年",
+            "last_week": "上周",
+            "last_month": "上月",
+            "last_quarter": "上季度",
+            "last_year": "去年",
+            "custom": "自定义范围",
+            "from": "开始",
+            "to": "结束",
+            "apply": "应用",
+            "range": "{from} – {to}"
+        },
+        "bucket": {
+            "hour": "按小时",
+            "day": "按天",
+            "week": "按周",
+            "month": "按月",
+            "quarter": "按季度",
+            "year": "按年"
+        },
+        "compare": {
+            "none": "不对比",
+            "previous": "上一时间段",
+            "year": "去年同期",
+            "vs": "对比 {period}"
+        },
+        "aggregate": {
+            "count": "计数",
+            "count_distinct": "去重计数",
+            "sum": "求和",
+            "avg": "平均值",
+            "min": "最小值",
+            "max": "最大值"
+        },
+        "chart": {
+            "bar": "柱状图",
+            "stackedBar": "堆叠柱状图",
+            "horizontalBar": "条形图",
+            "line": "折线图",
+            "area": "面积图",
+            "stackedArea": "堆叠面积图",
+            "pie": "饼图",
+            "doughnut": "环形图",
+            "table": "表格"
+        },
+        "export": {
+            "csv": "CSV",
+            "xlsx": "Excel",
+            "pdf": "PDF",
+            "previous": "上一期",
+            "change": "变化"
+        },
+        "dim": {
+            "signupDate": "注册日期",
+            "status": "状态",
+            "role": "角色",
+            "eventDate": "事件日期",
+            "subjectType": "对象类型",
+            "event": "事件",
+            "createdAt": "创建时间"
+        },
+        "measure": {
+            "signups": "注册数",
+            "uniqueEmails": "去重邮箱数",
+            "events": "事件数",
+            "actors": "操作者数",
+            "total": "合计",
+            "count": "计数"
+        },
+        "field": {
+            "event": "事件",
+            "subjectType": "对象类型"
+        },
+        "users": {
+            "title": "用户注册"
+        },
+        "activity": {
+            "title": "活动量"
+        },
+        "errors": {
+            "malformed": "该报表请求格式不正确。",
+            "badPeriod": "该日期范围无效。",
+            "periodTooWide": "该日期范围过大，请缩小后重试。",
+            "tooManyBuckets": "该时间段与粒度会产生过多分组，请选择更粗的粒度。",
+            "tooManyCrossFilters": "启用的交叉筛选过多。",
+            "tooManyReports": "一次请求的报表过多。",
+            "noMeasures": "该报表中没有你可查看的度量。",
+            "formatUnavailable": "该导出格式不可用。",
+            "pdfUnsupportedCharset": "PDF 导出无法渲染当前语言的字符，请改用 Excel 导出。",
+            "failed": "报表刷新失败。"
+        },
+        "views": {
+            "save": "保存为视图",
+            "name": "视图名称"
+        },
+        "demo": {
+            "title": "报表与服务端聚合",
+            "description": "本页每个数字都由数据库计算，只有分桶结果会到达浏览器。",
+            "period": "切换时间段。窗口为左闭右开，因此上一时间段首尾相接，不会差一。",
+            "bucket": "切换粒度。分桶表达式是日期变成 SQL 的唯一位置。",
+            "compare": "开启对比。两次互不重叠的窗口扫描按序号对齐——而不是跨越两段的条件聚合。",
+            "dimension": "切换分组维度：日期、普通列或关联。",
+            "truncated": "分类维度受 limit() 限制，尾部折叠为一行由 SQL 计算的“其他”，非可加度量显示破折号而不是编造的数字。",
+            "measures": "切换度量。未声明的名称会被丢弃而非报错，因此不存在字段枚举探测。",
+            "views": "保存当前状态。报表视图复用 table_views 表并加 report: 前缀——不新增任何表。",
+            "export": "导出的是分桶结果而不是源数据行，结果集本身已受上限约束。"
+        }
+    },
     "table": {
         "active": "已启用：",
         "filters": "筛选",
@@ -179,6 +327,128 @@
         "search": "搜索列",
         "title": "列",
         "visible": "显示"
+    },
+    "charts": {
+        "a11y": {
+            "canvas": "{chart}，包含 {rows} 个数据点。",
+            "delta": "{direction} {percent}（{absolute}）—— 比上一周期{verdict}。",
+            "gauge": "{measure}：{value}，目标 {goal}（{percent}%）。",
+            "gaugeNoGoal": "{measure}：{value}。未设定目标。",
+            "loading": "正在加载图表数据…",
+            "segment": "{label}：{measure} {value}。",
+            "summary": "{chart}，展示 {rows} 组{measure}，合计 {total}。"
+        },
+        "compare": {
+            "none": "不对比",
+            "previous": "对比上一周期",
+            "year": "对比去年同期"
+        },
+        "comparison": "上一周期",
+        "dashboard": {
+            "activity": "最近活动",
+            "activityDescription": "系统内的最新操作",
+            "activityEmpty": "暂无最近活动。",
+            "addUser": "新增用户",
+            "byStatus": "按状态分组的用户",
+            "byStatusDescription": "各状态的分布",
+            "greeting": "欢迎回来，{name}",
+            "growth": "用户增长",
+            "growthDescription": "过去 6 个月的新注册",
+            "manageRoles": "管理角色",
+            "month": "月份",
+            "newUsers": "新用户",
+            "newUsersThisMonth": "位本月新用户 | 位本月新用户",
+            "quickActions": "快捷操作",
+            "recentUsers": "最近用户",
+            "recentUsersDescription": "最新注册",
+            "settings": "设置",
+            "status": "状态",
+            "statusEmpty": "暂无状态数据。",
+            "suspended": "已停用",
+            "systemHealth": "系统健康",
+            "users": "用户",
+            "usersEmpty": "暂无用户。",
+            "viewAllUsers": "查看全部用户"
+        },
+        "delta": {
+            "better": "更好",
+            "down": "下降",
+            "flat": "持平",
+            "none": "不对比",
+            "up": "上升",
+            "worse": "更差"
+        },
+        "demo": {
+            "back": "返回演示",
+            "closureDescription": "ChartWidget.make().data() 保留了页面已有数据的客户端路径。",
+            "closureTitle": "基于闭包的图表",
+            "col": {
+                "customer": "客户",
+                "order": "订单",
+                "product": "产品",
+                "revenue": "收入",
+                "sales": "销量",
+                "status": "状态",
+                "total": "合计"
+            },
+            "compareDescription": "对比周期会成为第二条虚线序列；差值徽标按结论而非方向上色。",
+            "compareTitle": "对比周期",
+            "description": "可配置的统计卡、图表与表格小组件构建器，支持闭包或服务端报表。",
+            "dim": {
+                "month": "月份",
+                "product": "产品"
+            },
+            "measure": {
+                "churn": "流失率",
+                "revenue": "收入",
+                "sales": "销量"
+            },
+            "reportDescription": "ChartWidget.make().report() 传递绑定而非闭包 —— 聚合留在 SQL 中，浏览器只会收到分组结果。",
+            "reportTitle": "基于报表的图表",
+            "sample": {
+                "badUp": "上升，而且是坏事（反向趋势）",
+                "flat": "持平",
+                "goodDown": "下降，而且是好事（反向趋势）",
+                "goodUp": "上升，而且是好事",
+                "noPrevious": "上一周期为零",
+                "none": "无对比周期"
+            },
+            "statDescription": "StatWidget.make() 提供数值、图标、趋势与描述构建器。",
+            "statTitle": "统计小组件",
+            "tableDescription": "TableWidget.make() 提供列、数据与页脚链接构建器。",
+            "tableTitle": "表格小组件",
+            "title": "仪表盘小组件系统",
+            "typesDescription": "每个渲染器都是懒加载：SVG 图表不引入任何库，Chart.js 类型共享同一个分块。",
+            "typesTitle": "图表库"
+        },
+        "empty": {
+            "description": "本周期没有任何记录。请扩大时间范围或清除筛选。",
+            "heading": "没有可绘制的数据",
+            "noData": "暂无数据。"
+        },
+        "goalOf": "目标 {goal}",
+        "goalProgress": "已达目标的 {percent}%",
+        "other": "其他",
+        "truncated": "显示前 {shown} 项，共 {total}+",
+        "type": {
+            "area": "面积图",
+            "bar": "柱状图",
+            "doughnut": "环形图",
+            "funnel": "漏斗图",
+            "gauge": "仪表盘图",
+            "heatmap": "热力图",
+            "horizontalBar": "横向柱状图",
+            "line": "折线图",
+            "pie": "饼图",
+            "polarArea": "极坐标面积图",
+            "radar": "雷达图",
+            "scatter": "散点图",
+            "sparkline": "迷你图",
+            "stackedArea": "堆叠面积图",
+            "stackedBar": "堆叠柱状图"
+        },
+        "viewAsChart": "以图表查看",
+        "viewAsTable": "以表格查看"
     },
     "transfer": {
         "export": {
@@ -316,5 +586,96 @@
         "noResults": "没有找到匹配项。",
         "placeholder": "搜索全部…",
         "recent": "最近"
+    },
+    "reportDelivery": {
+        "crossFilter": {
+            "clear": "全部清除",
+            "hint": "按 Escape 可清除所有交叉筛选。",
+            "remove": "移除“{label}”筛选",
+            "title": "筛选条件"
+        },
+        "days": {
+            "sun": "星期日",
+            "mon": "星期一",
+            "tue": "星期二",
+            "wed": "星期三",
+            "thu": "星期四",
+            "fri": "星期五",
+            "sat": "星期六"
+        },
+        "demo": {
+            "crossFilter": "点击一个分段，选择“筛选仪表盘”，所有其他组件都会带着新规则从服务器重新加载。一次点击只发一个批量请求，而不是每个组件一个。",
+            "drill": "钻取 URL 由服务器生成。目标表格会用自己的白名单重新校验规则树，因此手工修改的链接与手动输入的筛选受到相同校验。",
+            "schedule": "直接为当前视图创建计划：对话框会预填，投递以您的身份和数据范围运行。",
+            "title": "钻取、交叉筛选与投递"
+        },
+        "describe": {
+            "daily": "每天 {time}（{tz}）",
+            "monthly": "每月 {dayOfMonth} 日 {time}（{tz}）",
+            "quarterly": "每季度第 {dayOfMonth} 日 {time}（{tz}）",
+            "weekly": "每逗{day} {time}（{tz}）"
+        },
+        "format": {
+            "csv": "CSV",
+            "inline": "直接写在邮件正文",
+            "pdf": "PDF",
+            "xlsx": "Excel"
+        },
+        "frequency": {
+            "daily": "每天",
+            "monthly": "每月",
+            "quarterly": "每季度",
+            "weekly": "每周"
+        },
+        "pdf": {
+            "unsupportedLocale": "PDF 无法渲染该语言。Excel 可保留全部字符。"
+        },
+        "schedule": {
+            "actions": "操作",
+            "active": "启用",
+            "addEmail": "添加邮箱地址…",
+            "allReports": "全部报表",
+            "breadcrumb": "报表计划",
+            "cadence": "频率",
+            "cancel": "取消",
+            "delete": "删除",
+            "deleteDescription": "“{name}”将停止投递。此操作无法撤销。",
+            "deleteTitle": "删除该计划？",
+            "description": "选择发送时间以及接收人。",
+            "dayOfMonth": "每月日期",
+            "dayOfWeek": "星期",
+            "edit": "编辑计划",
+            "empty": "还没有计划。",
+            "externalDenied": "您无权向工作区以外的地址发送邮件。",
+            "externalEmails": "外部地址",
+            "format": "格式",
+            "frequency": "频率",
+            "message": "正文",
+            "minute": "分钟",
+            "name": "名称",
+            "never": "未安排",
+            "new": "新建计划",
+            "nextRun": "下次运行",
+            "pause": "暂停",
+            "paused": "已暂停",
+            "recipients": "收件人",
+            "report": "报表",
+            "resume": "恢复",
+            "save": "保存",
+            "sendTest": "立即发送一份",
+            "skipIfEmpty": "无数据时跳过",
+            "status": "状态",
+            "subtitle": "按计划渲染并发送的报表。",
+            "time": "时间",
+            "timezone": "时区",
+            "title": "报表计划"
+        },
+        "segment": {
+            "compare": "与上一期对比",
+            "filter": "按“{label}”筛选仪表盘",
+            "title": "“{label}”的操作",
+            "view": "查看 {count} 条记录",
+            "viewUnavailable": "该分段无法以表格打开。"
+        }
     }
 }

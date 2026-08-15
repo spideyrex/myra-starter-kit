@@ -28,6 +28,7 @@ import {
     MapPin,
     Code,
     Bookmark,
+    BarChart3,
 } from 'lucide-vue-next';
 
 const demos = [
@@ -180,6 +181,13 @@ const demos = [
         icon: Bookmark,
         route: 'admin.demo.saved-views',
         badge: 'Views',
+    },
+    {
+        title: 'Reports & Charts',
+        description: 'Composable report definitions with every measure computed in SQL: periods, comparisons, top-N with an Other row, and saved report views.',
+        icon: BarChart3,
+        route: 'admin.demo.reports',
+        badge: 'Reports',
     },
 ];
 </script>

@@ -2,6 +2,115 @@
 
 All notable changes to the Myra Starter Kit are documented here.
 
+## v2.3.0 — 2026-08
+
+The reporting cluster: composable report definitions, a server-side aggregation engine, a lazy
+chart library, drill-through/cross-filtering, and scheduled delivery. Plus the security follow-ups
+left over from v2.2.0.
+
+### A — security follow-ups + export writer seam
+
+- Every remaining unescaped `LIKE` now goes through `Sql::whereLike()` / `Sql::orWhereLike()`:
+  `UserService::exportQuery()`, `AdminNotificationController`, `ActivityLogController`,
+  `EmailLogController`, `MediaController` (including the `mime_type` **prefix** match, where an
+  unescaped `%` turned `LIKE 'x%'` into an arbitrary pattern) and `HasRelationManagers`.
+- `HasRelationManagers::paginateRelation()` gained a `$sortable` whitelist. An out-of-whitelist
+  `sort` falls back to `$defaultSort` instead of reaching `orderBy()` verbatim; `direction`
+  normalises to `asc`/`desc`.
+- New `App\Admin\Http\Refusal` — a refusal responds as JSON to an XHR caller and `text/plain`
+  otherwise, always with `nosniff` and `no-store`, and never through the debug HTML renderer that
+  leaks request/user context. Wired into the export row cap and both import row caps.
+- New `App\Admin\Export\WriterRegistry` — the single authority on export formats. `csv` and `xlsx`
+  register themselves (xlsx behind a `ZipArchive` capability gate); `ExportDefinition::formats()`
+  intersects against it, which is the security boundary for the `format` parameter.
+- `Sql::LIKE_ESCAPE` removed: its value is driver-dependent, so a public const was misleading.
+- `InlineUploadController::show()` no longer dereferences a null user before the 404 can fire.
+
+### B — report definitions + the server-side aggregation engine
+
+- **Every number a report produces is computed by the database.** `ReportRunner` contains no
+  `->get()` on an ungrouped query, no `->cursor()`, no `Collection::groupBy` and no `array_sum`
+  over model rows. The rows the grouped statement returns ARE the buckets, and there are never
+  more than `maxGroups` of them — a 10M-row table grouped by month over two years is 24 rows of
+  scalars, independent of table size. The query budget is asserted mechanically via `DB::listen`:
+  2 statements for a grouped run, +2 for a comparison, +1 for a relation dimension's bounded label
+  lookup.
+- `App\Admin\Report\*`: `ReportDefinition` (model, scope, dimensions, measures, filters, defaults,
+  comparisons, drill target, caps), `Dimension`, `Measure`, `ReportRegistry`, `ReportRequest`,
+  `ReportRunner`, `ReportResult`/`ReportRow`/`StatResult`, `ReportBatch`, `ReportShape`.
+- `Bucket` and `Aggregate` are **closed enums and the only producers of a `selectRaw`/`groupByRaw`
+  fragment**, exactly as `Operator` is the only producer of a `WHERE` fragment. `App\Support\DateBucket`
+  is the only place a date becomes SQL and asserts the column against the same identifier regex
+  `FieldSpec` uses.
+- `Period` is a **half-open** `[start, end)` window, so "previous period" is contiguous with no
+  off-by-one and the date predicate is an index range scan rather than a `BETWEEN`. On the wire
+  `to` is inclusive; internally `end` is exclusive and both bounds are UTC.
+- `ReportRequest` is the only client-input surface. Names are intersected against the declared sets
+  and **dropped** when undeclared (no field-enumeration oracle); malformed input, an over-wide
+  period, a bucket that would overflow the group cap, a cross-filter storm and an unknown filter
+  field are all 422s. Cross-filters are re-validated server-side even though the server minted
+  them — the client is the transport, and the transport carries no authority.
+- Top-N on a categorical dimension folds the tail into ONE SQL-computed `Other` row using the
+  scalar totals already fetched, so it costs zero extra queries. Non-additive measures
+  (`avg`, `min`, `max`, `count_distinct`) report `null` on that row and render an em dash rather
+  than a fabricated number.
+- Comparisons are two disjoint window scans reusing the same `(scope, date)` index — deliberately
+  not one conditional aggregate spanning both windows, which would widen the outer range and need
+  driver-specific date arithmetic to realign. Date series are gap-filled and zipped by ordinal;
+  categorical series are zipped by key.
+- `ReportBatch` runs a whole dashboard in ONE request (12 reports max), not one request per widget.
+- **Saved report views add zero tables**: they reuse `table_views` with a `report:{key}` prefix, so
+  `TableView::scopeVisibleTo()`, the controller, the policy, `useTableViews.ts` and
+  `TableViewsMenu.vue` all work unchanged.
+- New routes under `/admin/reports` (`index`, `show`, `data`, `export`) plus
+  `/admin/dashboard/widgets/data`; new `reports.view` / `reports.export` / `reports.schedule` /
+  `reports.schedule.external` permissions (the last is super-admin only — it authorises mailing
+  arbitrary addresses, a data-exfiltration vector).
+- Client: `types/reports.ts`, `useReportState.ts` (debounced, cancelling; a 422 sets an i18n key and
+  **leaves the previous result intact** — a failed refine must never blank the chart),
+  `components/admin/reports/*` assembled entirely from existing `ui/` primitives.
+- `php artisan make:myra-report {Model}` scaffolds a definition and registers it in
+  `config('myra.reports.definitions')`.
+- Demo page 22 (`/admin/demo/reports`) runs the real `users` report against real data — no mock
+  provider, because the point is that the aggregation happens in SQL.
+
+### C — chart library, comparison rendering, sparkline
+
+- Chart.js moved behind `defineAsyncComponent` in a registry, so a stat-only dashboard no longer
+  pays for the chart library; the duplicate `ChartJS.register()` in `Dashboard.vue` is gone.
+- New `components/admin/charts/*`: `ChartCanvas` (the only importer of `vue-chartjs`), inline-SVG
+  `Heatmap`/`Funnel`/`Gauge`/`Sparkline`, `DeltaBadge`, `ChartRegistry`, `chartTheme`.
+- Chart options are now a `computed`, so a type or theme change actually re-renders; every colour
+  comes from resolved CSS custom properties, never a hex literal in a component.
+- SVG charts carry `role="img"` with a summary label, keyboard-operable segments (Enter and Space
+  fire the same event as a click), a visible focus ring, and a "view as table" fallback.
+- `useDashboardWidgets` gains report bindings, `permission`, `sort`, `visible`, `lazy`, `poll`,
+  responsive `colSpan` (clamped to the grid) and `rowSpan`. `.data(fn)` and every existing closure
+  builder are retained unchanged.
+- `TableWidget`'s hardcoded "No data available." is now an i18n key.
+
+### D — drill-down, cross-filter, scheduled delivery, PDF
+
+- `DrillThrough` builds the URL a segment navigates to. The tree it emits **carries no authority**:
+  the landing controller re-parses it through its own `FieldSet`, so a forged drill URL is
+  validated exactly like a hand-typed filter. Its params are byte-identical to what
+  `buildTableParams()` emits, so "Save as view" on a drilled table just works.
+- Client-orchestrated cross-filtering: one segment click is ONE batched request for every affected
+  widget, never N. A widget never filters itself.
+- Dependency-free PDF writer (`App\Admin\Report\Pdf\*`) on the `XlsxRowWriter` precedent — page
+  content streams to a temp file so memory is O(1). Charts render as native PDF vector operators
+  for bar/line/pie; other types degrade to their data table. WinAnsi only: a non-Latin locale is
+  refused with `reports.errors.pdfUnsupportedCharset` rather than emitting mojibake.
+- Scheduled delivery on one new additive table (`report_schedules`) with a precomputed
+  `next_run_at`, so dispatch is an index range scan rather than a cron evaluation over every row.
+  Cadence is a closed preset enum — never a user-supplied cron string a worker executes.
+  The job runs **as the schedule owner**, so ownership scoping still applies to a 3 a.m. mail;
+  three consecutive failures pause the schedule and notify the owner.
+- `RecipientResolver` drops any recipient the owner cannot address; an external address requires
+  `reports.schedule.external`.
+- `EmailService` gained `mailerFor()` (builds a Mailer without mutating global config, which does
+  not survive a queue worker) and `queueTemplate()`, so an `EmailLog` row that says `queued`
+  finally means it. `sendTemplate()` keeps its signature and synchronous behaviour.
 ## v2.2.1 — 2026-08
 
 Security and robustness follow-ups. No feature changes.

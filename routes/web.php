@@ -14,6 +14,8 @@ use App\Http\Controllers\Admin\ImportController;
 use App\Http\Controllers\Admin\InlineUploadController;
 use App\Http\Controllers\Admin\MediaController;
 use App\Http\Controllers\Admin\PermissionController;
+use App\Http\Controllers\Admin\ReportController;
+use App\Http\Controllers\Admin\ReportScheduleController;
 use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Admin\SearchController;
 use App\Http\Controllers\Admin\SettingController;
@@ -284,6 +286,9 @@ Route::middleware(['auth', 'verified', 'active', '2fa'])->prefix('admin')->name(
     // >>> MYRA v2.2 [B] START
     Route::get('/demo/saved-views', [DemoController::class, 'savedViews'])->name('demo.saved-views');
     // <<< MYRA v2.2 [B] END
+    // >>> MYRA v2.3 [B] START
+    Route::get('/demo/reports', [DemoController::class, 'reports'])->name('demo.reports');
+    // <<< MYRA v2.3 [B] END
 
     // Advanced Feature Demos
     Route::get('/demo/inline-editing', [DemoController::class, 'inlineEditing'])->name('demo.inline-editing');
@@ -302,6 +307,39 @@ Route::middleware(['auth', 'verified', 'active', '2fa'])->prefix('admin')->name(
     Route::get('/demo/wizard', [DemoController::class, 'wizardDemo'])->name('demo.wizard');
     Route::get('/demo/map', [DemoController::class, 'map'])->name('demo.map');
     }); // end demo group
+
+    // >>> MYRA v2.3 [B] START
+    // Reports. `data` and `widgets` are POST because a rule tree does not fit
+    // in a URL; both are still Gate-checked per report inside the controller.
+    Route::get('/reports', [ReportController::class, 'index'])
+        ->middleware('permission:reports.view')->name('reports.index');
+    Route::get('/reports/{report}', [ReportController::class, 'show'])
+        ->middleware('permission:reports.view')->name('reports.show');
+    Route::post('/reports/{report}/data', [ReportController::class, 'data'])
+        ->middleware(['permission:reports.view', 'throttle:60,1'])->name('reports.data');
+    Route::post('/dashboard/widgets/data', [ReportController::class, 'widgets'])
+        ->middleware(['permission:reports.view', 'throttle:60,1'])->name('reports.widgets');
+    Route::get('/reports/{report}/export', [ReportController::class, 'export'])
+        ->middleware(['permission:reports.export', 'throttle:10,1'])->name('reports.export');
+    // <<< MYRA v2.3 [B] END
+
+    // The report-schedules routes ship with the report-delivery bundle, which
+    // owns ReportScheduleController. Registering them here binds a class that
+    // does not exist on this branch.
+    // >>> MYRA v2.3 [D] START
+    // Scheduled report delivery. Per-schedule authority is the ReportSchedulePolicy;
+    // the middleware only keeps the whole surface behind the schedule ability.
+    Route::get('/report-schedules', [ReportScheduleController::class, 'index'])
+        ->middleware('permission:reports.schedule')->name('report-schedules.index');
+    Route::post('/report-schedules', [ReportScheduleController::class, 'store'])
+        ->middleware(['permission:reports.schedule', 'throttle:20,1'])->name('report-schedules.store');
+    Route::put('/report-schedules/{reportSchedule}', [ReportScheduleController::class, 'update'])
+        ->middleware(['permission:reports.schedule', 'throttle:20,1'])->name('report-schedules.update');
+    Route::delete('/report-schedules/{reportSchedule}', [ReportScheduleController::class, 'destroy'])
+        ->middleware('permission:reports.schedule')->name('report-schedules.destroy');
+    Route::post('/report-schedules/{reportSchedule}/test', [ReportScheduleController::class, 'test'])
+        ->middleware(['permission:reports.schedule', 'throttle:3,10'])->name('report-schedules.test');
+    // <<< MYRA v2.3 [D] END
 
     // myra:routes — make:myra-* commands insert generated routes above this line. Do not remove.
 });

@@ -17,7 +17,9 @@
         "systemHealth": "Kesihatan Sistem",
         "apiTokens": "Token API",
         "notifications": "Pemberitahuan",
-        "featureDemos": "Demo Ciri"
+        "featureDemos": "Demo Ciri",
+        "reports": "Laporan",
+        "reportSchedules": "Jadual Laporan"
     },
     "navGroups": {
         "main": "Utama",
@@ -26,7 +28,8 @@
         "email": "E-mel",
         "pushNotifications": "Pemberitahuan Push",
         "system": "Sistem",
-        "demo": "Demo"
+        "demo": "Demo",
+        "reports": "Laporan"
     },
     "common": {
         "save": "Simpan",
@@ -128,6 +131,151 @@
             "italicSample": "teks condong"
         }
     },
+    "reports": {
+        "title": "Laporan",
+        "subtitle": "Pengagregatan di pelayan — pangkalan data mengira setiap nombor.",
+        "catalogue": "Laporan tersedia",
+        "open": "Buka laporan",
+        "empty": "Tiada laporan tersedia untuk anda buat masa ini.",
+        "noRows": "Tiada data bagi tempoh ini.",
+        "other": "Lain-lain",
+        "truncated": "Memaparkan {shown} teratas daripada {total}+",
+        "notApplicable": "—",
+        "total": "Jumlah",
+        "loading": "Memuatkan laporan…",
+        "updating": "Mengemas kini laporan…",
+        "refresh": "Muat semula",
+        "groupCount": "{count} kumpulan",
+        "viewAsTable": "Lihat sebagai jadual",
+        "backToReports": "Semua laporan",
+        "toolbar": {
+            "dimension": "Kumpulkan mengikut",
+            "measures": "Ukuran",
+            "bucket": "Kegranularan",
+            "compare": "Banding",
+            "chart": "Jenis carta",
+            "export": "Eksport",
+            "views": "Paparan",
+            "filters": "Penapis",
+            "period": "Tempoh"
+        },
+        "period": {
+            "label": "Tempoh",
+            "today": "Hari ini",
+            "yesterday": "Semalam",
+            "last_7_days": "7 hari lepas",
+            "last_30_days": "30 hari lepas",
+            "last_90_days": "90 hari lepas",
+            "this_week": "Minggu ini",
+            "this_month": "Bulan ini",
+            "this_quarter": "Suku ini",
+            "this_year": "Tahun ini",
+            "last_week": "Minggu lepas",
+            "last_month": "Bulan lepas",
+            "last_quarter": "Suku lepas",
+            "last_year": "Tahun lepas",
+            "custom": "Julat tersuai",
+            "from": "Dari",
+            "to": "Hingga",
+            "apply": "Guna",
+            "range": "{from} – {to}"
+        },
+        "bucket": {
+            "hour": "Setiap jam",
+            "day": "Harian",
+            "week": "Mingguan",
+            "month": "Bulanan",
+            "quarter": "Suku tahunan",
+            "year": "Tahunan"
+        },
+        "compare": {
+            "none": "Tiada perbandingan",
+            "previous": "Tempoh sebelumnya",
+            "year": "Tempoh sama tahun lepas",
+            "vs": "berbanding {period}"
+        },
+        "aggregate": {
+            "count": "Bilangan",
+            "count_distinct": "Bilangan unik",
+            "sum": "Jumlah",
+            "avg": "Purata",
+            "min": "Minimum",
+            "max": "Maksimum"
+        },
+        "chart": {
+            "bar": "Bar",
+            "stackedBar": "Bar bertindan",
+            "horizontalBar": "Bar mendatar",
+            "line": "Garis",
+            "area": "Kawasan",
+            "stackedArea": "Kawasan bertindan",
+            "pie": "Pai",
+            "doughnut": "Donat",
+            "table": "Jadual"
+        },
+        "export": {
+            "csv": "CSV",
+            "xlsx": "Excel",
+            "pdf": "PDF",
+            "previous": "Sebelumnya",
+            "change": "Perubahan"
+        },
+        "dim": {
+            "signupDate": "Tarikh pendaftaran",
+            "status": "Status",
+            "role": "Peranan",
+            "eventDate": "Tarikh peristiwa",
+            "subjectType": "Jenis subjek",
+            "event": "Peristiwa",
+            "createdAt": "Dicipta"
+        },
+        "measure": {
+            "signups": "Pendaftaran",
+            "uniqueEmails": "E-mel unik",
+            "events": "Peristiwa",
+            "actors": "Pelaku",
+            "total": "Jumlah",
+            "count": "Bilangan"
+        },
+        "field": {
+            "event": "Peristiwa",
+            "subjectType": "Jenis subjek"
+        },
+        "users": {
+            "title": "Pendaftaran pengguna"
+        },
+        "activity": {
+            "title": "Jumlah aktiviti"
+        },
+        "errors": {
+            "malformed": "Permintaan laporan itu tidak sah.",
+            "badPeriod": "Julat tarikh itu tidak sah.",
+            "periodTooWide": "Julat tarikh itu terlalu luas. Kecilkan dan cuba lagi.",
+            "tooManyBuckets": "Tempoh dan kegranularan itu menghasilkan terlalu banyak kumpulan. Pilih kegranularan yang lebih kasar.",
+            "tooManyCrossFilters": "Terlalu banyak penapis silang aktif.",
+            "tooManyReports": "Terlalu banyak laporan diminta serentak.",
+            "noMeasures": "Tiada ukuran dalam laporan ini tersedia untuk anda.",
+            "formatUnavailable": "Format eksport itu tidak tersedia.",
+            "pdfUnsupportedCharset": "Eksport PDF tidak dapat memaparkan aksara bahasa ini. Sila eksport ke Excel.",
+            "failed": "Laporan tidak dapat dimuat semula."
+        },
+        "views": {
+            "save": "Simpan sebagai paparan",
+            "name": "Nama paparan"
+        },
+        "demo": {
+            "title": "Laporan & pengagregatan di pelayan",
+            "description": "Setiap nombor pada halaman ini dikira oleh pangkalan data. Hanya baldi yang sampai ke pelayar.",
+            "period": "Tukar tempoh. Tetingkap adalah separa terbuka, jadi tempoh sebelumnya bersambung tanpa ralat satu unit.",
+            "bucket": "Tukar kegranularan. Ungkapan baldi ialah satu-satunya tempat tarikh menjadi SQL.",
+            "compare": "Hidupkan perbandingan. Dua imbasan tetingkap berasingan diselaraskan mengikut turutan — bukan satu agregat bersyarat merentas kedua-duanya.",
+            "dimension": "Tukar paksi pengumpulan: tarikh, lajur biasa, atau perhubungan.",
+            "truncated": "Dimensi kategori dihadkan oleh limit(). Bakinya dilipat ke satu baris Lain-lain yang dikira dalam SQL, dan ukuran bukan tambahan memaparkan sengkang panjang, bukan nombor rekaan.",
+            "measures": "Togol ukuran. Nama yang tidak diisytihar digugurkan, bukan ditolak, jadi tiada oracle penyenaraian medan.",
+            "views": "Simpan keadaan semasa. Paparan laporan menggunakan semula jadual table_views dengan awalan report: — tiada jadual baharu.",
+            "export": "Eksport baldi, bukan baris sumber. Set keputusan sudah pun dihadkan."
+        }
+    },
     "table": {
         "active": "Aktif:",
         "filters": "Penapis",
@@ -179,6 +327,128 @@
         "search": "Cari lajur",
         "title": "Lajur",
         "visible": "Kelihatan"
+    },
+    "charts": {
+        "a11y": {
+            "canvas": "{chart} dengan {rows} titik data.",
+            "delta": "{direction} {percent} ({absolute}) — {verdict} berbanding tempoh sebelumnya.",
+            "gauge": "{measure}: {value} daripada sasaran {goal} ({percent}%).",
+            "gaugeNoGoal": "{measure}: {value}. Tiada sasaran ditetapkan.",
+            "loading": "Memuatkan data carta…",
+            "segment": "{label}: {measure} {value}.",
+            "summary": "{chart} bagi {measure} merentas {rows} kumpulan, berjumlah {total}."
+        },
+        "compare": {
+            "none": "Tiada perbandingan",
+            "previous": "berbanding tempoh sebelumnya",
+            "year": "berbanding tempoh sama tahun lalu"
+        },
+        "comparison": "Tempoh sebelumnya",
+        "dashboard": {
+            "activity": "Aktiviti Terkini",
+            "activityDescription": "Tindakan terbaharu merentas sistem",
+            "activityEmpty": "Tiada aktiviti terkini.",
+            "addUser": "Tambah Pengguna",
+            "byStatus": "Pengguna mengikut Status",
+            "byStatusDescription": "Taburan mengikut status",
+            "greeting": "Selamat kembali, {name}",
+            "growth": "Pertumbuhan Pengguna",
+            "growthDescription": "Pendaftaran baharu sepanjang 6 bulan lepas",
+            "manageRoles": "Urus Peranan",
+            "month": "Bulan",
+            "newUsers": "Pengguna Baharu",
+            "newUsersThisMonth": "pengguna baharu bulan ini | pengguna baharu bulan ini",
+            "quickActions": "Tindakan Pantas",
+            "recentUsers": "Pengguna Terkini",
+            "recentUsersDescription": "Pendaftaran terbaharu",
+            "settings": "Tetapan",
+            "status": "Status",
+            "statusEmpty": "Tiada data status tersedia.",
+            "suspended": "Digantung",
+            "systemHealth": "Kesihatan Sistem",
+            "users": "Pengguna",
+            "usersEmpty": "Tiada pengguna lagi.",
+            "viewAllUsers": "Lihat semua pengguna"
+        },
+        "delta": {
+            "better": "lebih baik",
+            "down": "Turun",
+            "flat": "Tidak berubah",
+            "none": "Tiada perbandingan",
+            "up": "Naik",
+            "worse": "lebih buruk"
+        },
+        "demo": {
+            "back": "Kembali ke Demo",
+            "closureDescription": "ChartWidget.make().data() mengekalkan laluan sisi klien untuk data yang sedia ada pada halaman.",
+            "closureTitle": "Carta berasaskan penutupan",
+            "col": {
+                "customer": "Pelanggan",
+                "order": "Pesanan",
+                "product": "Produk",
+                "revenue": "Hasil",
+                "sales": "Jualan",
+                "status": "Status",
+                "total": "Jumlah"
+            },
+            "compareDescription": "Tempoh perbandingan menjadi siri kedua bergaris putus; lencana delta diwarnakan mengikut keputusan, bukan arah.",
+            "compareTitle": "Tempoh perbandingan",
+            "description": "Pembina widget boleh dikonfigurasi untuk kad statistik, carta dan jadual, sama ada melalui penutupan atau laporan pelayan.",
+            "dim": {
+                "month": "Bulan",
+                "product": "Produk"
+            },
+            "measure": {
+                "churn": "Kadar Keciciran",
+                "revenue": "Hasil",
+                "sales": "Jualan"
+            },
+            "reportDescription": "ChartWidget.make().report() menghantar pengikatan, bukan penutupan — pengurangan kekal dalam SQL dan pelayar hanya menerima baldi.",
+            "reportTitle": "Carta berasaskan laporan",
+            "sample": {
+                "badUp": "Naik, dan itu buruk (aliran songsang)",
+                "flat": "Tidak berubah",
+                "goodDown": "Turun, dan itu baik (aliran songsang)",
+                "goodUp": "Naik, dan itu baik",
+                "noPrevious": "Tempoh sebelumnya kosong",
+                "none": "Tiada tempoh perbandingan"
+            },
+            "statDescription": "StatWidget.make() dengan pembina nilai, ikon, aliran dan penerangan.",
+            "statTitle": "Widget statistik",
+            "tableDescription": "TableWidget.make() dengan pembina lajur, data dan pautan pengaki.",
+            "tableTitle": "Widget jadual",
+            "title": "Sistem Widget Papan Pemuka",
+            "typesDescription": "Setiap penerjemah dimuatkan secara malas: carta SVG tidak membawa sebarang pustaka, dan jenis Chart.js berkongsi satu ketulan.",
+            "typesTitle": "Pustaka carta"
+        },
+        "empty": {
+            "description": "Tiada apa-apa direkodkan bagi tempoh ini. Luaskan julat atau kosongkan penapis.",
+            "heading": "Tiada data untuk dicartakan",
+            "noData": "Tiada data tersedia."
+        },
+        "goalOf": "daripada {goal}",
+        "goalProgress": "{percent}% daripada sasaran",
+        "other": "Lain-lain",
+        "truncated": "Memaparkan {shown} teratas daripada {total}+",
+        "type": {
+            "area": "Carta kawasan",
+            "bar": "Carta bar",
+            "doughnut": "Carta donat",
+            "funnel": "Carta corong",
+            "gauge": "Tolok",
+            "heatmap": "Peta haba",
+            "horizontalBar": "Carta bar mendatar",
+            "line": "Carta garis",
+            "pie": "Carta pai",
+            "polarArea": "Carta kawasan polar",
+            "radar": "Carta radar",
+            "scatter": "Plot serakan",
+            "sparkline": "Garis kilat",
+            "stackedArea": "Carta kawasan bertindan",
+            "stackedBar": "Carta bar bertindan"
+        },
+        "viewAsChart": "Lihat sebagai carta",
+        "viewAsTable": "Lihat sebagai jadual"
     },
     "transfer": {
         "export": {
@@ -316,5 +586,96 @@
         "noResults": "Tiada padanan ditemui.",
         "placeholder": "Cari semua…",
         "recent": "Terkini"
+    },
+    "reportDelivery": {
+        "crossFilter": {
+            "clear": "Kosongkan semua",
+            "hint": "Tekan Escape untuk mengosongkan semua penapis silang.",
+            "remove": "Buang penapis {label}",
+            "title": "Ditapis mengikut"
+        },
+        "days": {
+            "sun": "Ahad",
+            "mon": "Isnin",
+            "tue": "Selasa",
+            "wed": "Rabu",
+            "thu": "Khamis",
+            "fri": "Jumaat",
+            "sat": "Sabtu"
+        },
+        "demo": {
+            "crossFilter": "Klik satu segmen, pilih “Tapis papan pemuka”, dan setiap widget lain dimuat semula dari pelayan dengan peraturan tambahan itu. Satu klik ialah satu permintaan berkelompok, bukan satu bagi setiap widget.",
+            "drill": "Pelayan membina URL gerudi. Jadual destinasi mengesahkan semula pepohon peraturan melalui senarai putihnya sendiri, jadi pautan yang disunting tangan disemak sama seperti penapis yang ditaip.",
+            "schedule": "Jadualkan keadaan yang anda lihat: dialog dibuka telah diisi, dan penghantaran berjalan sebagai anda, dengan skop pemilikan anda.",
+            "title": "Gerudi, penapis silang dan penghantaran"
+        },
+        "describe": {
+            "daily": "Setiap hari pada {time} ({tz})",
+            "monthly": "Hari {dayOfMonth} setiap bulan pada {time} ({tz})",
+            "quarterly": "Hari {dayOfMonth} setiap suku tahun pada {time} ({tz})",
+            "weekly": "Setiap {day} pada {time} ({tz})"
+        },
+        "format": {
+            "csv": "CSV",
+            "inline": "Dalam badan e-mel",
+            "pdf": "PDF",
+            "xlsx": "Excel"
+        },
+        "frequency": {
+            "daily": "Harian",
+            "monthly": "Bulanan",
+            "quarterly": "Suku tahunan",
+            "weekly": "Mingguan"
+        },
+        "pdf": {
+            "unsupportedLocale": "PDF tidak dapat memaparkan bahasa ini. Excel mengekalkan setiap aksara."
+        },
+        "schedule": {
+            "actions": "Tindakan",
+            "active": "Aktif",
+            "addEmail": "Tambah alamat e-mel…",
+            "allReports": "Semua laporan",
+            "breadcrumb": "Jadual laporan",
+            "cadence": "Kekerapan",
+            "cancel": "Batal",
+            "delete": "Padam",
+            "deleteDescription": "“{name}” akan berhenti dihantar. Tindakan ini tidak boleh dibatalkan.",
+            "deleteTitle": "Padam jadual ini?",
+            "description": "Pilih bila laporan ini dihantar dan siapa yang menerimanya.",
+            "dayOfMonth": "Hari dalam bulan",
+            "dayOfWeek": "Hari dalam minggu",
+            "edit": "Sunting jadual",
+            "empty": "Tiada jadual lagi.",
+            "externalDenied": "Anda tidak dibenarkan menghantar e-mel ke alamat luar ruang kerja ini.",
+            "externalEmails": "Alamat luar",
+            "format": "Format",
+            "frequency": "Kekerapan",
+            "message": "Mesej",
+            "minute": "Minit",
+            "name": "Nama",
+            "never": "Tidak dijadualkan",
+            "new": "Jadual baharu",
+            "nextRun": "Larian seterusnya",
+            "pause": "Jeda",
+            "paused": "Dijeda",
+            "recipients": "Penerima",
+            "report": "Laporan",
+            "resume": "Sambung",
+            "save": "Simpan",
+            "sendTest": "Hantar sekarang",
+            "skipIfEmpty": "Langkau apabila tiada data",
+            "status": "Status",
+            "subtitle": "Laporan yang dihasilkan dan dihantar mengikut jadual.",
+            "time": "Masa",
+            "timezone": "Zon waktu",
+            "title": "Jadual laporan"
+        },
+        "segment": {
+            "compare": "Bandingkan dengan tempoh sebelumnya",
+            "filter": "Tapis papan pemuka mengikut {label}",
+            "title": "Tindakan untuk {label}",
+            "view": "Lihat {count} rekod",
+            "viewUnavailable": "Segmen ini tidak boleh dibuka sebagai jadual."
+        }
     }
 }

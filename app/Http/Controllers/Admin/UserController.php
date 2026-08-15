@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Admin;
 
 use App\Admin\Export\ExportColumn;
 use App\Admin\Export\ExportDefinition;
+use App\Admin\QueryBuilder\FieldSet;
+use App\Admin\QueryBuilder\FieldSpec;
 use App\Admin\Traits\ExportableQuery;
 use App\Admin\Traits\HandlesSoftDeletes;
 use App\DTOs\UserData;
@@ -241,6 +243,27 @@ class UserController extends Controller
 
         return redirect()->route('admin.users.index')->with('success', 'Stopped impersonating.');
     }
+
+    // >>> MYRA v2.3 [B] START
+    /**
+     * The server-side field whitelist for user queries. One declaration, two
+     * consumers: the users report's filters and any drill-through that lands
+     * back on this index.
+     */
+    public static function filterFieldSet(): FieldSet
+    {
+        return FieldSet::make([
+            FieldSpec::text('name')->labelKey('filters.field.name')->contains(),
+            FieldSpec::text('email')->labelKey('filters.field.email')->contains(),
+            FieldSpec::text('phone')->labelKey('filters.field.phone')->nullable(),
+            FieldSpec::select('status')->labelKey('filters.field.status')->options(['active', 'suspended', 'pending']),
+            FieldSpec::date('created_at')->labelKey('filters.field.createdAt'),
+            FieldSpec::date('email_verified_at')->labelKey('filters.field.verifiedAt')->nullable(),
+            FieldSpec::relation('roles')->labelKey('filters.field.roles')->relationship('roles', 'name'),
+        ])->maxRules((int) config('myra.filters.max_rules', 25))
+            ->maxDepth((int) config('myra.filters.max_depth', 3));
+    }
+    // <<< MYRA v2.3 [B] END
 
     /** Role names the current user is allowed to assign / filter by. */
     private function assignableRoleNames(): \Illuminate\Support\Collection

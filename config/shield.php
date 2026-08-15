@@ -48,6 +48,9 @@ return [
         'categories' => ['view', 'create', 'edit', 'delete'],
         'demo' => ['view'],
         'search' => ['view'],
+        // >>> MYRA v2.3 [B] START
+        'reports' => ['view', 'export', 'schedule'],
+        // <<< MYRA v2.3 [B] END
         /* myra:modules */
     ],
 

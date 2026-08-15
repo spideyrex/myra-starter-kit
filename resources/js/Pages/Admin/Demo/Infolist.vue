@@ -8,9 +8,9 @@ import { Button } from '@/components/ui/button';
 import { Section, Grid, Tabs, Tab } from '@/composables/useInfolistSchema';
 import {
     TextEntry, BadgeEntry, DateEntry, BooleanEntry, ImageEntry,
-    RepeatableEntry, KeyValueEntry,
+    RepeatableEntry, KeyValueEntry, ColorEntry, CodeEntry,
 } from '@/composables/useInfolistSchema';
-import { ArrowLeft, User, ShieldCheck, Activity } from 'lucide-vue-next';
+import { ArrowLeft, User, ShieldCheck, Activity, Palette, Webhook } from 'lucide-vue-next';
 
 const props = defineProps<{
     user: Record<string, any>;
@@ -59,6 +59,33 @@ const schema: any[] = [
             ]),
         ] as any),
     ]),
+
+    Section.make('Branding').icon(Palette).description('ColorEntry — swatch, value and copy button.').columns(4).schema([
+        ColorEntry.make('primary_color').label('Primary'),
+        ColorEntry.make('accent_color').label('Accent').swatchOnly().circular().swatchSize(32),
+        ColorEntry.make('overlay_color').label('Overlay').copyMessage('Overlay colour copied'),
+        ColorEntry.make('legacy_color').label('Legacy (invalid)').copyable(false),
+    ] as any),
+
+    Section.make('Last webhook delivery').icon(Webhook).description('CodeEntry — read-only, syntax highlighted, copyable.').columns(1).schema([
+        CodeEntry.make('webhook_response')
+            .label('Response body')
+            .language('json')
+            .filename('response.json')
+            .maxLines(300)
+            .highlightLines([4, 5]),
+        CodeEntry.make('deploy_script')
+            .label('Deploy script')
+            .language('bash')
+            .filename('deploy.sh')
+            .wrap(false),
+        CodeEntry.make('raw_payload')
+            .label('Raw payload (object value — auto JSON)'),
+        CodeEntry.make('access_log')
+            .label('Access log (900 lines — Expand to load the rest)')
+            .maxLines(25)
+            .wrap(false),
+    ] as any),
 ];
 </script>
 

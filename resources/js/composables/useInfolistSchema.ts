@@ -1,10 +1,13 @@
 import type { Component } from 'vue';
+import type { CodeLanguage } from './useFormSchema';
 
 // Re-export layout classes from form schema for infolist reuse
 export { Section, Grid, Tabs, Tab, Fieldset, Flex, isLayoutItem, resolveLayout } from './useFormSchema';
 export type { LayoutSchema, LayoutType } from './useFormSchema';
+// One code vocabulary shared with the `code` form field.
+export type { CodeLanguage } from './useFormSchema';
 
-export type EntryType = 'text' | 'badge' | 'date' | 'boolean' | 'image' | 'icon' | 'repeatable' | 'key-value';
+export type EntryType = 'text' | 'badge' | 'date' | 'boolean' | 'image' | 'icon' | 'repeatable' | 'key-value' | 'color' | 'code';
 
 export interface EntrySchema {
     key: string;
@@ -39,6 +42,19 @@ export interface EntrySchema {
     // Icon
     iconFn?: (value: any, record: any) => Component;
     colorFn?: (value: any, record: any) => string;
+    // Color   (copyable is shared with Text, above)
+    copyMessage?: string;
+    swatchShowValue?: boolean;
+    swatchSize?: number;
+    swatchShape?: 'square' | 'circle';
+    // Code
+    codeLanguage?: CodeLanguage;
+    codeLineNumbers?: boolean;
+    codeWrap?: boolean;
+    codeMaxLines?: number;
+    codeStartLine?: number;
+    codeHighlightLines?: number[];
+    codeFilename?: string;
     // Repeatable
     subSchema?: EntrySchema[];
     // Visibility
@@ -391,6 +407,132 @@ export class KeyValueEntry extends BaseEntry {
         return {
             ...super.toSchema(),
             type: 'key-value',
+        };
+    }
+}
+
+export class ColorEntry extends BaseEntry {
+    protected _type: EntryType = 'color';
+    private _copyable = true;
+    private _copyMessage = 'Copied to clipboard';
+    private _showValue = true;
+    private _swatchSize = 24;
+    private _swatchShape: 'square' | 'circle' = 'square';
+
+    static make(key: string): ColorEntry {
+        return new ColorEntry(key);
+    }
+
+    copyable(value = true): this {
+        this._copyable = value;
+        return this;
+    }
+
+    copyMessage(text: string): this {
+        this._copyMessage = text;
+        return this;
+    }
+
+    showValue(value = true): this {
+        this._showValue = value;
+        return this;
+    }
+
+    swatchOnly(): this {
+        return this.showValue(false);
+    }
+
+    swatchSize(px: number): this {
+        this._swatchSize = px;
+        return this;
+    }
+
+    circular(value = true): this {
+        this._swatchShape = value ? 'circle' : 'square';
+        return this;
+    }
+
+    toSchema(): EntrySchema {
+        return {
+            ...super.toSchema(),
+            type: 'color',
+            copyable: this._copyable,
+            copyMessage: this._copyMessage,
+            swatchShowValue: this._showValue,
+            swatchSize: this._swatchSize,
+            swatchShape: this._swatchShape,
+        };
+    }
+}
+
+export class CodeEntry extends BaseEntry {
+    protected _type: EntryType = 'code';
+    private _codeLanguage: CodeLanguage = 'plaintext';
+    private _codeLineNumbers = true;
+    private _codeWrap = true;
+    private _codeMaxLines = 400;
+    private _codeStartLine = 1;
+    private _codeHighlightLines: number[] = [];
+    private _codeFilename?: string;
+    private _copyable = true;
+
+    static make(key: string): CodeEntry {
+        return new CodeEntry(key);
+    }
+
+    language(lang: CodeLanguage): this {
+        this._codeLanguage = lang;
+        return this;
+    }
+
+    lineNumbers(value = true): this {
+        this._codeLineNumbers = value;
+        return this;
+    }
+
+    wrap(value = true): this {
+        this._codeWrap = value;
+        return this;
+    }
+
+    /** Lines rendered eagerly; the rest sit behind an Expand button. */
+    maxLines(n: number): this {
+        this._codeMaxLines = n;
+        return this;
+    }
+
+    startLine(n: number): this {
+        this._codeStartLine = n;
+        return this;
+    }
+
+    highlightLines(lines: number[]): this {
+        this._codeHighlightLines = lines;
+        return this;
+    }
+
+    filename(name: string): this {
+        this._codeFilename = name;
+        return this;
+    }
+
+    copyable(value = true): this {
+        this._copyable = value;
+        return this;
+    }
+
+    toSchema(): EntrySchema {
+        return {
+            ...super.toSchema(),
+            type: 'code',
+            codeLanguage: this._codeLanguage,
+            codeLineNumbers: this._codeLineNumbers,
+            codeWrap: this._codeWrap,
+            codeMaxLines: this._codeMaxLines,
+            codeStartLine: this._codeStartLine,
+            codeHighlightLines: this._codeHighlightLines,
+            codeFilename: this._codeFilename,
+            copyable: this._copyable,
         };
     }
 }

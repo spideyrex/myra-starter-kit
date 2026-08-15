@@ -52,7 +52,13 @@
         "security": "安全",
         "logout": "退出登录",
         "darkMode": "深色模式",
-        "lightMode": "浅色模式"
+        "lightMode": "浅色模式",
+        "copy": "复制",
+        "copied": "已复制到剪贴板",
+        "copyFailed": "无法复制到剪贴板",
+        "showAll": "显示全部 {count} 行",
+        "showLess": "收起",
+        "linesTruncated": "显示 {total} 行中的 {shown} 行。"
     },
     "status": {
         "active": "活跃",

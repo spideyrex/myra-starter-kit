@@ -52,7 +52,13 @@
         "security": "Keselamatan",
         "logout": "Log Keluar",
         "darkMode": "Mod Gelap",
-        "lightMode": "Mod Cerah"
+        "lightMode": "Mod Cerah",
+        "copy": "Salin",
+        "copied": "Disalin ke papan keratan",
+        "copyFailed": "Gagal menyalin ke papan keratan",
+        "showAll": "Tunjuk semua {count} baris",
+        "showLess": "Tunjuk kurang",
+        "linesTruncated": "Memaparkan {shown} daripada {total} baris."
     },
     "status": {
         "active": "Aktif",

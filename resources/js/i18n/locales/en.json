@@ -52,7 +52,13 @@
         "security": "Security",
         "logout": "Log Out",
         "darkMode": "Dark Mode",
-        "lightMode": "Light Mode"
+        "lightMode": "Light Mode",
+        "copy": "Copy",
+        "copied": "Copied to clipboard",
+        "copyFailed": "Could not copy to clipboard",
+        "showAll": "Show all {count} lines",
+        "showLess": "Show less",
+        "linesTruncated": "Showing {shown} of {total} lines."
     },
     "status": {
         "active": "Active",

@@ -474,6 +474,36 @@ class DemoController extends Controller
                 ['action' => 'Changed password', 'date' => now()->subDays(3)->toDateTimeString(), 'ip' => '192.168.1.42'],
                 ['action' => 'Logged in', 'date' => now()->subDays(5)->toDateTimeString(), 'ip' => '10.0.0.1'],
             ],
+            // ColorEntry demo values: hex, alpha (checkerboard), and an invalid value.
+            'primary_color' => '#6366f1',
+            'accent_color' => '#f59e0b',
+            'overlay_color' => 'rgba(0, 0, 0, 0.4)',
+            'legacy_color' => 'red; background-image: url(x)',
+            // CodeEntry demo values.
+            'webhook_response' => json_encode([
+                'id' => 'evt_8Fq2Lb',
+                'status' => 'delivered',
+                'attempts' => 2,
+                'error' => null,
+                'endpoint' => 'https://hooks.example.com/myra',
+                'headers' => ['content-type' => 'application/json', 'x-signature' => 'sha256=…'],
+            ], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES),
+            'deploy_script' => implode("\n", [
+                '#!/usr/bin/env bash',
+                'set -euo pipefail',
+                '',
+                'php artisan down --render="errors::503"',
+                'composer install --no-dev --optimize-autoloader',
+                'php artisan migrate --force',
+                'npm ci && npm run build',
+                'php artisan up',
+            ]),
+            // Object value: CodeBlock stringifies it and forces JSON.
+            'raw_payload' => ['event' => 'user.updated', 'data' => ['id' => 1, 'name' => 'Jane Cooper']],
+            // Long document to exercise maxLines + Expand.
+            'access_log' => collect(range(1, 900))
+                ->map(fn ($i) => sprintf('10.0.0.%d - - [%s] "GET /api/users?page=%d HTTP/1.1" 200 %d', $i % 255, now()->toDateTimeString(), $i, 400 + $i))
+                ->implode("\n"),
         ];
 
         return Inertia::render('Admin/Demo/Infolist', ['user' => $user]);

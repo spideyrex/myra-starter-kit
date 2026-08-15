@@ -82,5 +82,42 @@
         "minLength": "{field} 至少需要 {min} 个字符",
         "maxLength": "{field} 不能超过 {max} 个字符",
         "confirmed": "{field} 确认不匹配"
+    },
+    "fields": {
+        "copied": "已复制到剪贴板",
+        "copyFailed": "复制失败",
+        "copyCode": "复制代码",
+        "tabMovesFocus": "移动焦点",
+        "escLeaves": "然后按 Tab 离开编辑器",
+        "tabHint": "按 Tab 键移至下一个字段。",
+        "escapeHint": "先按 Escape，再按 Tab 离开编辑器。",
+        "md": {
+            "bold": "粗体",
+            "italic": "斜体",
+            "strike": "删除线",
+            "link": "链接",
+            "heading": "标题",
+            "quote": "引用",
+            "code": "行内代码",
+            "codeBlock": "代码块",
+            "bulletList": "无序列表",
+            "orderedList": "有序列表",
+            "table": "表格",
+            "image": "图片",
+            "hr": "分隔线",
+            "undo": "撤销",
+            "redo": "重做",
+            "mode": "视图模式",
+            "edit": "仅编辑",
+            "split": "分栏视图",
+            "preview": "仅预览",
+            "fullscreen": "全屏",
+            "renderedPreview": "渲染预览",
+            "placeholder": "撰写 Markdown...",
+            "words": "{count} 个词",
+            "uploadFailed": "图片上传失败",
+            "boldSample": "粗体文字",
+            "italicSample": "斜体文字"
+        }
     }
 }

@@ -256,6 +256,7 @@ Route::middleware(['auth', 'verified', 'active', '2fa'])->prefix('admin')->name(
     Route::post('/demo/reorder', [DemoController::class, 'demoReorder'])->name('demo.reorder');
     Route::get('/demo/widgets', [DemoController::class, 'widgets'])->name('demo.widgets');
     Route::get('/demo/field-types', [DemoController::class, 'fieldTypes'])->name('demo.field-types');
+    Route::get('/demo/code-editor', [DemoController::class, 'codeEditor'])->name('demo.code-editor');
     Route::get('/demo/advanced-filters', [DemoController::class, 'advancedFilters'])->name('demo.advanced-filters');
     Route::get('/demo/wizard', [DemoController::class, 'wizardDemo'])->name('demo.wizard');
     Route::get('/demo/map', [DemoController::class, 'map'])->name('demo.map');

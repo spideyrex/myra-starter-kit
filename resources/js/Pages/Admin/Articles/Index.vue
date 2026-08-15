@@ -7,14 +7,21 @@ import PageHeader from '@/components/PageHeader.vue';
 import StatusBadge from '@/components/StatusBadge.vue';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { RowActions, DateCell } from '@/components/admin';
-import { useConfirmAction } from '@/composables/useConfirmAction';
-import { useConfirm } from '@/composables/useConfirm';
+import { DateCell } from '@/components/admin';
 import { usePermissions } from '@/composables/usePermissions';
-import { SelectFilter } from '@/composables/useTableFilters';
-import { BulkAction } from '@/composables/useTableActions';
+import { SelectFilter, trashedFilter } from '@/composables/useTableFilters';
+import {
+    Action,
+    ActionDivider,
+    ActionSectionLabel,
+    ActionGroup,
+    BulkAction,
+    ReplicateAction,
+    softDeleteActions,
+    softDeleteBulkActions,
+} from '@/composables/useTableActions';
 import type { PaginatedData } from '@/types';
-import { Plus, Pencil, Trash2, ExternalLink, RotateCcw, AlertTriangle, Globe, Lock } from 'lucide-vue-next';
+import { Plus, Trash2, ExternalLink, Globe, Lock } from 'lucide-vue-next';
 
 const props = defineProps<{
     articles: PaginatedData<any>;
@@ -23,8 +30,6 @@ const props = defineProps<{
 }>();
 
 const { can } = usePermissions();
-const { confirmDelete } = useConfirmAction();
-const { confirm } = useConfirm();
 
 const tableFilters = [
     SelectFilter.make('status').options({
@@ -39,11 +44,7 @@ const tableFilters = [
         '1': 'Public',
         '0': 'Private',
     }),
-    SelectFilter.make('trashed').label('Trash').options({
-        '': 'Active Only',
-        only: 'Trashed Only',
-        with: 'All (incl. Trashed)',
-    }),
+    trashedFilter(),
 ];
 
 const columns: Column[] = [
@@ -74,36 +75,33 @@ const bulkActions = [
         .requiresConfirmation('Delete Articles', 'Are you sure you want to delete the selected articles?')
         .icon(Trash2)
         .permission('articles.delete'),
-    ...(isTrashedView ? [
-        BulkAction.make('Restore')
-            .action((ids) => bulkAction('restore', ids))
-            .icon(RotateCcw)
-            .permission('articles.edit'),
-        BulkAction.make('Force Delete')
-            .action((ids) => bulkAction('force_delete', ids))
-            .destructive()
-            .requiresConfirmation('Permanently Delete', 'This action cannot be undone. These articles will be permanently removed.')
-            .icon(AlertTriangle)
-            .permission('articles.delete'),
-    ] : []),
+    ...(isTrashedView ? softDeleteBulkActions('admin.articles') : []),
 ];
 
-function getRowActions(row: any) {
-    if (row.deleted_at) {
-        return [
-            { label: 'Restore', icon: RotateCcw, permission: 'articles.edit', onClick: () => router.post(route('admin.articles.restore', row.id)) },
-            { label: 'Force Delete', icon: AlertTriangle, permission: 'articles.delete', destructive: true, separator: true, onClick: async () => {
-                const confirmed = await confirm({ title: 'Permanently Delete', description: 'This article will be permanently removed and cannot be recovered.', variant: 'destructive', confirmText: 'Delete Forever' });
-                if (confirmed) router.delete(route('admin.articles.force-delete', row.id));
-            }},
-        ];
-    }
-    return [
-        { label: 'Edit', icon: Pencil, href: route('admin.articles.edit', row.id), permission: 'articles.edit' },
-        { label: 'View', icon: ExternalLink, href: `/blog/${row.slug}`, external: true },
-        { label: 'Delete', icon: Trash2, permission: 'articles.delete', destructive: true, separator: true, onClick: () => confirmDelete('admin.articles.destroy', row.id, { title: 'Delete Article', description: 'Are you sure you want to delete this article?' }) },
-    ];
-}
+const [editAction, deleteAction, restoreAction, forceDeleteAction] = softDeleteActions('admin.articles');
+
+const actions = [
+    ActionGroup.make([
+        editAction,
+        Action.make('View on site')
+            .icon(ExternalLink)
+            .url((row: any) => `/blog/${row.slug}`)
+            .external()
+            .visible((row: any) => !row.deleted_at),
+        ActionSectionLabel.make('Duplicate'),
+        ReplicateAction.make('admin.articles.replicate')
+            .permission('articles.create')
+            .except(['published_at'])
+            .suffix('title')
+            .overrides(() => ({ status: 'draft', is_public: false }))
+            .visible((row: any) => !row.deleted_at),
+        ActionDivider.make(),
+        ActionSectionLabel.make('Danger zone'),
+        deleteAction.confirmTitle('Delete article').confirmDescription('The article is moved to trash. You can restore it later.'),
+        restoreAction,
+        forceDeleteAction,
+    ]).tooltip('Article actions'),
+];
 </script>
 
 <template>
@@ -129,6 +127,7 @@ function getRowActions(row: any) {
                 :table-filters="tableFilters"
                 :selectable="true"
                 :bulk-actions="bulkActions"
+                :actions="actions"
                 route-name="admin.articles.index"
                 search-placeholder="Search articles..."
             >
@@ -158,10 +157,6 @@ function getRowActions(row: any) {
 
                 <template #cell-published_at="{ value }">
                     <DateCell :value="value" />
-                </template>
-
-                <template #actions="{ row }">
-                    <RowActions :actions="getRowActions(row)" />
                 </template>
             </DataTable>
         </div>

@@ -2,10 +2,11 @@
 import { ref, computed } from 'vue';
 import { router, Link } from '@inertiajs/vue3';
 import type { PaginatedData } from '@/types';
-import type { ColumnSchema, FilterSchema, ActionSchema, BulkActionSchema, RowAction, QueryGroup, QueryRule } from '@/types/admin';
+import type { ColumnSchema, FilterSchema, ActionSchema, ActionGroupSchema, BulkActionSchema, RowAction, RowActionsConfig, QueryGroup, QueryRule } from '@/types/admin';
 import { BaseColumn } from '@/composables/useTableSchema';
 import { BaseFilter } from '@/composables/useTableFilters';
-import { Action, BulkAction, ActionGroup } from '@/composables/useTableActions';
+import { Action, BulkAction, ActionGroup, ActionDivider, ActionSectionLabel } from '@/composables/useTableActions';
+import { toast } from 'vue-sonner';
 import {
     Table,
     TableBody,
@@ -22,7 +23,6 @@ import { Select as UiSelect, SelectContent, SelectItem, SelectTrigger, SelectVal
 import { Checkbox } from '@/components/ui/checkbox';
 import { Skeleton } from '@/components/ui/skeleton';
 import { usePermissions } from '@/composables/usePermissions';
-import { useConfirmAction } from '@/composables/useConfirmAction';
 import { useConfirm } from '@/composables/useConfirm';
 import DateCell from '@/components/admin/DateCell.vue';
 import StatusBadge from '@/components/StatusBadge.vue';
@@ -42,7 +42,7 @@ export interface Column {
 
 type ColumnInput = Column | BaseColumn;
 type FilterInput = BaseFilter | FilterSchema;
-type ActionInput = Action | ActionGroup;
+type ActionInput = Action | ActionGroup | ActionDivider | ActionSectionLabel;
 type BulkActionInput = BulkAction;
 
 const props = withDefaults(defineProps<{
@@ -75,7 +75,6 @@ const props = withDefaults(defineProps<{
 });
 
 const { can } = usePermissions();
-const { confirmDelete } = useConfirmAction();
 const { confirm } = useConfirm();
 
 function decodePaginationLabel(label: string): string {
@@ -149,25 +148,32 @@ const resolvedFilters = computed<FilterSchema[]>(() => {
 });
 
 // --- Normalize actions ---
-const resolvedActions = computed<ActionSchema[]>(() => {
+type AnyActionSchema = ActionSchema | ActionGroupSchema;
+
+const resolvedActions = computed<AnyActionSchema[]>(() => {
     if (!props.actions) return [];
-    const result: ActionSchema[] = [];
-    for (const a of props.actions) {
-        if (a instanceof ActionGroup) {
-            result.push(...a.toSchema());
-        } else if (a instanceof Action) {
-            result.push(a.toSchema());
-        }
-    }
-    return result;
+    return props.actions.map(a => a.toSchema());
 });
+
+/**
+ * A single top-level ActionGroup configures the trigger itself (label, icon,
+ * badge, collapseAfter…) rather than nesting a submenu inside a dropdown.
+ */
+const rootGroup = computed<ActionGroupSchema | null>(() => {
+    const items = resolvedActions.value;
+    return items.length === 1 && (items[0] as ActionGroupSchema).kind === 'group'
+        ? (items[0] as ActionGroupSchema)
+        : null;
+});
+
+const actionItems = computed<AnyActionSchema[]>(() => rootGroup.value?.items ?? resolvedActions.value);
 
 const resolvedBulkActions = computed<BulkActionSchema[]>(() => {
     if (!props.bulkActions) return [];
     return props.bulkActions.map(b => b instanceof BulkAction ? b.toSchema() : b);
 });
 
-const hasActions = computed(() => resolvedActions.value.length > 0);
+const hasActions = computed(() => actionItems.value.length > 0);
 
 // --- State ---
 const qp = props.queryPrefix || '';
@@ -364,28 +370,115 @@ function goToPage(url: string | null) {
 }
 
 // --- Action helpers ---
+
+/** One request path for every action — confirmation, route, payload, toast. */
+async function runAction(a: ActionSchema, row: any) {
+    if (a.requiresConfirmation) {
+        const ok = await confirm({
+            title: a.confirmTitle ?? 'Confirm',
+            description: a.confirmDescription ?? '',
+            confirmText: a.confirmTitle ?? 'Confirm',
+            variant: a.destructive ? 'destructive' : 'default',
+        });
+        if (!ok) return;
+    }
+
+    const name = a.routeName ?? a.deleteRouteName;
+    const method = a.routeName ? (a.method ?? 'post') : 'delete';
+
+    if (name && !a.urlFn) {
+        const params = a.routeParamsFn?.(row) ?? row.id;
+        const payload = a.payloadFn?.(row) ?? {};
+        const options = {
+            preserveScroll: true,
+            onSuccess: () => { if (a.successMessage) toast.success(a.successMessage); },
+        };
+        const url = route(name, params);
+        if (method === 'delete') {
+            // Inertia's delete() takes no data argument.
+            router.delete(url, { ...options, data: payload });
+        } else if (method === 'get') {
+            router.get(url, payload, options);
+        } else {
+            router[method](url, payload, options);
+        }
+        return;
+    }
+
+    a.actionFn?.(row);
+}
+
+function toRowAction(a: AnyActionSchema, row: any): RowAction | null {
+    if ((a as ActionGroupSchema).kind === 'group') {
+        const g = a as ActionGroupSchema;
+        const items = g.items.map(i => toRowAction(i, row)).filter((i): i is RowAction => i !== null);
+        if (items.length === 0) return null;
+        return {
+            kind: 'group',
+            label: g.label,
+            icon: g.icon,
+            color: g.color,
+            permission: g.permission,
+            badge: g.badgeFn?.(row) ?? null,
+            tooltip: g.tooltip,
+            items,
+        };
+    }
+
+    const action = a as ActionSchema;
+    if (action.kind === 'divider' || action.kind === 'section') {
+        return { kind: action.kind, label: action.label };
+    }
+    if (action.hiddenFn?.(row)) return null;
+    if (action.visibleFn && !action.visibleFn(row)) return null;
+
+    return {
+        kind: 'action',
+        label: action.label,
+        icon: action.icon,
+        permission: action.permission,
+        href: action.urlFn?.(row),
+        external: action.external,
+        color: action.color,
+        tooltip: action.tooltip,
+        badge: action.badgeFn?.(row) ?? null,
+        onClick: action.modalConfig
+            ? () => openModalAction(action, row)
+            : () => runAction(action, row),
+        destructive: action.destructive,
+        separator: action.separator,
+    };
+}
+
 function getRowActions(row: any): RowAction[] {
-    return resolvedActions.value
-        .filter(a => {
-            if (a.hiddenFn?.(row)) return false;
-            if (a.visibleFn && !a.visibleFn(row)) return false;
-            return true;
-        })
-        .map(a => ({
-            label: a.label,
-            icon: a.icon,
-            permission: a.permission,
-            href: a.urlFn?.(row),
-            onClick: a.modalConfig
-                ? () => openModalAction(a, row)
-                : a.deleteRouteName
-                    ? () => confirmDelete(a.deleteRouteName!, row.id)
-                    : a.actionFn
-                        ? () => a.actionFn!(row)
-                        : undefined,
-            destructive: a.destructive,
-            separator: a.separator,
-        }));
+    return actionItems.value
+        .map(a => toRowAction(a, row))
+        .filter((a): a is RowAction => a !== null);
+}
+
+const rowActionsConfig = computed<RowActionsConfig | undefined>(() => {
+    const g = rootGroup.value;
+    if (!g) return undefined;
+    return {
+        label: g.label,
+        icon: g.icon,
+        color: g.color,
+        size: g.size,
+        asButton: g.asButton,
+        buttonGroup: g.buttonGroup,
+        tooltip: g.tooltip,
+        placement: g.placement,
+        width: g.width,
+        maxHeight: g.maxHeight,
+        collapseAfter: g.collapseAfter,
+    };
+});
+
+function rowActionsConfigFor(row: any): RowActionsConfig | undefined {
+    const g = rootGroup.value;
+    const base = rowActionsConfig.value;
+    if (!g || !base) return undefined;
+    return { ...base, badge: g.badgeFn?.(row) ?? null };
 }
 
 async function handleBulkAction(bulk: BulkActionSchema) {
@@ -460,7 +553,7 @@ function openModalAction(action: ActionSchema, row: any) {
         title: action.label,
         schema: mc.schema,
         routeName: mc.routeName,
-        routeParams: { id: row.id },
+        routeParams: mc.routeParamsFn ? mc.routeParamsFn(row) : { id: row.id },
         method: mc.method || 'put',
         defaults: mc.defaultsFn ? mc.defaultsFn(row) : {},
         submitLabel: mc.submitLabel || action.label,
@@ -931,7 +1024,7 @@ defineExpose({ selectedIds });
                                             </TableCell>
                                             <TableCell v-if="hasActions || $slots.actions" class="text-right">
                                                 <slot name="actions" :row="row">
-                                                    <RowActions v-if="hasActions" :actions="getRowActions(row)" />
+                                                    <RowActions v-if="hasActions" :actions="getRowActions(row)" :config="rowActionsConfigFor(row)" />
                                                 </slot>
                                             </TableCell>
                                         </TableRow>
@@ -1012,7 +1105,7 @@ defineExpose({ selectedIds });
                                     </TableCell>
                                     <TableCell v-if="hasActions || $slots.actions" class="text-right">
                                         <slot name="actions" :row="row">
-                                            <RowActions v-if="hasActions" :actions="getRowActions(row)" />
+                                            <RowActions v-if="hasActions" :actions="getRowActions(row)" :config="rowActionsConfigFor(row)" />
                                         </slot>
                                     </TableCell>
                                 </TableRow>

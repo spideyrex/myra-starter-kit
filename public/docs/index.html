@@ -472,6 +472,9 @@
         <a href="#sticky-header">Sticky Header</a>
         <a href="#column-manager">Column Manager</a>
         <a href="#table-actions">Table Actions</a>
+        <a href="#soft-delete-actions">Restore &amp; Force Delete</a>
+        <a href="#replicate-action">Replicate Action</a>
+        <a href="#action-grouping">Action Grouping</a>
 
         <div class="nav-group">Advanced Features</div>
         <a href="#websocket-notifications">WebSocket Notifications</a>
@@ -1875,7 +1878,13 @@ QueryBuilderFilter.make('query_builder')
             <tr><td><code>EditAction.make(routeName)</code></td><td>Pencil icon + navigates to route</td></tr>
             <tr><td><code>ViewAction.make(routeName)</code></td><td>Eye icon + navigates to route</td></tr>
             <tr><td><code>DeleteAction.make(routeName)</code></td><td>Trash icon + confirms + deletes</td></tr>
-            <tr><td><code>Action.make(label)</code></td><td>Custom action with <code>.icon()</code>, <code>.url(fn)</code>, <code>.action(fn)</code>, <code>.permission()</code>, <code>.destructive()</code></td></tr>
+            <tr><td><code>RestoreAction.make(routeName)</code></td><td>Rotate icon + confirms + POSTs. Visible only when <code>row.deleted_at</code> is set</td></tr>
+            <tr><td><code>ForceDeleteAction.make(routeName)</code></td><td>Destructive + confirms + DELETEs. Visible only when <code>row.deleted_at</code> is set</td></tr>
+            <tr><td><code>ReplicateAction.make(routeName)</code></td><td>Copy icon + duplicates the record, optionally through a form modal</td></tr>
+            <tr><td><code>ActionGroup.make(items)</code></td><td>Dropdown cluster with dividers, section headings and submenus</td></tr>
+            <tr><td><code>ActionDivider.make()</code> / <code>ActionSectionLabel.make(text)</code></td><td>A rule / a heading inside a group</td></tr>
+            <tr><td><code>softDeleteActions(prefix, opts?)</code></td><td>Edit + Delete + Restore + Delete permanently, permission-gated</td></tr>
+            <tr><td><code>Action.make(label)</code></td><td>Custom action with <code>.icon()</code>, <code>.url(fn)</code>, <code>.action(fn)</code>, <code>.route(name, method)</code>, <code>.permission()</code>, <code>.destructive()</code></td></tr>
             <tr><td><code>BulkAction.make(label)</code></td><td>Bulk action with <code>.action(fn)</code>, <code>.requiresConfirmation()</code>, <code>.destructive()</code></td></tr>
         </tbody>
     </table>
@@ -1893,6 +1902,164 @@ const bulkActions = [
         .destructive()
         .action((ids) => router.post(route('admin.products.bulk-action'), { ids, action: 'delete' })),
 ];</code></pre>
+
+    <h4>Action &mdash; full method list</h4>
+    <p>Every method below is available on <code>Action</code> and on all of its subclasses.</p>
+    <table>
+        <thead><tr><th>Method</th><th>Effect</th></tr></thead>
+        <tbody>
+            <tr><td><code>label(text)</code></td><td>Overrides the menu label</td></tr>
+            <tr><td><code>icon(component)</code></td><td>Leading lucide icon</td></tr>
+            <tr><td><code>color(color)</code></td><td><code>muted | primary | info | success | warning | danger</code>, or any Tailwind class</td></tr>
+            <tr><td><code>url(fn)</code></td><td>Renders a link instead of a button</td></tr>
+            <tr><td><code>external(value?)</code></td><td>Opens the URL in a new tab (<code>rel="noopener noreferrer"</code> plus an sr-only note)</td></tr>
+            <tr><td><code>action(fn)</code></td><td>Client-side callback &mdash; the escape hatch</td></tr>
+            <tr><td><code>route(name, method?)</code></td><td>Framework-owned request. <code>method</code> defaults to <code>post</code></td></tr>
+            <tr><td><code>routeParams(fn)</code></td><td>Route params for that request. Defaults to <code>row.id</code></td></tr>
+            <tr><td><code>payload(fn)</code></td><td>Request body</td></tr>
+            <tr><td><code>successMessage(text)</code></td><td>Toast shown on a successful response</td></tr>
+            <tr><td><code>modal(config)</code></td><td>Opens an <code>ActionModal</code> form instead of firing a request</td></tr>
+            <tr><td><code>requiresConfirmation(title?, description?)</code></td><td>Confirmation dialog &mdash; honoured for <em>every</em> action, not just deletes</td></tr>
+            <tr><td><code>confirmTitle(text)</code> / <code>confirmDescription(text)</code></td><td>Individual confirmation copy</td></tr>
+            <tr><td><code>permission(perm)</code></td><td>Hides the item without the Shield ability</td></tr>
+            <tr><td><code>destructive(value?)</code></td><td>Destructive styling and destructive confirm variant</td></tr>
+            <tr><td><code>visible(fn)</code> / <code>hidden(fn)</code></td><td>Per-row visibility</td></tr>
+            <tr><td><code>separator(value?)</code></td><td>Draws a rule above the item</td></tr>
+            <tr><td><code>badge(fn)</code></td><td>Per-row badge on the item</td></tr>
+            <tr><td><code>tooltip(text)</code></td><td>Native tooltip on the item</td></tr>
+        </tbody>
+    </table>
+
+    <h3 id="soft-delete-actions">Restore, force-delete and the soft-delete preset</h3>
+    <p><code>RestoreAction</code> and <code>ForceDeleteAction</code> are first-class actions. Both default to <code>visible(row =&gt; !!row.deleted_at)</code>; <code>DeleteAction</code> defaults to the inverse, so a table shows the right trio without any branching in the page.</p>
+
+    <pre><code class="language-typescript">import { softDeleteActions, softDeleteBulkActions } from '@/composables/useTableActions';
+import { trashedFilter } from '@/composables/useTableFilters';
+
+const actions      = softDeleteActions('admin.articles');
+const bulkActions  = softDeleteBulkActions('admin.articles');
+const tableFilters = [trashedFilter()];</code></pre>
+
+    <p><code>softDeleteActions(prefix, opts?)</code> returns <code>Edit</code>, <code>Delete</code>, <code>Restore</code> and <code>Delete permanently</code>, wired to <code>{prefix}.edit|destroy|restore|force-delete</code> and gated on <code>{module}.edit|delete</code>, where <code>module</code> is the last segment of the prefix.</p>
+    <table>
+        <thead><tr><th>Option</th><th>Effect</th></tr></thead>
+        <tbody>
+            <tr><td><code>module</code></td><td>Shield module slug. <code>false</code> attaches no permissions (demo tables)</td></tr>
+            <tr><td><code>view</code></td><td>Prepends a <code>ViewAction</code> on <code>{prefix}.show</code></td></tr>
+            <tr><td><code>edit</code></td><td>Set <code>false</code> to omit the edit action</td></tr>
+            <tr><td><code>viewRoute</code>, <code>editRoute</code>, <code>deleteRoute</code>, <code>restoreRoute</code>, <code>forceDeleteRoute</code></td><td>Override any individual route name</td></tr>
+        </tbody>
+    </table>
+    <p><code>softDeleteBulkActions(prefix, module?)</code> returns Restore and Delete permanently, posting <code>{ ids, action }</code> to <code>{prefix}.bulk-action</code>.</p>
+
+    <div class="callout callout-info">
+        <div class="callout-title">&#8505; Server side</div>
+        Bulk endpoints are gated on <code>{module}.edit</code> but accept destructive verbs, so every <code>bulkAction()</code> calls
+        <code>$this-&gt;authorizeBulkVerb($request-&gt;action, 'articles')</code> from <code>App\Admin\Traits\HandlesSoftDeletes</code>.
+        <code>force_delete</code> and <code>delete</code> map to <code>{module}.delete</code>; every other verb to <code>{module}.edit</code>.
+        The single restore / force-delete endpoints re-check the ability with <code>authorizeAbility()</code> in addition to the route middleware.
+    </div>
+
+    <h3 id="replicate-action">ReplicateAction</h3>
+    <p>Duplicates a record from the row menu. The client sends a <em>hint</em>; the server whitelists every part of it.</p>
+
+    <pre><code class="language-typescript">import { ReplicateAction } from '@/composables/useTableActions';
+
+ReplicateAction.make('admin.articles.replicate')
+    .permission('articles.create')
+    .except(['published_at'])          // deny-list
+    .suffix('title')                   // "X" -> "X (copy)" -> "X (copy 2)"
+    .withRelations(['tags'])           // one level deep, re-whitelisted server-side
+    .overrides(() => ({ status: 'draft', is_public: false })),
+
+// Edit before saving - rides the existing ActionModal path.
+ReplicateAction.make('admin.articles.replicate')
+    .label('Duplicate and edit')
+    .schema([TextInput.make('title').required()]),</code></pre>
+
+    <table>
+        <thead><tr><th>Method</th><th>Effect</th></tr></thead>
+        <tbody>
+            <tr><td><code>except(cols)</code></td><td>Columns that are not copied</td></tr>
+            <tr><td><code>only(cols)</code></td><td>Allow-list. Wins over <code>except()</code></td></tr>
+            <tr><td><code>withRelations(names)</code></td><td>Clones <code>belongsToMany</code> pivots and <code>hasMany</code> rows, one level deep</td></tr>
+            <tr><td><code>overrides(fn)</code></td><td>Attribute overrides, filtered against the model's <code>$fillable</code></td></tr>
+            <tr><td><code>suffix(field, template?)</code></td><td>Template defaults to <code>:value (copy)</code>; uniqueness is resolved against the column</td></tr>
+            <tr><td><code>schema(items)</code></td><td>Opens a form modal instead of posting immediately</td></tr>
+            <tr><td><code>redirectTo(routeName)</code></td><td>Passed through to the server as <code>redirect_to</code></td></tr>
+        </tbody>
+    </table>
+
+    <p>Server side, add the <code>Replicates</code> trait to the controller:</p>
+    <pre><code class="language-php">use App\Admin\Traits\Replicates;
+
+class ArticleController extends Controller
+{
+    use Replicates;
+
+    protected function replicateModel(): string { return Article::class; }
+    protected function replicateModule(): string { return 'articles'; }
+
+    /** Columns carrying a unique index - regenerated on the clone. */
+    protected function replicateUniqueColumns(): array { return ['slug']; }
+}</code></pre>
+    <pre><code class="language-php">Route::post('/articles/{article}/replicate', [ArticleController::class, 'replicate'])
+    -&gt;middleware('permission:articles.create')-&gt;name('articles.replicate');</code></pre>
+
+    <div class="callout callout-warning">
+        <div class="callout-title">&#9888; Whitelists, not blacklists</div>
+        Relation names are intersected with the model's <code>public static array $replicable</code> (absent means &ldquo;none&rdquo;),
+        overrides are intersected with <code>$fillable</code>, and the record is fetched through the model's global scopes so
+        ownership still applies. Nested grandchildren are deliberately not cloned &mdash; unbounded recursion from one click is a denial of service.
+    </div>
+
+    <h3 id="action-grouping">Action grouping</h3>
+    <p><code>ActionGroup</code> clusters row actions into a configurable dropdown. Pass a single group as the table's only action and it configures the trigger itself; nest one inside another and it renders as a submenu.</p>
+
+    <pre><code class="language-typescript">import { ActionGroup, ActionDivider, ActionSectionLabel } from '@/composables/useTableActions';
+
+const actions = [
+    ActionGroup.make([
+        EditAction.make('admin.articles.edit'),
+        ActionSectionLabel.make('Duplicate'),
+        ReplicateAction.make('admin.articles.replicate').suffix('title'),
+        ActionDivider.make(),
+        ActionSectionLabel.make('Danger zone'),
+        ...softDeleteActions('admin.articles').slice(1),
+    ])
+        .tooltip('Article actions')
+        .badge((row) => (row.flagged ? '!' : null))
+        .width('lg')
+        .collapseAfter(3),
+];</code></pre>
+
+    <table>
+        <thead><tr><th>Method</th><th>Default</th><th>Effect</th></tr></thead>
+        <tbody>
+            <tr><td><code>label(text)</code></td><td><code>'Actions'</code></td><td>Trigger label and its <code>aria-label</code></td></tr>
+            <tr><td><code>icon(component)</code></td><td><code>MoreHorizontal</code></td><td>Trigger icon</td></tr>
+            <tr><td><code>color(color)</code></td><td>&mdash;</td><td>Semantic colour</td></tr>
+            <tr><td><code>size(s)</code></td><td><code>'sm'</code></td><td><code>sm | default | lg</code></td></tr>
+            <tr><td><code>button(value?)</code></td><td><code>false</code></td><td>Labelled button trigger instead of an icon button</td></tr>
+            <tr><td><code>buttonGroup(value?)</code></td><td><code>false</code></td><td>Renders every item inline as a joined button group &mdash; no dropdown</td></tr>
+            <tr><td><code>tooltip(text)</code></td><td>&mdash;</td><td>Tooltip on the trigger</td></tr>
+            <tr><td><code>badge(fn)</code></td><td>&mdash;</td><td>Per-row badge on the trigger</td></tr>
+            <tr><td><code>placement(p)</code></td><td><code>'bottom-end'</code></td><td><code>bottom-start | bottom-end | top-start | top-end</code></td></tr>
+            <tr><td><code>width(w)</code></td><td><code>'md'</code></td><td><code>sm | md | lg</code></td></tr>
+            <tr><td><code>maxHeight(css)</code></td><td><code>'20rem'</code></td><td>Scroll cap on the menu</td></tr>
+            <tr><td><code>collapseAfter(n)</code></td><td>&mdash;</td><td>Below <code>n</code> visible items render inline; at or above, collapse to a dropdown</td></tr>
+            <tr><td><code>permission(perm)</code></td><td>&mdash;</td><td>Hides the whole group</td></tr>
+        </tbody>
+    </table>
+
+    <table>
+        <thead><tr><th>Item</th><th>Renders as</th></tr></thead>
+        <tbody>
+            <tr><td><code>ActionDivider.make()</code></td><td><code>DropdownMenuSeparator</code>. Leading, trailing and duplicate dividers collapse away after permission filtering, so a hidden action never leaves an orphan rule</td></tr>
+            <tr><td><code>ActionSectionLabel.make(text)</code></td><td><code>DropdownMenuLabel</code>. Not a focus stop</td></tr>
+            <tr><td>Nested <code>ActionGroup</code></td><td><code>DropdownMenuSub</code> submenu</td></tr>
+        </tbody>
+    </table>
 </section>
 
 <hr class="section-divider">
@@ -3499,13 +3666,13 @@ import { Button } from '@/components/ui/button';
     <h4>useTableFilters</h4>
     <p>Table filter builder API for defining DataTable filters.</p>
     <p><strong>File:</strong> <code>resources/js/composables/useTableFilters.ts</code></p>
-    <p><strong>Exports:</strong> <code>SelectFilter</code>, <code>TernaryFilter</code>, <code>Filter</code>, <code>BaseFilter</code></p>
+    <p><strong>Exports:</strong> <code>SelectFilter</code>, <code>TernaryFilter</code>, <code>Filter</code>, <code>DateRangeFilter</code>, <code>QueryBuilderFilter</code>, <code>BaseFilter</code>, <code>trashedFilter()</code></p>
     <p>See <a href="#table-filters">Table Filters</a> for full documentation.</p>
 
     <h4>useTableActions</h4>
     <p>Table action builder API for defining row actions and bulk actions.</p>
     <p><strong>File:</strong> <code>resources/js/composables/useTableActions.ts</code></p>
-    <p><strong>Exports:</strong> <code>Action</code>, <code>EditAction</code>, <code>ViewAction</code>, <code>DeleteAction</code>, <code>ActionGroup</code>, <code>BulkAction</code></p>
+    <p><strong>Exports:</strong> <code>Action</code>, <code>EditAction</code>, <code>ViewAction</code>, <code>DeleteAction</code>, <code>RestoreAction</code>, <code>ForceDeleteAction</code>, <code>ReplicateAction</code>, <code>ActionGroup</code>, <code>ActionDivider</code>, <code>ActionSectionLabel</code>, <code>BulkAction</code>, <code>softDeleteActions()</code>, <code>softDeleteBulkActions()</code></p>
     <p>See <a href="#table-actions">Table Actions</a> for full documentation.</p>
 
     <h4>useInfolistSchema</h4>

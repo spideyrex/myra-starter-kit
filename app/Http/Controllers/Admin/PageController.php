@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Admin\Traits\HandlesSoftDeletes;
+use App\Admin\Traits\Replicates;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\PageResource;
 use App\Models\Page;
@@ -15,7 +17,27 @@ use Inertia\Response;
 
 class PageController extends Controller
 {
+    use HandlesSoftDeletes;
+    use Replicates;
+
+    private const MODULE = 'pages';
+
     public function __construct(private readonly PageService $pageService) {}
+
+    protected function replicateModel(): string
+    {
+        return Page::class;
+    }
+
+    protected function replicateModule(): string
+    {
+        return self::MODULE;
+    }
+
+    protected function replicateUniqueColumns(): array
+    {
+        return ['slug'];
+    }
 
     public function index(Request $request): Response
     {
@@ -128,6 +150,7 @@ class PageController extends Controller
 
     public function restore(int $id): RedirectResponse
     {
+        $this->authorizeAbility(self::MODULE . '.edit');
         $this->pageService->restore($id);
 
         return back()->with('success', 'Page restored successfully.');
@@ -135,6 +158,7 @@ class PageController extends Controller
 
     public function forceDelete(int $id): RedirectResponse
     {
+        $this->authorizeAbility(self::MODULE . '.delete');
         $this->pageService->forceDelete($id);
 
         return back()->with('success', 'Page permanently deleted.');
@@ -147,6 +171,9 @@ class PageController extends Controller
             'ids.*' => 'integer',
             'action' => 'required|in:publish,archive,delete,restore,force_delete',
         ]);
+
+        // The route is gated on pages.edit; destructive verbs need their own ability.
+        $this->authorizeBulkVerb($request->action, self::MODULE);
 
         if (in_array($request->action, ['restore', 'force_delete'])) {
             foreach ($request->ids as $id) {

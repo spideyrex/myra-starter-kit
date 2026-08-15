@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Admin\Report\ReportShape;
 use App\Admin\Views\ViewShape;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\TableViewRequest;
@@ -136,6 +137,14 @@ class TableViewController extends Controller
     /** @param array<string, mixed> $data */
     private function assertQueryShape(array $data): void
     {
+        // A report view's payload is a ReportState: `query` is one tree, not a
+        // map of them, so ReportShape is the authority for that shape.
+        if (str_starts_with((string) ($data['table_key'] ?? ''), 'report:')) {
+            ReportShape::assertState($data['payload'] ?? null, 'payload');
+
+            return;
+        }
+
         foreach ((array) ($data['payload']['query'] ?? []) as $name => $tree) {
             ViewShape::assertQueryTree($tree, 'payload.query.'.$name);
         }

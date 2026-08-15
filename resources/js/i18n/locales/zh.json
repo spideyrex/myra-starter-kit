@@ -17,7 +17,9 @@
         "systemHealth": "系统健康",
         "apiTokens": "API 令牌",
         "notifications": "通知",
-        "featureDemos": "功能演示"
+        "featureDemos": "功能演示",
+        "reports": "报表",
+        "reportSchedules": "报表订阅"
     },
     "navGroups": {
         "main": "主要",
@@ -26,7 +28,8 @@
         "email": "邮件",
         "pushNotifications": "推送通知",
         "system": "系统",
-        "demo": "演示"
+        "demo": "演示",
+        "reports": "报表"
     },
     "common": {
         "save": "保存",
@@ -126,6 +129,151 @@
             "uploadFailed": "图片上传失败",
             "boldSample": "粗体文字",
             "italicSample": "斜体文字"
+        }
+    },
+    "reports": {
+        "title": "报表",
+        "subtitle": "服务端聚合——每一个数字都由数据库计算。",
+        "catalogue": "可用报表",
+        "open": "打开报表",
+        "empty": "暂无可供你查看的报表。",
+        "noRows": "该时间段没有数据。",
+        "other": "其他",
+        "truncated": "显示前 {shown} 项，共 {total}+ 项",
+        "notApplicable": "—",
+        "total": "合计",
+        "loading": "正在加载报表…",
+        "updating": "正在更新报表…",
+        "refresh": "刷新",
+        "groupCount": "{count} 个分组",
+        "viewAsTable": "以表格查看",
+        "backToReports": "全部报表",
+        "toolbar": {
+            "dimension": "分组维度",
+            "measures": "度量",
+            "bucket": "粒度",
+            "compare": "对比",
+            "chart": "图表类型",
+            "export": "导出",
+            "views": "视图",
+            "filters": "筛选",
+            "period": "时间段"
+        },
+        "period": {
+            "label": "时间段",
+            "today": "今天",
+            "yesterday": "昨天",
+            "last_7_days": "最近 7 天",
+            "last_30_days": "最近 30 天",
+            "last_90_days": "最近 90 天",
+            "this_week": "本周",
+            "this_month": "本月",
+            "this_quarter": "本季度",
+            "this_year": "今年",
+            "last_week": "上周",
+            "last_month": "上月",
+            "last_quarter": "上季度",
+            "last_year": "去年",
+            "custom": "自定义范围",
+            "from": "开始",
+            "to": "结束",
+            "apply": "应用",
+            "range": "{from} – {to}"
+        },
+        "bucket": {
+            "hour": "按小时",
+            "day": "按天",
+            "week": "按周",
+            "month": "按月",
+            "quarter": "按季度",
+            "year": "按年"
+        },
+        "compare": {
+            "none": "不对比",
+            "previous": "上一时间段",
+            "year": "去年同期",
+            "vs": "对比 {period}"
+        },
+        "aggregate": {
+            "count": "计数",
+            "count_distinct": "去重计数",
+            "sum": "求和",
+            "avg": "平均值",
+            "min": "最小值",
+            "max": "最大值"
+        },
+        "chart": {
+            "bar": "柱状图",
+            "stackedBar": "堆叠柱状图",
+            "horizontalBar": "条形图",
+            "line": "折线图",
+            "area": "面积图",
+            "stackedArea": "堆叠面积图",
+            "pie": "饼图",
+            "doughnut": "环形图",
+            "table": "表格"
+        },
+        "export": {
+            "csv": "CSV",
+            "xlsx": "Excel",
+            "pdf": "PDF",
+            "previous": "上一期",
+            "change": "变化"
+        },
+        "dim": {
+            "signupDate": "注册日期",
+            "status": "状态",
+            "role": "角色",
+            "eventDate": "事件日期",
+            "subjectType": "对象类型",
+            "event": "事件",
+            "createdAt": "创建时间"
+        },
+        "measure": {
+            "signups": "注册数",
+            "uniqueEmails": "去重邮箱数",
+            "events": "事件数",
+            "actors": "操作者数",
+            "total": "合计",
+            "count": "计数"
+        },
+        "field": {
+            "event": "事件",
+            "subjectType": "对象类型"
+        },
+        "users": {
+            "title": "用户注册"
+        },
+        "activity": {
+            "title": "活动量"
+        },
+        "errors": {
+            "malformed": "该报表请求格式不正确。",
+            "badPeriod": "该日期范围无效。",
+            "periodTooWide": "该日期范围过大，请缩小后重试。",
+            "tooManyBuckets": "该时间段与粒度会产生过多分组，请选择更粗的粒度。",
+            "tooManyCrossFilters": "启用的交叉筛选过多。",
+            "tooManyReports": "一次请求的报表过多。",
+            "noMeasures": "该报表中没有你可查看的度量。",
+            "formatUnavailable": "该导出格式不可用。",
+            "pdfUnsupportedCharset": "PDF 导出无法渲染当前语言的字符，请改用 Excel 导出。",
+            "failed": "报表刷新失败。"
+        },
+        "views": {
+            "save": "保存为视图",
+            "name": "视图名称"
+        },
+        "demo": {
+            "title": "报表与服务端聚合",
+            "description": "本页每个数字都由数据库计算，只有分桶结果会到达浏览器。",
+            "period": "切换时间段。窗口为左闭右开，因此上一时间段首尾相接，不会差一。",
+            "bucket": "切换粒度。分桶表达式是日期变成 SQL 的唯一位置。",
+            "compare": "开启对比。两次互不重叠的窗口扫描按序号对齐——而不是跨越两段的条件聚合。",
+            "dimension": "切换分组维度：日期、普通列或关联。",
+            "truncated": "分类维度受 limit() 限制，尾部折叠为一行由 SQL 计算的“其他”，非可加度量显示破折号而不是编造的数字。",
+            "measures": "切换度量。未声明的名称会被丢弃而非报错，因此不存在字段枚举探测。",
+            "views": "保存当前状态。报表视图复用 table_views 表并加 report: 前缀——不新增任何表。",
+            "export": "导出的是分桶结果而不是源数据行，结果集本身已受上限约束。"
         }
     },
     "table": {

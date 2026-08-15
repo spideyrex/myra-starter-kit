@@ -12,9 +12,15 @@ class TableViewRequest extends FormRequest
         return $this->user() !== null;
     }
 
+    /** A saved report view is an ordinary view with a `report:`-prefixed key. */
+    public function isReportView(): bool
+    {
+        return str_starts_with((string) $this->input('table_key'), 'report:');
+    }
+
     public function rules(): array
     {
-        return [
+        $rules = [
             'table_key' => ['required', 'string', 'max:120', 'regex:/^[a-z0-9][a-z0-9._:-]*$/i'],
             'name' => [
                 'required', 'string', 'max:60',
@@ -27,7 +33,18 @@ class TableViewRequest extends FormRequest
             ],
             'visibility' => ['required', Rule::in(['private', 'team'])],
             'is_default' => ['boolean'],
+        ];
 
+        // A report view carries a ReportState, not a DataTable payload. Its
+        // shape, size and cross-filter count are asserted by ReportShape; the
+        // state itself is re-validated by ReportRequest::parse on replay.
+        if ($this->isReportView()) {
+            $rules['payload'] = ['required', 'array'];
+
+            return $rules;
+        }
+
+        return $rules + [
             // `array:...` pins the top-level keys: an unlisted key is a
             // validation failure, not a silent extra.
             'payload' => ['required', 'array:search,sort,direction,per_page,filters,dateRanges,query,columns,columnOrder'],

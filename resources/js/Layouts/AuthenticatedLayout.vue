@@ -92,6 +92,7 @@ import {
     AlertTriangle,
     FlaskConical,
     LayoutGrid,
+    BarChart3,
 } from 'lucide-vue-next';
 
 defineProps<{
@@ -176,6 +177,16 @@ const navGroups = computed(() => [
             { title: t('nav.firebaseSettings'), href: route('admin.firebase-settings.index'), icon: Smartphone, permission: 'firebase.view' },
         ],
     },
+    // >>> MYRA v2.3 [B] START
+    {
+        label: t('navGroups.reports'),
+        items: [
+            { title: t('nav.reports'), href: route('admin.reports.index'), icon: BarChart3, permission: 'reports.view' },
+            // The schedules entry ships with the report-delivery bundle, which
+            // registers admin.report-schedules.index.
+        ],
+    },
+    // <<< MYRA v2.3 [B] END
     {
         label: t('navGroups.system'),
         items: [

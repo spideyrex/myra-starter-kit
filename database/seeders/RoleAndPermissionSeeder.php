@@ -85,6 +85,15 @@ class RoleAndPermissionSeeder extends Seeder
             'categories.create',
             'categories.edit',
             'categories.delete',
+
+            // >>> MYRA v2.3 [B] START
+            // Reports. `reports.schedule.external` authorises mailing arbitrary
+            // addresses, so it stays a super-admin-only ability.
+            'reports.view',
+            'reports.export',
+            'reports.schedule',
+            'reports.schedule.external',
+            // <<< MYRA v2.3 [B] END
         ];
 
         foreach ($permissions as $permission) {
@@ -94,9 +103,9 @@ class RoleAndPermissionSeeder extends Seeder
         // Super Admin - gets all via Gate::before
         Role::firstOrCreate(['name' => 'super-admin']);
 
-        // Admin - all permissions
+        // Admin - all permissions except the external-recipient escalation
         $admin = Role::firstOrCreate(['name' => 'admin']);
-        $admin->syncPermissions($permissions);
+        $admin->syncPermissions(array_values(array_diff($permissions, ['reports.schedule.external'])));
 
         // Manager - most permissions except system
         $manager = Role::firstOrCreate(['name' => 'manager']);
@@ -112,6 +121,7 @@ class RoleAndPermissionSeeder extends Seeder
             'pages.view', 'pages.create', 'pages.edit',
             'articles.view', 'articles.create', 'articles.edit',
             'categories.view', 'categories.create', 'categories.edit',
+            'reports.view', 'reports.export', 'reports.schedule',
         ]);
 
         // Editor - content permissions

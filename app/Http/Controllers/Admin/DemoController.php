@@ -774,4 +774,36 @@ class DemoController extends Controller
         ]);
     }
     // <<< MYRA v2.2 [B] END
+
+    // >>> MYRA v2.3 [B] START
+    /**
+     * Real data, real SQL. There is no HasSampleData provider here on purpose:
+     * the whole point of the page is that the aggregation happens in the
+     * database, which an in-memory Collection cannot demonstrate.
+     */
+    public function reports(Request $request)
+    {
+        \Illuminate\Support\Facades\Gate::authorize('reports.view');
+
+        $user = $request->user();
+        $definition = \App\Admin\Report\ReportRegistry::resolve('users');
+        $reportRequest = \App\Admin\Report\ReportRequest::parse($request->input('state'), $definition, $user);
+        $result = (new \App\Admin\Report\ReportRunner($definition))->run($reportRequest, $user);
+
+        return Inertia::render('Admin/Demo/Reports', [
+            'schema' => $definition->toClientSchema($user),
+            'state' => $reportRequest->toArray(),
+            'result' => $result->toArray(),
+            'savedViews' => \App\Models\TableView::visibleTo($user)
+                ->where('table_key', 'report:users')
+                ->where('name', '!=', \App\Models\TableView::COLUMNS_NAME)
+                ->orderBy('sort')
+                ->orderBy('name')
+                ->get()
+                ->map(fn (\App\Models\TableView $view) => $view->toClientArray($user))
+                ->values(),
+            'canShareViews' => (bool) $user->current_team_id,
+        ]);
+    }
+    // <<< MYRA v2.3 [B] END
 }

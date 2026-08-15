@@ -17,7 +17,9 @@
         "systemHealth": "Kesihatan Sistem",
         "apiTokens": "Token API",
         "notifications": "Pemberitahuan",
-        "featureDemos": "Demo Ciri"
+        "featureDemos": "Demo Ciri",
+        "reports": "Laporan",
+        "reportSchedules": "Jadual Laporan"
     },
     "navGroups": {
         "main": "Utama",
@@ -26,7 +28,8 @@
         "email": "E-mel",
         "pushNotifications": "Pemberitahuan Push",
         "system": "Sistem",
-        "demo": "Demo"
+        "demo": "Demo",
+        "reports": "Laporan"
     },
     "common": {
         "save": "Simpan",
@@ -126,6 +129,151 @@
             "uploadFailed": "Muat naik imej gagal",
             "boldSample": "teks tebal",
             "italicSample": "teks condong"
+        }
+    },
+    "reports": {
+        "title": "Laporan",
+        "subtitle": "Pengagregatan di pelayan — pangkalan data mengira setiap nombor.",
+        "catalogue": "Laporan tersedia",
+        "open": "Buka laporan",
+        "empty": "Tiada laporan tersedia untuk anda buat masa ini.",
+        "noRows": "Tiada data bagi tempoh ini.",
+        "other": "Lain-lain",
+        "truncated": "Memaparkan {shown} teratas daripada {total}+",
+        "notApplicable": "—",
+        "total": "Jumlah",
+        "loading": "Memuatkan laporan…",
+        "updating": "Mengemas kini laporan…",
+        "refresh": "Muat semula",
+        "groupCount": "{count} kumpulan",
+        "viewAsTable": "Lihat sebagai jadual",
+        "backToReports": "Semua laporan",
+        "toolbar": {
+            "dimension": "Kumpulkan mengikut",
+            "measures": "Ukuran",
+            "bucket": "Kegranularan",
+            "compare": "Banding",
+            "chart": "Jenis carta",
+            "export": "Eksport",
+            "views": "Paparan",
+            "filters": "Penapis",
+            "period": "Tempoh"
+        },
+        "period": {
+            "label": "Tempoh",
+            "today": "Hari ini",
+            "yesterday": "Semalam",
+            "last_7_days": "7 hari lepas",
+            "last_30_days": "30 hari lepas",
+            "last_90_days": "90 hari lepas",
+            "this_week": "Minggu ini",
+            "this_month": "Bulan ini",
+            "this_quarter": "Suku ini",
+            "this_year": "Tahun ini",
+            "last_week": "Minggu lepas",
+            "last_month": "Bulan lepas",
+            "last_quarter": "Suku lepas",
+            "last_year": "Tahun lepas",
+            "custom": "Julat tersuai",
+            "from": "Dari",
+            "to": "Hingga",
+            "apply": "Guna",
+            "range": "{from} – {to}"
+        },
+        "bucket": {
+            "hour": "Setiap jam",
+            "day": "Harian",
+            "week": "Mingguan",
+            "month": "Bulanan",
+            "quarter": "Suku tahunan",
+            "year": "Tahunan"
+        },
+        "compare": {
+            "none": "Tiada perbandingan",
+            "previous": "Tempoh sebelumnya",
+            "year": "Tempoh sama tahun lepas",
+            "vs": "berbanding {period}"
+        },
+        "aggregate": {
+            "count": "Bilangan",
+            "count_distinct": "Bilangan unik",
+            "sum": "Jumlah",
+            "avg": "Purata",
+            "min": "Minimum",
+            "max": "Maksimum"
+        },
+        "chart": {
+            "bar": "Bar",
+            "stackedBar": "Bar bertindan",
+            "horizontalBar": "Bar mendatar",
+            "line": "Garis",
+            "area": "Kawasan",
+            "stackedArea": "Kawasan bertindan",
+            "pie": "Pai",
+            "doughnut": "Donat",
+            "table": "Jadual"
+        },
+        "export": {
+            "csv": "CSV",
+            "xlsx": "Excel",
+            "pdf": "PDF",
+            "previous": "Sebelumnya",
+            "change": "Perubahan"
+        },
+        "dim": {
+            "signupDate": "Tarikh pendaftaran",
+            "status": "Status",
+            "role": "Peranan",
+            "eventDate": "Tarikh peristiwa",
+            "subjectType": "Jenis subjek",
+            "event": "Peristiwa",
+            "createdAt": "Dicipta"
+        },
+        "measure": {
+            "signups": "Pendaftaran",
+            "uniqueEmails": "E-mel unik",
+            "events": "Peristiwa",
+            "actors": "Pelaku",
+            "total": "Jumlah",
+            "count": "Bilangan"
+        },
+        "field": {
+            "event": "Peristiwa",
+            "subjectType": "Jenis subjek"
+        },
+        "users": {
+            "title": "Pendaftaran pengguna"
+        },
+        "activity": {
+            "title": "Jumlah aktiviti"
+        },
+        "errors": {
+            "malformed": "Permintaan laporan itu tidak sah.",
+            "badPeriod": "Julat tarikh itu tidak sah.",
+            "periodTooWide": "Julat tarikh itu terlalu luas. Kecilkan dan cuba lagi.",
+            "tooManyBuckets": "Tempoh dan kegranularan itu menghasilkan terlalu banyak kumpulan. Pilih kegranularan yang lebih kasar.",
+            "tooManyCrossFilters": "Terlalu banyak penapis silang aktif.",
+            "tooManyReports": "Terlalu banyak laporan diminta serentak.",
+            "noMeasures": "Tiada ukuran dalam laporan ini tersedia untuk anda.",
+            "formatUnavailable": "Format eksport itu tidak tersedia.",
+            "pdfUnsupportedCharset": "Eksport PDF tidak dapat memaparkan aksara bahasa ini. Sila eksport ke Excel.",
+            "failed": "Laporan tidak dapat dimuat semula."
+        },
+        "views": {
+            "save": "Simpan sebagai paparan",
+            "name": "Nama paparan"
+        },
+        "demo": {
+            "title": "Laporan & pengagregatan di pelayan",
+            "description": "Setiap nombor pada halaman ini dikira oleh pangkalan data. Hanya baldi yang sampai ke pelayar.",
+            "period": "Tukar tempoh. Tetingkap adalah separa terbuka, jadi tempoh sebelumnya bersambung tanpa ralat satu unit.",
+            "bucket": "Tukar kegranularan. Ungkapan baldi ialah satu-satunya tempat tarikh menjadi SQL.",
+            "compare": "Hidupkan perbandingan. Dua imbasan tetingkap berasingan diselaraskan mengikut turutan — bukan satu agregat bersyarat merentas kedua-duanya.",
+            "dimension": "Tukar paksi pengumpulan: tarikh, lajur biasa, atau perhubungan.",
+            "truncated": "Dimensi kategori dihadkan oleh limit(). Bakinya dilipat ke satu baris Lain-lain yang dikira dalam SQL, dan ukuran bukan tambahan memaparkan sengkang panjang, bukan nombor rekaan.",
+            "measures": "Togol ukuran. Nama yang tidak diisytihar digugurkan, bukan ditolak, jadi tiada oracle penyenaraian medan.",
+            "views": "Simpan keadaan semasa. Paparan laporan menggunakan semula jadual table_views dengan awalan report: — tiada jadual baharu.",
+            "export": "Eksport baldi, bukan baris sumber. Set keputusan sudah pun dihadkan."
         }
     },
     "table": {

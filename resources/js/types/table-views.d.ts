@@ -9,6 +9,8 @@ export interface TableViewPayload {
     query?: Record<string, unknown>;
     columns?: Record<string, boolean>;
     columnOrder?: string[];
+    // Inertia's router requires an index signature to accept this as a request payload.
+    [key: string]: any;
 }
 
 export interface SavedView {

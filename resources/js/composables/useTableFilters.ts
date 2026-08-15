@@ -71,6 +71,15 @@ export class SelectFilter extends BaseFilter {
     }
 }
 
+/** Matches the `trashed` query contract every *Service::list() implements. */
+export function trashedFilter(): SelectFilter {
+    return SelectFilter.make('trashed').label('Records').options({
+        '': 'Active only',
+        only: 'Trashed only',
+        with: 'All (include trashed)',
+    });
+}
+
 export class TernaryFilter extends BaseFilter {
     protected _type: FilterType = 'ternary';
     private _trueLabel = 'Yes';

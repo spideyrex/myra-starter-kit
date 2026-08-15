@@ -19,6 +19,8 @@ export interface SelectOption {
 }
 
 export interface RowAction {
+    /** 'action' (default), 'divider', 'section' heading, or a nested 'group' submenu. */
+    kind?: 'action' | 'divider' | 'section' | 'group';
     label: string;
     icon?: Component;
     permission?: string;
@@ -27,6 +29,31 @@ export interface RowAction {
     destructive?: boolean;
     separator?: boolean;
     show?: boolean;
+    color?: SemanticColor | string;
+    /** Renders an <a target="_blank"> instead of an Inertia <Link>. */
+    external?: boolean;
+    badge?: string | number | null;
+    tooltip?: string;
+    /** Only for kind: 'group'. */
+    items?: RowAction[];
+    /** Trigger configuration for kind: 'group'. */
+    group?: RowActionsConfig;
+}
+
+/** Trigger + menu configuration produced by ActionGroup. */
+export interface RowActionsConfig {
+    label: string;
+    icon?: Component;
+    color?: SemanticColor | string;
+    size: 'sm' | 'default' | 'lg';
+    asButton: boolean;
+    buttonGroup: boolean;
+    tooltip?: string;
+    badge?: string | number | null;
+    placement: 'bottom-start' | 'bottom-end' | 'top-start' | 'top-end';
+    width: 'sm' | 'md' | 'lg';
+    maxHeight: string;
+    collapseAfter?: number;
 }
 
 export interface SimpleTableColumn {
@@ -214,10 +241,15 @@ export type FilterSchema = SelectFilterSchema | TernaryFilterSchema | CheckboxFi
 
 // --- Table Action Schema ---
 
+/** Semantic colour tokens. Mirrors SemanticColor in useFormSchema. */
+export type SemanticColor = 'muted' | 'primary' | 'info' | 'success' | 'warning' | 'danger';
+
 export interface ActionSchema {
+    /** Defaults to 'action'. */
+    kind?: 'action' | 'divider' | 'section';
     label: string;
     icon?: Component;
-    color?: string;
+    color?: SemanticColor | string;
     urlFn?: (row: any) => string;
     actionFn?: (row: any) => void;
     requiresConfirmation: boolean;
@@ -228,8 +260,36 @@ export interface ActionSchema {
     hiddenFn?: (row: any) => boolean;
     visibleFn?: (row: any) => boolean;
     separator: boolean;
+    external?: boolean;
+    tooltip?: string;
+    badgeFn?: (row: any) => string | number | null;
+    // Generic route path — supersedes deleteRouteName.
+    routeName?: string;
+    method?: 'get' | 'post' | 'put' | 'patch' | 'delete';
+    routeParamsFn?: (row: any) => any;
+    payloadFn?: (row: any) => Record<string, any>;
+    successMessage?: string;
+    /** BC alias for { routeName, method: 'delete' }. */
     deleteRouteName?: string;
     modalConfig?: ModalConfig;
+}
+
+export interface ActionGroupSchema {
+    kind: 'group';
+    label: string;
+    icon?: Component;
+    color?: SemanticColor | string;
+    size: 'sm' | 'default' | 'lg';
+    asButton: boolean;
+    buttonGroup: boolean;
+    tooltip?: string;
+    badgeFn?: (row: any) => string | number | null;
+    placement: 'bottom-start' | 'bottom-end' | 'top-start' | 'top-end';
+    width: 'sm' | 'md' | 'lg';
+    maxHeight: string;
+    collapseAfter?: number;
+    permission?: string;
+    items: Array<ActionSchema | ActionGroupSchema>;
 }
 
 export interface BulkActionSchema {

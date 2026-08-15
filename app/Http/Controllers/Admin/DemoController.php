@@ -693,6 +693,16 @@ class DemoController extends Controller
         return back()->with('success', "Task #{$id} deleted.");
     }
 
+    public function demoReplicateTask(int $id)
+    {
+        return back()->with('success', "Task #{$id} duplicated.");
+    }
+
+    public function demoArchiveTask(int $id)
+    {
+        return back()->with('success', "Task #{$id} archived.");
+    }
+
     public function exportCsv()
     {
         $this->seedFaker(300);

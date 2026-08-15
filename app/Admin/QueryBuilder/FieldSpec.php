@@ -139,7 +139,13 @@ final class FieldSpec
     /** @param  Operator[]  $ops */
     public function operators(array $ops): self
     {
-        $this->operators = array_values(array_intersect(Operator::forType($this->type), $ops));
+        // Enums are not stringable, so intersect by ->value rather than array_intersect().
+        $wanted = array_map(static fn (Operator $o) => $o->value, $ops);
+
+        $this->operators = array_values(array_filter(
+            Operator::forType($this->type),
+            static fn (Operator $o) => in_array($o->value, $wanted, true),
+        ));
 
         return $this;
     }
@@ -153,7 +159,13 @@ final class FieldSpec
             $ops = array_merge($ops, [Operator::Contains, Operator::NotContains]);
         }
 
-        return array_values(array_unique($ops, SORT_REGULAR));
+        $unique = [];
+
+        foreach ($ops as $op) {
+            $unique[$op->value] = $op;
+        }
+
+        return array_values($unique);
     }
 
     public function allows(Operator $op): bool

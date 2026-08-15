@@ -246,7 +246,7 @@ Route::middleware(['auth', 'verified', 'active', '2fa'])->prefix('admin')->name(
 
     // Advanced Feature Demos
     Route::get('/demo/inline-editing', [DemoController::class, 'inlineEditing'])->name('demo.inline-editing');
-    Route::put('/demo/inline-update/{id}', [DemoController::class, 'demoInlineUpdate'])->name('demo.inline-update');
+    Route::match(['put', 'patch'], '/demo/inline-update/{id}', [DemoController::class, 'demoInlineUpdate'])->name('demo.inline-update');
     Route::get('/demo/conditional-fields', [DemoController::class, 'conditionalFields'])->name('demo.conditional-fields');
     Route::get('/demo/infolist', [DemoController::class, 'infolist'])->name('demo.infolist');
     Route::get('/demo/relation-manager', [DemoController::class, 'relationManager'])->name('demo.relation-manager');

@@ -7,7 +7,25 @@ function humanize(name: string): string {
         .replace(/\b\w/g, c => c.toUpperCase());
 }
 
-export type ColumnType = 'text' | 'badge' | 'date' | 'boolean' | 'image' | 'icon' | 'toggle' | 'select' | 'textinput';
+export type ColumnType = 'text' | 'badge' | 'date' | 'boolean' | 'image' | 'icon' | 'toggle' | 'select' | 'textinput' | 'color' | 'checkbox';
+
+export type SummaryType = 'sum' | 'average' | 'count' | 'min' | 'max' | 'median' | 'range' | 'custom';
+
+export interface SummaryConfig {
+    type: SummaryType;
+    label?: string;
+    prefix?: string;
+    suffix?: string;
+    decimals?: number;
+    currency?: string;
+    locale?: string;
+    excludeNull?: boolean;
+    /** `range` only. */
+    separator?: string;
+    /** `'all'` expects the value to arrive in the server `summaries` prop. */
+    scope?: 'page' | 'all';
+    fn?: (values: any[]) => string | number;
+}
 
 export abstract class BaseColumn {
     protected _key: string;
@@ -21,8 +39,9 @@ export abstract class BaseColumn {
     protected _tooltip?: string;
     protected _toggleable = false;
     protected _grow = false;
-    protected _summarize?: 'sum' | 'average' | 'count' | 'range' | 'custom';
+    protected _summarize?: SummaryType;
     protected _summaryFn?: (values: any[]) => string | number;
+    protected _summaryConfig?: SummaryConfig;
 
     constructor(key: string) {
         this._key = key;
@@ -82,9 +101,17 @@ export abstract class BaseColumn {
         return this;
     }
 
-    summarize(type: 'sum' | 'average' | 'count' | 'range' | 'custom', fn?: (values: any[]) => string | number): this {
+    summarize(type: SummaryType, fn?: (values: any[]) => string | number): this {
         this._summarize = type;
         if (fn) this._summaryFn = fn;
+        return this;
+    }
+
+    /** Rich form of summarize() — label, formatting and scope. */
+    summary(config: SummaryConfig): this {
+        this._summarize = config.type;
+        this._summaryConfig = config;
+        if (config.fn) this._summaryFn = config.fn;
         return this;
     }
 
@@ -103,6 +130,7 @@ export abstract class BaseColumn {
             grow: this._grow,
             summarize: this._summarize,
             summaryFn: this._summaryFn,
+            summaryConfig: this._summaryConfig,
         } as ColumnSchema;
     }
 }
@@ -351,32 +379,130 @@ export class IconColumn extends BaseColumn {
     }
 }
 
-export class ToggleColumn extends BaseColumn {
+/**
+ * Shared base for cells the user edits in place. When `updateRoute()` is set the
+ * table owns the request, the optimistic write and the rollback; `onUpdate()`
+ * stays as the escape hatch for pages that want to own it themselves.
+ */
+export abstract class InlineEditableColumn<V = any> extends BaseColumn {
+    protected _updateRoute?: string;
+    protected _updateField?: string;
+    protected _optimistic = true;
+    protected _permission?: string;
+    protected _disabledFn?: (row: any) => boolean;
+    protected _confirmFn?: (row: any, value: V) => string | false;
+    protected _rowLabelFn?: (row: any) => string;
+    protected _debounceMs?: number;
+    protected _onUpdateFn?: (row: any, value: V) => void;
+
+    updateRoute(routeName: string): this {
+        this._updateRoute = routeName;
+        return this;
+    }
+
+    /** Column written server-side. Defaults to the column key. */
+    field(name: string): this {
+        this._updateField = name;
+        return this;
+    }
+
+    /** false = wait for the server before showing the new value. */
+    optimistic(value = true): this {
+        this._optimistic = value;
+        return this;
+    }
+
+    /** Client-side gate only — the server check stays authoritative. */
+    permission(perm: string): this {
+        this._permission = perm;
+        return this;
+    }
+
+    disabledWhen(fn: (row: any) => boolean): this {
+        this._disabledFn = fn;
+        return this;
+    }
+
+    /** Return a message to require confirmation for that value only. */
+    confirmWhen(fn: (row: any, value: V) => string | false): this {
+        this._confirmFn = fn;
+        return this;
+    }
+
+    /** Per-row accessible name. Required for checkbox/toggle columns. */
+    rowLabel(fn: (row: any) => string): this {
+        this._rowLabelFn = fn;
+        return this;
+    }
+
+    debounce(ms: number): this {
+        this._debounceMs = ms;
+        return this;
+    }
+
+    /** Escape hatch — ignored when updateRoute() is set. */
+    onUpdate(fn: (row: any, value: V) => void): this {
+        this._onUpdateFn = fn;
+        return this;
+    }
+
+    protected inlineSchema() {
+        return {
+            updateRoute: this._updateRoute,
+            updateField: this._updateField ?? this._key,
+            optimistic: this._optimistic,
+            permission: this._permission,
+            disabledFn: this._disabledFn,
+            confirmFn: this._confirmFn,
+            rowLabelFn: this._rowLabelFn,
+            debounceMs: this._debounceMs ?? 500,
+            onUpdateFn: this._onUpdateFn,
+        };
+    }
+}
+
+export class ToggleColumn extends InlineEditableColumn<boolean> {
     protected _type: ColumnType = 'toggle';
-    private _onUpdateFn?: (row: any, value: boolean) => void;
 
     static make(key: string): ToggleColumn {
         return new ToggleColumn(key);
-    }
-
-    onUpdate(fn: (row: any, value: boolean) => void): this {
-        this._onUpdateFn = fn;
-        return this;
     }
 
     toSchema(): ColumnSchema {
         return {
             ...super.toSchema(),
             type: 'toggle',
-            onUpdateFn: this._onUpdateFn,
-        };
+            ...this.inlineSchema(),
+        } as ColumnSchema;
     }
 }
 
-export class SelectColumn extends BaseColumn {
+export class CheckboxColumn extends InlineEditableColumn<boolean> {
+    protected _type: ColumnType = 'checkbox';
+    private _indeterminateFn?: (row: any) => boolean;
+
+    static make(key: string): CheckboxColumn {
+        return new CheckboxColumn(key);
+    }
+
+    indeterminateWhen(fn: (row: any) => boolean): this {
+        this._indeterminateFn = fn;
+        return this;
+    }
+
+    toSchema(): ColumnSchema {
+        return {
+            ...super.toSchema(),
+            type: 'checkbox',
+            ...this.inlineSchema(),
+            indeterminateFn: this._indeterminateFn,
+        } as ColumnSchema;
+    }
+}
+
+export class SelectColumn extends InlineEditableColumn<string> {
     protected _type: ColumnType = 'select';
     private _options: Array<{ label: string; value: string }> = [];
-    private _onUpdateFn?: (row: any, value: string) => void;
     private _placeholder?: string;
 
     static make(key: string): SelectColumn {
@@ -392,11 +518,6 @@ export class SelectColumn extends BaseColumn {
         return this;
     }
 
-    onUpdate(fn: (row: any, value: string) => void): this {
-        this._onUpdateFn = fn;
-        return this;
-    }
-
     placeholder(text: string): this {
         this._placeholder = text;
         return this;
@@ -407,25 +528,18 @@ export class SelectColumn extends BaseColumn {
             ...super.toSchema(),
             type: 'select',
             options: this._options,
-            onUpdateFn: this._onUpdateFn,
             placeholder: this._placeholder,
-        };
+            ...this.inlineSchema(),
+        } as ColumnSchema;
     }
 }
 
-export class TextInputColumn extends BaseColumn {
+export class TextInputColumn extends InlineEditableColumn<string> {
     protected _type: ColumnType = 'textinput';
-    private _onUpdateFn?: (row: any, value: string) => void;
     private _placeholder?: string;
-    private _debounceMs = 500;
 
     static make(key: string): TextInputColumn {
         return new TextInputColumn(key);
-    }
-
-    onUpdate(fn: (row: any, value: string) => void): this {
-        this._onUpdateFn = fn;
-        return this;
     }
 
     placeholder(text: string): this {
@@ -433,18 +547,67 @@ export class TextInputColumn extends BaseColumn {
         return this;
     }
 
-    debounce(ms: number): this {
-        this._debounceMs = ms;
+    toSchema(): ColumnSchema {
+        return {
+            ...super.toSchema(),
+            type: 'textinput',
+            placeholder: this._placeholder,
+            ...this.inlineSchema(),
+        } as ColumnSchema;
+    }
+}
+
+export class ColorColumn extends BaseColumn {
+    protected _type: ColumnType = 'color';
+    private _copyable = true;
+    private _copyMessage = 'Copied to clipboard';
+    private _showValue = true;
+    private _swatchSize = 16;
+    private _swatchShape: 'square' | 'circle' = 'square';
+
+    static make(key: string): ColorColumn {
+        return new ColorColumn(key);
+    }
+
+    copyable(value = true): this {
+        this._copyable = value;
+        return this;
+    }
+
+    copyMessage(text: string): this {
+        this._copyMessage = text;
+        return this;
+    }
+
+    /** false hides the literal value — the swatch then carries an aria-label. */
+    showValue(value = true): this {
+        this._showValue = value;
+        return this;
+    }
+
+    swatchOnly(): this {
+        return this.showValue(false);
+    }
+
+    swatchSize(px: number): this {
+        this._swatchSize = px;
+        return this;
+    }
+
+    circular(value = true): this {
+        this._swatchShape = value ? 'circle' : 'square';
         return this;
     }
 
     toSchema(): ColumnSchema {
         return {
             ...super.toSchema(),
-            type: 'textinput',
-            onUpdateFn: this._onUpdateFn,
-            placeholder: this._placeholder,
-            debounceMs: this._debounceMs,
-        };
+            type: 'color',
+            copyable: this._copyable,
+            copyMessage: this._copyMessage,
+            swatchShowValue: this._showValue,
+            swatchSize: this._swatchSize,
+            swatchShape: this._swatchShape,
+        } as ColumnSchema;
     }
 }

@@ -1704,9 +1704,11 @@ const actions = [
             <tr><td><code>BooleanColumn</code></td><td>Check/X icons</td><td><code>.trueIcon(icon)</code>, <code>.falseIcon(icon)</code>, <code>.trueColor()</code>, <code>.falseColor()</code></td></tr>
             <tr><td><code>ImageColumn</code></td><td><code>&lt;img&gt;</code> tag</td><td><code>.circular()</code>, <code>.size(n)</code>, <code>.defaultUrl(url)</code></td></tr>
             <tr><td><code>IconColumn</code></td><td>Lucide icon</td><td><code>.icon(fn)</code>, <code>.color(fn)</code></td></tr>
-            <tr><td><code>ToggleColumn</code></td><td><code>&lt;Switch&gt;</code></td><td><code>.onUpdate(fn)</code> &mdash; inline editable boolean</td></tr>
-            <tr><td><code>SelectColumn</code></td><td><code>&lt;Select&gt;</code> dropdown</td><td><code>.options(obj|arr)</code>, <code>.onUpdate(fn)</code>, <code>.placeholder(text)</code> &mdash; inline editable select</td></tr>
-            <tr><td><code>TextInputColumn</code></td><td><code>&lt;Input&gt;</code></td><td><code>.onUpdate(fn)</code>, <code>.placeholder(text)</code>, <code>.debounce(ms)</code> &mdash; inline editable text (default 500ms debounce)</td></tr>
+            <tr><td><code>ToggleColumn</code></td><td><code>&lt;Switch&gt;</code></td><td>Inline editable boolean &mdash; see <a href="#inline-editing">inline editing methods</a></td></tr>
+            <tr><td><code>CheckboxColumn</code></td><td><code>&lt;Checkbox&gt;</code></td><td>Inline editable boolean, plus <code>.indeterminateWhen(fn)</code></td></tr>
+            <tr><td><code>SelectColumn</code></td><td><code>&lt;Select&gt;</code> dropdown</td><td><code>.options(obj|arr)</code>, <code>.placeholder(text)</code> + inline editing methods</td></tr>
+            <tr><td><code>TextInputColumn</code></td><td><code>&lt;Input&gt;</code></td><td><code>.placeholder(text)</code>, <code>.debounce(ms)</code> + inline editing methods (default 500ms debounce)</td></tr>
+            <tr><td><code>ColorColumn</code></td><td>Colour swatch + value</td><td><code>.copyable(bool)</code>, <code>.copyMessage(text)</code>, <code>.showValue(bool)</code>, <code>.swatchOnly()</code>, <code>.swatchSize(px)</code>, <code>.circular()</code></td></tr>
         </tbody>
     </table>
 
@@ -1724,9 +1726,26 @@ const actions = [
             <tr><td><code>.tooltip(text)</code></td><td>Add tooltip text</td></tr>
             <tr><td><code>.toggleable()</code></td><td>User can show/hide this column</td></tr>
             <tr><td><code>.grow()</code></td><td>Column takes available space</td></tr>
-            <tr><td><code>.summarize(type, fn?)</code></td><td>Add column summary. Types: <code>'sum'</code>, <code>'average'</code>, <code>'count'</code>, <code>'range'</code>, <code>'custom'</code>. Custom fn receives values array.</td></tr>
+            <tr><td><code>.summarize(type, fn?)</code></td><td>Add column summary. Types: <code>'sum'</code>, <code>'average'</code>, <code>'count'</code>, <code>'min'</code>, <code>'max'</code>, <code>'median'</code>, <code>'range'</code>, <code>'custom'</code>. Custom fn receives values array.</td></tr>
+            <tr><td><code>.summary(config)</code></td><td>Rich form of <code>.summarize()</code> &mdash; label, formatting, scope. See <a href="#table-summaries">Summaries</a>.</td></tr>
         </tbody>
     </table>
+
+    <h4>ColorColumn</h4>
+    <p>Renders a validated colour swatch next to the literal value, with a copy button. Values are matched against a
+       strict colour regex before they ever reach an inline <code>style</code>; anything else (including
+       <code>red; background-image:url(x)</code>) renders as plain text. Alpha colours (8-digit hex,
+       <code>rgba()</code>, <code>hsla()</code>) sit on a themed checkerboard so transparency is visible.</p>
+
+    <pre><code class="language-typescript">import { ColorColumn } from '@/composables/useTableSchema';
+
+ColorColumn.make('brand_color').copyable().copyMessage('Brand colour copied'),
+ColorColumn.make('accent_color').swatchOnly().circular().swatchSize(24),</code></pre>
+
+    <p><strong>Accessibility:</strong> with <code>.showValue()</code> (the default) the swatch is
+       <code>aria-hidden</code> and the value is read as text; with <code>.swatchOnly()</code> the swatch becomes
+       <code>role="img"</code> with the value as its <code>aria-label</code>. Colour is never the only carrier of
+       information.</p>
 </section>
 
 <section id="table-filters">
@@ -1903,54 +1922,85 @@ const bulkActions = [
 
 <section id="inline-editing">
     <h2>Inline Table Editing</h2>
-    <p>Edit cell values directly in the table without opening a form. Three inline-editable column types are available: <code>ToggleColumn</code>, <code>SelectColumn</code>, and <code>TextInputColumn</code>.</p>
+    <p>Edit cell values directly in the table without opening a form. Four inline-editable column types are available:
+       <code>ToggleColumn</code>, <code>CheckboxColumn</code>, <code>SelectColumn</code> and
+       <code>TextInputColumn</code>. They all extend <code>InlineEditableColumn</code> and therefore share one set of
+       methods.</p>
 
-    <h3>SelectColumn</h3>
-    <p>Renders an inline <code>&lt;Select&gt;</code> dropdown in each cell. Changes are emitted immediately via the <code>onUpdate</code> callback.</p>
-    <pre><code class="language-typescript">import { SelectColumn } from '@/composables/useTableSchema';
+    <h3>Shared Inline Methods</h3>
+    <table>
+        <thead><tr><th>Method</th><th>Description</th></tr></thead>
+        <tbody>
+            <tr><td><code>.updateRoute(name)</code></td><td><strong>Preferred.</strong> The table owns the request: it PATCHes <code>{ field, value }</code> to <code>route(name, row.id)</code>, paints optimistically and rolls back with a toast on error.</td></tr>
+            <tr><td><code>.field(name)</code></td><td>Column written server-side. Defaults to the column key.</td></tr>
+            <tr><td><code>.optimistic(bool)</code></td><td><code>false</code> waits for the server before showing the new value. Default <code>true</code>.</td></tr>
+            <tr><td><code>.permission(perm)</code></td><td>Client-side gate — the control is disabled and the request is skipped. The server check stays authoritative.</td></tr>
+            <tr><td><code>.disabledWhen(fn)</code></td><td>Per-row disable, e.g. <code>row =&gt; row.archived_at !== null</code>.</td></tr>
+            <tr><td><code>.confirmWhen(fn)</code></td><td>Return a message to require confirmation for that value only; return <code>false</code> to write straight through.</td></tr>
+            <tr><td><code>.rowLabel(fn)</code></td><td><strong>Required for toggle/checkbox.</strong> Per-row accessible name for the control.</td></tr>
+            <tr><td><code>.debounce(ms)</code></td><td>Text input only. Default 500ms.</td></tr>
+            <tr><td><code>.onUpdate(fn)</code></td><td>Escape hatch — the page owns the request. Ignored when <code>.updateRoute()</code> is set.</td></tr>
+        </tbody>
+    </table>
+
+    <h3>CheckboxColumn</h3>
+    <pre><code class="language-typescript">import { CheckboxColumn } from '@/composables/useTableSchema';
+
+CheckboxColumn.make('is_featured')
+    .label('Featured')
+    .updateRoute('admin.products.inline-update')
+    .permission('products.edit')
+    .rowLabel(row =&gt; `Feature ${row.name}`)
+    .disabledWhen(row =&gt; row.archived_at !== null)
+    .indeterminateWhen(row =&gt; row.stock === 0 &amp;&amp; !row.is_featured)
+    .confirmWhen((row, value) =&gt; value &amp;&amp; row.stock === 0
+        ? 'This product is out of stock. Feature it anyway?'
+        : false)</code></pre>
+
+    <h3>ToggleColumn / SelectColumn / TextInputColumn</h3>
+    <pre><code class="language-typescript">ToggleColumn.make('is_active')
+    .updateRoute('admin.products.inline-update')
+    .rowLabel(row =&gt; `Activate ${row.name}`),
 
 SelectColumn.make('status')
-    .label('Status')
     .options({ active: 'Active', draft: 'Draft', archived: 'Archived' })
-    .placeholder('Select...')
-    .onUpdate((row, value) => {
-        router.put(route('admin.products.inline-update', row.id), {
-            field: 'status', value,
-        });
-    })</code></pre>
-
-    <h3>TextInputColumn</h3>
-    <p>Renders an inline <code>&lt;Input&gt;</code> with built-in debounce (default 500ms). Changes fire after the user stops typing.</p>
-    <pre><code class="language-typescript">import { TextInputColumn } from '@/composables/useTableSchema';
+    .updateRoute('admin.products.inline-update'),
 
 TextInputColumn.make('stock')
-    .label('Stock')
     .placeholder('Qty')
-    .debounce(300)  // ms, default 500
-    .onUpdate((row, value) => {
-        router.put(route('admin.products.inline-update', row.id), {
-            field: 'stock', value,
-        });
-    })</code></pre>
+    .debounce(300)                       // ms, default 500
+    .updateRoute('admin.products.inline-update'),
 
-    <h3>ToggleColumn</h3>
-    <p>Renders an inline <code>&lt;Switch&gt;</code> toggle for boolean fields.</p>
-    <pre><code class="language-typescript">import { ToggleColumn } from '@/composables/useTableSchema';
+// Escape hatch — the page owns the request
+TextInputColumn.make('sku')
+    .onUpdate((row, value) =&gt; router.put(route('admin.products.sku', row.id), { value })),</code></pre>
 
-ToggleColumn.make('is_active')
-    .label('Active')
-    .onUpdate((row, value) => {
-        router.put(route('admin.products.toggle', row.id), { is_active: value });
-    })</code></pre>
+    <p>A second change to the same cell while a request is in flight is ignored, and pending debounced writes are
+       cancelled when the table unmounts.</p>
 
     <h3>Backend Pattern</h3>
-    <pre><code class="language-php">// Single endpoint handles all inline updates
-public function inlineUpdate(Request $request, int $id): RedirectResponse
+    <p>Use the <code>HandlesInlineUpdates</code> trait. The editable field list is a server-side literal, so a client
+       cannot write an unlisted column, and the model policy is re-checked on top of the route middleware.</p>
+    <pre><code class="language-php">use App\Admin\Traits\HandlesInlineUpdates;
+
+class ProductController extends Controller
 {
-    $product = Product::findOrFail($id);
-    $product->update([$request->field => $request->value]);
-    return back()->with('success', 'Updated successfully.');
+    use HandlesInlineUpdates;
+
+    protected function modelClass(): string
+    {
+        return Product::class;
+    }
+
+    protected function inlineEditableFields(): array
+    {
+        return ['is_featured' =&gt; 'boolean', 'status' =&gt; 'string', 'stock' =&gt; 'integer'];
+    }
 }</code></pre>
+    <pre><code class="language-php">// routes/web.php — middleware AND the in-controller authorize()
+Route::patch('/products/{product}/inline', [ProductController::class, 'inlineUpdate'])
+    -&gt;middleware('permission:products.edit')
+    -&gt;name('products.inline-update');</code></pre>
 </section>
 
 <section id="conditional-visibility">
@@ -2034,11 +2084,46 @@ const isVisible = evaluateVisibility('type:business', formData);</code></pre>
         <tbody>
             <tr><td><code>'sum'</code></td><td>Sum of numeric values. Respects <code>.money()</code> formatting.</td></tr>
             <tr><td><code>'average'</code></td><td>Average of numeric values</td></tr>
-            <tr><td><code>'count'</code></td><td>Count of non-null values</td></tr>
-            <tr><td><code>'range'</code></td><td>Shows <code>min &ndash; max</code></td></tr>
+            <tr><td><code>'count'</code></td><td>Count of non-null values (all rows when <code>excludeNull: false</code>)</td></tr>
+            <tr><td><code>'min'</code></td><td>Smallest numeric value</td></tr>
+            <tr><td><code>'max'</code></td><td>Largest numeric value</td></tr>
+            <tr><td><code>'median'</code></td><td>Middle value; the mean of the two middle values for an even count</td></tr>
+            <tr><td><code>'range'</code></td><td>Shows <code>min &ndash; max</code>, separator configurable</td></tr>
             <tr><td><code>'custom'</code></td><td>Custom function receives all values, returns display string</td></tr>
         </tbody>
     </table>
+    <p>Empty columns render <code>&mdash;</code> for <code>min</code>, <code>max</code>, <code>median</code> and
+       <code>range</code>. Each summarised column is accumulated in a single pass, so a full page of rows never
+       spreads an array into <code>Math.min()</code>.</p>
+
+    <h3>.summary(config) &mdash; labels, formatting and scope</h3>
+    <pre><code class="language-typescript">TextColumn.make('rating').alignEnd()
+    .summary({ type: 'median', label: 'Median', decimals: 1 }),
+
+TextColumn.make('delivery_days').alignEnd()
+    .summary({ type: 'range', label: 'Range', separator: ' to ', decimals: 0 }),
+
+TextColumn.make('revenue').money('MYR').alignEnd()
+    .summary({ type: 'sum', label: 'Company total', currency: 'MYR', scope: 'all' }),</code></pre>
+
+    <table>
+        <thead><tr><th>Key</th><th>Description</th></tr></thead>
+        <tbody>
+            <tr><td><code>type</code></td><td>Any summary type above (required)</td></tr>
+            <tr><td><code>label</code></td><td>Prefix shown before the value in the footer</td></tr>
+            <tr><td><code>prefix</code> / <code>suffix</code></td><td>Wrapped around the formatted value</td></tr>
+            <tr><td><code>decimals</code></td><td>Fixed decimal places. Defaults to 2 (0 for <code>count</code>) when a config is supplied.</td></tr>
+            <tr><td><code>currency</code> / <code>locale</code></td><td>Formats via <code>Intl.NumberFormat</code>. Locale defaults to <code>'en-US'</code>.</td></tr>
+            <tr><td><code>excludeNull</code></td><td><code>false</code> makes <code>count</code> include null rows. Default <code>true</code>.</td></tr>
+            <tr><td><code>separator</code></td><td><code>range</code> only. Default <code>' – '</code>.</td></tr>
+            <tr><td><code>scope</code></td><td><code>'all'</code> declares the value must come from the server <code>summaries</code> prop; a dev-build warning fires when it does not arrive.</td></tr>
+        </tbody>
+    </table>
+
+    <h3>Page vs. dataset scope</h3>
+    <p>A client-computed summary can only see the current page, so the footer marks it with a small
+       <strong>Page</strong> badge. Supplying the value in the <code>summaries</code> prop removes the badge &mdash;
+       the reader always knows which number they are looking at.</p>
 
     <h3>Server-Side Summaries</h3>
     <p>For large datasets, pass pre-computed summaries from the backend via the <code>summaries</code> prop. Server summaries take precedence over client-side calculation:</p>
@@ -2048,6 +2133,13 @@ const isVisible = evaluateVisibility('type:business', formData);</code></pre>
     :summaries="{ price: '$45,230.00', quantity: 1284 }"
     route-name="admin.orders.index"
 /&gt;</code></pre>
+    <p>The <code>SearchableQuery</code> trait ships a helper for this. The column spec is a server-side literal &mdash;
+       never derived from the request:</p>
+    <pre><code class="language-php">$summaries = $this-&gt;summarise($query, [
+    'price' =&gt; 'sum',
+    'stock' =&gt; 'min',
+    'rating' =&gt; 'range',
+]);</code></pre>
 
     <h3>Group + Summary Combined</h3>
     <p>When both <code>groupBy</code> and summaries are used, each group shows its own summary row plus an overall footer.</p>
@@ -3493,7 +3585,7 @@ import { Button } from '@/components/ui/button';
     <h4>useTableSchema</h4>
     <p>Table column builder API for defining DataTable columns with a fluent, chainable syntax.</p>
     <p><strong>File:</strong> <code>resources/js/composables/useTableSchema.ts</code></p>
-    <p><strong>Exports:</strong> <code>TextColumn</code>, <code>BadgeColumn</code>, <code>DateColumn</code>, <code>BooleanColumn</code>, <code>ImageColumn</code>, <code>IconColumn</code>, <code>ToggleColumn</code>, <code>BaseColumn</code></p>
+    <p><strong>Exports:</strong> <code>TextColumn</code>, <code>BadgeColumn</code>, <code>DateColumn</code>, <code>BooleanColumn</code>, <code>ImageColumn</code>, <code>IconColumn</code>, <code>ToggleColumn</code>, <code>CheckboxColumn</code>, <code>SelectColumn</code>, <code>TextInputColumn</code>, <code>ColorColumn</code>, <code>BaseColumn</code>, <code>InlineEditableColumn</code>, <code>SummaryType</code>, <code>SummaryConfig</code></p>
     <p>See <a href="#table-columns">Table Columns</a> for full documentation.</p>
 
     <h4>useTableFilters</h4>
@@ -5712,8 +5804,22 @@ interface NavItem {
     tooltip?: string;
     toggleable: boolean;
     grow: boolean;
-    summarize?: 'sum' | 'average' | 'count' | 'range' | 'custom';
+    summarize?: SummaryType;   // 'sum'|'average'|'count'|'min'|'max'|'median'|'range'|'custom'
     summaryFn?: (rows: any[]) =&gt; string | number;
+    summaryConfig?: SummaryConfig;
+}
+
+// Shared by every inline-editable column
+interface InlineEditableSchema&lt;V&gt; {
+    updateRoute?: string;
+    updateField?: string;
+    optimistic?: boolean;
+    permission?: string;
+    disabledFn?: (row: any) =&gt; boolean;
+    confirmFn?: (row: any, value: V) =&gt; string | false;
+    rowLabelFn?: (row: any) =&gt; string;
+    debounceMs?: number;
+    onUpdateFn?: (row: any, value: V) =&gt; void;
 }
 
 type ColumnSchema =
@@ -5723,9 +5829,11 @@ type ColumnSchema =
     | BooleanColumnSchema   // type: 'boolean' + trueIcon, falseIcon, trueColor, falseColor
     | ImageColumnSchema     // type: 'image' + circular, size, defaultUrl
     | IconColumnSchema      // type: 'icon' + iconFn, colorFn
-    | ToggleColumnSchema    // type: 'toggle' + onUpdateFn
-    | SelectColumnSchema   // type: 'select' + options, onUpdateFn, placeholder
-    | TextInputColumnSchema; // type: 'textinput' + onUpdateFn, placeholder, debounceMs</code></pre>
+    | ToggleColumnSchema    // type: 'toggle' + InlineEditableSchema&lt;boolean&gt;
+    | CheckboxColumnSchema  // type: 'checkbox' + InlineEditableSchema&lt;boolean&gt; + indeterminateFn
+    | SelectColumnSchema    // type: 'select' + options, placeholder + InlineEditableSchema&lt;string&gt;
+    | TextInputColumnSchema // type: 'textinput' + placeholder + InlineEditableSchema&lt;string&gt;
+    | ColorColumnSchema;    // type: 'color' + copyable, copyMessage, swatchShowValue, swatchSize, swatchShape</code></pre>
 
     <h4>FilterSchema</h4>
     <pre><code class="language-typescript">type FilterSchema =

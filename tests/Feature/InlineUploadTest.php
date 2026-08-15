@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Models\User;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use Spatie\Permission\PermissionRegistrar;
 use Tests\TestCase;
 
@@ -47,16 +48,26 @@ class InlineUploadTest extends TestCase
         return $this->post(route('admin.uploads.inline'), ['file' => $file], ['Accept' => 'application/json']);
     }
 
-    /** Store a real image as $owner and return the relative storage path. */
+    /**
+     * Store a real image as $owner and return the relative storage path.
+     *
+     * The route segment is itself named "inline", so the URL reads
+     * /admin/uploads/inline/inline/{id}/{ulid}.png. Searching for the first
+     * "inline/" hits the ROUTE segment, so strip the exact route prefix instead.
+     */
     private function storeAs(User $owner): string
     {
         $this->actingAs($owner);
         $response = $this->upload($this->pngFile());
         $response->assertOk();
 
-        $path = urldecode((string) parse_url((string) $response->json('url'), PHP_URL_PATH));
+        $sentinel = '__STORAGE_PATH__';
+        $prefix = Str::before(route('admin.uploads.inline.show', ['path' => $sentinel]), $sentinel);
 
-        return substr($path, (int) strpos($path, 'inline/'));
+        $url = (string) $response->json('url');
+        $this->assertStringStartsWith($prefix, $url);
+
+        return urldecode(Str::after($url, $prefix));
     }
 
     public function test_a_valid_image_is_stored_on_the_private_disk(): void
@@ -117,6 +128,20 @@ class InlineUploadTest extends TestCase
 
         // 404, never 403 — a 403 would confirm the file exists.
         $this->get(route('admin.uploads.inline.show', ['path' => $path]))->assertNotFound();
+    }
+
+    /** The returned URL must round-trip to the exact key on the private disk. */
+    public function test_the_returned_url_round_trips_to_the_stored_path(): void
+    {
+        $owner = $this->userWith(['media.create']);
+
+        $path = $this->storeAs($owner);
+
+        $this->assertMatchesRegularExpression(
+            '#^inline/' . $owner->id . '/[0-9A-HJKMNP-TV-Z]{26}\.png$#',
+            $path,
+        );
+        $this->assertTrue(Storage::disk('local')->exists($path));
     }
 
     public function test_the_owner_may_read_their_own_upload(): void

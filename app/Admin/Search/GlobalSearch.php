@@ -142,7 +142,7 @@ class GlobalSearch
         // match escape any scope added later — a whole-table leak.
         $query->where(function (Builder $q) use ($source, $term) {
             foreach ($source->attributeNames() as $attribute) {
-                $q->orWhere($attribute, 'like', Sql::like($term, $source->matchMode()));
+                Sql::orWhereLike($q, $attribute, $term, $source->matchMode());
             }
         });
 

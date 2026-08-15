@@ -44,7 +44,7 @@ trait SearchableQuery
                     foreach ($searchable as $column) {
                         // Escape % _ \ so a user's wildcard cannot widen the match
                         // or force a full scan.
-                        $q->orWhere($column, 'like', Sql::like((string) $request->search));
+                        Sql::orWhereLike($q, $column, (string) $request->search);
                     }
                 });
             })

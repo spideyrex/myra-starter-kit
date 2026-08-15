@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Admin\Http\Refusal;
 use App\Admin\Import\HeaderMapper;
 use App\Admin\Import\ImportDefinition;
 use App\Admin\Import\ImportRegistry;
@@ -74,11 +75,15 @@ class ImportController extends Controller
 
         fclose($handle);
 
-        abort_if(
-            $totalRows > $definition->getMaxRows(),
-            422,
-            __('transfer.import.tooManyRows', ['max' => $definition->getMaxRows()]),
-        );
+        // A clean refusal, not abort(): both row-cap call sites answer an XHR
+        // caller, and a rendered HTML error page is unparseable to it.
+        if ($totalRows > $definition->getMaxRows()) {
+            Refusal::throw(
+                $request,
+                __('transfer.import.tooManyRows', ['max' => $definition->getMaxRows()]),
+                ['max' => $definition->getMaxRows()],
+            );
+        }
 
         $session = ImportSession::stage($file, $resource, (int) $request->user()->id, $headers);
 
@@ -140,11 +145,13 @@ class ImportController extends Controller
 
         fclose($handle);
 
-        abort_if(
-            $total > $definition->getMaxRows(),
-            422,
-            __('transfer.import.tooManyRows', ['max' => $definition->getMaxRows()]),
-        );
+        if ($total > $definition->getMaxRows()) {
+            Refusal::throw(
+                $request,
+                __('transfer.import.tooManyRows', ['max' => $definition->getMaxRows()]),
+                ['max' => $definition->getMaxRows()],
+            );
+        }
 
         return response()->json([
             'columns' => $definition->toClientSchema(),

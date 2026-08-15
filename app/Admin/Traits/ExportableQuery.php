@@ -5,11 +5,11 @@ namespace App\Admin\Traits;
 use App\Admin\Export\CsvRowWriter;
 use App\Admin\Export\ExportDefinition;
 use App\Admin\Export\XlsxRowWriter;
+use App\Admin\Http\Refusal;
 use App\Support\Csv;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 trait ExportableQuery
@@ -84,7 +84,11 @@ trait ExportableQuery
         $count = (clone $query)->toBase()->getCountForPagination();
 
         if ($count > $definition->getMaxRows()) {
-            throw new HttpResponseException($this->exportRefusal($request, $definition->getMaxRows()));
+            throw new HttpResponseException(Refusal::respond(
+                $request,
+                __('transfer.export.tooManyRows', ['max' => $definition->getMaxRows()]),
+                ['max' => $definition->getMaxRows()],
+            ));
         }
 
         return response()->streamDownload(function () use ($query, $columns, $definition, $format) {
@@ -116,25 +120,6 @@ trait ExportableQuery
             'X-Content-Type-Options' => 'nosniff',
             'Cache-Control' => 'no-store',
             'X-Accel-Buffering' => 'no',
-        ]);
-    }
-
-    /**
-     * A refusal must not be rendered by the exception handler: the debug renderer
-     * returns a full HTML page carrying request/user context, which is both a leak
-     * and indistinguishable from a body the download link just wrote to disk.
-     */
-    private function exportRefusal(Request $request, int $max): Response
-    {
-        $message = __('transfer.export.tooManyRows', ['max' => $max]);
-
-        $response = $request->expectsJson()
-            ? response()->json(['message' => $message, 'max' => $max], 422)
-            : response($message, 422, ['Content-Type' => 'text/plain; charset=UTF-8']);
-
-        return $response->withHeaders([
-            'X-Content-Type-Options' => 'nosniff',
-            'Cache-Control' => 'no-store',
         ]);
     }
 

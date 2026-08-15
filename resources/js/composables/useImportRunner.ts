@@ -27,12 +27,39 @@ export interface CommitResponse {
 
 export type CommitFn = (cursor: { offset: number; line: number }) => Promise<CommitResponse>;
 
+/** Generic i18n key used whenever the failure body is not the JSON refusal payload. */
+export const IMPORT_FAILED_KEY = 'transfer.import.failed';
+
+export interface ImportRunnerOptions {
+    /** Resolves the generic message. Defaults to the raw key so the composable stays i18n-free. */
+    fallback?: () => string;
+}
+
+/**
+ * A refusal body is only trusted when it is the JSON `{ message, max }` payload
+ * the server emits. An HTML error page is never rendered into the error slot;
+ * a transport error (no response at all) keeps its own message.
+ */
+export function importErrorMessage(e: any, fallback: () => string = () => IMPORT_FAILED_KEY): string {
+    const response = e?.response;
+
+    if (response) {
+        const data = response.data;
+
+        return data && typeof data === 'object' && typeof data.message === 'string' && data.message !== ''
+            ? data.message
+            : fallback();
+    }
+
+    return e?.message || fallback();
+}
+
 /**
  * Drives the resumable commit loop: one chunk per request, advancing on the
  * byte offset the server returns. A failed chunk leaves the cursor where it
  * stopped, so Resume continues rather than restarting from 0.
  */
-export function useImportRunner(commit: CommitFn) {
+export function useImportRunner(commit: CommitFn, options: ImportRunnerOptions = {}) {
     const offset = ref(0);
     const line = ref(1);
     const imported = ref(0);
@@ -80,7 +107,7 @@ export function useImportRunner(commit: CommitFn) {
                 }
             }
         } catch (e: any) {
-            error.value = e?.response?.data?.message || e?.message || 'error';
+            error.value = importErrorMessage(e, options.fallback);
             status.value = 'idle';
         } finally {
             running.value = false;

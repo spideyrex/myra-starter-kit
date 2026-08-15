@@ -59,6 +59,10 @@ jobs:
       - name: Install npm dependencies
         run: npm ci
 
+      # Blocking: pure vitest, no browser or DB, so it is stable on the runner.
+      - name: JS unit tests
+        run: npm run test:js
+
       # Non-blocking: vue-tsc passes locally and on the Linux VPS but is flaky
       # on the GitHub runner. The vite build below is the real frontend gate.
       - name: Type check

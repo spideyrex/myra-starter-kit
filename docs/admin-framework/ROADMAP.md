@@ -33,6 +33,28 @@ Concrete, verified gaps in the schema engines.
 
 ---
 
+## C1b — C1 follow-ups (carried from the v2.1.0 sweep)
+
+Known-and-logged, not silently dropped.
+
+- [ ] **Framework stubs are stale.** Every C1 agent skipped `packages/myra/framework/stubs/`
+      because `packages/` is gitignored and absent from a git worktree. Generated projects do
+      not get inline-edit columns, the new actions, or the hint API. Needs: `use HandlesInlineUpdates`
+      + `inlineEditableFields()` in the controller stub, `use HandlesSoftDeletes` + `authorizeBulkVerb()`
+      in the generated `bulkAction()`, and CheckboxColumn/ColorColumn in the index-page stub.
+      **Any future sweep touching `resources/js` must run the stub port as a non-worktree step.**
+- [ ] Markdown field image upload has no server endpoint — `mdUploadRoute` posts to a route that
+      does not exist yet (private disk + signed temporary URL per spec).
+- [ ] `ReplicateAction.schema()` discards user edits: `ActionModal` submits only schema fields, so
+      the modal's values never reach the replicate endpoint.
+- [ ] `ActionGroup.permission()` is dead for a root-level group (copied everywhere except `permission`).
+- [ ] Toggle `min`/`max` are enforced in the renderer only — no matching validation rule is emitted.
+- [ ] i18n pass over the new strings ('Confirm', 'Update failed.', 'Copied to clipboard', 'Page').
+- [ ] `only: []` in the inline-update request is a no-op — Inertia treats an empty array as a full
+      visit, so the "returns no props" optimisation never happens.
+
+---
+
 ## C2 — Table power features
 
 The "view, filter, search, export, import" stability mandate.

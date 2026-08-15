@@ -218,11 +218,14 @@ export function toChartData(
             borderSkipped: false,
             pointRadius: rows.length > 40 ? 0 : 3,
             spanGaps: false,
+            stack: 'current',
             myra: { labelKey: measure.labelKey, measureKey: measure.key, isComparison: false },
         } as MyraDataset);
     });
 
     if (result.comparison) {
+        // A distinct stack id keeps the previous-period series beside the current
+        // one on a stacked chart instead of piling on top of it.
         measures.forEach((measure) => {
             datasets.push({
                 label: measure.labelKey,
@@ -235,6 +238,7 @@ export function toChartData(
                 tension: 0.3,
                 pointRadius: 0,
                 spanGaps: false,
+                stack: 'previous',
                 myra: { labelKey: measure.labelKey, measureKey: measure.key, isComparison: true },
             } as MyraDataset);
         });

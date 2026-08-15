@@ -1,5 +1,14 @@
-import { describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { mount } from '@vue/test-utils';
+
+/** DashboardGrid reads identity from Inertia's shared props, never from `pageProps`. */
+const inertiaPage = vi.hoisted(() => ({ props: {} as any }));
+
+vi.mock('@inertiajs/vue3', () => ({
+    usePage: () => inertiaPage,
+    Link: { name: 'Link', template: '<a><slot /></a>' },
+}));
+
 import { testI18n } from './helpers/i18n';
 import {
     ChartWidget, StatWidget, TableWidget, resolveWidgets, spanClasses,
@@ -107,6 +116,12 @@ describe('DashboardGrid', () => {
         });
     }
 
+    function signIn(user: { roles?: string[]; permissions?: string[] } | null) {
+        inertiaPage.props = user ? { auth: { user } } : {};
+    }
+
+    beforeEach(() => signIn(null));
+
     it('never loads the chart library for a stat-only dashboard', () => {
         const loader = vi.spyOn(chartComponents, 'bar');
 
@@ -125,15 +140,50 @@ describe('DashboardGrid', () => {
     });
 
     it('hides a widget the signed-in actor lacks permission for', () => {
-        const pageProps = { auth: { user: { roles: [], permissions: ['other'] } } };
-        const w = grid([StatWidget.make('secret').permission('reports.view').value(() => 1)], pageProps);
+        signIn({ roles: [], permissions: ['other'] });
+        const w = grid([StatWidget.make('secret').permission('reports.view').value(() => 1)]);
 
         expect(w.findAll('.lg\\:col-span-1')).toHaveLength(0);
     });
 
     it('shows everything to a super-admin', () => {
-        const pageProps = { auth: { user: { roles: ['super-admin'], permissions: [] } } };
-        const w = grid([StatWidget.make('secret').permission('reports.view').value(() => 1)], pageProps);
+        signIn({ roles: ['super-admin'], permissions: [] });
+        const w = grid([StatWidget.make('secret').permission('reports.view').value(() => 1)]);
+
+        expect(w.findAll('.lg\\:col-span-1')).toHaveLength(1);
+    });
+
+    it('shows a permitted widget to a plain actor holding the ability', () => {
+        signIn({ roles: [], permissions: ['reports.view'] });
+        const w = grid([StatWidget.make('secret').permission('reports.view').value(() => 1)]);
+
+        expect(w.findAll('.lg\\:col-span-1')).toHaveLength(1);
+    });
+
+    it('denies a gated widget when there is no auth context at all', () => {
+        const w = grid([StatWidget.make('secret').permission('reports.view').value(() => 1)]);
+
+        expect(w.findAll('.lg\\:col-span-1')).toHaveLength(0);
+    });
+
+    it('ignores an auth block smuggled in through pageProps', () => {
+        const w = grid(
+            [StatWidget.make('secret').permission('reports.view').value(() => 1)],
+            { auth: { user: { roles: ['super-admin'], permissions: ['reports.view'] } } },
+        );
+
+        expect(w.findAll('.lg\\:col-span-1')).toHaveLength(0);
+    });
+
+    it('still honours an explicit can override', () => {
+        const w = mount(DashboardGrid, {
+            props: {
+                widgets: [StatWidget.make('secret').permission('reports.view').value(() => 1)],
+                pageProps: {},
+                can: () => true,
+            },
+            global: { plugins: [testI18n()] },
+        });
 
         expect(w.findAll('.lg\\:col-span-1')).toHaveLength(1);
     });

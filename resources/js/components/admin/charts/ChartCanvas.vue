@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue';
+import { computed, ref, type Component } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { Bar, Line, Pie, Doughnut, Radar, Scatter, PolarArea } from 'vue-chartjs';
 import {
@@ -71,7 +71,15 @@ const emit = defineEmits<{
 const { t } = useI18n();
 const canvasRef = ref<any>(null);
 
-const renderer = computed(() => {
+/**
+ * Typed as the generic `Component` on purpose. vue-chartjs narrows `data`/`options`
+ * to one ChartTypeRegistry key per component, so a union of the seven renderers
+ * would demand props assignable to ALL of them at once — impossible, since
+ * ChartData<'line'> and ChartData<'pie'> disagree on their data element type.
+ * Erasing the narrowing here is the only structural option; correctness still
+ * holds because toChartData/chartOptionsFor branch on the same `props.type`.
+ */
+const renderer = computed<Component>(() => {
     switch (props.type) {
         case 'line':
         case 'area':

@@ -87,6 +87,22 @@ describe('toChartData', () => {
         expect(data.datasets[1].data).toEqual([3, 9]);
     });
 
+    it('puts the comparison series in its own stack so a stacked chart never doubles a bar', () => {
+        const payload = result({
+            comparison: { mode: 'previous', from: '2026-06-17', to: '2026-07-16' },
+            rows: [
+                row('a', { signups: 5 }, { previous: { signups: 3 } }),
+                row('b', { signups: 8 }, { previous: { signups: 9 } }),
+            ],
+        });
+
+        const data = toChartData(payload, 'stackedBar', testTheme) as any;
+
+        expect(data.datasets[0].stack).toBe('current');
+        expect(data.datasets[1].stack).toBe('previous');
+        expect(data.datasets[0].stack).not.toBe(data.datasets[1].stack);
+    });
+
     it('keeps a missing value null so Chart.js draws a gap, never a false zero', () => {
         const payload = result({ rows: [row('a', { signups: null }), row('b', { signups: 8 })] });
         const data = toChartData(payload, 'line', testTheme) as any;

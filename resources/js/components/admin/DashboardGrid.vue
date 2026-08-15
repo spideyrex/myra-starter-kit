@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, defineAsyncComponent, h, provide, type Component } from 'vue';
+import { usePage } from '@inertiajs/vue3';
 import {
     DASHBOARD_SEGMENT, resolveWidgets, spanClasses,
     type SegmentHandler, type WidgetInput, type WidgetSchema, type WidgetType,
@@ -15,7 +16,7 @@ const props = withDefaults(defineProps<{
     /** Server results keyed by widget key. Absent until a report backs the widget. */
     results?: Record<string, ReportResultPayload | StatResultPayload>;
     loading?: Record<string, boolean>;
-    /** Override the permission check; defaults to pageProps.auth.user. */
+    /** Override the permission check; defaults to Inertia's shared auth.user. */
     can?: (ability: string) => boolean;
     /** Bundle D supplies cross-filter / drill-through. Default is a no-op. */
     onSegment?: SegmentHandler;
@@ -46,10 +47,13 @@ const widgetComponents: Record<WidgetType, Component> = {
     custom: CustomWidgetHost,
 };
 
+// Identity comes from Inertia's shared props, never from the caller-supplied
+// `pageProps` — that is the page's own data and carries no auth.
+const page = usePage<any>();
+
 function canDefault(ability: string): boolean {
-    const user = props.pageProps?.auth?.user;
-    // No auth context (demo pages) — the server still authorises the data.
-    if (!user) return true;
+    const user = page.props?.auth?.user;
+    if (!user) return false;
     if (user.roles?.includes('super-admin')) return true;
     return user.permissions?.includes(ability) ?? false;
 }
@@ -84,7 +88,7 @@ function onSegmentFrom(widget: WidgetSchema, row: ReportRow, measureKey: string)
                     <component
                         :is="widgetComponents[widget.type]"
                         v-bind="widgetProps(widget)"
-                        @segment="(row, measureKey) => onSegmentFrom(widget, row, measureKey)"
+                        @segment="(row: ReportRow, measureKey: string) => onSegmentFrom(widget, row, measureKey)"
                     />
                 </LazyMount>
             </div>

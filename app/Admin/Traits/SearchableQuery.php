@@ -47,4 +47,31 @@ trait SearchableQuery
             ->paginate($perPage)
             ->withQueryString();
     }
+
+    /**
+     * Whole-dataset summaries for a table footer (column => summary type).
+     * The spec is always a server-side literal, never derived from the request.
+     *
+     * @param  array<string,string>  $spec  e.g. ['price' => 'sum', 'stock' => 'min']
+     * @return array<string,mixed>
+     */
+    protected function summarise(Builder $query, array $spec): array
+    {
+        $out = [];
+
+        foreach ($spec as $column => $type) {
+            $q = clone $query;
+            $out[$column] = match ($type) {
+                'sum' => (float) $q->sum($column),
+                'average' => (float) $q->avg($column),
+                'count' => (int) $q->count($column),
+                'min' => $q->min($column),
+                'max' => $q->max($column),
+                'range' => trim(($q->min($column) ?? '—') . ' – ' . ((clone $query)->max($column) ?? '—')),
+                default => null,
+            };
+        }
+
+        return $out;
+    }
 }

@@ -96,4 +96,46 @@ return [
         'accept' => ['image/jpeg', 'image/png', 'image/gif', 'image/webp'],
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Exports
+    |--------------------------------------------------------------------------
+    |
+    | Server-streamed exports (App\Admin\Export). `max_rows` is a refusal, not a
+    | truncation: over the cap the request 422s rather than hand back a partial
+    | file the user mistakes for complete.
+    |
+    */
+
+    'exports' => [
+        'max_rows' => 50000,
+        'chunk_size' => 1000,
+        'formats' => ['csv', 'xlsx'],
+        'client_max_rows' => 5000,
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Imports
+    |--------------------------------------------------------------------------
+    |
+    | `resources` maps the {resource} URL segment to a class exposing a static
+    | definition(): App\Admin\Import\ImportDefinition. No migrations, no queue,
+    | no notifications table — chunk_size is the future job boundary.
+    |
+    */
+
+    'imports' => [
+        'max_rows' => 50000,
+        'max_columns' => 128,
+        'chunk_size' => 250,
+        'token_ttl' => 60,
+        'max_failures' => 1000,
+
+        'resources' => [
+            'users' => \App\Admin\Import\UsersImport::class,
+            'demo-contacts' => \App\Admin\Import\DemoContactsImport::class,
+        ],
+    ],
+
 ];

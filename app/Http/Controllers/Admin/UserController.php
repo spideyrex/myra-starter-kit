@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Admin\Export\ExportColumn;
+use App\Admin\Export\ExportDefinition;
+use App\Admin\Traits\ExportableQuery;
 use App\Admin\Traits\HandlesSoftDeletes;
 use App\DTOs\UserData;
 use App\Http\Controllers\Controller;
@@ -14,12 +17,14 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use App\Models\Role;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
 use Inertia\Response;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class UserController extends Controller
 {
+    use ExportableQuery;
     use HandlesSoftDeletes;
 
     private const MODULE = 'users';
@@ -137,30 +142,34 @@ class UserController extends Controller
         return back()->with('success', 'Bulk action completed successfully.');
     }
 
+    /**
+     * Streams the SAME scoped query the listing uses. The pre-v2.2 version built
+     * its own `User::with('roles')->get()`, which bypassed UserService's
+     * created_by ownership scope and super-admin exclusion entirely.
+     */
     public function exportCsv(Request $request): StreamedResponse
     {
-        $users = User::with('roles')
-            ->when($request->search, fn ($q, $s) => $q->where('name', 'like', "%{$s}%")->orWhere('email', 'like', "%{$s}%"))
-            ->get();
+        Gate::authorize(self::MODULE . '.view');
 
-        return response()->streamDownload(function () use ($users) {
-            $file = fopen('php://output', 'w');
-            fputcsv($file, ['ID', 'Name', 'Email', 'Phone', 'Status', 'Roles', 'Created At']);
-
-            foreach ($users as $user) {
-                fputcsv($file, \App\Support\Csv::row([
-                    $user->id,
-                    $user->name,
-                    $user->email,
-                    $user->phone,
-                    $user->status,
-                    $user->roles->pluck('name')->join(', '),
-                    $user->created_at->toDateTimeString(),
-                ]));
-            }
-
-            fclose($file);
-        }, 'users.csv');
+        return $this->streamExport(
+            $this->userService->exportQuery($request, withSearch: true),
+            ExportDefinition::make('users')
+                ->columns([
+                    ExportColumn::make('id')->label('ID'),
+                    ExportColumn::make('name')->label('Name'),
+                    ExportColumn::make('email')->label('Email'),
+                    ExportColumn::make('phone')->label('Phone'),
+                    ExportColumn::make('status')->label('Status'),
+                    ExportColumn::make('roles')->label('Roles')
+                        ->state(fn (User $u) => $u->roles->pluck('name')->join(', ')),
+                    ExportColumn::make('created_at')->label('Created At')->date('Y-m-d H:i'),
+                ])
+                ->eagerLoad(['roles'])
+                ->formats(['csv', 'xlsx'])
+                ->maxRows((int) config('myra.exports.max_rows', 50000))
+                ->filename('users'),
+            $request,
+        );
     }
 
     public function impersonate(User $user): RedirectResponse

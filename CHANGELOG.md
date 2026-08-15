@@ -66,6 +66,74 @@ All notable changes to the Myra Starter Kit are documented here.
   from a bare `Record<string, boolean>` to `{ v: 2, visible, order }`, migrated in place on read;
   the storage key gained the query prefix so two tables on one page no longer collide. New props:
   `tableKey`, `savedViews`, `views`, `columnManager`, `canShareViews`.
+### C — Streaming export + import hardening
+
+#### Security
+- **Export data leak closed.** `UserController::exportCsv` built its own
+  `User::with('roles')->get()`, bypassing `UserService`'s `created_by` ownership scope and the
+  super-admin exclusion — any holder of `users.view` could export every user in the system. It now
+  streams `UserService::exportQuery()`, the same scoped query the listing paginates. Covered by
+  `tests/Feature/ExportScopeTest.php`.
+- Import mapping keys are whitelisted against the declared column names, and mapping values against
+  the staged headers. Previously any client key reached the model and only a hand-written field list
+  stood between an import and mass assignment.
+- TOCTOU closed: `preview()` stages the upload once under `imports/{userId}/{ulid}.csv` on the
+  private disk and hands back a ULID token; `validate` and `commit` re-read from the path derived
+  from that token, never from the request. The committed bytes are always the previewed bytes.
+- Per-record authorization is mandatory — `ImportDefinition::assertConfigured()` throws when
+  `authorizeRow()` is missing, so an import cannot silently skip the guards the single-record path
+  applies. `UsersImport` reproduces the role-privilege guard.
+- All three import write endpoints are rate limited (`throttle:10,1`); they had none. The per-resource
+  ability is resolved from the registry rather than hardcoded to `users.create`.
+- `Csv::filename()` strips everything outside `[A-Za-z0-9._-]`, collapses `..` and truncates to 80
+  chars, so a filename cannot traverse a path or inject a `Content-Disposition` header.
+- Formula-injection escaping (`Csv::cell`) is unconditional in **both** CSV and XLSX output.
+
+#### Added
+- `App\Admin\Export\ExportDefinition` + `ExportColumn` — declarative exports with `state()`,
+  `formatStateUsing()`, `date()`, `counts()`, `sum()`, `limit()`, `sensitive()`,
+  `enabledByDefault()`. Client column picks are intersected with the declared set, never trusted.
+- `ExportableQuery::streamExport()` — keyset (`lazyById`) iteration, so an export is constant-memory
+  and stable under concurrent writes; `chunk()`'s OFFSET paging skips and duplicates rows mid-export.
+  `preserveSort()` opts into `cursor()` and lowers `maxRows` to 20 000.
+- Over `maxRows` the request **422s**; it never returns a truncated file the user mistakes for
+  complete.
+- Streaming XLSX writer (`XlsxRowWriter`) — inline strings written to a temp sheet stream, zipped and
+  piped out. Dependency-free (ZipArchive); swap in OpenSpout later without touching callers.
+- `App\Admin\Import\{ImportDefinition, ImportColumn, ImportRegistry, ImportSession, HeaderMapper}`
+  and a four-endpoint pipeline: `preview` → `validate` → `commit` (resumable) → `failures`.
+  **No migrations, no queue, no notifications table.**
+- Resumable commit: one chunk per request inside a transaction, returning the byte offset to resume
+  from. Memory is O(chunk); a killed request resumes where it stopped and never leaves a half-written
+  row. `chunkSize` is the future job boundary.
+- Server-side auto-mapping in four passes: exact → normalised → declared `guess()` aliases →
+  Levenshtein ≤ 2.
+- `validate` dry-runs rows and returns per-cell errors; failures accumulate to a downloadable CSV
+  (capped at 1000 rows, after which the run reports `aborted`). `sensitive()` columns are `***`.
+- `ImportErrorGrid.vue` — a real `<table>` with `<caption>`, `scope="col"`, `aria-invalid` +
+  `aria-describedby` on offending cells, and an icon + text so colour is never the only signal.
+- `useImportRunner` — the commit loop, with Resume that continues from the stored cursor rather than
+  restarting.
+- `make:myra-import` now generates an `ImportDefinition` and registers it in `config/myra.php`;
+  `make:myra-export` emits an `ExportDefinition`.
+- `transfer.*` i18n namespace in `{en,ms,zh}.json`, plus `lang/{en,ms,zh}/transfer.php` for the
+  server-side messages.
+
+#### Changed
+- `ExportDropdown` takes a route **name** and reads `window.location.search` itself, so "Export CSV"
+  finally carries the active filters — it silently exported everything before. Adds a column picker.
+- The browser XLSX item is relabelled "this page only" and `useExcelExport` refuses above
+  `MAX_CLIENT_ROWS = 5000`, pointing at the server route.
+- `ImportModal` steps become upload → map → validate → import → result, with a `role="progressbar"`
+  and a polite live region.
+- The `if (count($errors) >= 10) break;` bail-out is gone — it stopped importing while reporting
+  `imported` as if it were the truth.
+- `EmailLogController` / `ActivityLogController` exports drop `->latest()->get()` for the streamed
+  path; `UserService`, `ArticleService` and `PageService` expose `exportQuery()`.
+
+#### Deferred
+- Queued/batched export and import above a threshold, PDF format, scheduled exports, "revert this
+  import".
 
 ## v2.1.0 — 2026-08
 

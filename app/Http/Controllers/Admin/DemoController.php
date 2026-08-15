@@ -703,6 +703,8 @@ class DemoController extends Controller
         return back()->with('success', "Task #{$id} archived.");
     }
 
+    // >>> MYRA v2.2 [C] START
+
     public function exportCsv()
     {
         $this->seedFaker(300);
@@ -718,68 +720,45 @@ class DemoController extends Controller
             $handle = fopen('php://output', 'w');
             fputcsv($handle, ['Name', 'Email', 'Phone', 'Company']);
             foreach ($items as $item) {
-                fputcsv($handle, $item);
+                fputcsv($handle, \App\Support\Csv::row($item));
             }
             fclose($handle);
-        }, 'demo-contacts-export.csv', ['Content-Type' => 'text/csv']);
+        }, \App\Support\Csv::filename('demo-contacts'), [
+            'Content-Type' => 'text/csv; charset=UTF-8',
+            'X-Content-Type-Options' => 'nosniff',
+            'Cache-Control' => 'no-store',
+        ]);
     }
 
-    // --- Demo Import (mock responses for ImportModal) ---
-
-    public function demoImportPreview(Request $request)
+    /**
+     * A deliberately broken sample so the demo's per-cell error grid has
+     * something to show: a duplicate email and an out-of-range status.
+     */
+    public function importSample()
     {
-        $request->validate(['file' => 'required|file|mimes:csv,txt|max:5120']);
+        $rows = [
+            ['Full Name', 'E-Mail', 'Mobile', 'Organisation', 'State'],
+            ['Ada Lovelace', 'ada@example.com', '+60 12-345 6789', 'Analytical Engines Ltd', 'active'],
+            ['Grace Hopper', 'grace@example.com', '+60 12-987 6543', 'COBOL Systems', 'pending'],
+            ['Alan Turing', 'not-an-email', '+60 11-222 3333', 'Bletchley Ltd', 'active'],
+            ['', 'ada@example.com', '+60 12-345 6789', 'Analytical Engines Ltd', 'sideways'],
+            ['Katherine Johnson', 'katherine@example.com', '+60 13-444 5555', 'Orbital Maths', 'suspended'],
+        ];
 
-        $file = $request->file('file');
-        $handle = fopen($file->getRealPath(), 'r');
-        $headers = fgetcsv($handle);
-
-        if (!$headers) {
-            fclose($handle);
-            return response()->json(['error' => 'Unable to read CSV headers.'], 422);
-        }
-
-        $headers[0] = preg_replace('/^\x{FEFF}/u', '', $headers[0]);
-        $headers = array_map('trim', $headers);
-
-        $preview = [];
-        $rowCount = 0;
-        while (($row = fgetcsv($handle)) !== false) {
-            if ($rowCount < 5) {
-                $preview[] = array_combine($headers, array_pad($row, count($headers), ''));
+        return response()->streamDownload(function () use ($rows) {
+            $handle = fopen('php://output', 'w');
+            foreach ($rows as $row) {
+                fputcsv($handle, \App\Support\Csv::row($row));
             }
-            $rowCount++;
-        }
-        fclose($handle);
-
-        return response()->json([
-            'headers' => $headers,
-            'preview' => $preview,
-            'total_rows' => $rowCount,
+            fclose($handle);
+        }, \App\Support\Csv::filename('demo-contacts-sample'), [
+            'Content-Type' => 'text/csv; charset=UTF-8',
+            'X-Content-Type-Options' => 'nosniff',
+            'Cache-Control' => 'no-store',
         ]);
     }
 
-    public function demoImportExecute(Request $request)
-    {
-        $request->validate([
-            'file' => 'required|file|mimes:csv,txt|max:5120',
-            'mapping' => 'required|array',
-        ]);
-
-        $file = $request->file('file');
-        $handle = fopen($file->getRealPath(), 'r');
-        fgetcsv($handle); // skip header
-        $rowCount = 0;
-        while (fgetcsv($handle) !== false) {
-            $rowCount++;
-        }
-        fclose($handle);
-
-        return response()->json([
-            'imported' => $rowCount,
-            'errors' => [],
-        ]);
-    }
+    // <<< MYRA v2.2 [C] END
 
     // =========================================================================
     // Helper methods

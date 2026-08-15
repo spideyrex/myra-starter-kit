@@ -179,5 +179,52 @@
         "search": "Cari lajur",
         "title": "Lajur",
         "visible": "Kelihatan"
+    },
+    "transfer": {
+        "export": {
+            "button": "Eksport",
+            "columns": "Lajur",
+            "csv": "Eksport CSV",
+            "keyOrder": "Baris dieksport mengikut susunan ID, bukan susunan yang dipaparkan.",
+            "matchView": "Padan paparan semasa",
+            "preparing": "Menyediakan eksport anda...",
+            "selectAll": "Pilih semua",
+            "selectNone": "Kosongkan pilihan",
+            "tooManyRows": "Terlalu banyak baris untuk eksport pelayar (had {max}). Gunakan Eksport CSV yang distrim dari pelayan.",
+            "xlsx": "Eksport XLSX",
+            "xlsxPageOnly": "Eksport XLSX (halaman ini sahaja)"
+        },
+        "import": {
+            "a11y": {
+                "errorGrid": "Baris yang gagal pengesahan",
+                "progress": "Kemajuan import"
+            },
+            "aborted": "Import dihentikan: terlalu banyak baris gagal.",
+            "cellError": "Nilai tidak sah",
+            "columnsMapped": "{mapped} daripada {total} lajur dipadankan.",
+            "commit": "Mula import",
+            "done": "Import selesai.",
+            "downloadSample": "Muat turun contoh CSV",
+            "expected": "Lajur dijangka: {columns}",
+            "failuresCsv": "Muat turun baris gagal",
+            "file": "Fail CSV",
+            "invalidRows": "{count} baris mengandungi ralat.",
+            "map": "Padankan lajur",
+            "mappingRequired": "Setiap lajur yang diwajibkan mesti dipadankan sebelum import.",
+            "noErrors": "Tiada ralat ditemui dalam baris yang disemak.",
+            "progress": "{done} daripada {total} baris diproses.",
+            "required": "Wajib",
+            "result": "Keputusan",
+            "resume": "Sambung semula",
+            "rowsImported": "{imported} dicipta, {updated} dikemas kini, {failed} gagal.",
+            "skip": "Langkau baris tidak sah",
+            "skipColumn": "-- Langkau --",
+            "sourceColumn": "Lajur sumber",
+            "title": "Import",
+            "tooManyColumns": "Fail ini mempunyai lebih daripada {max} lajur.",
+            "tooManyRows": "Fail ini mempunyai lebih daripada {max} baris.",
+            "upload": "Muat naik",
+            "validate": "Semak baris"
+        }
     }
 }

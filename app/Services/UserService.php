@@ -7,6 +7,7 @@ use App\DTOs\UserData;
 use App\Models\Role;
 use App\Models\User;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -15,7 +16,18 @@ class UserService
 {
     use SearchableQuery;
 
-    public function list(Request $request): LengthAwarePaginator
+    /** Columns the listing search spans. Mirrored by exportQuery(withSearch: true). */
+    private const SEARCHABLE = ['name', 'email'];
+
+    /**
+     * Ownership scoping + every filter, without pagination. The export path must
+     * reuse this: a hand-rolled export query is how a listing scope gets bypassed.
+     *
+     * `$withSearch` exists because list() delegates the search clause to
+     * applySearchAndPaginate() (owned elsewhere); the export has no paginator to
+     * delegate to. C3 unifies the two.
+     */
+    public function exportQuery(Request $request, bool $withSearch = false): Builder
     {
         $current = Auth::user();
 
@@ -37,10 +49,23 @@ class UserService
             $query->withTrashed();
         }
 
+        if ($withSearch && $request->search) {
+            $query->where(function ($q) use ($request) {
+                foreach (self::SEARCHABLE as $column) {
+                    $q->orWhere($column, 'like', '%' . $request->search . '%');
+                }
+            });
+        }
+
+        return $query;
+    }
+
+    public function list(Request $request): LengthAwarePaginator
+    {
         return $this->applySearchAndPaginate(
-            $query,
+            $this->exportQuery($request),
             $request,
-            searchable: ['name', 'email'],
+            searchable: self::SEARCHABLE,
         );
     }
 

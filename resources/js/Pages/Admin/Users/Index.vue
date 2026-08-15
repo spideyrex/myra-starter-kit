@@ -158,10 +158,7 @@ const actions = [
         <ImportModal
             v-model:open="showImport"
             title="Import Users"
-            :preview-route="route('admin.import.preview')"
-            :execute-route="route('admin.import.execute')"
             resource="users"
-            :expected-columns="['name', 'email', 'password', 'phone', 'status', 'role']"
         />
     </AuthenticatedLayout>
 </template>

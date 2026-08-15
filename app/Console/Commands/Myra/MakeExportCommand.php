@@ -13,7 +13,7 @@ class MakeExportCommand extends Command
     protected $signature = 'make:myra-export {name : Model name in PascalCase (e.g. Product)}
         {--print : Print the route snippet instead of editing routes/web.php}';
 
-    protected $description = 'Scaffold a streaming CSV export controller for a model (uses the ExportableQuery trait) + route, gated by {prefix}.view';
+    protected $description = 'Scaffold a streaming CSV/XLSX export controller for a model (ExportDefinition + ExportableQuery) + route, gated by {prefix}.view';
 
     public function handle(): int
     {
@@ -34,9 +34,9 @@ class MakeExportCommand extends Command
         $this->newLine();
         $this->components->info("Export scaffolded → GET /admin/{$prefix}/export-csv");
         $this->components->bulletList([
-            "Customize the headers + row mapper in {$name}ExportController.",
-            "Add an export button to your index page:",
-            "  <Button as-child><Link :href=\"route('admin.{$prefix}.export-csv')\">Export CSV</Link></Button>",
+            "Declare your columns on the ExportDefinition in {$name}ExportController.",
+            'Pass the SAME scoped query your index uses — the definition adds columns, never rows.',
+            'Add <ExportDropdown :csv-route="\'admin.' . $prefix . '.export-csv\'" ... /> to your index page.',
         ]);
 
         return self::SUCCESS;
@@ -49,9 +49,12 @@ class MakeExportCommand extends Command
 
 namespace App\\Http\\Controllers\\Admin;
 
+use App\\Admin\\Export\\ExportColumn;
+use App\\Admin\\Export\\ExportDefinition;
 use App\\Admin\\Traits\\ExportableQuery;
 use App\\Http\\Controllers\\Controller;
 use App\\Models\\{$name};
+use Illuminate\\Support\\Facades\\Gate;
 use Illuminate\\Http\\Request;
 use Symfony\\Component\\HttpFoundation\\StreamedResponse;
 
@@ -61,15 +64,20 @@ class {$name}ExportController extends Controller
 
     public function __invoke(Request \$request): StreamedResponse
     {
-        // TODO: customize the columns + row mapping for your model.
-        return \$this->streamCsvExport(
+        Gate::authorize('{$prefix}.view');
+
+        // Pass the same scoped + filtered query your index uses, so the export can
+        // never return a row the listing would not.
+        return \$this->streamExport(
             {$name}::query(),
-            ['ID', 'Created At'],
-            fn (\$record) => [
-                \$record->id,
-                optional(\$record->created_at)->toDateTimeString(),
-            ],
-            '{$prefix}.csv',
+            ExportDefinition::make('{$prefix}')
+                ->columns([
+                    ExportColumn::make('id')->label('ID'),
+                    ExportColumn::make('created_at')->label('Created At')->date('Y-m-d H:i'),
+                ])
+                ->formats(['csv', 'xlsx'])
+                ->filename('{$prefix}'),
+            \$request,
         );
     }
 }

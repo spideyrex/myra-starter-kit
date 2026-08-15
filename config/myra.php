@@ -7,7 +7,7 @@ return [
     | Framework version
     |--------------------------------------------------------------------------
     */
-    'version' => '2.2.0',
+    'version' => '2.3.0',
 
     /*
     |--------------------------------------------------------------------------
@@ -65,6 +65,7 @@ return [
         'reordering'         => ['demo' => 'Reordering',      'method' => 'forReordering',      'request' => false, 'label' => 'Reordering'],
         'map'                => ['demo' => 'Map',             'method' => null,                 'request' => false, 'label' => 'Map'],
         'saved-views'        => ['demo' => 'SavedViews',      'method' => 'forSavedViews',      'request' => true,  'label' => 'Saved Views'],
+        'reports'            => ['demo' => 'Reports',         'method' => null,                 'request' => false, 'label' => 'Reports & Charts'],
     ],
 
     /*
@@ -167,5 +168,69 @@ return [
         'max_term' => 100,
     ],
     // <<< MYRA v2.2 [D] END
+
+    // >>> MYRA v2.3 [B] START
+    /*
+    |--------------------------------------------------------------------------
+    | Reports
+    |--------------------------------------------------------------------------
+    |
+    | Every number a report produces is computed by the database. These are the
+    | ceilings that keep it that way: `max_groups` caps the rows a grouped
+    | statement may return (over it is a 422, never a truncated chart) and
+    | `max_period_days` caps the window a client may ask for.
+    |
+    | `definitions` maps the {report} URL segment to a class exposing a static
+    | definition(): App\Admin\Report\ReportDefinition.
+    |
+    */
+
+    'reports' => [
+        'max_groups'      => 200,
+        'hard_max_groups' => 2000,
+        'max_measures'    => 6,
+        'max_period_days' => 1830,
+        'max_batch'       => 12,
+        'cache_ttl'       => 120,
+        'formats'         => ['csv', 'xlsx', 'pdf'],
+        'definitions'     => [
+            'users'    => \App\Admin\Report\Reports\UsersReport::class,
+            'activity' => \App\Admin\Report\Reports\ActivityReport::class,
+            // myra:reports — make:myra-report inserts definitions above this line.
+        ],
+    ],
+    // <<< MYRA v2.3 [B] END
+
+    // >>> MYRA v2.3 [C] START
+    /*
+    |--------------------------------------------------------------------------
+    | Charts
+    |--------------------------------------------------------------------------
+    */
+
+    'charts' => [
+        'default_type'    => 'bar',
+        'sparkline_points'=> 30,
+        'lazy'            => true,
+    ],
+    // <<< MYRA v2.3 [C] END
+
+    // >>> MYRA v2.3 [D] START
+    /*
+    |--------------------------------------------------------------------------
+    | Scheduled report delivery
+    |--------------------------------------------------------------------------
+    */
+
+    'report_schedules' => [
+        'max_per_user'      => 20,
+        'max_recipients'    => 25,
+        'pause_after_fails' => 3,
+        'dispatch_limit'    => 200,
+        'dispatch_window'   => 15,
+        'pdf_disk'          => 'local',
+        'pdf_ttl_minutes'   => 60,
+    ],
+    // <<< MYRA v2.3 [D] END
 
 ];

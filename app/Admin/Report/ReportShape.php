@@ -44,7 +44,9 @@ final class ReportShape
         }
 
         if (isset($state['cross'])) {
-            if (! is_array($state['cross']) || array_is_list($state['cross'])) {
+            // An empty map round-trips through JSON as [], which array_is_list()
+            // reports as a list — so only a NON-empty list is malformed.
+            if (! is_array($state['cross']) || ($state['cross'] !== [] && array_is_list($state['cross']))) {
                 self::fail($attribute, 'The saved report state is malformed.');
             }
 

@@ -301,8 +301,12 @@ class ReportRunnerTest extends TestCase
         $this->assertFalse($result->truncated());
     }
 
-    public function test_drill_is_null_until_a_resolver_is_bound(): void
+    public function test_drill_is_null_when_no_resolver_is_bound(): void
     {
+        // AppServiceProvider binds a DrillResolver, so unbind it to exercise the
+        // no-resolver path the runner still has to support.
+        $this->app->offsetUnset(\App\Admin\Report\Contracts\DrillResolver::class);
+
         $actor = $this->warm($this->actingAsSuperAdmin());
         User::factory()->count(1)->create();
 
@@ -310,6 +314,24 @@ class ReportRunnerTest extends TestCase
 
         foreach ($result->rows() as $row) {
             $this->assertNull($row->drill);
+        }
+    }
+
+    public function test_drill_is_populated_when_a_resolver_is_bound(): void
+    {
+        $this->assertTrue($this->app->bound(\App\Admin\Report\Contracts\DrillResolver::class));
+
+        $actor = $this->warm($this->actingAsSuperAdmin());
+        User::factory()->count(1)->create();
+
+        $result = $this->runReport(['dimension' => 'created_at'], $actor);
+
+        $rows = iterator_to_array($result->rows());
+        $this->assertNotEmpty($rows);
+
+        foreach ($rows as $row) {
+            $this->assertIsArray($row->drill);
+            $this->assertArrayHasKey('url', $row->drill);
         }
     }
 

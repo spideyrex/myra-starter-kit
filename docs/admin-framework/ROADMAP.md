@@ -110,14 +110,14 @@ The "view, filter, search, export, import" stability mandate.
 
 Beyond Filament — this is a differentiator, not a parity item.
 
-- [ ] Report builder: composable report definitions (source, dimensions, measures, filters)
-- [ ] Chart library expansion: line, bar, stacked, area, pie/donut, radar, scatter, heatmap,
+- [x] Report builder: composable report definitions (source, dimensions, measures, filters) — v2.3.0
+- [x] Chart library expansion: line, bar, stacked, area, pie/donut, radar, scatter, heatmap, — v2.3.0
       funnel, gauge, sparkline (current: chart.js + vue-chartjs)
-- [ ] Drill-down — click a chart segment to open the filtered table
-- [ ] Cross-filtering between dashboard widgets
-- [ ] Scheduled reports — cron → render → email delivery (email templates already exist)
-- [ ] PDF export for reports; Excel export exists (`useExcelExport.ts`)
-- [ ] Comparison periods (vs previous period / year) on stat + chart widgets
+- [x] Drill-down — click a chart segment to open the filtered table — v2.3.0
+- [x] Cross-filtering between dashboard widgets — v2.3.0
+- [x] Scheduled reports — cron → render → email delivery (email templates already exist) — v2.3.0
+- [x] PDF export for reports; Excel export exists (`useExcelExport.ts`) — v2.3.0
+- [x] Comparison periods (vs previous period / year) on stat + chart widgets — v2.3.0
 
 ---
 

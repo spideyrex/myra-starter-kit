@@ -46,6 +46,36 @@ class ReportViewTest extends TestCase
         $this->assertSame('status', $view->payload['dimension']);
     }
 
+    /**
+     * Saves the state the SERVER actually produces, not a hand-written literal.
+     * ReportRequest::toArray() always emits `cross`, which is [] when unset —
+     * the shape check rejected that, so every real save from the UI 422'd while
+     * the literal-based test above stayed green.
+     */
+    public function test_the_server_produced_state_saves_without_a_validation_error(): void
+    {
+        $actor = $this->actingAsSuperAdmin();
+
+        $definition = ReportRegistry::resolve('users');
+        $state = ReportRequest::parse([], $definition, $actor)->toArray();
+
+        $this->assertArrayHasKey('cross', $state);
+        $this->assertSame([], $state['cross']);
+
+        $this->post(route('admin.table-views.store'), [
+            'table_key' => self::KEY,
+            'name' => 'Server produced',
+            'visibility' => 'private',
+            'is_default' => false,
+            'payload' => $state,
+        ])->assertSessionHasNoErrors()->assertRedirect();
+
+        $this->assertDatabaseHas('table_views', [
+            'table_key' => self::KEY,
+            'name' => 'Server produced',
+        ]);
+    }
+
     public function test_a_saved_state_round_trips_through_report_request_parse(): void
     {
         $actor = $this->actingAsSuperAdmin();

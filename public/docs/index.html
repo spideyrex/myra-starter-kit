@@ -2105,6 +2105,7 @@ CREATE INDEX `idx_sort_order` ON `tasks` (`sort_order`);</code></pre>
 import {
     TextEntry, BadgeEntry, DateEntry, BooleanEntry,
     ImageEntry, IconEntry, RepeatableEntry, KeyValueEntry,
+    ColorEntry, CodeEntry,
 } from '@/composables/useInfolistSchema';
 
 // Layout types (reused from form builder)
@@ -2125,6 +2126,8 @@ import { InfolistEntries } from '@/components/admin';</code></pre>
             <tr><td><code>IconEntry</code></td><td>Lucide icon</td><td><code>.icon(fn)</code>, <code>.color(fn)</code></td></tr>
             <tr><td><code>RepeatableEntry</code></td><td>List of sub-entries</td><td><code>.schema(entries[])</code></td></tr>
             <tr><td><code>KeyValueEntry</code></td><td>Key-value table</td><td>(none &mdash; renders object as key/value pairs)</td></tr>
+            <tr><td><code>ColorEntry</code></td><td>Colour swatch + value</td><td><code>.copyable()</code>, <code>.copyMessage(text)</code>, <code>.showValue()</code>, <code>.swatchOnly()</code>, <code>.swatchSize(px)</code>, <code>.circular()</code></td></tr>
+            <tr><td><code>CodeEntry</code></td><td>Read-only highlighted code block</td><td><code>.language(lang)</code>, <code>.lineNumbers()</code>, <code>.wrap()</code>, <code>.maxLines(n)</code>, <code>.startLine(n)</code>, <code>.highlightLines([n])</code>, <code>.filename(name)</code>, <code>.copyable()</code></td></tr>
         </tbody>
     </table>
 
@@ -2172,6 +2175,53 @@ const schema = [
         ]),
     ]),
 ];</code></pre>
+
+    <h3>ColorEntry</h3>
+    <p>Renders a colour swatch beside its literal value, with a copy button. Shares the <code>&lt;ColorSwatch&gt;</code> renderer with <code>ColorColumn</code>, so a colour looks identical in a table and on a show page.</p>
+    <table>
+        <thead><tr><th>Method</th><th>Default</th><th>Description</th></tr></thead>
+        <tbody>
+            <tr><td><code>.copyable(value = true)</code></td><td><code>true</code></td><td>Show the copy-to-clipboard button</td></tr>
+            <tr><td><code>.copyMessage(text)</code></td><td><code>'Copied to clipboard'</code></td><td>Toast shown after copying</td></tr>
+            <tr><td><code>.showValue(value = true)</code></td><td><code>true</code></td><td>Render the literal value next to the swatch</td></tr>
+            <tr><td><code>.swatchOnly()</code></td><td>&mdash;</td><td>Alias for <code>.showValue(false)</code></td></tr>
+            <tr><td><code>.swatchSize(px)</code></td><td><code>24</code></td><td>Swatch edge length in pixels</td></tr>
+            <tr><td><code>.circular(value = true)</code></td><td><code>false</code></td><td>Round swatch instead of a rounded square</td></tr>
+        </tbody>
+    </table>
+    <pre><code class="language-typescript">Section.make('Branding').icon(Palette).columns(3).schema([
+    ColorEntry.make('primary_color'),
+    ColorEntry.make('accent_color').swatchOnly().circular(),
+    TextEntry.make('updated_at').label('Last changed'),
+] as any),</code></pre>
+    <p><strong>Security.</strong> The value reaches an inline <code>style</code>, so it is matched against a strict hex/rgb/hsl regex first. Anything else (<code>red; background-image: url(x)</code>, <code>var(--x)</code>, <code>expression(1)</code>) renders as plain text and never as CSS.</p>
+    <p><strong>Accessibility.</strong> Colour is never the only carrier of information: with <code>.swatchOnly()</code> the swatch takes <code>role="img"</code> and an <code>aria-label</code> of the value; otherwise the value renders as adjacent text and the swatch is <code>aria-hidden</code>. An alpha value (8-digit hex, <code>rgba()</code>, <code>hsla()</code>) draws a checkerboard behind the swatch so transparency is visible.</p>
+
+    <h3>CodeEntry</h3>
+    <p>Read-only, syntax-highlighted code. Uses the <em>read-only</em> half of <code>useCodeMirror</code> (<code>highlightToHtml</code>) &mdash; grammar plus <code>@lezer/highlight</code> only, no <code>EditorView</code>, no contenteditable. The renderer (<code>CodeBlock.vue</code>) is loaded through <code>defineAsyncComponent</code>, and highlighting does not start until the block scrolls within 200px of the viewport.</p>
+    <table>
+        <thead><tr><th>Method</th><th>Default</th><th>Description</th></tr></thead>
+        <tbody>
+            <tr><td><code>.language(lang)</code></td><td><code>'plaintext'</code></td><td>One of the shared <code>CodeLanguage</code> values (same list as the <code>code</code> form field)</td></tr>
+            <tr><td><code>.lineNumbers(value = true)</code></td><td><code>true</code></td><td><code>aria-hidden</code> line-number gutter</td></tr>
+            <tr><td><code>.wrap(value = true)</code></td><td><code>true</code></td><td>Soft-wrap long lines instead of scrolling horizontally</td></tr>
+            <tr><td><code>.maxLines(n)</code></td><td><code>400</code></td><td>Lines highlighted eagerly; the rest sit behind an Expand button</td></tr>
+            <tr><td><code>.startLine(n)</code></td><td><code>1</code></td><td>First gutter number (for excerpts)</td></tr>
+            <tr><td><code>.highlightLines([n])</code></td><td><code>[]</code></td><td>Absolute line numbers to emphasise</td></tr>
+            <tr><td><code>.filename(name)</code></td><td>&mdash;</td><td>Filename shown in the header bar</td></tr>
+            <tr><td><code>.copyable(value = true)</code></td><td><code>true</code></td><td>Copy button in the header bar</td></tr>
+        </tbody>
+    </table>
+    <pre><code class="language-typescript">Section.make('Last webhook delivery').columns(1).schema([
+    CodeEntry.make('response_body')
+        .language('json')
+        .filename('response.json')
+        .maxLines(300)
+        .highlightLines([4, 5]),
+] as any),</code></pre>
+    <p>An object or array value is pretty-printed with <code>JSON.stringify(value, null, 2)</code> and the language is forced to <code>json</code>, so a raw payload column needs no formatting code.</p>
+    <p><strong>Accessibility.</strong> The block is <code>&lt;pre&gt;&lt;code class="language-x"&gt;</code> with <code>tabindex="0"</code>, <code>role="region"</code> and an <code>aria-label</code> (filename, entry label, or "&lt;language&gt; code"), so a scrollable region is reachable by keyboard. The gutter is <code>aria-hidden</code>, so a screen reader reads the code rather than "1 2 3 4". The Expand button carries <code>aria-expanded</code> and <code>aria-controls</code>.</p>
+    <p><strong>Security.</strong> Highlighted markup passes through <code>sanitizeHtml</code> before <code>v-html</code>. If the highlighter chunk fails to load, the block degrades to escaped plain text rather than raw HTML.</p>
 
     <h3>Rendering</h3>
     <pre><code class="language-xml">&lt;InfolistEntries :schema="schema" :record="user" /&gt;</code></pre>
@@ -3511,9 +3561,9 @@ import { Button } from '@/components/ui/button';
     <h4>useInfolistSchema</h4>
     <p>Infolist entry builder API for defining read-only detail views with a fluent, chainable syntax. Re-exports layout classes from <code>useFormSchema</code> for structural composition.</p>
     <p><strong>File:</strong> <code>resources/js/composables/useInfolistSchema.ts</code></p>
-    <p><strong>Entry exports:</strong> <code>TextEntry</code>, <code>BadgeEntry</code>, <code>DateEntry</code>, <code>BooleanEntry</code>, <code>ImageEntry</code>, <code>IconEntry</code>, <code>RepeatableEntry</code>, <code>KeyValueEntry</code></p>
+    <p><strong>Entry exports:</strong> <code>TextEntry</code>, <code>BadgeEntry</code>, <code>DateEntry</code>, <code>BooleanEntry</code>, <code>ImageEntry</code>, <code>IconEntry</code>, <code>RepeatableEntry</code>, <code>KeyValueEntry</code>, <code>ColorEntry</code>, <code>CodeEntry</code></p>
     <p><strong>Layout re-exports:</strong> <code>Section</code>, <code>Grid</code>, <code>Tabs</code>, <code>Tab</code>, <code>Fieldset</code>, <code>Flex</code></p>
-    <p><strong>Type exports:</strong> <code>EntrySchema</code>, <code>EntryType</code>, <code>InfolistSchemaItem</code></p>
+    <p><strong>Type exports:</strong> <code>EntrySchema</code>, <code>EntryType</code>, <code>InfolistSchemaItem</code>, <code>CodeLanguage</code> (re-exported from <code>useFormSchema</code> so entries and the <code>code</code> field share one language list)</p>
     <p>See <a href="#infolist-builder">Infolist Builder</a> for full documentation.</p>
 
     <h4>useDashboardWidgets</h4>
@@ -5783,7 +5833,7 @@ type SchemaItem = BaseField | LayoutItem; // Field or layout wrapper</code></pre
 
     <h4>EntrySchema (Infolist)</h4>
     <p>Used by infolist entry builders (<code>TextEntry</code>, <code>BadgeEntry</code>, <code>DateEntry</code>, etc.).</p>
-    <pre><code class="language-typescript">type EntryType = 'text' | 'badge' | 'date' | 'boolean' | 'image' | 'icon' | 'repeatable' | 'key-value';
+    <pre><code class="language-typescript">type EntryType = 'text' | 'badge' | 'date' | 'boolean' | 'image' | 'icon' | 'repeatable' | 'key-value' | 'color' | 'code';
 
 interface EntrySchema {
     key: string;
@@ -5818,6 +5868,19 @@ interface EntrySchema {
     // Icon
     iconFn?: (value: any, record: any) =&gt; Component;
     colorFn?: (value: any, record: any) =&gt; string;
+    // Color   (copyable is shared with Text, above)
+    copyMessage?: string;
+    swatchShowValue?: boolean;
+    swatchSize?: number;
+    swatchShape?: 'square' | 'circle';
+    // Code
+    codeLanguage?: CodeLanguage;
+    codeLineNumbers?: boolean;
+    codeWrap?: boolean;
+    codeMaxLines?: number;
+    codeStartLine?: number;
+    codeHighlightLines?: number[];
+    codeFilename?: string;
     // Repeatable
     subSchema?: EntrySchema[];
     // Visibility

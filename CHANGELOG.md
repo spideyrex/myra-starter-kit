@@ -2,6 +2,44 @@
 
 All notable changes to the Myra Starter Kit are documented here.
 
+## [2.2.0]
+
+### A — C1b follow-up defects
+
+- **Inline (markdown) image upload.** New `InlineUploadController` + `admin.uploads.inline` /
+  `admin.uploads.inline.show` routes. Files land on the **private** `local` disk under
+  `inline/{userId}/{ulid}.{ext}` — nothing is written to `public/`. `mimes:` is not trusted:
+  `getimagesize()` re-checks the magic bytes and a `.png`-named text file is a 422. Reads are
+  authorised as *owner OR `media.view`*, and a miss is a **404, never a 403**, so the endpoint is
+  not an existence oracle. Responses carry `nosniff`, `Content-Disposition: inline` and a
+  `default-src 'none'; sandbox` CSP. `MarkdownEditor.uploadRoute()` now defaults to the shipped
+  route and gains `.maxUploadKb()` / `.acceptedUploadTypes()`; the editor pre-checks both, sends
+  `X-CSRF-TOKEN` + `Accept: application/json` with `credentials: 'same-origin'`, exposes a
+  `role="status"` uploading line and disables the image button while a request is in flight.
+  Limits live in `config('myra.uploads')`.
+- **`ReplicateAction.schema()` keeps the user's edits.** `ActionModal` gained `payloadKey` and
+  `extraPayload`; the modal now posts `{except, only, relations, suffix, redirect_to, overrides:
+  {...row overrides, ...form values}}` instead of bare form values, so the schema fields actually
+  reach `Replicates::replicate()`. Form values win on collision. New `ReplicateAction.fillFrom()`
+  seeds the modal separately from `overrides()`. The server whitelist is unchanged — an override
+  outside `fillable` is still dropped.
+- **`ActionGroup.permission()` gates a root-level group.** New exported `resolveActionItems()`
+  returns `rootGroup: null` and an empty item list when the single top-level group's permission is
+  denied, instead of painting an empty trigger. `ActionGroup` also gained `visibleWhen()` /
+  `hiddenWhen()`, evaluated per row.
+- **Toggle `min()` / `max()` produce a rule.** `BaseField.rules()` added on every field;
+  `ToggleGroupField` / `ToggleButtons` / `CheckboxList` auto-derive `['array', 'min:n', 'max:n']`
+  under any explicit `.rules()`. `FormField` renders an advisory `validation.selectBetween` message
+  wired via `aria-describedby` with `aria-invalid` on the group container.
+- **i18n for the v2.1.0 strings.** New top-level `table` namespace (`table.filters`, `table.active`,
+  `table.updateFailed`, `table.scope.page`, `table.upload.*`) plus `common.copiedToClipboard` and
+  `validation.selectBetween`, in `en` / `ms` / `zh`. Replaces the hardcoded English in
+  `DataTable.vue`, `ActionModal.vue` and `ColorColumn`'s copy message.
+- **Inline updates are a real partial visit.** `only: []` is a *full* visit in Inertia; inline edits
+  now send `only: props.inlineReloadProps` (default `['flash']`) with `replace: true`, so an inline
+  edit no longer refetches the page or stacks a history entry. Pages needing server-computed
+  footers pass `:inline-reload-props="['flash', 'summaries']"`.
+
 ## v2.1.0 — 2026-08
 
 Filament v5 parity cluster: the remaining form fields, table columns, infolist entries and record

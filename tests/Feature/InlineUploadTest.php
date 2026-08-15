@@ -1,0 +1,170 @@
+<?php
+
+namespace Tests\Feature;
+
+use App\Models\User;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
+use Spatie\Permission\PermissionRegistrar;
+use Tests\TestCase;
+
+class InlineUploadTest extends TestCase
+{
+    /** A real 1x1 PNG — getimagesize() must accept these bytes. */
+    private const PNG_1X1 = 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==';
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        Storage::fake('local');
+    }
+
+    private function userWith(array $permissions): User
+    {
+        $user = $this->makeUser();
+        $user->givePermissionTo($permissions);
+        app(PermissionRegistrar::class)->forgetCachedPermissions();
+
+        return $user;
+    }
+
+    private function actingAsUserWith(array $permissions): User
+    {
+        $user = $this->userWith($permissions);
+        $this->actingAs($user);
+
+        return $user;
+    }
+
+    private function pngFile(string $name = 'shot.png'): UploadedFile
+    {
+        return UploadedFile::fake()->createWithContent($name, base64_decode(self::PNG_1X1));
+    }
+
+    /** The editor posts XHR, so validation must answer 422 rather than redirect. */
+    private function upload(UploadedFile $file)
+    {
+        return $this->post(route('admin.uploads.inline'), ['file' => $file], ['Accept' => 'application/json']);
+    }
+
+    /** Store a real image as $owner and return the relative storage path. */
+    private function storeAs(User $owner): string
+    {
+        $this->actingAs($owner);
+        $response = $this->upload($this->pngFile());
+        $response->assertOk();
+
+        $path = urldecode((string) parse_url((string) $response->json('url'), PHP_URL_PATH));
+
+        return substr($path, (int) strpos($path, 'inline/'));
+    }
+
+    public function test_a_valid_image_is_stored_on_the_private_disk(): void
+    {
+        $user = $this->actingAsUserWith(['media.create', 'media.view']);
+
+        $response = $this->upload($this->pngFile());
+
+        $response->assertOk();
+        $this->assertStringContainsString(
+            '/uploads/inline/inline/' . $user->id . '/',
+            (string) $response->json('url'),
+        );
+        $this->assertCount(1, Storage::disk('local')->files('inline/' . $user->id));
+    }
+
+    public function test_a_file_that_only_claims_to_be_an_image_is_rejected(): void
+    {
+        $this->actingAsUserWith(['media.create']);
+
+        // Passes `mimes:` (the client-supplied type is trusted by the rule) but
+        // carries no image magic bytes.
+        $this->upload(UploadedFile::fake()->create('evil.png', 4, 'image/png'))->assertStatus(422);
+
+        $this->assertEmpty(Storage::disk('local')->allFiles('inline'));
+    }
+
+    public function test_a_text_file_named_png_is_rejected(): void
+    {
+        $this->actingAsUserWith(['media.create']);
+
+        $this->upload(UploadedFile::fake()->createWithContent('evil.png', 'not an image at all'))->assertStatus(422);
+
+        $this->assertEmpty(Storage::disk('local')->allFiles('inline'));
+    }
+
+    public function test_an_oversized_file_is_rejected(): void
+    {
+        $this->actingAsUserWith(['media.create']);
+
+        $this->upload(UploadedFile::fake()->create('huge.png', 6 * 1024, 'image/png'))->assertStatus(422);
+
+        $this->assertEmpty(Storage::disk('local')->allFiles('inline'));
+    }
+
+    public function test_upload_requires_the_media_create_permission(): void
+    {
+        $this->actingAsUserWith(['media.view']);
+
+        $this->upload($this->pngFile())->assertForbidden();
+    }
+
+    public function test_another_user_gets_404_not_403(): void
+    {
+        $path = $this->storeAs($this->userWith(['media.create']));
+
+        $this->actingAs($this->userWith(['media.create']));
+
+        // 404, never 403 — a 403 would confirm the file exists.
+        $this->get(route('admin.uploads.inline.show', ['path' => $path]))->assertNotFound();
+    }
+
+    public function test_the_owner_may_read_their_own_upload(): void
+    {
+        $owner = $this->userWith(['media.create']);
+        $path = $this->storeAs($owner);
+
+        $this->get(route('admin.uploads.inline.show', ['path' => $path]))->assertOk();
+    }
+
+    public function test_a_media_viewer_may_read_another_users_upload(): void
+    {
+        $owner = $this->userWith(['media.create']);
+        $path = $this->storeAs($owner);
+
+        $viewer = $this->actingAsUserWith(['media.view']);
+        $this->assertNotSame($owner->id, $viewer->id);
+
+        $this->get(route('admin.uploads.inline.show', ['path' => $path]))->assertOk();
+    }
+
+    public function test_the_response_carries_hardening_headers(): void
+    {
+        $path = $this->storeAs($this->userWith(['media.create']));
+
+        $response = $this->get(route('admin.uploads.inline.show', ['path' => $path]));
+
+        $response->assertOk();
+        $response->assertHeader('X-Content-Type-Options', 'nosniff');
+        $this->assertSame('image/png', $response->headers->get('Content-Type'));
+        $this->assertStringStartsWith('inline', (string) $response->headers->get('Content-Disposition'));
+    }
+
+    public static function badPathProvider(): array
+    {
+        return [
+            'not a ulid' => ['inline/1/hello.png'],
+            'wrong extension' => ['inline/1/01J0000000000000000000000A.svg'],
+            'nested deeper' => ['inline/1/sub/01J0000000000000000000000A.png'],
+            'non numeric owner' => ['inline/abc/01J0000000000000000000000A.png'],
+        ];
+    }
+
+    /** @dataProvider badPathProvider */
+    public function test_a_malformed_path_is_404(string $path): void
+    {
+        $this->actingAsUserWith(['media.view']);
+
+        $this->get('/admin/uploads/inline/' . $path)->assertNotFound();
+    }
+}

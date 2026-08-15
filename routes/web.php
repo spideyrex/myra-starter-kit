@@ -11,6 +11,7 @@ use App\Http\Controllers\Admin\EmailLogController;
 use App\Http\Controllers\Admin\EmailSettingController;
 use App\Http\Controllers\Admin\EmailTemplateController;
 use App\Http\Controllers\Admin\ImportController;
+use App\Http\Controllers\Admin\InlineUploadController;
 use App\Http\Controllers\Admin\MediaController;
 use App\Http\Controllers\Admin\PermissionController;
 use App\Http\Controllers\Admin\RoleController;
@@ -171,6 +172,16 @@ Route::middleware(['auth', 'verified', 'active', '2fa'])->prefix('admin')->name(
     Route::post('/media', [MediaController::class, 'store'])->middleware('permission:media.create')->name('media.store');
     Route::delete('/media/{media}', [MediaController::class, 'destroy'])->middleware('permission:media.delete')->name('media.destroy');
     Route::post('/media/bulk-action', [MediaController::class, 'bulkDestroy'])->middleware('permission:media.delete')->name('media.bulk-action');
+
+    // >>> MYRA v2.2 [A] START
+    // Inline (markdown) image uploads — private disk, ownership encoded in the path.
+    Route::post('/uploads/inline', [InlineUploadController::class, 'store'])
+        ->middleware(['permission:media.create', 'throttle:30,1'])->name('uploads.inline');
+    // No `permission:media.view` middleware: the controller authorises owner OR
+    // media.view, and the middleware would lock an owner out of their own image.
+    Route::get('/uploads/inline/{path}', [InlineUploadController::class, 'show'])
+        ->where('path', 'inline/.*')->name('uploads.inline.show');
+    // <<< MYRA v2.2 [A] END
 
     // System Health
     Route::get('/system-health', [SystemHealthController::class, 'index'])->middleware('permission:system-health.view')->name('system-health.index');

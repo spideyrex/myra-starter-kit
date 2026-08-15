@@ -14,6 +14,10 @@ export interface ModalConfig {
     /** Route params for the submit URL. Defaults to `{ id: row.id }`. */
     routeParamsFn?: (row: any) => any;
     submitLabel?: string;
+    /** Nests the form values under this key instead of merging them at the root. */
+    payloadKey?: string;
+    /** Non-form data merged into the request alongside the form values. */
+    extraPayloadFn?: (row: any) => Record<string, any>;
 }
 
 export class Action {
@@ -287,6 +291,7 @@ export class ReplicateAction extends Action {
     private _suffixTemplate = ':value (copy)';
     private _schema?: SchemaItem[];
     private _redirectTo?: string;
+    private _fillFromFn?: (row: any) => Record<string, any>;
 
     constructor(routeName: string) {
         super('Duplicate');
@@ -338,9 +343,28 @@ export class ReplicateAction extends Action {
         return this;
     }
 
+    /** Modal defaults derived from the row. Distinct from overrides(), which is the payload. */
+    fillFrom(fn: (row: any) => Record<string, any>): this {
+        this._fillFromFn = fn;
+        return this;
+    }
+
     redirectTo(routeName: string): this {
         this._redirectTo = routeName;
         return this;
+    }
+
+    private replicatePayload(row: any): Record<string, any> {
+        return {
+            except: this._except,
+            only: this._only ?? null,
+            relations: this._relations,
+            suffix: this._suffixField
+                ? { field: this._suffixField, template: this._suffixTemplate }
+                : null,
+            overrides: this._overridesFn?.(row) ?? {},
+            redirect_to: this._redirectTo ?? null,
+        };
     }
 
     toSchema(): ActionSchema {
@@ -354,7 +378,14 @@ export class ReplicateAction extends Action {
                     method: 'post',
                     submitLabel: this._label,
                     routeParamsFn: (row: any) => row.id,
-                    defaultsFn: (row: any) => ({ ...row, ...(this._overridesFn?.(row) ?? {}) }),
+                    defaultsFn: (row: any) => ({
+                        ...row,
+                        ...(this._fillFromFn?.(row) ?? this._overridesFn?.(row) ?? {}),
+                    }),
+                    // Without these the modal posts bare form values and the
+                    // except/only/relations/suffix config never reaches the server.
+                    payloadKey: 'overrides',
+                    extraPayloadFn: (row: any) => this.replicatePayload(row),
                 },
             };
         }
@@ -362,16 +393,7 @@ export class ReplicateAction extends Action {
         return {
             ...super.toSchema(),
             routeParamsFn: this._routeParamsFn ?? ((row: any) => row.id),
-            payloadFn: (row: any) => ({
-                except: this._except,
-                only: this._only ?? null,
-                relations: this._relations,
-                suffix: this._suffixField
-                    ? { field: this._suffixField, template: this._suffixTemplate }
-                    : null,
-                overrides: this._overridesFn?.(row) ?? {},
-                redirect_to: this._redirectTo ?? null,
-            }),
+            payloadFn: (row: any) => this.replicatePayload(row),
         };
     }
 }
@@ -417,6 +439,8 @@ export class ActionGroup {
     private _maxHeight = '20rem';
     private _collapseAfter?: number;
     private _permission?: string;
+    private _visibleFn?: (row: any) => boolean;
+    private _hiddenFn?: (row: any) => boolean;
 
     constructor(items: ActionItem[]) {
         this._items = items;
@@ -494,6 +518,16 @@ export class ActionGroup {
         return this;
     }
 
+    visibleWhen(fn: (row: any) => boolean): this {
+        this._visibleFn = fn;
+        return this;
+    }
+
+    hiddenWhen(fn: (row: any) => boolean): this {
+        this._hiddenFn = fn;
+        return this;
+    }
+
     toSchema(): ActionGroupSchema {
         return {
             kind: 'group',
@@ -510,9 +544,37 @@ export class ActionGroup {
             maxHeight: this._maxHeight,
             collapseAfter: this._collapseAfter,
             permission: this._permission,
+            visibleFn: this._visibleFn,
+            hiddenFn: this._hiddenFn,
             items: this._items.map(i => i.toSchema()),
         };
     }
+}
+
+/**
+ * A single top-level ActionGroup configures the trigger itself rather than
+ * nesting a submenu. Its `permission()` gates the whole column: without this the
+ * group renders and only its children are filtered, so a denied group still
+ * paints an empty trigger.
+ */
+export function resolveActionItems(
+    items: Array<ActionSchema | ActionGroupSchema>,
+    can: (permission: string) => boolean,
+): { rootGroup: ActionGroupSchema | null; items: Array<ActionSchema | ActionGroupSchema> } {
+    const single = items.length === 1 && (items[0] as ActionGroupSchema).kind === 'group'
+        ? (items[0] as ActionGroupSchema)
+        : null;
+
+    if (single?.permission && !can(single.permission)) {
+        return { rootGroup: null, items: [] };
+    }
+
+    const source = single?.items ?? items;
+
+    return {
+        rootGroup: single,
+        items: source.filter(i => !(i as any).permission || can((i as any).permission)),
+    };
 }
 
 // --- Soft-delete presets ---

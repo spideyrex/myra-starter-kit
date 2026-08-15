@@ -58,7 +58,8 @@
         "copyFailed": "无法复制到剪贴板",
         "showAll": "显示全部 {count} 行",
         "showLess": "收起",
-        "linesTruncated": "显示 {total} 行中的 {shown} 行。"
+        "linesTruncated": "显示 {total} 行中的 {shown} 行。",
+        "copiedToClipboard": "已复制到剪贴板"
     },
     "status": {
         "active": "活跃",
@@ -87,7 +88,8 @@
         "email": "请输入有效的邮箱地址",
         "minLength": "{field} 至少需要 {min} 个字符",
         "maxLength": "{field} 不能超过 {max} 个字符",
-        "confirmed": "{field} 确认不匹配"
+        "confirmed": "{field} 确认不匹配",
+        "selectBetween": "请选择 {min} 至 {max} 个选项。"
     },
     "fields": {
         "copied": "已复制到剪贴板",
@@ -124,6 +126,20 @@
             "uploadFailed": "图片上传失败",
             "boldSample": "粗体文字",
             "italicSample": "斜体文字"
+        }
+    },
+    "table": {
+        "active": "已启用：",
+        "filters": "筛选",
+        "scope": {
+            "page": "本页"
+        },
+        "updateFailed": "更新失败。",
+        "upload": {
+            "badType": "不支持该文件类型。",
+            "notAnImage": "该文件不是有效的图片。",
+            "tooLarge": "图片超过 {max} KB。",
+            "uploading": "正在上传图片…"
         }
     }
 }

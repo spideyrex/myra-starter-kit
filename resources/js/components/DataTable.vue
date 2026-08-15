@@ -1,12 +1,13 @@
 <script setup lang="ts">
 import { ref, computed, onBeforeUnmount } from 'vue';
+import { useI18n } from 'vue-i18n';
 import { router } from '@inertiajs/vue3';
 import { toast } from 'vue-sonner';
 import type { PaginatedData } from '@/types';
 import type { ColumnSchema, FilterSchema, ActionSchema, ActionGroupSchema, BulkActionSchema, RowAction, RowActionsConfig, QueryGroup, QueryRule } from '@/types/admin';
 import { BaseColumn } from '@/composables/useTableSchema';
 import { BaseFilter } from '@/composables/useTableFilters';
-import { Action, BulkAction, ActionGroup, ActionDivider, ActionSectionLabel } from '@/composables/useTableActions';
+import { Action, BulkAction, ActionGroup, ActionDivider, ActionSectionLabel, resolveActionItems } from '@/composables/useTableActions';
 import {
     Table,
     TableBody,
@@ -63,6 +64,7 @@ const props = withDefaults(defineProps<{
     reorderRoute?: string;
     queryPrefix?: string;
     stickyHeader?: boolean;
+    inlineReloadProps?: string[];   // [A]
 }>(), {
     searchable: true,
     searchPlaceholder: 'Search...',
@@ -71,10 +73,12 @@ const props = withDefaults(defineProps<{
     reorderable: false,
     queryPrefix: '',
     stickyHeader: false,
+    inlineReloadProps: () => ['flash'],       // [A]
 });
 
 const { can } = usePermissions();
 const { confirm } = useConfirm();
+const { t } = useI18n();
 
 function decodePaginationLabel(label: string): string {
     return label
@@ -156,16 +160,14 @@ const resolvedActions = computed<AnyActionSchema[]>(() => {
 
 /**
  * A single top-level ActionGroup configures the trigger itself (label, icon,
- * badge, collapseAfter…) rather than nesting a submenu inside a dropdown.
+ * badge, collapseAfter…) rather than nesting a submenu inside a dropdown. Its
+ * own permission() gates the whole column.
  */
-const rootGroup = computed<ActionGroupSchema | null>(() => {
-    const items = resolvedActions.value;
-    return items.length === 1 && (items[0] as ActionGroupSchema).kind === 'group'
-        ? (items[0] as ActionGroupSchema)
-        : null;
-});
+const resolvedRoot = computed(() => resolveActionItems(resolvedActions.value, can));
 
-const actionItems = computed<AnyActionSchema[]>(() => rootGroup.value?.items ?? resolvedActions.value);
+const rootGroup = computed<ActionGroupSchema | null>(() => resolvedRoot.value.rootGroup);
+
+const actionItems = computed<AnyActionSchema[]>(() => resolvedRoot.value.items);
 
 const resolvedBulkActions = computed<BulkActionSchema[]>(() => {
     if (!props.bulkActions) return [];
@@ -410,6 +412,8 @@ async function runAction(a: ActionSchema, row: any) {
 function toRowAction(a: AnyActionSchema, row: any): RowAction | null {
     if ((a as ActionGroupSchema).kind === 'group') {
         const g = a as ActionGroupSchema;
+        if (g.hiddenFn?.(row)) return null;
+        if (g.visibleFn && !g.visibleFn(row)) return null;
         const items = g.items.map(i => toRowAction(i, row)).filter((i): i is RowAction => i !== null);
         if (items.length === 0) return null;
         return {
@@ -513,6 +517,8 @@ function openModalAction(action: ActionSchema, row: any) {
         method: mc.method || 'put',
         defaults: mc.defaultsFn ? mc.defaultsFn(row) : {},
         submitLabel: mc.submitLabel || action.label,
+        payloadKey: mc.payloadKey,
+        extraPayload: mc.extraPayloadFn ? mc.extraPayloadFn(row) : undefined,
     };
     modalOpen.value = true;
 }
@@ -609,7 +615,7 @@ async function runInlineUpdate(col: ColumnSchema, row: any, value: any) {
 
     const message = c.confirmFn?.(row, value);
     if (message) {
-        const ok = await confirm({ title: 'Confirm', description: message });
+        const ok = await confirm({ title: t('common.confirm'), description: message });
         if (!ok) return;
     }
 
@@ -632,7 +638,10 @@ async function runInlineUpdate(col: ColumnSchema, row: any, value: any) {
         {
             preserveState: true,
             preserveScroll: true,
-            only: [],
+            replace: true,                    // inline edits stop stacking history entries
+            // `only: []` is a FULL visit — Inertia treats an empty array as "no
+            // partial". Default to the one genuinely shared prop instead.
+            only: props.inlineReloadProps,
             onSuccess: () => {
                 succeeded = true;
                 if (c.optimistic === false) row[col.key] = value;
@@ -643,7 +652,7 @@ async function runInlineUpdate(col: ColumnSchema, row: any, value: any) {
                 inFlight.delete(key);
                 if (!succeeded) {
                     if (c.optimistic !== false) row[col.key] = previous;
-                    toast.error('Update failed.');
+                    toast.error(t('table.updateFailed'));
                 }
             },
         },
@@ -700,7 +709,7 @@ defineExpose({ selectedIds });
                     @click="showFilters = !showFilters"
                 >
                     <FilterIcon class="mr-2 size-4" />
-                    <span class="hidden sm:inline">Filters</span>
+                    <span class="hidden sm:inline">{{ t('table.filters') }}</span>
                     <Badge v-if="hasActiveFilters" variant="secondary" class="ml-1.5 h-5 min-w-5 px-1 text-xs">
                         {{ activeFilterCount }}
                     </Badge>
@@ -754,7 +763,7 @@ defineExpose({ selectedIds });
         <div v-if="showFilters && resolvedFilters.length > 0" class="rounded-lg border bg-card shadow-sm">
             <!-- Active filter tags -->
             <div v-if="hasActiveFilters" class="flex flex-wrap items-center gap-1.5 border-b px-4 py-2.5">
-                <span class="mr-1 text-xs font-medium text-muted-foreground">Active:</span>
+                <span class="mr-1 text-xs font-medium text-muted-foreground">{{ t('table.active') }}</span>
                 <template v-for="filter in resolvedFilters" :key="`tag-${filter.name}`">
                     <!-- Select / ternary tags -->
                     <Badge
@@ -1084,7 +1093,7 @@ defineExpose({ selectedIds });
                                         variant="outline"
                                         class="ml-1 px-1 py-0 text-[10px] font-normal"
                                         title="Computed from the current page only"
-                                    >Page</Badge>
+                                    >{{ t('table.scope.page') }}</Badge>
                                 </span>
                             </TableCell>
                             <TableCell v-if="hasActions || $slots.actions" />

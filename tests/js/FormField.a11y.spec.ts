@@ -7,6 +7,10 @@ vi.mock('@inertiajs/vue3', () => ({
     Link: { name: 'Link', render: () => null },
 }));
 
+vi.mock('vue-i18n', () => ({
+    useI18n: () => ({ t: (key: string) => key }),
+}));
+
 describe('FormField accessibility wiring', () => {
     it('points aria-describedby at both the hint and the error, and marks the control invalid', () => {
         const wrapper = mount(FormField, {

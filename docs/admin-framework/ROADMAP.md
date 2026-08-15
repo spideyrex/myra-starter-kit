@@ -43,15 +43,12 @@ Known-and-logged, not silently dropped.
       + `inlineEditableFields()` in the controller stub, `use HandlesSoftDeletes` + `authorizeBulkVerb()`
       in the generated `bulkAction()`, and CheckboxColumn/ColorColumn in the index-page stub.
       **Any future sweep touching `resources/js` must run the stub port as a non-worktree step.**
-- [ ] Markdown field image upload has no server endpoint — `mdUploadRoute` posts to a route that
-      does not exist yet (private disk + signed temporary URL per spec).
-- [ ] `ReplicateAction.schema()` discards user edits: `ActionModal` submits only schema fields, so
-      the modal's values never reach the replicate endpoint.
-- [ ] `ActionGroup.permission()` is dead for a root-level group (copied everywhere except `permission`).
-- [ ] Toggle `min`/`max` are enforced in the renderer only — no matching validation rule is emitted.
-- [ ] i18n pass over the new strings ('Confirm', 'Update failed.', 'Copied to clipboard', 'Page').
-- [ ] `only: []` in the inline-update request is a no-op — Inertia treats an empty array as a full
-      visit, so the "returns no props" optimisation never happens.
+- [x] Markdown field image upload endpoint (private disk, magic-byte validation) — v2.2.0
+- [x] `ReplicateAction.schema()` now carries the modal's edits to the replicate endpoint — v2.2.0
+- [x] `ActionGroup.permission()` is dead for a root-level group (copied everywhere except `permission`). — v2.2.0
+- [x] Toggle `min`/`max` are enforced in the renderer only — no matching validation rule is emitted. — v2.2.0
+- [x] i18n pass over the new strings ('Confirm', 'Update failed.', 'Copied to clipboard', 'Page'). — v2.2.0
+- [x] Inline-update partial-reload props (the `only: []` no-op) — v2.2.0
 
 ---
 
@@ -59,13 +56,36 @@ Known-and-logged, not silently dropped.
 
 The "view, filter, search, export, import" stability mandate.
 
-- [ ] Saved views — named filter+column+sort presets, per user, shareable
-- [ ] Column visibility manager with presets and persistence
+- [x] Saved views — named filter+column+sort presets, per user, shareable — v2.2.0
+- [x] Column visibility manager with presets and persistence — v2.2.0
 - [ ] 100k+ row performance: virtualised rows, cursor pagination, indexed sort paths
-- [ ] Streaming export for large datasets (never buffer the whole set in memory)
-- [ ] Import: column auto-mapping, validation preview, partial-failure report, resumable
-- [ ] Advanced query builder parity (nested AND/OR groups — `QueryBuilderGroup.vue` is the base)
-- [ ] Global search ranking + scoped search per resource
+- [x] Streaming export for large datasets (never buffer the whole set in memory) — v2.2.0
+- [x] Import: column auto-mapping, validation preview, partial-failure report, resumable — v2.2.0
+- [x] Advanced query builder parity (nested AND/OR groups — `QueryBuilderGroup.vue` is the base) — v2.2.0
+- [x] Global search ranking + scoped search per resource — v2.2.0
+
+---
+
+## C2b — C2 follow-ups (carried from the v2.2.0 sweep)
+
+- [ ] **Unescaped LIKE patterns outside the query builder.** Six call sites still interpolate raw
+      user input into a LIKE pattern with no escaping on any driver — a `%` in the search box
+      matches everything: `app/Services/UserService.php:~55`,
+      `app/Http/Controllers/Admin/AdminNotificationController.php:27-30`,
+      `ActivityLogController.php:29-30`, `EmailLogController.php:29`, `MediaController.php:25-26`,
+      `app/Admin/Traits/HasRelationManagers.php:36`. Migrate all six to `Sql::whereLike()`.
+- [ ] `ImportController.php:80,146` still use `abort()`, so a refusal renders an HTML error page
+      instead of a clean payload — the same bug just fixed in the export path.
+- [ ] `Sql::LIKE_ESCAPE` is dead code; `escapeLiteral()` re-derives the literal itself.
+- [ ] MySQL `sql_mode=NO_BACKSLASH_ESCAPES` would break the emitted `ESCAPE '\\'` literal.
+      `escapeLiteral()` needs a third case if any deployment runs that mode.
+- [ ] `Sql::like()` is still public and can be misused without its `ESCAPE` clause — only a
+      docblock guards it. Consider making it internal.
+- [ ] `InlineUploadController::show()` dereferences `$request->user()->id` without a null guard.
+- [ ] The inline-upload public URL contains a doubled segment (`/uploads/inline/inline/{id}/`),
+      now enshrined by an assertion. Cosmetic, but worth a clean route.
+- [ ] 100k+ row performance (virtualised rows, cursor pagination) — deliberately deferred from
+      the v2.2.0 sweep, not attempted.
 
 ---
 

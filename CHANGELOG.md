@@ -2,7 +2,24 @@
 
 All notable changes to the Myra Starter Kit are documented here.
 
-## [2.2.0]
+## v2.2.0 — 2026-08
+
+Table power features (saved views, column manager, streaming export, resumable import, nested
+query builder, ranked global search) plus the C1b follow-up defects from v2.1.0.
+
+### Fixed — defects caught by the release gate
+- `Sql::like()` escaped `%` `_` `\` but no call site emitted an `ESCAPE` clause. MySQL treats
+  backslash as the default LIKE escape so this silently worked there; SQLite has none, so
+  searching for a literal `%` matched nothing. Added `Sql::whereLike()` / `orWhereLike()`, which
+  emit the pattern and a driver-aware `ESCAPE` clause together, with the column validated as an
+  identifier and the term still bound as a parameter.
+- Inline-upload reads resolved the storage path with `strpos($path, 'inline/')`, which matched the
+  **route** segment rather than the storage prefix. Replaced with an anchored strip of the exact
+  route prefix.
+- The export row cap aborted mid-stream, so a refusal could still emit a partial file. The cap is
+  now enforced before any bytes are written.
+- `FieldSpec::operators()` called `array_intersect()` on `Operator` enum instances, which PHP
+  cannot cast to string — a hard `Error`. Now compares by `->value` with `in_array(strict: true)`.
 
 ### A — C1b follow-up defects
 

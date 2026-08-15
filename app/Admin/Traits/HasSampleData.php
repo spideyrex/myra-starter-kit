@@ -395,4 +395,26 @@ trait HasSampleData
             ],
         ];
     }
+
+    // >>> MYRA v2.2 [B] START
+    public function forSavedViews(Request $request): array
+    {
+        $user = $request->user();
+        $tableKey = 'admin.demo.saved-views';
+
+        return [
+            'products' => $this->paginateCollection($this->sampleProducts(), $request, ['category', 'status']),
+            'filters' => (object) $request->only('search', 'sort', 'direction', 'category', 'status', 'per_page'),
+            'savedViews' => \App\Models\TableView::visibleTo($user)
+                ->where('table_key', $tableKey)
+                ->where('name', '!=', \App\Models\TableView::COLUMNS_NAME)
+                ->orderBy('sort')
+                ->orderBy('name')
+                ->get()
+                ->map(fn (\App\Models\TableView $view) => $view->toClientArray($user))
+                ->values(),
+            'canShareViews' => (bool) $user->current_team_id,
+        ];
+    }
+    // <<< MYRA v2.2 [B] END
 }

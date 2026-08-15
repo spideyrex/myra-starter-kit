@@ -141,5 +141,43 @@
             "tooLarge": "That image is larger than {max} KB.",
             "uploading": "Uploading image..."
         }
+    },
+    "views": {
+        "a11y": {
+            "menu": "Saved views menu"
+        },
+        "copyLink": "Copy link",
+        "default": "Default",
+        "delete": "Delete view",
+        "deleted": "View deleted",
+        "limitReached": "You have reached the saved view limit for this table.",
+        "linkCopied": "Link copied to clipboard",
+        "makeDefault": "Set as default",
+        "mine": "My views",
+        "modified": "Modified",
+        "namePlaceholder": "View name",
+        "none": "No saved views yet",
+        "rename": "Rename view",
+        "save": "Save view",
+        "saveAs": "Save as new view",
+        "saved": "View saved",
+        "shareWithTeam": "Share with my team",
+        "shared": "Shared with team",
+        "team": "Team views",
+        "title": "Views",
+        "update": "Update this view"
+    },
+    "columns": {
+        "a11y": {
+            "list": "Column visibility and order",
+            "moved": "{label} moved to position {position} of {total}."
+        },
+        "hidden": "Hidden",
+        "moveDown": "Move down",
+        "moveUp": "Move up",
+        "reset": "Reset columns",
+        "search": "Search columns",
+        "title": "Columns",
+        "visible": "Visible"
     }
 }

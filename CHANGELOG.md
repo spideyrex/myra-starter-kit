@@ -39,6 +39,33 @@ All notable changes to the Myra Starter Kit are documented here.
   now send `only: props.inlineReloadProps` (default `['flash']`) with `replace: true`, so an inline
   edit no longer refetches the page or stacks a history entry. Pages needing server-computed
   footers pass `:inline-reload-props="['flash', 'summaries']"`.
+### B — Saved views + column manager
+
+#### Added
+- **Saved table views** — `TableView.make(name)` declares a view on the page (`search`, `filters`,
+  `dateRange`, `query`, `sort`, `perPage`, `columns`, `columnOrder`, `default`, `permission`), and a
+  user-saved view arrives from the server in the same `SavedView` shape, so one menu drives both.
+  `useTableViews()` exposes `all`, `active`, `isModified`, `applyView`, `saveAs`, `updateActive`,
+  `rename`, `remove`, `makeDefault` and `shareUrl`.
+- `table_views` table (additive migration), `App\Models\TableView` with a `visibleTo` scope,
+  `App\Policies\TableViewPolicy` (team views are readable by teammates, writable only by their
+  author), `TableViewRequest`, and `Admin\TableViewController` with index/store/update/destroy/
+  makeDefault under `admin.table-views.*`.
+- `App\Admin\Views\ViewShape` — shape and size validation for the opaque `payload.query` blob
+  (25 rules, depth 3, 16 KB). It deliberately performs no field or operator whitelisting: a saved
+  view is replayed as URL query params through the same controller path as a live filter.
+- **Column manager** — `useColumnManager()` plus `admin/ColumnManager.vue`: search-within-list,
+  drag reorder (native HTML5, no dnd library), `Alt`+arrow keyboard reorder announced through an
+  `aria-live` region, group headers, and Reset. On by default; opt out with `:column-manager="false"`.
+- `admin/TableViewsMenu.vue`, `resources/js/types/table-views.d.ts`, `config/myra.php` `views.max`,
+  the `views.*` / `columns.*` i18n namespaces in `{en,ms,zh}.json`, and a `Demo/SavedViews.vue` page.
+
+#### Changed
+- `DataTable.vue` — `applyFilters()` split into `buildParams()` / `captureState()` / `applyView()`;
+  `per_page` is now sent (the server already read and capped it); the column-visibility store moved
+  from a bare `Record<string, boolean>` to `{ v: 2, visible, order }`, migrated in place on read;
+  the storage key gained the query prefix so two tables on one page no longer collide. New props:
+  `tableKey`, `savedViews`, `views`, `columnManager`, `canShareViews`.
 
 ## v2.1.0 — 2026-08
 

@@ -38,6 +38,11 @@ Do not guess the architecture. These are the load-bearing files:
 | Tests | `tests/Feature/`, `tests/Unit/` (26 files), CI in `.github/workflows/tests.yml` |
 | Backlog (state) | `docs/admin-framework/ROADMAP.md` |
 
+**Two stub systems — do not conflate.** `stubs/admin/*.stub` (8 files) is TRACKED in this repo and
+drives the `make:myra-*` generators — agents can and should edit it. `packages/myra/framework/stubs/`
+(384 files) is a different, private repo and drives `myra:install` for brand-new projects; it is
+unreachable from a git worktree and must be synced separately.
+
 **Dual-repo trap.** `/packages/` and `/.claude/` are gitignored in `myra-starter-kit`.
 `packages/myra/framework` is a **separate private git repo**
 (`github.com/spideyrex/myra-framework`). Any change under `packages/` must be committed and

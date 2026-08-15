@@ -37,12 +37,28 @@ Concrete, verified gaps in the schema engines.
 
 Known-and-logged, not silently dropped.
 
-- [ ] **Framework stubs are stale.** Every C1 agent skipped `packages/myra/framework/stubs/`
-      because `packages/` is gitignored and absent from a git worktree. Generated projects do
-      not get inline-edit columns, the new actions, or the hint API. Needs: `use HandlesInlineUpdates`
-      + `inlineEditableFields()` in the controller stub, `use HandlesSoftDeletes` + `authorizeBulkVerb()`
-      in the generated `bulkAction()`, and CheckboxColumn/ColorColumn in the index-page stub.
-      **Any future sweep touching `resources/js` must run the stub port as a non-worktree step.**
+- [ ] **Scaffolding stubs are stale — TWO separate systems, do not conflate them** (corrected
+      2026-08-16 after inspection; the earlier note here was wrong):
+
+      **(a) `stubs/admin/*.stub` — 8 files, TRACKED IN THE MAIN REPO, agent-reachable.**
+      Consumed by the `make:myra-*` generators via `base_path()` (see
+      `app/Console/Commands/Myra/Concerns/ScaffoldsAdmin.php::writeStub`). This is the
+      higher-value target: it is what `make:myra-resource` emits every time you scaffold.
+      Today `page.index.stub` imports only `TextColumn`/`DateColumn` + `EditAction`/`DeleteAction`,
+      and `controller.resource.stub` has no `bulkAction()` at all.
+      **This is real design work, not a copy.** Adding `HandlesInlineUpdates` needs a matching
+      route + `inlineEditableFields()`, and adding `ColorColumn`/`CheckboxColumn` blind would
+      reference columns the generated model may not have — a careless port makes the generator
+      emit scaffolds that 404 or fatal. Needs a proper design pass deciding what is universally
+      safe to emit vs. what belongs behind a generator flag.
+
+      **(b) `packages/myra/framework/stubs/` — 384 files, SEPARATE PRIVATE REPO, NOT
+      agent-reachable from a worktree.** Consumed by `myra:install` (`InstallCommand` copies the
+      whole tree) to bootstrap a brand-new project. It is a **v1.0-era snapshot, two releases
+      stale**: verified absent are `ColorSwatch.vue`, `CodeBlock.vue`, `useCodeMirror.ts`,
+      `useTableViews.ts`, `useSummaries.ts` — i.e. a freshly installed project gets none of
+      v2.1.0 or v2.2.0. Lower urgency (only affects new installs, not this platform) but it is
+      a full-tree sync and must be done outside a worktree, in the `myra-framework` repo.
 - [x] Markdown field image upload endpoint (private disk, magic-byte validation) — v2.2.0
 - [x] `ReplicateAction.schema()` now carries the modal's edits to the replicate endpoint — v2.2.0
 - [x] `ActionGroup.permission()` is dead for a root-level group (copied everywhere except `permission`). — v2.2.0

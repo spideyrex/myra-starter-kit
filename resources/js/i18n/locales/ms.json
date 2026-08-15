@@ -586,5 +586,96 @@
         "noResults": "Tiada padanan ditemui.",
         "placeholder": "Cari semua…",
         "recent": "Terkini"
+    },
+    "reportDelivery": {
+        "crossFilter": {
+            "clear": "Kosongkan semua",
+            "hint": "Tekan Escape untuk mengosongkan semua penapis silang.",
+            "remove": "Buang penapis {label}",
+            "title": "Ditapis mengikut"
+        },
+        "days": {
+            "sun": "Ahad",
+            "mon": "Isnin",
+            "tue": "Selasa",
+            "wed": "Rabu",
+            "thu": "Khamis",
+            "fri": "Jumaat",
+            "sat": "Sabtu"
+        },
+        "demo": {
+            "crossFilter": "Klik satu segmen, pilih “Tapis papan pemuka”, dan setiap widget lain dimuat semula dari pelayan dengan peraturan tambahan itu. Satu klik ialah satu permintaan berkelompok, bukan satu bagi setiap widget.",
+            "drill": "Pelayan membina URL gerudi. Jadual destinasi mengesahkan semula pepohon peraturan melalui senarai putihnya sendiri, jadi pautan yang disunting tangan disemak sama seperti penapis yang ditaip.",
+            "schedule": "Jadualkan keadaan yang anda lihat: dialog dibuka telah diisi, dan penghantaran berjalan sebagai anda, dengan skop pemilikan anda.",
+            "title": "Gerudi, penapis silang dan penghantaran"
+        },
+        "describe": {
+            "daily": "Setiap hari pada {time} ({tz})",
+            "monthly": "Hari {dayOfMonth} setiap bulan pada {time} ({tz})",
+            "quarterly": "Hari {dayOfMonth} setiap suku tahun pada {time} ({tz})",
+            "weekly": "Setiap {day} pada {time} ({tz})"
+        },
+        "format": {
+            "csv": "CSV",
+            "inline": "Dalam badan e-mel",
+            "pdf": "PDF",
+            "xlsx": "Excel"
+        },
+        "frequency": {
+            "daily": "Harian",
+            "monthly": "Bulanan",
+            "quarterly": "Suku tahunan",
+            "weekly": "Mingguan"
+        },
+        "pdf": {
+            "unsupportedLocale": "PDF tidak dapat memaparkan bahasa ini. Excel mengekalkan setiap aksara."
+        },
+        "schedule": {
+            "actions": "Tindakan",
+            "active": "Aktif",
+            "addEmail": "Tambah alamat e-mel…",
+            "allReports": "Semua laporan",
+            "breadcrumb": "Jadual laporan",
+            "cadence": "Kekerapan",
+            "cancel": "Batal",
+            "delete": "Padam",
+            "deleteDescription": "“{name}” akan berhenti dihantar. Tindakan ini tidak boleh dibatalkan.",
+            "deleteTitle": "Padam jadual ini?",
+            "description": "Pilih bila laporan ini dihantar dan siapa yang menerimanya.",
+            "dayOfMonth": "Hari dalam bulan",
+            "dayOfWeek": "Hari dalam minggu",
+            "edit": "Sunting jadual",
+            "empty": "Tiada jadual lagi.",
+            "externalDenied": "Anda tidak dibenarkan menghantar e-mel ke alamat luar ruang kerja ini.",
+            "externalEmails": "Alamat luar",
+            "format": "Format",
+            "frequency": "Kekerapan",
+            "message": "Mesej",
+            "minute": "Minit",
+            "name": "Nama",
+            "never": "Tidak dijadualkan",
+            "new": "Jadual baharu",
+            "nextRun": "Larian seterusnya",
+            "pause": "Jeda",
+            "paused": "Dijeda",
+            "recipients": "Penerima",
+            "report": "Laporan",
+            "resume": "Sambung",
+            "save": "Simpan",
+            "sendTest": "Hantar sekarang",
+            "skipIfEmpty": "Langkau apabila tiada data",
+            "status": "Status",
+            "subtitle": "Laporan yang dihasilkan dan dihantar mengikut jadual.",
+            "time": "Masa",
+            "timezone": "Zon waktu",
+            "title": "Jadual laporan"
+        },
+        "segment": {
+            "compare": "Bandingkan dengan tempoh sebelumnya",
+            "filter": "Tapis papan pemuka mengikut {label}",
+            "title": "Tindakan untuk {label}",
+            "view": "Lihat {count} rekod",
+            "viewUnavailable": "Segmen ini tidak boleh dibuka sebagai jadual."
+        }
     }
 }

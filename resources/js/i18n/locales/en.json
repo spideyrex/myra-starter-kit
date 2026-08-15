@@ -586,5 +586,96 @@
         "noResults": "No matches found.",
         "placeholder": "Search everything…",
         "recent": "Recent"
+    },
+    "reportDelivery": {
+        "crossFilter": {
+            "clear": "Clear all",
+            "hint": "Press Escape to clear every cross-filter.",
+            "remove": "Remove the {label} filter",
+            "title": "Filtered by"
+        },
+        "days": {
+            "sun": "Sunday",
+            "mon": "Monday",
+            "tue": "Tuesday",
+            "wed": "Wednesday",
+            "thu": "Thursday",
+            "fri": "Friday",
+            "sat": "Saturday"
+        },
+        "demo": {
+            "crossFilter": "Click a segment, choose “Filter dashboard”, and every sibling widget reloads from the server with the extra rule. One click is one batched request, not one per widget.",
+            "drill": "The server builds the drill URL. The landing table re-validates the rule tree through its own whitelist, so a hand-edited link is checked exactly like a typed filter.",
+            "schedule": "Schedule the state you are looking at: the dialog opens prefilled, and the delivery runs as you, with your ownership scope.",
+            "title": "Drill-down, cross-filter and delivery"
+        },
+        "describe": {
+            "daily": "Every day at {time} ({tz})",
+            "monthly": "Day {dayOfMonth} of each month at {time} ({tz})",
+            "quarterly": "Day {dayOfMonth} of each quarter at {time} ({tz})",
+            "weekly": "Every {day} at {time} ({tz})"
+        },
+        "format": {
+            "csv": "CSV",
+            "inline": "In the email body",
+            "pdf": "PDF",
+            "xlsx": "Excel"
+        },
+        "frequency": {
+            "daily": "Daily",
+            "monthly": "Monthly",
+            "quarterly": "Quarterly",
+            "weekly": "Weekly"
+        },
+        "pdf": {
+            "unsupportedLocale": "PDF cannot render this language. Excel keeps every character."
+        },
+        "schedule": {
+            "actions": "Actions",
+            "active": "Active",
+            "addEmail": "Add an email address…",
+            "allReports": "All reports",
+            "breadcrumb": "Report schedules",
+            "cadence": "Cadence",
+            "cancel": "Cancel",
+            "delete": "Delete",
+            "deleteDescription": "“{name}” will stop being delivered. This cannot be undone.",
+            "deleteTitle": "Delete this schedule?",
+            "description": "Pick when this report is sent and who receives it.",
+            "dayOfMonth": "Day of month",
+            "dayOfWeek": "Day of week",
+            "edit": "Edit schedule",
+            "empty": "No schedules yet.",
+            "externalDenied": "You are not allowed to mail addresses outside this workspace.",
+            "externalEmails": "External addresses",
+            "format": "Format",
+            "frequency": "Frequency",
+            "message": "Message",
+            "minute": "Minute",
+            "name": "Name",
+            "never": "Not scheduled",
+            "new": "New schedule",
+            "nextRun": "Next run",
+            "pause": "Pause",
+            "paused": "Paused",
+            "recipients": "Recipients",
+            "report": "Report",
+            "resume": "Resume",
+            "save": "Save",
+            "sendTest": "Send one now",
+            "skipIfEmpty": "Skip when there is no data",
+            "status": "Status",
+            "subtitle": "Reports that are rendered and emailed on a schedule.",
+            "time": "Time",
+            "timezone": "Timezone",
+            "title": "Report schedules"
+        },
+        "segment": {
+            "compare": "Compare to previous period",
+            "filter": "Filter dashboard by {label}",
+            "title": "Actions for {label}",
+            "view": "View {count} records",
+            "viewUnavailable": "This segment cannot be opened as a table."
+        }
     }
 }

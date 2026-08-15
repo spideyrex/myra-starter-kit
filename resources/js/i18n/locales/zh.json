@@ -586,5 +586,96 @@
         "noResults": "没有找到匹配项。",
         "placeholder": "搜索全部…",
         "recent": "最近"
+    },
+    "reportDelivery": {
+        "crossFilter": {
+            "clear": "全部清除",
+            "hint": "按 Escape 可清除所有交叉筛选。",
+            "remove": "移除“{label}”筛选",
+            "title": "筛选条件"
+        },
+        "days": {
+            "sun": "星期日",
+            "mon": "星期一",
+            "tue": "星期二",
+            "wed": "星期三",
+            "thu": "星期四",
+            "fri": "星期五",
+            "sat": "星期六"
+        },
+        "demo": {
+            "crossFilter": "点击一个分段，选择“筛选仪表盘”，所有其他组件都会带着新规则从服务器重新加载。一次点击只发一个批量请求，而不是每个组件一个。",
+            "drill": "钻取 URL 由服务器生成。目标表格会用自己的白名单重新校验规则树，因此手工修改的链接与手动输入的筛选受到相同校验。",
+            "schedule": "直接为当前视图创建计划：对话框会预填，投递以您的身份和数据范围运行。",
+            "title": "钻取、交叉筛选与投递"
+        },
+        "describe": {
+            "daily": "每天 {time}（{tz}）",
+            "monthly": "每月 {dayOfMonth} 日 {time}（{tz}）",
+            "quarterly": "每季度第 {dayOfMonth} 日 {time}（{tz}）",
+            "weekly": "每逗{day} {time}（{tz}）"
+        },
+        "format": {
+            "csv": "CSV",
+            "inline": "直接写在邮件正文",
+            "pdf": "PDF",
+            "xlsx": "Excel"
+        },
+        "frequency": {
+            "daily": "每天",
+            "monthly": "每月",
+            "quarterly": "每季度",
+            "weekly": "每周"
+        },
+        "pdf": {
+            "unsupportedLocale": "PDF 无法渲染该语言。Excel 可保留全部字符。"
+        },
+        "schedule": {
+            "actions": "操作",
+            "active": "启用",
+            "addEmail": "添加邮箱地址…",
+            "allReports": "全部报表",
+            "breadcrumb": "报表计划",
+            "cadence": "频率",
+            "cancel": "取消",
+            "delete": "删除",
+            "deleteDescription": "“{name}”将停止投递。此操作无法撤销。",
+            "deleteTitle": "删除该计划？",
+            "description": "选择发送时间以及接收人。",
+            "dayOfMonth": "每月日期",
+            "dayOfWeek": "星期",
+            "edit": "编辑计划",
+            "empty": "还没有计划。",
+            "externalDenied": "您无权向工作区以外的地址发送邮件。",
+            "externalEmails": "外部地址",
+            "format": "格式",
+            "frequency": "频率",
+            "message": "正文",
+            "minute": "分钟",
+            "name": "名称",
+            "never": "未安排",
+            "new": "新建计划",
+            "nextRun": "下次运行",
+            "pause": "暂停",
+            "paused": "已暂停",
+            "recipients": "收件人",
+            "report": "报表",
+            "resume": "恢复",
+            "save": "保存",
+            "sendTest": "立即发送一份",
+            "skipIfEmpty": "无数据时跳过",
+            "status": "状态",
+            "subtitle": "按计划渲染并发送的报表。",
+            "time": "时间",
+            "timezone": "时区",
+            "title": "报表计划"
+        },
+        "segment": {
+            "compare": "与上一期对比",
+            "filter": "按“{label}”筛选仪表盘",
+            "title": "“{label}”的操作",
+            "view": "查看 {count} 条记录",
+            "viewUnavailable": "该分段无法以表格打开。"
+        }
     }
 }

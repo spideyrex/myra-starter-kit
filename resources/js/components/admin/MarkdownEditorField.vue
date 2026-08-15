@@ -33,10 +33,14 @@ const props = withDefaults(defineProps<{
     mdMinHeight?: string;
     mdMaxHeight?: string;
     mdUploadRoute?: string;
+    mdMaxUploadKb?: number;
+    mdAcceptedTypes?: string[];
 }>(), {
     rows: 10,
     mdMode: 'split',
     mdModeSwitcher: true,
+    mdMaxUploadKb: 5120,
+    mdAcceptedTypes: () => ['image/jpeg', 'image/png', 'image/gif', 'image/webp'],
 });
 
 const emit = defineEmits<{ 'update:modelValue': [value: string] }>();
@@ -164,18 +168,37 @@ const actionButtons = computed(() => buttons.value
     .filter(b => TOOLBAR_META[b])
     .map(b => ({ button: b, icon: TOOLBAR_META[b]!.icon, labelKey: `fields.md.${TOOLBAR_META[b]!.key}` })));
 
-// --- Paste / drop image upload (private disk, signed URL) ---
+// --- Paste / drop image upload (private disk, permission-gated URL) ---
+const uploading = ref(false);
+
+/** Client-side gate only — the endpoint re-validates size, mime AND magic bytes. */
+function rejectReason(file: File): string | null {
+    if (file.size / 1024 > props.mdMaxUploadKb) return t('table.upload.tooLarge', { max: props.mdMaxUploadKb });
+    if (!props.mdAcceptedTypes.includes(file.type)) return t('table.upload.badType');
+    return null;
+}
+
 async function uploadFile(file: File) {
     if (!props.mdUploadRoute) return;
+
+    const reason = rejectReason(file);
+    if (reason) {
+        toast.error(reason);
+        return;
+    }
+
     const body = new FormData();
     body.append('file', file);
+    uploading.value = true;
     try {
         const res = await fetch(route(props.mdUploadRoute), {
             method: 'POST',
             body,
+            credentials: 'same-origin',
             headers: {
                 'X-Requested-With': 'XMLHttpRequest',
                 'X-CSRF-TOKEN': (document.querySelector('meta[name="csrf-token"]') as HTMLMetaElement)?.content ?? '',
+                Accept: 'application/json',
             },
         });
         if (!res.ok) throw new Error(String(res.status));
@@ -184,6 +207,8 @@ async function uploadFile(file: File) {
         replaceSelection(`![${file.name}](${data.url})`);
     } catch {
         toast.error(t('fields.md.uploadFailed'));
+    } finally {
+        uploading.value = false;
     }
 }
 
@@ -220,7 +245,7 @@ function onDrop(e: DragEvent) {
                             variant="ghost"
                             size="icon"
                             class="size-7"
-                            :disabled="disabled"
+                            :disabled="disabled || (item.button === 'image' && uploading)"
                             :aria-label="t(item.labelKey)"
                             @click="run(item.button)"
                         >
@@ -296,6 +321,10 @@ function onDrop(e: DragEvent) {
                 v-html="rendered"
             />
         </div>
+
+        <p v-if="uploading" class="text-xs text-muted-foreground" role="status" aria-live="polite">
+            {{ t('table.upload.uploading') }}
+        </p>
 
         <p v-if="mdCounter" class="text-xs" :class="overLimit ? 'text-destructive' : 'text-muted-foreground'" aria-live="polite">
             {{ t('fields.md.words', { count: wordCount }) }} ·

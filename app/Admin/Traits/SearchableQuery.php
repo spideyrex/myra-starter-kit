@@ -2,12 +2,16 @@
 
 namespace App\Admin\Traits;
 
+use App\Support\Sql;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 
 trait SearchableQuery
 {
+    /** Upper bound on the requested page number. */
+    public const MAX_PAGE = 10000;
+
     public function applySearchAndPaginate(
         Builder $query,
         Request $request,
@@ -31,11 +35,16 @@ trait SearchableQuery
         $requestedPerPage = (int) ($request->per_page ?? $perPage);
         $perPage = max(1, min($requestedPerPage, 100));
 
+        // Cap the page number so `?page=500000` cannot issue a multi-million-row OFFSET.
+        $page = max(1, min((int) ($request->page ?: 1), self::MAX_PAGE));
+
         return $query
             ->when($request->search && count($searchable) > 0, function ($q) use ($request, $searchable) {
                 $q->where(function ($q) use ($request, $searchable) {
                     foreach ($searchable as $column) {
-                        $q->orWhere($column, 'like', "%{$request->search}%");
+                        // Escape % _ \ so a user's wildcard cannot widen the match
+                        // or force a full scan.
+                        Sql::orWhereLike($q, $column, (string) $request->search);
                     }
                 });
             })
@@ -44,7 +53,7 @@ trait SearchableQuery
                 fn ($q) => $q->orderBy($sort, $direction),
                 fn ($q) => $q->orderBy($defaultSort, $defaultDir),
             )
-            ->paginate($perPage)
+            ->paginate($perPage, ['*'], 'page', $page)
             ->withQueryString();
     }
 

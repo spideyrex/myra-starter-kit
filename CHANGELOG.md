@@ -2,6 +2,200 @@
 
 All notable changes to the Myra Starter Kit are documented here.
 
+## v2.2.0 — 2026-08
+
+Table power features (saved views, column manager, streaming export, resumable import, nested
+query builder, ranked global search) plus the C1b follow-up defects from v2.1.0.
+
+### Fixed — defects caught by the release gate
+- `Sql::like()` escaped `%` `_` `\` but no call site emitted an `ESCAPE` clause. MySQL treats
+  backslash as the default LIKE escape so this silently worked there; SQLite has none, so
+  searching for a literal `%` matched nothing. Added `Sql::whereLike()` / `orWhereLike()`, which
+  emit the pattern and a driver-aware `ESCAPE` clause together, with the column validated as an
+  identifier and the term still bound as a parameter.
+- Inline-upload reads resolved the storage path with `strpos($path, 'inline/')`, which matched the
+  **route** segment rather than the storage prefix. Replaced with an anchored strip of the exact
+  route prefix.
+- The export row cap aborted mid-stream, so a refusal could still emit a partial file. The cap is
+  now enforced before any bytes are written.
+- `FieldSpec::operators()` called `array_intersect()` on `Operator` enum instances, which PHP
+  cannot cast to string — a hard `Error`. Now compares by `->value` with `in_array(strict: true)`.
+
+### A — C1b follow-up defects
+
+- **Inline (markdown) image upload.** New `InlineUploadController` + `admin.uploads.inline` /
+  `admin.uploads.inline.show` routes. Files land on the **private** `local` disk under
+  `inline/{userId}/{ulid}.{ext}` — nothing is written to `public/`. `mimes:` is not trusted:
+  `getimagesize()` re-checks the magic bytes and a `.png`-named text file is a 422. Reads are
+  authorised as *owner OR `media.view`*, and a miss is a **404, never a 403**, so the endpoint is
+  not an existence oracle. Responses carry `nosniff`, `Content-Disposition: inline` and a
+  `default-src 'none'; sandbox` CSP. `MarkdownEditor.uploadRoute()` now defaults to the shipped
+  route and gains `.maxUploadKb()` / `.acceptedUploadTypes()`; the editor pre-checks both, sends
+  `X-CSRF-TOKEN` + `Accept: application/json` with `credentials: 'same-origin'`, exposes a
+  `role="status"` uploading line and disables the image button while a request is in flight.
+  Limits live in `config('myra.uploads')`.
+- **`ReplicateAction.schema()` keeps the user's edits.** `ActionModal` gained `payloadKey` and
+  `extraPayload`; the modal now posts `{except, only, relations, suffix, redirect_to, overrides:
+  {...row overrides, ...form values}}` instead of bare form values, so the schema fields actually
+  reach `Replicates::replicate()`. Form values win on collision. New `ReplicateAction.fillFrom()`
+  seeds the modal separately from `overrides()`. The server whitelist is unchanged — an override
+  outside `fillable` is still dropped.
+- **`ActionGroup.permission()` gates a root-level group.** New exported `resolveActionItems()`
+  returns `rootGroup: null` and an empty item list when the single top-level group's permission is
+  denied, instead of painting an empty trigger. `ActionGroup` also gained `visibleWhen()` /
+  `hiddenWhen()`, evaluated per row.
+- **Toggle `min()` / `max()` produce a rule.** `BaseField.rules()` added on every field;
+  `ToggleGroupField` / `ToggleButtons` / `CheckboxList` auto-derive `['array', 'min:n', 'max:n']`
+  under any explicit `.rules()`. `FormField` renders an advisory `validation.selectBetween` message
+  wired via `aria-describedby` with `aria-invalid` on the group container.
+- **i18n for the v2.1.0 strings.** New top-level `table` namespace (`table.filters`, `table.active`,
+  `table.updateFailed`, `table.scope.page`, `table.upload.*`) plus `common.copiedToClipboard` and
+  `validation.selectBetween`, in `en` / `ms` / `zh`. Replaces the hardcoded English in
+  `DataTable.vue`, `ActionModal.vue` and `ColorColumn`'s copy message.
+- **Inline updates are a real partial visit.** `only: []` is a *full* visit in Inertia; inline edits
+  now send `only: props.inlineReloadProps` (default `['flash']`) with `replace: true`, so an inline
+  edit no longer refetches the page or stacks a history entry. Pages needing server-computed
+  footers pass `:inline-reload-props="['flash', 'summaries']"`.
+### B — Saved views + column manager
+
+#### Added
+- **Saved table views** — `TableView.make(name)` declares a view on the page (`search`, `filters`,
+  `dateRange`, `query`, `sort`, `perPage`, `columns`, `columnOrder`, `default`, `permission`), and a
+  user-saved view arrives from the server in the same `SavedView` shape, so one menu drives both.
+  `useTableViews()` exposes `all`, `active`, `isModified`, `applyView`, `saveAs`, `updateActive`,
+  `rename`, `remove`, `makeDefault` and `shareUrl`.
+- `table_views` table (additive migration), `App\Models\TableView` with a `visibleTo` scope,
+  `App\Policies\TableViewPolicy` (team views are readable by teammates, writable only by their
+  author), `TableViewRequest`, and `Admin\TableViewController` with index/store/update/destroy/
+  makeDefault under `admin.table-views.*`.
+- `App\Admin\Views\ViewShape` — shape and size validation for the opaque `payload.query` blob
+  (25 rules, depth 3, 16 KB). It deliberately performs no field or operator whitelisting: a saved
+  view is replayed as URL query params through the same controller path as a live filter.
+- **Column manager** — `useColumnManager()` plus `admin/ColumnManager.vue`: search-within-list,
+  drag reorder (native HTML5, no dnd library), `Alt`+arrow keyboard reorder announced through an
+  `aria-live` region, group headers, and Reset. On by default; opt out with `:column-manager="false"`.
+- `admin/TableViewsMenu.vue`, `resources/js/types/table-views.d.ts`, `config/myra.php` `views.max`,
+  the `views.*` / `columns.*` i18n namespaces in `{en,ms,zh}.json`, and a `Demo/SavedViews.vue` page.
+
+#### Changed
+- `DataTable.vue` — `applyFilters()` split into `buildParams()` / `captureState()` / `applyView()`;
+  `per_page` is now sent (the server already read and capped it); the column-visibility store moved
+  from a bare `Record<string, boolean>` to `{ v: 2, visible, order }`, migrated in place on read;
+  the storage key gained the query prefix so two tables on one page no longer collide. New props:
+  `tableKey`, `savedViews`, `views`, `columnManager`, `canShareViews`.
+### C — Streaming export + import hardening
+
+#### Security
+- **Export data leak closed.** `UserController::exportCsv` built its own
+  `User::with('roles')->get()`, bypassing `UserService`'s `created_by` ownership scope and the
+  super-admin exclusion — any holder of `users.view` could export every user in the system. It now
+  streams `UserService::exportQuery()`, the same scoped query the listing paginates. Covered by
+  `tests/Feature/ExportScopeTest.php`.
+- Import mapping keys are whitelisted against the declared column names, and mapping values against
+  the staged headers. Previously any client key reached the model and only a hand-written field list
+  stood between an import and mass assignment.
+- TOCTOU closed: `preview()` stages the upload once under `imports/{userId}/{ulid}.csv` on the
+  private disk and hands back a ULID token; `validate` and `commit` re-read from the path derived
+  from that token, never from the request. The committed bytes are always the previewed bytes.
+- Per-record authorization is mandatory — `ImportDefinition::assertConfigured()` throws when
+  `authorizeRow()` is missing, so an import cannot silently skip the guards the single-record path
+  applies. `UsersImport` reproduces the role-privilege guard.
+- All three import write endpoints are rate limited (`throttle:10,1`); they had none. The per-resource
+  ability is resolved from the registry rather than hardcoded to `users.create`.
+- `Csv::filename()` strips everything outside `[A-Za-z0-9._-]`, collapses `..` and truncates to 80
+  chars, so a filename cannot traverse a path or inject a `Content-Disposition` header.
+- Formula-injection escaping (`Csv::cell`) is unconditional in **both** CSV and XLSX output.
+
+#### Added
+- `App\Admin\Export\ExportDefinition` + `ExportColumn` — declarative exports with `state()`,
+  `formatStateUsing()`, `date()`, `counts()`, `sum()`, `limit()`, `sensitive()`,
+  `enabledByDefault()`. Client column picks are intersected with the declared set, never trusted.
+- `ExportableQuery::streamExport()` — keyset (`lazyById`) iteration, so an export is constant-memory
+  and stable under concurrent writes; `chunk()`'s OFFSET paging skips and duplicates rows mid-export.
+  `preserveSort()` opts into `cursor()` and lowers `maxRows` to 20 000.
+- Over `maxRows` the request **422s**; it never returns a truncated file the user mistakes for
+  complete.
+- Streaming XLSX writer (`XlsxRowWriter`) — inline strings written to a temp sheet stream, zipped and
+  piped out. Dependency-free (ZipArchive); swap in OpenSpout later without touching callers.
+- `App\Admin\Import\{ImportDefinition, ImportColumn, ImportRegistry, ImportSession, HeaderMapper}`
+  and a four-endpoint pipeline: `preview` → `validate` → `commit` (resumable) → `failures`.
+  **No migrations, no queue, no notifications table.**
+- Resumable commit: one chunk per request inside a transaction, returning the byte offset to resume
+  from. Memory is O(chunk); a killed request resumes where it stopped and never leaves a half-written
+  row. `chunkSize` is the future job boundary.
+- Server-side auto-mapping in four passes: exact → normalised → declared `guess()` aliases →
+  Levenshtein ≤ 2.
+- `validate` dry-runs rows and returns per-cell errors; failures accumulate to a downloadable CSV
+  (capped at 1000 rows, after which the run reports `aborted`). `sensitive()` columns are `***`.
+- `ImportErrorGrid.vue` — a real `<table>` with `<caption>`, `scope="col"`, `aria-invalid` +
+  `aria-describedby` on offending cells, and an icon + text so colour is never the only signal.
+- `useImportRunner` — the commit loop, with Resume that continues from the stored cursor rather than
+  restarting.
+- `make:myra-import` now generates an `ImportDefinition` and registers it in `config/myra.php`;
+  `make:myra-export` emits an `ExportDefinition`.
+- `transfer.*` i18n namespace in `{en,ms,zh}.json`, plus `lang/{en,ms,zh}/transfer.php` for the
+  server-side messages.
+
+#### Changed
+- `ExportDropdown` takes a route **name** and reads `window.location.search` itself, so "Export CSV"
+  finally carries the active filters — it silently exported everything before. Adds a column picker.
+- The browser XLSX item is relabelled "this page only" and `useExcelExport` refuses above
+  `MAX_CLIENT_ROWS = 5000`, pointing at the server route.
+- `ImportModal` steps become upload → map → validate → import → result, with a `role="progressbar"`
+  and a polite live region.
+- The `if (count($errors) >= 10) break;` bail-out is gone — it stopped importing while reporting
+  `imported` as if it were the truth.
+- `EmailLogController` / `ActivityLogController` exports drop `->latest()->get()` for the streamed
+  path; `UserService`, `ArticleService` and `PageService` expose `exportQuery()`.
+
+#### Deferred
+- Queued/batched export and import above a threshold, PDF format, scheduled exports, "revert this
+  import".
+### D — query builder + global search
+
+**Added**
+- `App\Admin\QueryBuilder`: a closed `Operator` enum (28 cases), `FieldSpec`/`FieldSet` whitelist,
+  `RuleTree` parser and `RuleCompiler`. `HandlesQueryBuilder::applyQueryBuilder()` is the single
+  entry point; the field set is always a controller-side literal.
+- `App\Support\Sql::like()` — escapes `%`, `_` and `\` in all four match modes.
+- `App\Admin\Search`: `SearchSource`, `GlobalSearch`, `Scorer` and `Sources`, registered from
+  `GlobalSearchServiceProvider`. Weighted ranking (`max(weight × matchKind) + recency boost`),
+  per-source ownership scopes, per-source and global result caps, and command-palette page entries.
+- Client: `Constraint` classes (`Text/Number/Boolean/Date/Select/Relation`) with
+  `QueryBuilderFilter.constraints()` / `.fromColumns()` / `.maxRules()` / `.maxDepth()`;
+  `QueryBuilderRule.vue`, `QueryValueInput.vue`, `CommandPalette.vue`, `SearchHighlight.vue`;
+  `types/query-builder.d.ts`.
+- `filters.*` and `search.*` i18n namespaces in `en`, `ms` and `zh`.
+- Additive, driver-guarded migration `2026_08_16_000004_add_search_indexes`.
+
+**Security**
+- The query builder fails closed. An unknown field, an operator the field does not allow, a value
+  outside a `select`'s options, a bad cast, an arity mismatch, more than `maxRules` rules, nesting
+  past `maxDepth` or a tree over 16 KB is a **422** — never a silently unfiltered result set. A
+  field the actor lacks permission for reuses the unknown-field message so it cannot be used as an
+  enumeration oracle.
+- `RuleCompiler` wraps the whole tree in one outer `where()`, so a top-level `or` can never escape
+  an ownership scope already applied to the builder. Column names come only from
+  `FieldSpec::column()`, validated against an identifier regex at construction.
+- `SearchableQuery::applySearchAndPaginate()` now escapes LIKE wildcards and caps the requested page
+  number. The signature is unchanged.
+- `SearchController`'s unwrapped `orWhere` chain is replaced by a registry whose OR set is always
+  wrapped; term length is clamped to 2..100 and the route gains `throttle:60,1`.
+- Registering a search source on a model with a `created_by` column but no `scope()` throws
+  `MissingSearchScopeException` outside production.
+- Search-result highlighting is rendered from server-supplied offset ranges into `<mark>` runs —
+  never `v-html`.
+
+**Fixed**
+- `useGlobalSearch` had no request cancellation: a slow early response could overwrite a newer one.
+  Each keystroke now aborts the in-flight request and a sequence guard discards stale responses.
+- `QueryBuilderGroup` was capped at one nesting level, showed hardcoded English operator labels and
+  used a `<Badge @click>` for the conjunction. It is now depth-configurable, fully i18n'd, and the
+  conjunction is a `<button type="button" aria-pressed>`; every rule row is a labelled `role="group"`
+  and the Add Rule / Add Group buttons disable at their caps.
+- `DemoController::advancedFilters` filtered an in-memory Collection; it now runs against a real
+  Eloquent model through the compiler, and the Collection rule evaluators are deleted.
+
 ## v2.1.0 — 2026-08
 
 Filament v5 parity cluster: the remaining form fields, table columns, infolist entries and record

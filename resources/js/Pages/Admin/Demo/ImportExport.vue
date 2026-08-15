@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue';
 import { Head, Link, router } from '@inertiajs/vue3';
+import { useI18n } from 'vue-i18n';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import DataTable from '@/components/DataTable.vue';
 import PageHeader from '@/components/PageHeader.vue';
@@ -17,6 +18,7 @@ const props = defineProps<{
     filters: Record<string, string>;
 }>();
 
+const { t } = useI18n();
 const showImport = ref(false);
 
 const columns = [
@@ -50,22 +52,26 @@ const xlsxData = computed(() => props.contacts.data);
     <AuthenticatedLayout :breadcrumbs="[{ label: 'Demo', href: route('admin.demo.index') }, { label: 'Import & Export' }]">
         <Head title="Import & Export Demo" />
 
-        <PageHeader title="Import & Export" description="CSV import with column mapping and preview, plus streaming CSV export.">
+        <PageHeader
+            title="Import & Export"
+            description="Streaming server export with a column picker, and a resumable import with per-cell validation."
+        >
             <template #actions>
                 <ExportDropdown
-                    :csv-href="route('admin.demo.export-csv')"
+                    csv-route="admin.demo.export-csv"
                     xlsx-filename="contacts"
                     xlsx-sheet-name="Contacts"
+                    :formats="['csv']"
                     :columns="xlsxColumns"
                     :data="xlsxData"
                 />
                 <Button variant="outline" @click="showImport = true">
-                    <Upload class="mr-2 size-4" />
-                    Import CSV
+                    <Upload class="mr-2 size-4" aria-hidden="true" />
+                    {{ t('transfer.import.title') }}
                 </Button>
                 <Button variant="outline" as-child>
                     <Link :href="route('admin.demo.index')">
-                        <ArrowLeft class="mr-2 size-4" />
+                        <ArrowLeft class="mr-2 size-4" aria-hidden="true" />
                         Back to Demos
                     </Link>
                 </Button>
@@ -86,11 +92,9 @@ const xlsxData = computed(() => props.contacts.data);
 
         <ImportModal
             v-model:open="showImport"
-            title="Import Contacts"
-            :preview-route="route('admin.demo.import-preview')"
-            :execute-route="route('admin.demo.import-execute')"
-            resource="contacts"
-            :expected-columns="['name', 'email', 'phone', 'company']"
+            :title="t('transfer.import.title')"
+            resource="demo-contacts"
+            :sample-href="route('admin.demo.import-sample')"
         />
     </AuthenticatedLayout>
 </template>

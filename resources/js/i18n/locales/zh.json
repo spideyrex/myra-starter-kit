@@ -58,7 +58,8 @@
         "copyFailed": "无法复制到剪贴板",
         "showAll": "显示全部 {count} 行",
         "showLess": "收起",
-        "linesTruncated": "显示 {total} 行中的 {shown} 行。"
+        "linesTruncated": "显示 {total} 行中的 {shown} 行。",
+        "copiedToClipboard": "已复制到剪贴板"
     },
     "status": {
         "active": "活跃",
@@ -87,7 +88,8 @@
         "email": "请输入有效的邮箱地址",
         "minLength": "{field} 至少需要 {min} 个字符",
         "maxLength": "{field} 不能超过 {max} 个字符",
-        "confirmed": "{field} 确认不匹配"
+        "confirmed": "{field} 确认不匹配",
+        "selectBetween": "请选择 {min} 至 {max} 个选项。"
     },
     "fields": {
         "copied": "已复制到剪贴板",
@@ -125,5 +127,193 @@
             "boldSample": "粗体文字",
             "italicSample": "斜体文字"
         }
+    },
+    "table": {
+        "active": "已启用：",
+        "filters": "筛选",
+        "scope": {
+            "page": "本页"
+        },
+        "updateFailed": "更新失败。",
+        "upload": {
+            "badType": "不支持该文件类型。",
+            "notAnImage": "该文件不是有效的图片。",
+            "tooLarge": "图片超过 {max} KB。",
+            "uploading": "正在上传图片…"
+        }
+    },
+    "views": {
+        "a11y": {
+            "menu": "已保存视图菜单"
+        },
+        "copyLink": "复制链接",
+        "default": "默认",
+        "delete": "删除视图",
+        "deleted": "视图已删除",
+        "limitReached": "该表格的已保存视图数量已达上限。",
+        "linkCopied": "链接已复制到剪贴板",
+        "makeDefault": "设为默认",
+        "mine": "我的视图",
+        "modified": "已修改",
+        "namePlaceholder": "视图名称",
+        "none": "尚无已保存的视图",
+        "rename": "重命名视图",
+        "save": "保存视图",
+        "saveAs": "另存为新视图",
+        "saved": "视图已保存",
+        "shareWithTeam": "与我的团队共享",
+        "shared": "已与团队共享",
+        "team": "团队视图",
+        "title": "视图",
+        "update": "更新此视图"
+    },
+    "columns": {
+        "a11y": {
+            "list": "列的显示与排序",
+            "moved": "{label} 已移至第 {position} 位，共 {total} 位。"
+        },
+        "hidden": "隐藏",
+        "moveDown": "下移",
+        "moveUp": "上移",
+        "reset": "重置列",
+        "search": "搜索列",
+        "title": "列",
+        "visible": "显示"
+    },
+    "transfer": {
+        "export": {
+            "button": "导出",
+            "columns": "列",
+            "csv": "导出 CSV",
+            "keyOrder": "导出按 ID 顺序排列，而非当前屏幕上的顺序。",
+            "matchView": "与当前视图一致",
+            "preparing": "正在准备导出…",
+            "selectAll": "全选",
+            "selectNone": "全不选",
+            "tooManyRows": "行数超出浏览器导出上限（{max} 行），请使用由服务器流式导出的 CSV。",
+            "xlsx": "导出 XLSX",
+            "xlsxPageOnly": "导出 XLSX（仅当前页）"
+        },
+        "import": {
+            "a11y": {
+                "errorGrid": "未通过校验的行",
+                "progress": "导入进度"
+            },
+            "aborted": "导入已停止：失败行过多。",
+            "cellError": "无效值",
+            "columnsMapped": "已映射 {mapped}/{total} 列。",
+            "commit": "开始导入",
+            "done": "导入完成。",
+            "downloadSample": "下载示例 CSV",
+            "expected": "预期列：{columns}",
+            "failuresCsv": "下载失败行",
+            "file": "CSV 文件",
+            "invalidRows": "{count} 行存在错误。",
+            "map": "映射列",
+            "mappingRequired": "导入前必须映射所有必填列。",
+            "noErrors": "所检查的行未发现错误。",
+            "progress": "已处理 {done}/{total} 行。",
+            "required": "必填",
+            "result": "结果",
+            "resume": "继续",
+            "rowsImported": "新增 {imported} 条，更新 {updated} 条，失败 {failed} 条。",
+            "skip": "跳过无效行",
+            "skipColumn": "-- 跳过 --",
+            "sourceColumn": "源列",
+            "title": "导入",
+            "tooManyColumns": "该文件的列数超过 {max} 列。",
+            "tooManyRows": "该文件的行数超过 {max} 行。",
+            "upload": "上传",
+            "validate": "检查行"
+        }
+    },
+    "filters": {
+        "a11y": {
+            "condition": "条件 {n}",
+            "conjunction": "切换匹配方式",
+            "valueFrom": "起始值",
+            "valueList": "取值",
+            "valueTo": "结束值"
+        },
+        "addGroup": "分组",
+        "addRule": "条件",
+        "and": "并且",
+        "applyQuery": "应用查询",
+        "clearQuery": "清除查询",
+        "depthLimit": "嵌套最多 {max} 层。",
+        "enterValue": "输入值…",
+        "errors": {
+            "badValue": "该值不适用于此条件。",
+            "malformed": "无法解析该查询。",
+            "tooDeep": "查询嵌套层级过深。",
+            "tooManyRules": "查询条件过多。",
+            "unknownField": "查询中包含未知字段。",
+            "unknownOperator": "查询中包含未知运算符。"
+        },
+        "field": {
+            "createdAt": "创建时间",
+            "email": "邮箱",
+            "name": "姓名",
+            "phone": "电话",
+            "roles": "角色",
+            "status": "状态",
+            "verifiedAt": "验证时间"
+        },
+        "matchAll": "满足全部条件",
+        "matchAny": "满足任一条件",
+        "op": {
+            "between": "介于",
+            "contains": "包含",
+            "count_eq": "数量等于",
+            "count_gte": "数量不少于",
+            "count_lte": "数量不多于",
+            "date_after": "晚于",
+            "date_before": "早于",
+            "date_between": "介于",
+            "date_is": "等于",
+            "ends_with": "结尾为",
+            "eq": "等于",
+            "gt": "大于",
+            "gte": "不小于",
+            "in": "属于",
+            "in_month": "所在月份",
+            "in_year": "所在年份",
+            "is_blank": "为空",
+            "is_false": "为否",
+            "is_filled": "不为空",
+            "is_true": "为是",
+            "lt": "小于",
+            "lte": "不大于",
+            "neq": "不等于",
+            "not_contains": "不包含",
+            "not_in": "不属于",
+            "not_related_to": "不关联于",
+            "related_to": "关联于",
+            "starts_with": "开头为"
+        },
+        "or": "或者",
+        "removeGroup": "删除分组",
+        "removeRule": "删除条件",
+        "removeValue": "删除取值",
+        "ruleCount": "{n} 个条件",
+        "ruleLimit": "最多 {max} 个条件。",
+        "selectField": "选择字段",
+        "selectOperator": "选择运算符"
+    },
+    "search": {
+        "a11y": {
+            "hint": "输入以搜索。使用方向键在结果间移动，按 Enter 打开。",
+            "results": "{n} 条结果"
+        },
+        "commands": "命令",
+        "groups": {
+            "activity": "操作日志",
+            "pages": "页面",
+            "roles": "角色",
+            "users": "用户"
+        },
+        "noResults": "没有找到匹配项。",
+        "placeholder": "搜索全部…",
+        "recent": "最近"
     }
 }

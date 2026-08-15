@@ -1,5 +1,54 @@
 import { ref } from 'vue';
 
+/**
+ * Hard ceiling for the browser-side XLSX path. Building a workbook in memory
+ * is not a substitute for the streamed server export; above this the caller is
+ * pointed at the server route instead of being handed a truncated file.
+ */
+export const MAX_CLIENT_ROWS = 5000;
+
+export class ClientExportTooLargeError extends Error {
+    constructor(public readonly rows: number, public readonly max: number = MAX_CLIENT_ROWS) {
+        super('client-export-too-large');
+        this.name = 'ClientExportTooLargeError';
+    }
+}
+
+export interface ExportHrefOptions {
+    routeName?: string;
+    routeParams?: Record<string, any>;
+    format: 'csv' | 'xlsx';
+    columns: string[];
+    /** Carry the page's active filters into the export. Default true. */
+    includeFilters?: boolean;
+    /** Query string to read; defaults to window.location.search. */
+    search?: string;
+    resolve: (name: string, params: Record<string, any>) => string;
+}
+
+/**
+ * Server-export href. The pre-v2.2 ExportDropdown took a pre-built href that
+ * never carried the active filters, so "Export CSV" silently exported the whole
+ * table. Reading the query string here keeps DataTable out of it.
+ */
+export function buildExportHref(options: ExportHrefOptions): string | null {
+    if (!options.routeName) return null;
+
+    const raw =
+        options.includeFilters === false
+            ? ''
+            : options.search ?? (typeof window !== 'undefined' ? window.location.search : '');
+
+    const filters = Object.fromEntries(new URLSearchParams(raw));
+
+    return options.resolve(options.routeName, {
+        ...(options.routeParams ?? {}),
+        ...filters,
+        format: options.format,
+        columns: options.columns,
+    });
+}
+
 export interface ExcelColumn {
     header: string;
     key: string;
@@ -22,6 +71,10 @@ export function useExcelExport() {
     const exporting = ref(false);
 
     async function exportToXlsx(options: ExcelExportOptions) {
+        if (options.data.length > MAX_CLIENT_ROWS) {
+            throw new ClientExportTooLargeError(options.data.length);
+        }
+
         exporting.value = true;
         try {
             const [ExcelJS, { saveAs }] = await Promise.all([

@@ -8,6 +8,10 @@ vi.mock('@inertiajs/vue3', () => ({
     Link: { name: 'Link', render: () => null },
 }));
 
+vi.mock('vue-i18n', () => ({
+    useI18n: () => ({ t: (key: string) => key }),
+}));
+
 function toggleProps(field: ToggleButtons, extra: Record<string, any> = {}) {
     return { ...field.toProps(), ...extra };
 }

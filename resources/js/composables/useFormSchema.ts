@@ -154,6 +154,10 @@ export interface FieldSchema {
     mdMinHeight?: string;
     mdMaxHeight?: string;
     mdUploadRoute?: string;
+    mdMaxUploadKb?: number;
+    mdAcceptedTypes?: string[];
+    /** Laravel-style rule strings. Advisory on the client; the server rule is what counts. */
+    rules?: string[];
     // Conditional visibility
     visibleWhen?: VisibilityCondition;
     hiddenWhen?: VisibilityCondition;
@@ -599,6 +603,7 @@ export class BaseField {
     protected _colSpan?: number;
     protected _visibleWhen?: VisibilityCondition;
     protected _hiddenWhen?: VisibilityCondition;
+    protected _rules: string[] = [];
 
     constructor(name: string) {
         this._name = name;
@@ -669,6 +674,12 @@ export class BaseField {
         return this;
     }
 
+    /** Laravel-style rule strings, mirrored into the FormRequest by the generators. */
+    rules(rules: string[]): this {
+        this._rules = [...this._rules, ...rules];
+        return this;
+    }
+
     toProps(): FieldSchema {
         return {
             name: this._name,
@@ -685,6 +696,7 @@ export class BaseField {
             colSpan: this._colSpan,
             visibleWhen: this._visibleWhen,
             hiddenWhen: this._hiddenWhen,
+            rules: this._rules.length ? [...this._rules] : undefined,
         };
     }
 }
@@ -1368,6 +1380,16 @@ export class TagsInput extends BaseField {
     }
 }
 
+/** Multi-select min()/max() only bind if they reach the server as rules. Explicit rules win. */
+function selectionRules(multiple: boolean, min: number | undefined, max: number | undefined, explicit: string[]): string[] | undefined {
+    const auto: string[] = [];
+    if (multiple) auto.push('array');
+    if (min !== undefined) auto.push(`min:${min}`);
+    if (max !== undefined) auto.push(`max:${max}`);
+    const all = [...auto, ...explicit];
+    return all.length ? all : undefined;
+}
+
 export class ToggleGroupField extends BaseField {
     protected _options: SelectOption[] = [];
     protected _toggleMultiple = false;
@@ -1461,6 +1483,7 @@ export class ToggleGroupField extends BaseField {
             toggleHideLabels: this._toggleHideLabels,
             toggleMin: this._toggleMin,
             toggleMax: this._toggleMax,
+            rules: selectionRules(this._toggleMultiple, this._toggleMin, this._toggleMax, this._rules),
         };
     }
 }
@@ -1540,6 +1563,8 @@ export class CheckboxList extends BaseField {
     private _options: SelectOption[] = [];
     private _searchable = false;
     private _columns = 1;
+    private _min?: number;
+    private _max?: number;
 
     constructor(name: string) {
         super(name);
@@ -1569,8 +1594,26 @@ export class CheckboxList extends BaseField {
         return this;
     }
 
+    min(n: number): this {
+        this._min = n;
+        return this;
+    }
+
+    max(n: number): this {
+        this._max = n;
+        return this;
+    }
+
     toProps(): FieldSchema {
-        return { ...super.toProps(), options: this._options, checkboxSearchable: this._searchable, checkboxColumns: this._columns };
+        return {
+            ...super.toProps(),
+            options: this._options,
+            checkboxSearchable: this._searchable,
+            checkboxColumns: this._columns,
+            toggleMin: this._min,
+            toggleMax: this._max,
+            rules: selectionRules(true, this._min, this._max, this._rules),
+        };
     }
 }
 
@@ -1639,6 +1682,8 @@ export class MarkdownEditor extends BaseField {
     private _mdMinHeight?: string;
     private _mdMaxHeight?: string;
     private _mdUploadRoute?: string;
+    private _mdMaxUploadKb = 5120;
+    private _mdAcceptedTypes: string[] = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
 
     constructor(name: string) {
         super(name);
@@ -1702,9 +1747,19 @@ export class MarkdownEditor extends BaseField {
         return this;
     }
 
-    /** Signed-URL upload endpoint for pasted/dropped images. */
-    uploadRoute(routeName: string): this {
+    /** Upload endpoint for pasted/dropped images. Defaults to the shipped route. */
+    uploadRoute(routeName = 'admin.uploads.inline'): this {
         this._mdUploadRoute = routeName;
+        return this;
+    }
+
+    maxUploadKb(kb: number): this {
+        this._mdMaxUploadKb = kb;
+        return this;
+    }
+
+    acceptedUploadTypes(mimes: string[]): this {
+        this._mdAcceptedTypes = mimes;
         return this;
     }
 
@@ -1722,6 +1777,8 @@ export class MarkdownEditor extends BaseField {
             mdMinHeight: this._mdMinHeight,
             mdMaxHeight: this._mdMaxHeight,
             mdUploadRoute: this._mdUploadRoute,
+            mdMaxUploadKb: this._mdMaxUploadKb,
+            mdAcceptedTypes: [...this._mdAcceptedTypes],
         };
     }
 }

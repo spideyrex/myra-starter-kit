@@ -58,7 +58,8 @@
         "copyFailed": "Could not copy to clipboard",
         "showAll": "Show all {count} lines",
         "showLess": "Show less",
-        "linesTruncated": "Showing {shown} of {total} lines."
+        "linesTruncated": "Showing {shown} of {total} lines.",
+        "copiedToClipboard": "Copied to clipboard"
     },
     "status": {
         "active": "Active",
@@ -87,7 +88,8 @@
         "email": "Please enter a valid email address",
         "minLength": "{field} must be at least {min} characters",
         "maxLength": "{field} must not exceed {max} characters",
-        "confirmed": "{field} confirmation does not match"
+        "confirmed": "{field} confirmation does not match",
+        "selectBetween": "Select between {min} and {max} options."
     },
     "fields": {
         "copied": "Copied to clipboard",
@@ -125,5 +127,193 @@
             "boldSample": "bold text",
             "italicSample": "italic text"
         }
+    },
+    "table": {
+        "active": "Active:",
+        "filters": "Filters",
+        "scope": {
+            "page": "Page"
+        },
+        "updateFailed": "Update failed.",
+        "upload": {
+            "badType": "That file type is not supported.",
+            "notAnImage": "That file is not a valid image.",
+            "tooLarge": "That image is larger than {max} KB.",
+            "uploading": "Uploading image..."
+        }
+    },
+    "views": {
+        "a11y": {
+            "menu": "Saved views menu"
+        },
+        "copyLink": "Copy link",
+        "default": "Default",
+        "delete": "Delete view",
+        "deleted": "View deleted",
+        "limitReached": "You have reached the saved view limit for this table.",
+        "linkCopied": "Link copied to clipboard",
+        "makeDefault": "Set as default",
+        "mine": "My views",
+        "modified": "Modified",
+        "namePlaceholder": "View name",
+        "none": "No saved views yet",
+        "rename": "Rename view",
+        "save": "Save view",
+        "saveAs": "Save as new view",
+        "saved": "View saved",
+        "shareWithTeam": "Share with my team",
+        "shared": "Shared with team",
+        "team": "Team views",
+        "title": "Views",
+        "update": "Update this view"
+    },
+    "columns": {
+        "a11y": {
+            "list": "Column visibility and order",
+            "moved": "{label} moved to position {position} of {total}."
+        },
+        "hidden": "Hidden",
+        "moveDown": "Move down",
+        "moveUp": "Move up",
+        "reset": "Reset columns",
+        "search": "Search columns",
+        "title": "Columns",
+        "visible": "Visible"
+    },
+    "transfer": {
+        "export": {
+            "button": "Export",
+            "columns": "Columns",
+            "csv": "Export CSV",
+            "keyOrder": "Rows are exported in ID order, not the order shown on screen.",
+            "matchView": "Match current view",
+            "preparing": "Preparing your export...",
+            "selectAll": "Select all",
+            "selectNone": "Select none",
+            "tooManyRows": "Too many rows for a browser export (limit {max}). Use Export CSV, which streams from the server.",
+            "xlsx": "Export XLSX",
+            "xlsxPageOnly": "Export XLSX (this page only)"
+        },
+        "import": {
+            "a11y": {
+                "errorGrid": "Rows that failed validation",
+                "progress": "Import progress"
+            },
+            "aborted": "Import stopped: too many failed rows.",
+            "cellError": "Invalid value",
+            "columnsMapped": "{mapped} of {total} columns mapped.",
+            "commit": "Start import",
+            "done": "Import complete.",
+            "downloadSample": "Download a sample CSV",
+            "expected": "Expected columns: {columns}",
+            "failuresCsv": "Download failed rows",
+            "file": "CSV file",
+            "invalidRows": "{count} row(s) contain errors.",
+            "map": "Map columns",
+            "mappingRequired": "Every required column must be mapped before importing.",
+            "noErrors": "No errors found in the checked rows.",
+            "progress": "{done} of {total} rows processed.",
+            "required": "Required",
+            "result": "Result",
+            "resume": "Resume",
+            "rowsImported": "{imported} created, {updated} updated, {failed} failed.",
+            "skip": "Skip invalid rows",
+            "skipColumn": "-- Skip --",
+            "sourceColumn": "Source column",
+            "title": "Import",
+            "tooManyColumns": "The file has more than {max} columns.",
+            "tooManyRows": "The file has more than {max} rows.",
+            "upload": "Upload",
+            "validate": "Check rows"
+        }
+    },
+    "filters": {
+        "a11y": {
+            "condition": "Condition {n}",
+            "conjunction": "Toggle match mode",
+            "valueFrom": "From value",
+            "valueList": "Values",
+            "valueTo": "To value"
+        },
+        "addGroup": "Group",
+        "addRule": "Rule",
+        "and": "and",
+        "applyQuery": "Apply query",
+        "clearQuery": "Clear query",
+        "depthLimit": "Nesting is limited to {max} levels.",
+        "enterValue": "Enter value…",
+        "errors": {
+            "badValue": "That value is not allowed for this condition.",
+            "malformed": "The query could not be read.",
+            "tooDeep": "The query is nested too deeply.",
+            "tooManyRules": "The query has too many conditions.",
+            "unknownField": "Unknown field in the query.",
+            "unknownOperator": "Unknown operator in the query."
+        },
+        "field": {
+            "createdAt": "Created",
+            "email": "Email",
+            "name": "Name",
+            "phone": "Phone",
+            "roles": "Roles",
+            "status": "Status",
+            "verifiedAt": "Verified"
+        },
+        "matchAll": "Match all conditions",
+        "matchAny": "Match any condition",
+        "op": {
+            "between": "is between",
+            "contains": "contains",
+            "count_eq": "has exactly",
+            "count_gte": "has at least",
+            "count_lte": "has at most",
+            "date_after": "is after",
+            "date_before": "is before",
+            "date_between": "is between",
+            "date_is": "is on",
+            "ends_with": "ends with",
+            "eq": "equals",
+            "gt": "is greater than",
+            "gte": "is at least",
+            "in": "is one of",
+            "in_month": "is in month",
+            "in_year": "is in year",
+            "is_blank": "is blank",
+            "is_false": "is false",
+            "is_filled": "is filled",
+            "is_true": "is true",
+            "lt": "is less than",
+            "lte": "is at most",
+            "neq": "does not equal",
+            "not_contains": "does not contain",
+            "not_in": "is not one of",
+            "not_related_to": "is not related to",
+            "related_to": "is related to",
+            "starts_with": "starts with"
+        },
+        "or": "or",
+        "removeGroup": "Remove group",
+        "removeRule": "Remove condition",
+        "removeValue": "Remove value",
+        "ruleCount": "{n} conditions",
+        "ruleLimit": "At most {max} conditions.",
+        "selectField": "Select field",
+        "selectOperator": "Select operator"
+    },
+    "search": {
+        "a11y": {
+            "hint": "Type to search. Use the arrow keys to move between results and Enter to open one.",
+            "results": "{n} results"
+        },
+        "commands": "Commands",
+        "groups": {
+            "activity": "Activity Log",
+            "pages": "Pages",
+            "roles": "Roles",
+            "users": "Users"
+        },
+        "noResults": "No matches found.",
+        "placeholder": "Search everything…",
+        "recent": "Recent"
     }
 }

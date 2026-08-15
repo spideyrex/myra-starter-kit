@@ -11,6 +11,7 @@ use App\Http\Controllers\Admin\EmailLogController;
 use App\Http\Controllers\Admin\EmailSettingController;
 use App\Http\Controllers\Admin\EmailTemplateController;
 use App\Http\Controllers\Admin\ImportController;
+use App\Http\Controllers\Admin\InlineUploadController;
 use App\Http\Controllers\Admin\MediaController;
 use App\Http\Controllers\Admin\PermissionController;
 use App\Http\Controllers\Admin\RoleController;
@@ -18,6 +19,7 @@ use App\Http\Controllers\Admin\SearchController;
 use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Admin\FirebaseSettingController;
 use App\Http\Controllers\Admin\SystemHealthController;
+use App\Http\Controllers\Admin\TableViewController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Auth\SessionController;
 use App\Http\Controllers\Auth\TwoFactorController;
@@ -111,9 +113,14 @@ Route::middleware(['auth', 'verified', 'active', '2fa'])->prefix('admin')->name(
     Route::post('/users/{user}/restore', [UserController::class, 'restore'])->middleware('permission:users.edit')->name('users.restore');
     Route::delete('/users/{user}/force-delete', [UserController::class, 'forceDelete'])->middleware('permission:users.delete')->name('users.force-delete');
 
-    // Import
-    Route::post('/import/preview', [ImportController::class, 'preview'])->middleware('permission:users.create')->name('import.preview');
-    Route::post('/import/execute', [ImportController::class, 'execute'])->middleware('permission:users.create')->name('import.execute');
+    // >>> MYRA v2.2 [C] START
+    // Import — the per-resource ability is resolved from the registry inside the
+    // controller, so a blanket permission: middleware would be the wrong gate.
+    Route::post('/import/{resource}/preview', [ImportController::class, 'preview'])->middleware('throttle:10,1')->name('import.preview');
+    Route::post('/import/{resource}/validate', [ImportController::class, 'validateRows'])->middleware('throttle:10,1')->name('import.validate');
+    Route::post('/import/{resource}/commit', [ImportController::class, 'commit'])->middleware('throttle:10,1')->name('import.commit');
+    Route::get('/import/{resource}/failures/{token}', [ImportController::class, 'failures'])->name('import.failures');
+    // <<< MYRA v2.2 [C] END
 
     // Roles
     Route::get('/roles', [RoleController::class, 'index'])->middleware('permission:roles.view')->name('roles.index');
@@ -172,6 +179,16 @@ Route::middleware(['auth', 'verified', 'active', '2fa'])->prefix('admin')->name(
     Route::delete('/media/{media}', [MediaController::class, 'destroy'])->middleware('permission:media.delete')->name('media.destroy');
     Route::post('/media/bulk-action', [MediaController::class, 'bulkDestroy'])->middleware('permission:media.delete')->name('media.bulk-action');
 
+    // >>> MYRA v2.2 [A] START
+    // Inline (markdown) image uploads — private disk, ownership encoded in the path.
+    Route::post('/uploads/inline', [InlineUploadController::class, 'store'])
+        ->middleware(['permission:media.create', 'throttle:30,1'])->name('uploads.inline');
+    // No `permission:media.view` middleware: the controller authorises owner OR
+    // media.view, and the middleware would lock an owner out of their own image.
+    Route::get('/uploads/inline/{path}', [InlineUploadController::class, 'show'])
+        ->where('path', 'inline/.*')->name('uploads.inline.show');
+    // <<< MYRA v2.2 [A] END
+
     // System Health
     Route::get('/system-health', [SystemHealthController::class, 'index'])->middleware('permission:system-health.view')->name('system-health.index');
 
@@ -222,8 +239,24 @@ Route::middleware(['auth', 'verified', 'active', '2fa'])->prefix('admin')->name(
     Route::put('/categories/{category}', [CategoryController::class, 'update'])->middleware('permission:categories.edit')->name('categories.update');
     Route::delete('/categories/{category}', [CategoryController::class, 'destroy'])->middleware('permission:categories.delete')->name('categories.destroy');
 
+    // >>> MYRA v2.2 [B] START
+    // Saved table views. No `permission:` middleware — a blanket views
+    // permission would grant nothing about the table being viewed, and the
+    // payload is opaque data replayed as query params through the existing
+    // index route, which keeps its own gate.
+    Route::get('/table-views', [TableViewController::class, 'index'])->name('table-views.index');
+    Route::post('/table-views', [TableViewController::class, 'store'])->middleware('throttle:30,1')->name('table-views.store');
+    Route::put('/table-views/{tableView}', [TableViewController::class, 'update'])->middleware('throttle:30,1')->name('table-views.update');
+    Route::delete('/table-views/{tableView}', [TableViewController::class, 'destroy'])->name('table-views.destroy');
+    Route::post('/table-views/{tableView}/default', [TableViewController::class, 'makeDefault'])->name('table-views.default');
+    // <<< MYRA v2.2 [B] END
+
     // Global Search
-    Route::get('/search', [SearchController::class, 'index'])->middleware('permission:search.view')->name('search');
+    // >>> MYRA v2.2 [D] START
+    Route::get('/search', [SearchController::class, 'index'])
+        ->middleware(['permission:search.view', 'throttle:60,1'])
+        ->name('search');
+    // <<< MYRA v2.2 [D] END
 
     // Demo / Feature Showcase (all gated by demo.view)
     Route::middleware('permission:demo.view')->group(function () {
@@ -242,11 +275,15 @@ Route::middleware(['auth', 'verified', 'active', '2fa'])->prefix('admin')->name(
     Route::delete('/demo/action-modals/{id}', [DemoController::class, 'demoDeleteTask'])->name('demo.delete-task');
     Route::post('/demo/action-modals/{id}/replicate', [DemoController::class, 'demoReplicateTask'])->name('demo.replicate-task');
     Route::post('/demo/action-modals/{id}/archive', [DemoController::class, 'demoArchiveTask'])->name('demo.archive-task');
+    // >>> MYRA v2.2 [C] START
     Route::get('/demo/import-export', [DemoController::class, 'importExport'])->name('demo.import-export');
     Route::get('/demo/export-csv', [DemoController::class, 'exportCsv'])->name('demo.export-csv');
-    Route::post('/demo/import/preview', [DemoController::class, 'demoImportPreview'])->name('demo.import-preview');
-    Route::post('/demo/import/execute', [DemoController::class, 'demoImportExecute'])->name('demo.import-execute');
+    Route::get('/demo/import-sample', [DemoController::class, 'importSample'])->name('demo.import-sample');
+    // <<< MYRA v2.2 [C] END
     Route::get('/demo/global-search', [DemoController::class, 'globalSearch'])->name('demo.global-search');
+    // >>> MYRA v2.2 [B] START
+    Route::get('/demo/saved-views', [DemoController::class, 'savedViews'])->name('demo.saved-views');
+    // <<< MYRA v2.2 [B] END
 
     // Advanced Feature Demos
     Route::get('/demo/inline-editing', [DemoController::class, 'inlineEditing'])->name('demo.inline-editing');

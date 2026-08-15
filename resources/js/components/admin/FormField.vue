@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, computed, defineAsyncComponent, h, type Component } from 'vue';
+import { useI18n } from 'vue-i18n';
 import { usePage } from '@inertiajs/vue3';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
@@ -40,6 +41,7 @@ const LazyMarkdownEditor = defineAsyncComponent({ loader: () => import('@/compon
 const LazyCodeEditor = defineAsyncComponent({ loader: () => import('@/components/admin/CodeEditorField.vue'), loadingComponent: paneSkeleton, delay: 120 });
 
 const page = usePage();
+const { t } = useI18n();
 
 const props = withDefaults(defineProps<{
     label: string;
@@ -144,6 +146,8 @@ const props = withDefaults(defineProps<{
     mdMinHeight?: string;
     mdMaxHeight?: string;
     mdUploadRoute?: string;
+    mdMaxUploadKb?: number;
+    mdAcceptedTypes?: string[];
 }>(), {
     type: 'text',
     pinLength: 6,
@@ -314,6 +318,31 @@ function onToggleChange(v: any) {
     if (props.toggleMin != null && next.length < props.toggleMin) return;
     model.value = next;
 }
+
+// Advisory only — the rule that binds is the server's (BaseField.rules()).
+const selectionMsgId = computed(() => `${fieldId.value}-selection`);
+
+const selectionCount = computed(() => {
+    if (props.type === 'checkbox-list') return Array.isArray(model.value) ? model.value.length : 0;
+    return Array.isArray(normalisedToggleModel.value) ? normalisedToggleModel.value.length : 0;
+});
+
+const hasSelectionBounds = computed(() => props.toggleMin != null || props.toggleMax != null);
+
+const selectionOutOfRange = computed(() => {
+    if (!hasSelectionBounds.value) return false;
+    const n = selectionCount.value;
+    return (props.toggleMin != null && n < props.toggleMin) || (props.toggleMax != null && n > props.toggleMax);
+});
+
+const selectionDescribedBy = computed(() => (selectionOutOfRange.value
+    ? [describedBy.value, selectionMsgId.value].filter(Boolean).join(' ')
+    : describedBy.value));
+
+const selectionMessage = computed(() => t('validation.selectBetween', {
+    min: props.toggleMin ?? 0,
+    max: props.toggleMax ?? (props.options?.length ?? 0),
+}));
 
 function atToggleMax(value: string): boolean {
     if (!props.toggleMultiple || props.toggleMax == null) return false;
@@ -632,38 +661,42 @@ function toggleAriaLabel(opt: ToggleOption): string | undefined {
                 </TagsInput>
 
                 <!-- Toggle group / Toggle buttons -->
-                <ToggleGroup
-                    v-else-if="type === 'toggle-group'"
-                    :id="fieldId"
-                    :type="toggleMultiple ? 'multiple' : 'single'"
-                    :model-value="normalisedToggleModel"
-                    :variant="toggleVariant"
-                    :size="toggleSize"
-                    :spacing="toggleColumns ? 2 : 0"
-                    :disabled="disabled"
-                    :class="toggleColumns ? 'grid w-full' : (toggleInline ? 'flex flex-wrap' : 'flex w-full flex-wrap')"
-                    :style="toggleColumns ? `grid-template-columns: repeat(${toggleColumns}, minmax(0,1fr))` : undefined"
-                    :aria-describedby="describedBy"
-                    :aria-invalid="!!error"
-                    @update:model-value="onToggleChange"
-                >
-                    <ToggleGroupItem
-                        v-for="opt in resolvedToggleOptions"
-                        :key="opt.value"
-                        :value="opt.value"
-                        :disabled="disabled || opt.disabled || atToggleMax(opt.value)"
-                        :aria-label="toggleAriaLabel(opt)"
-                        :title="opt.tooltip"
-                        :class="['h-auto py-2', toggleColorClass(opt.color)]"
+                <div v-else-if="type === 'toggle-group'" class="space-y-1.5">
+                    <ToggleGroup
+                        :id="fieldId"
+                        :type="toggleMultiple ? 'multiple' : 'single'"
+                        :model-value="normalisedToggleModel"
+                        :variant="toggleVariant"
+                        :size="toggleSize"
+                        :spacing="toggleColumns ? 2 : 0"
+                        :disabled="disabled"
+                        :class="toggleColumns ? 'grid w-full' : (toggleInline ? 'flex flex-wrap' : 'flex w-full flex-wrap')"
+                        :style="toggleColumns ? `grid-template-columns: repeat(${toggleColumns}, minmax(0,1fr))` : undefined"
+                        :aria-describedby="selectionDescribedBy"
+                        :aria-invalid="!!error || selectionOutOfRange"
+                        @update:model-value="onToggleChange"
                     >
-                        <component :is="opt.icon" v-if="opt.icon" class="size-4" :class="toggleHideLabels ? '' : 'mr-2'" aria-hidden="true" />
-                        <span v-if="!toggleHideLabels" class="flex flex-col items-start text-left">
-                            <span>{{ opt.label }}</span>
-                            <span v-if="opt.description" class="text-xs opacity-70">{{ opt.description }}</span>
-                            <span v-if="opt.tooltip" class="sr-only">{{ opt.tooltip }}</span>
-                        </span>
-                    </ToggleGroupItem>
-                </ToggleGroup>
+                        <ToggleGroupItem
+                            v-for="opt in resolvedToggleOptions"
+                            :key="opt.value"
+                            :value="opt.value"
+                            :disabled="disabled || opt.disabled || atToggleMax(opt.value)"
+                            :aria-label="toggleAriaLabel(opt)"
+                            :title="opt.tooltip"
+                            :class="['h-auto py-2', toggleColorClass(opt.color)]"
+                        >
+                            <component :is="opt.icon" v-if="opt.icon" class="size-4" :class="toggleHideLabels ? '' : 'mr-2'" aria-hidden="true" />
+                            <span v-if="!toggleHideLabels" class="flex flex-col items-start text-left">
+                                <span>{{ opt.label }}</span>
+                                <span v-if="opt.description" class="text-xs opacity-70">{{ opt.description }}</span>
+                                <span v-if="opt.tooltip" class="sr-only">{{ opt.tooltip }}</span>
+                            </span>
+                        </ToggleGroupItem>
+                    </ToggleGroup>
+                    <p v-if="selectionOutOfRange" :id="selectionMsgId" class="text-xs text-destructive" aria-live="polite">
+                        {{ selectionMessage }}
+                    </p>
+                </div>
 
                 <!-- TimePicker -->
                 <Input
@@ -695,7 +728,8 @@ function toggleAriaLabel(opt: ToggleOption): string | undefined {
                     <div
                         class="max-h-48 overflow-y-auto rounded-md border p-2 grid gap-2"
                         :style="`grid-template-columns: repeat(${checkboxColumns || 1}, minmax(0, 1fr))`"
-                        :aria-describedby="describedBy"
+                        :aria-describedby="selectionDescribedBy"
+                        :aria-invalid="!!error || selectionOutOfRange"
                     >
                         <label
                             v-for="opt in filteredCheckboxOptions"
@@ -710,6 +744,9 @@ function toggleAriaLabel(opt: ToggleOption): string | undefined {
                             {{ opt.label }}
                         </label>
                     </div>
+                    <p v-if="selectionOutOfRange" :id="selectionMsgId" class="text-xs text-destructive" aria-live="polite">
+                        {{ selectionMessage }}
+                    </p>
                 </div>
 
                 <!-- KeyValue -->
@@ -774,6 +811,8 @@ function toggleAriaLabel(opt: ToggleOption): string | undefined {
                     :md-min-height="mdMinHeight"
                     :md-max-height="mdMaxHeight"
                     :md-upload-route="mdUploadRoute"
+                    :md-max-upload-kb="mdMaxUploadKb"
+                    :md-accepted-types="mdAcceptedTypes"
                     @update:model-value="model = $event"
                 />
 

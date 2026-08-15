@@ -125,7 +125,7 @@ function copyToClipboard(text: string) {
             :shape="c.swatchShape ?? 'square'"
             :show-value="c.swatchShowValue !== false"
             :copyable="c.copyable !== false"
-            :copy-message="c.copyMessage || 'Copied to clipboard'"
+            :copy-message="c.copyMessage"
         />
     </template>
 

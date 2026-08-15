@@ -1,26 +1,55 @@
 <script setup lang="ts">
+import { computed } from 'vue';
+import { useI18n } from 'vue-i18n';
 import type { QueryGroup, QueryRule } from '@/types/admin';
+import type { QueryConstraintSchema } from '@/types/query-builder';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Badge } from '@/components/ui/badge';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Plus, Trash2, FolderPlus } from 'lucide-vue-next';
+import QueryBuilderRule from '@/components/admin/QueryBuilderRule.vue';
+import { emptyValueForOperator } from '@/composables/useTableFilters';
 
+/** @deprecated legacy shape, still accepted via the `fields` prop. */
 interface QueryBuilderFieldDef {
     name: string;
     label: string;
     operators: string[];
 }
 
-const props = defineProps<{
+const props = withDefaults(defineProps<{
     group: QueryGroup;
-    fields: QueryBuilderFieldDef[];
+    constraints?: QueryConstraintSchema[];
+    fields?: QueryBuilderFieldDef[];
     depth: number;
-}>();
+    maxDepth?: number;
+    maxRules?: number;
+    /** Total rules across the whole tree, so the cap is enforced globally. */
+    ruleCount?: number;
+}>(), {
+    constraints: () => [],
+    fields: () => [],
+    maxDepth: 3,
+    maxRules: 25,
+    ruleCount: 0,
+});
 
 const emit = defineEmits<{
     'update:group': [group: QueryGroup];
 }>();
+
+const { t } = useI18n();
+
+const resolvedConstraints = computed<QueryConstraintSchema[]>(() =>
+    props.constraints.length
+        ? props.constraints
+        : props.fields.map(f => ({
+            name: f.name,
+            type: 'text' as const,
+            label: f.label,
+            operators: (f.operators ?? []) as any,
+        })));
+
+const atRuleCap = computed(() => props.ruleCount >= props.maxRules);
+const atDepthCap = computed(() => props.depth + 1 >= props.maxDepth);
 
 function toggleConjunction() {
     emit('update:group', {
@@ -30,27 +59,20 @@ function toggleConjunction() {
 }
 
 function addRule() {
-    const firstField = props.fields[0];
+    if (atRuleCap.value) return;
+    const first = resolvedConstraints.value[0];
+    const operator = first?.operators?.[0] ?? 'eq';
     const newRule: QueryRule = {
-        field: firstField?.name || '',
-        operator: firstField?.operators[0] || '=',
-        value: '',
+        field: first?.name ?? '',
+        operator,
+        value: emptyValueForOperator(operator),
     };
-    emit('update:group', {
-        ...props.group,
-        rules: [...props.group.rules, newRule],
-    });
+    emit('update:group', { ...props.group, rules: [...props.group.rules, newRule] });
 }
 
-function updateRule(index: number, patch: Partial<QueryRule>) {
+function updateRule(index: number, rule: QueryRule) {
     const rules = [...props.group.rules];
-    rules[index] = { ...rules[index], ...patch };
-    if (patch.field) {
-        const fieldDef = props.fields.find(f => f.name === patch.field);
-        if (fieldDef && !fieldDef.operators.includes(rules[index].operator)) {
-            rules[index].operator = fieldDef.operators[0] || '=';
-        }
-    }
+    rules[index] = rule;
     emit('update:group', { ...props.group, rules });
 }
 
@@ -61,12 +83,9 @@ function removeRule(index: number) {
 }
 
 function addSubGroup() {
-    if (props.depth >= 1) return;
+    if (atDepthCap.value || atRuleCap.value) return;
     const newGroup: QueryGroup = { conjunction: 'and', rules: [], groups: [] };
-    emit('update:group', {
-        ...props.group,
-        groups: [...props.group.groups, newGroup],
-    });
+    emit('update:group', { ...props.group, groups: [...props.group.groups, newGroup] });
 }
 
 function updateSubGroup(index: number, subGroup: QueryGroup) {
@@ -80,128 +99,117 @@ function removeSubGroup(index: number) {
     groups.splice(index, 1);
     emit('update:group', { ...props.group, groups });
 }
-
-function getOperatorsForField(fieldName: string): string[] {
-    const f = props.fields.find(f => f.name === fieldName);
-    return f?.operators || ['='];
-}
-
-const operatorLabels: Record<string, string> = {
-    '=': 'equals',
-    '!=': 'not equal',
-    '>': 'greater than',
-    '<': 'less than',
-    '>=': 'at least',
-    '<=': 'at most',
-    'contains': 'contains',
-    'starts_with': 'starts with',
-    'ends_with': 'ends with',
-};
 </script>
 
 <template>
     <div
         :class="[
-            'relative rounded-lg border transition-colors',
+            'qb-group relative rounded-lg border',
             depth > 0 ? 'bg-muted/30 border-dashed' : 'bg-background',
         ]"
     >
-        <!-- Conjunction indicator line -->
-        <div v-if="group.rules.length > 1 || group.groups.length > 0" class="absolute left-3.5 top-10 bottom-12 w-px bg-border" />
+        <div v-if="group.rules.length > 1 || group.groups.length > 0" class="absolute left-3.5 top-10 bottom-12 w-px bg-border" aria-hidden="true" />
 
         <div class="p-3 space-y-2">
-            <!-- Header: Conjunction toggle -->
             <div class="flex items-center justify-between">
                 <div class="flex items-center gap-2">
-                    <Badge
-                        class="cursor-pointer select-none uppercase tracking-wide text-[10px] font-semibold px-2 py-0.5 transition-colors"
-                        :variant="group.conjunction === 'and' ? 'default' : 'secondary'"
+                    <button
+                        type="button"
+                        :aria-pressed="group.conjunction === 'and'"
+                        :aria-label="t('filters.a11y.conjunction')"
+                        :class="[
+                            'qb-conjunction inline-flex items-center rounded-md border px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide',
+                            'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
+                            group.conjunction === 'and'
+                                ? 'border-transparent bg-primary text-primary-foreground'
+                                : 'border-transparent bg-secondary text-secondary-foreground',
+                        ]"
                         @click="toggleConjunction"
                     >
-                        {{ group.conjunction }}
-                    </Badge>
+                        {{ group.conjunction === 'and' ? t('filters.and') : t('filters.or') }}
+                    </button>
                     <span class="text-[11px] text-muted-foreground">
-                        {{ group.conjunction === 'and' ? 'Match all conditions' : 'Match any condition' }}
+                        {{ group.conjunction === 'and' ? t('filters.matchAll') : t('filters.matchAny') }}
                     </span>
                 </div>
                 <slot name="remove" />
             </div>
 
-            <!-- Rules -->
-            <div v-for="(rule, i) in group.rules" :key="`rule-${i}`" class="relative flex flex-wrap items-center gap-1.5 pl-4">
-                <!-- Dot connector -->
-                <div class="absolute left-[11px] top-1/2 -translate-y-1/2 size-1.5 rounded-full bg-border" />
+            <QueryBuilderRule
+                v-for="(rule, i) in group.rules"
+                :key="`rule-${i}`"
+                :rule="rule"
+                :constraints="resolvedConstraints"
+                :index="i"
+                @update:rule="(r: QueryRule) => updateRule(i, r)"
+                @remove="removeRule(i)"
+            />
 
-                <Select :model-value="rule.field" @update:model-value="(v: any) => updateRule(i, { field: String(v) })">
-                    <SelectTrigger class="h-8 w-[130px] text-xs">
-                        <SelectValue placeholder="Select field" />
-                    </SelectTrigger>
-                    <SelectContent>
-                        <SelectItem v-for="f in fields" :key="f.name" :value="f.name">{{ f.label }}</SelectItem>
-                    </SelectContent>
-                </Select>
-
-                <Select :model-value="rule.operator" @update:model-value="(v: any) => updateRule(i, { operator: String(v) })">
-                    <SelectTrigger class="h-8 w-[120px] text-xs">
-                        <SelectValue placeholder="Operator" />
-                    </SelectTrigger>
-                    <SelectContent>
-                        <SelectItem v-for="op in getOperatorsForField(rule.field)" :key="op" :value="op">
-                            <span class="font-mono text-xs mr-1.5">{{ op }}</span>
-                            <span v-if="operatorLabels[op]" class="text-muted-foreground text-[11px]">{{ operatorLabels[op] }}</span>
-                        </SelectItem>
-                    </SelectContent>
-                </Select>
-
-                <Input
-                    :model-value="rule.value"
-                    placeholder="Enter value…"
-                    class="h-8 w-[150px] text-xs"
-                    @update:model-value="(v: any) => updateRule(i, { value: String(v) })"
-                />
-
-                <Button
-                    variant="ghost"
-                    size="sm"
-                    class="h-7 w-7 p-0 text-muted-foreground hover:text-destructive transition-colors"
-                    @click="removeRule(i)"
-                >
-                    <Trash2 class="size-3.5" />
-                </Button>
-            </div>
-
-            <!-- Sub-groups -->
             <div v-for="(subGroup, i) in group.groups" :key="`group-${i}`" class="pl-4">
                 <QueryBuilderGroup
                     :group="subGroup"
-                    :fields="fields"
+                    :constraints="resolvedConstraints"
                     :depth="depth + 1"
+                    :max-depth="maxDepth"
+                    :max-rules="maxRules"
+                    :rule-count="ruleCount"
                     @update:group="(g: QueryGroup) => updateSubGroup(i, g)"
                 >
                     <template #remove>
                         <Button
                             variant="ghost"
                             size="sm"
-                            class="h-7 w-7 p-0 text-muted-foreground hover:text-destructive transition-colors"
+                            type="button"
+                            class="h-7 w-7 p-0 text-muted-foreground hover:text-destructive focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                            :aria-label="t('filters.removeGroup')"
                             @click="removeSubGroup(i)"
                         >
-                            <Trash2 class="size-3.5" />
+                            <Trash2 class="size-3.5" aria-hidden="true" />
                         </Button>
                     </template>
                 </QueryBuilderGroup>
             </div>
 
-            <!-- Action buttons -->
-            <div class="flex items-center gap-1.5 pl-4 pt-0.5">
-                <Button variant="outline" size="sm" class="h-7 text-xs gap-1" @click="addRule">
-                    <Plus class="size-3" />
-                    Rule
+            <div class="flex flex-wrap items-center gap-1.5 pl-4 pt-0.5">
+                <Button
+                    variant="outline"
+                    size="sm"
+                    type="button"
+                    class="h-7 gap-1 text-xs focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                    data-testid="qb-add-rule"
+                    :disabled="atRuleCap"
+                    :title="atRuleCap ? t('filters.ruleLimit', { max: maxRules }) : undefined"
+                    @click="addRule"
+                >
+                    <Plus class="size-3" aria-hidden="true" />
+                    {{ t('filters.addRule') }}
                 </Button>
-                <Button v-if="depth < 1" variant="outline" size="sm" class="h-7 text-xs gap-1" @click="addSubGroup">
-                    <FolderPlus class="size-3" />
-                    Group
+                <Button
+                    variant="outline"
+                    size="sm"
+                    type="button"
+                    class="h-7 gap-1 text-xs focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                    data-testid="qb-add-group"
+                    :disabled="atDepthCap || atRuleCap"
+                    :title="atDepthCap ? t('filters.depthLimit', { max: maxDepth }) : undefined"
+                    @click="addSubGroup"
+                >
+                    <FolderPlus class="size-3" aria-hidden="true" />
+                    {{ t('filters.addGroup') }}
                 </Button>
+                <span v-if="atRuleCap" class="text-[11px] text-muted-foreground" aria-live="polite">
+                    {{ t('filters.ruleLimit', { max: maxRules }) }}
+                </span>
             </div>
         </div>
     </div>
 </template>
+
+<style scoped>
+@media (prefers-reduced-motion: no-preference) {
+    .qb-group,
+    .qb-conjunction {
+        transition: background-color 150ms ease, border-color 150ms ease, color 150ms ease;
+    }
+}
+</style>

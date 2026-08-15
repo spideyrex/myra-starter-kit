@@ -5,13 +5,15 @@ namespace App\Services;
 use App\Admin\Traits\SearchableQuery;
 use App\Models\Page;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 
 class PageService
 {
     use SearchableQuery;
 
-    public function list(Request $request): LengthAwarePaginator
+    /** Every filter, without pagination — the export path reuses this, never a copy. */
+    public function exportQuery(Request $request): Builder
     {
         $query = Page::query()
             ->with('creator')
@@ -24,8 +26,13 @@ class PageService
             $query->withTrashed();
         }
 
+        return $query;
+    }
+
+    public function list(Request $request): LengthAwarePaginator
+    {
         return $this->applySearchAndPaginate(
-            $query,
+            $this->exportQuery($request),
             $request,
             searchable: ['title', 'slug', 'excerpt'],
         );

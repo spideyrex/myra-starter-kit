@@ -2,10 +2,15 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Admin\Export\ExportColumn;
+use App\Admin\Export\ExportDefinition;
+use App\Admin\Traits\ExportableQuery;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\ActivityResource;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
 use Inertia\Response;
 use Spatie\Activitylog\Models\Activity;
@@ -13,15 +18,25 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class ActivityLogController extends Controller
 {
+    use ExportableQuery;
+
+    /** One filter definition shared by the listing and the export. */
+    private function baseQuery(Request $request): Builder
+    {
+        return Activity::query()
+            ->when($request->search, function ($q, $search) {
+                $q->where(function ($q) use ($search) {
+                    $q->where('description', 'like', "%{$search}%")
+                      ->orWhere('subject_type', 'like', "%{$search}%");
+                });
+            })
+            ->when($request->log_name, fn ($q, $name) => $q->where('log_name', $name));
+    }
+
     public function index(Request $request): Response
     {
-        $activities = Activity::query()
+        $activities = $this->baseQuery($request)
             ->with('causer')
-            ->when($request->search, function ($q, $search) {
-                $q->where('description', 'like', "%{$search}%")
-                  ->orWhere('subject_type', 'like', "%{$search}%");
-            })
-            ->when($request->log_name, fn ($q, $name) => $q->where('log_name', $name))
             ->latest()
             ->paginate(15)
             ->withQueryString();
@@ -47,32 +62,25 @@ class ActivityLogController extends Controller
 
     public function exportCsv(Request $request): StreamedResponse
     {
-        $activities = Activity::query()
-            ->with('causer')
-            ->when($request->search, function ($q, $search) {
-                $q->where('description', 'like', "%{$search}%")
-                  ->orWhere('subject_type', 'like', "%{$search}%");
-            })
-            ->when($request->log_name, fn ($q, $name) => $q->where('log_name', $name))
-            ->latest()
-            ->get();
+        Gate::authorize('activity-log.view');
 
-        return response()->streamDownload(function () use ($activities) {
-            $file = fopen('php://output', 'w');
-            fputcsv($file, ['ID', 'Description', 'User', 'Subject', 'Event', 'Date']);
-
-            foreach ($activities as $activity) {
-                fputcsv($file, \App\Support\Csv::row([
-                    $activity->id,
-                    $activity->description,
-                    $activity->causer?->name ?? 'System',
-                    $activity->subject_type,
-                    $activity->event,
-                    $activity->created_at->toDateTimeString(),
-                ]));
-            }
-
-            fclose($file);
-        }, 'activity-log.csv');
+        return $this->streamExport(
+            $this->baseQuery($request),
+            ExportDefinition::make('activity-log')
+                ->columns([
+                    ExportColumn::make('id')->label('ID'),
+                    ExportColumn::make('description')->label('Description'),
+                    ExportColumn::make('causer')->label('User')
+                        ->state(fn (Activity $a) => $a->causer?->name ?? 'System'),
+                    ExportColumn::make('subject_type')->label('Subject'),
+                    ExportColumn::make('event')->label('Event'),
+                    ExportColumn::make('created_at')->label('Date')->date('Y-m-d H:i:s'),
+                ])
+                ->eagerLoad(['causer'])
+                ->formats(['csv', 'xlsx'])
+                ->maxRows((int) config('myra.exports.max_rows', 50000))
+                ->filename('activity-log'),
+            $request,
+        );
     }
 }

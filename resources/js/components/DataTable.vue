@@ -1,12 +1,13 @@
 <script setup lang="ts">
 import { ref, computed, onBeforeUnmount } from 'vue';
+import { useI18n } from 'vue-i18n';
 import { router } from '@inertiajs/vue3';
 import { toast } from 'vue-sonner';
 import type { PaginatedData } from '@/types';
 import type { ColumnSchema, FilterSchema, ActionSchema, ActionGroupSchema, BulkActionSchema, RowAction, RowActionsConfig, QueryGroup, QueryRule } from '@/types/admin';
 import { BaseColumn } from '@/composables/useTableSchema';
 import { BaseFilter } from '@/composables/useTableFilters';
-import { Action, BulkAction, ActionGroup, ActionDivider, ActionSectionLabel } from '@/composables/useTableActions';
+import { Action, BulkAction, ActionGroup, ActionDivider, ActionSectionLabel, resolveActionItems } from '@/composables/useTableActions';
 import {
     Table,
     TableBody,
@@ -31,12 +32,20 @@ import QueryBuilderGroup from '@/components/admin/QueryBuilderGroup.vue';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Separator } from '@/components/ui/separator';
 import { Search, ChevronUp, ChevronDown, ChevronsUpDown, Check, X, Filter as FilterIcon, GripVertical, ChevronRight, Columns3, CalendarDays, Sparkles, RotateCcw } from 'lucide-vue-next';
+// [B] saved views + column manager
+import { onMounted } from 'vue';
+import { useTableViews, buildTableParams, type TableView } from '@/composables/useTableViews';
+import { useColumnManager } from '@/composables/useColumnManager';
+import TableViewsMenu from '@/components/admin/TableViewsMenu.vue';
+import ColumnManager from '@/components/admin/ColumnManager.vue';
+import type { SavedView, TableViewPayload, ColumnManagerOptions } from '@/types/table-views';
 
 export interface Column {
     key: string;
     label: string;
     sortable?: boolean;
     class?: string;
+    toggleable?: boolean; // [B]
 }
 
 type ColumnInput = Column | BaseColumn;
@@ -63,6 +72,12 @@ const props = withDefaults(defineProps<{
     reorderRoute?: string;
     queryPrefix?: string;
     stickyHeader?: boolean;
+    inlineReloadProps?: string[];   // [A]
+    tableKey?: string;                              // [B]
+    savedViews?: SavedView[];                       // [B]
+    views?: TableView[];                            // [B]
+    columnManager?: boolean | ColumnManagerOptions; // [B]
+    canShareViews?: boolean;                        // [B]
 }>(), {
     searchable: true,
     searchPlaceholder: 'Search...',
@@ -71,10 +86,14 @@ const props = withDefaults(defineProps<{
     reorderable: false,
     queryPrefix: '',
     stickyHeader: false,
+    inlineReloadProps: () => ['flash'],       // [A]
+    columnManager: true,                            // [B]
+    canShareViews: false,                           // [B]
 });
 
 const { can } = usePermissions();
 const { confirm } = useConfirm();
+const { t } = useI18n();
 
 function decodePaginationLabel(label: string): string {
     return label
@@ -103,39 +122,33 @@ const resolvedColumns = computed(() => {
             hidden: false,
             alignRight: false,
             class: (col as Column).class,
-            toggleable: false,
+            toggleable: (col as Column).toggleable ?? true, // [B]
             grow: false,
         } satisfies ColumnSchema;
     });
 });
 
-// --- Column visibility (Column Manager) ---
-const columnStorageKey = computed(() => `dt-columns-${props.routeName}`);
-const hasToggleableColumns = computed(() => resolvedColumns.value.some(c => c.toggleable));
+// --- Column visibility + order (Column Manager) --- [B]
+const columnManagerEnabled = computed(() => props.columnManager !== false);
+const columnManagerOptions = computed<ColumnManagerOptions>(() =>
+    typeof props.columnManager === 'object' ? props.columnManager : {},
+);
 
-const columnVisibility = ref<Record<string, boolean>>({});
+// Two tables on one page can share a routeName; the query prefix disambiguates.
+const columnStorageKey = computed(() =>
+    `dt-columns-${props.routeName}${props.queryPrefix ? ':' + props.queryPrefix : ''}`,
+);
 
-// Init from localStorage
-if (typeof window !== 'undefined') {
-    try {
-        const stored = localStorage.getItem(`dt-columns-${props.routeName}`);
-        if (stored) columnVisibility.value = JSON.parse(stored);
-    } catch {}
-}
+const columnPrefs = useColumnManager({
+    columns: resolvedColumns,
+    storageKey: columnStorageKey,
+    persist: props.columnManager === false
+        ? 'none'
+        : ((typeof props.columnManager === 'object' ? props.columnManager.persist : undefined) ?? 'local'),
+});
 
-function toggleColumnVisibility(key: string, visible: boolean) {
-    columnVisibility.value[key] = visible;
-    try {
-        localStorage.setItem(columnStorageKey.value, JSON.stringify(columnVisibility.value));
-    } catch {}
-}
-
-const visibleColumns = computed(() => resolvedColumns.value.filter(c => {
-    if (c.toggleable && columnVisibility.value[c.key] !== undefined) {
-        return columnVisibility.value[c.key];
-    }
-    return !c.hidden;
-}));
+const visibleColumns = columnPrefs.visibleColumns;
+const columnsReorderable = computed(() => columnManagerOptions.value.reorderable !== false);
 
 // --- Normalize filters ---
 const resolvedFilters = computed<FilterSchema[]>(() => {
@@ -156,16 +169,14 @@ const resolvedActions = computed<AnyActionSchema[]>(() => {
 
 /**
  * A single top-level ActionGroup configures the trigger itself (label, icon,
- * badge, collapseAfter…) rather than nesting a submenu inside a dropdown.
+ * badge, collapseAfter…) rather than nesting a submenu inside a dropdown. Its
+ * own permission() gates the whole column.
  */
-const rootGroup = computed<ActionGroupSchema | null>(() => {
-    const items = resolvedActions.value;
-    return items.length === 1 && (items[0] as ActionGroupSchema).kind === 'group'
-        ? (items[0] as ActionGroupSchema)
-        : null;
-});
+const resolvedRoot = computed(() => resolveActionItems(resolvedActions.value, can));
 
-const actionItems = computed<AnyActionSchema[]>(() => rootGroup.value?.items ?? resolvedActions.value);
+const rootGroup = computed<ActionGroupSchema | null>(() => resolvedRoot.value.rootGroup);
+
+const actionItems = computed<AnyActionSchema[]>(() => resolvedRoot.value.items);
 
 const resolvedBulkActions = computed<BulkActionSchema[]>(() => {
     if (!props.bulkActions) return [];
@@ -301,49 +312,85 @@ function handleSearch() {
     searchTimeout = setTimeout(() => applyFilters(), 300);
 }
 
+// --- Saved views: capture / build / apply --- [B]
+const perPage = ref<number | undefined>(
+    props.filters?.[qp + 'per_page'] ? Number(props.filters[qp + 'per_page']) : undefined,
+);
+
+/** Pure — the exact param set applyFilters() sends. `page` is never emitted. */
+function buildParams(state?: TableViewPayload): Record<string, any> {
+    return buildTableParams(state ?? captureState(), {
+        queryPrefix: qp,
+        routeParams: props.routeParams,
+        currentSearch: typeof window !== 'undefined' ? window.location.search : '',
+    });
+}
+
+function captureState(): TableViewPayload {
+    const state: TableViewPayload = {
+        search: search.value || undefined,
+        sort: sortField.value || undefined,
+        direction: sortField.value ? (sortDirection.value as 'asc' | 'desc') : undefined,
+        per_page: perPage.value,
+        filters: { ...filterValues.value },
+        dateRanges: { ...dateRangeValues.value },
+        query: { ...queryBuilderData.value },
+    };
+    if (columnManagerEnabled.value) Object.assign(state, columnPrefs.snapshot());
+    return state;
+}
+
+/** Assigns a payload onto the exposed refs without navigating. */
+function assignState(payload: TableViewPayload): void {
+    search.value = payload.search ?? '';
+    sortField.value = payload.sort ?? '';
+    sortDirection.value = payload.direction ?? 'asc';
+    perPage.value = payload.per_page;
+    filterValues.value = { ...(payload.filters ?? {}) };
+    dateRangeValues.value = { ...(payload.dateRanges ?? {}) } as Record<string, { from: string; to: string }>;
+    queryBuilderData.value = { ...(payload.query ?? {}) } as Record<string, QueryGroup>;
+    queryBuilderDirty.value = false;
+    if (columnManagerEnabled.value) {
+        columnPrefs.apply({ columns: payload.columns, columnOrder: payload.columnOrder });
+    }
+}
+
+function applyView(payload: TableViewPayload): void {
+    assignState(payload);
+    applyFilters();
+}
+
 function applyFilters() {
-    const params: Record<string, any> = {};
-
-    // When using a query prefix, preserve other DataTables' params from the URL
-    if (qp) {
-        const currentParams = new URLSearchParams(window.location.search);
-        currentParams.forEach((val, key) => {
-            if (!key.startsWith(qp)) {
-                params[key] = val;
-            }
-        });
-    }
-
-    Object.assign(params, props.routeParams);
-    params[qp + 'search'] = search.value || undefined;
-    params[qp + 'sort'] = sortField.value || undefined;
-    params[qp + 'direction'] = sortDirection.value !== 'asc' ? sortDirection.value : undefined;
-
-    // Add table filter values
-    for (const [key, val] of Object.entries(filterValues.value)) {
-        if (val && val !== '') {
-            params[qp + key] = val;
-        }
-    }
-
-    // Add date range filter values
-    for (const [key, val] of Object.entries(dateRangeValues.value)) {
-        if (val.from) params[qp + key + '_from'] = val.from;
-        if (val.to) params[qp + key + '_to'] = val.to;
-    }
-
-    // Add query builder filter values
-    for (const [key, val] of Object.entries(queryBuilderData.value)) {
-        if (val.rules.length > 0 || val.groups.length > 0) {
-            params[qp + key] = JSON.stringify(val);
-        }
-    }
-
-    router.get(route(props.routeName, props.routeParams), params, {
+    router.get(route(props.routeName, props.routeParams), buildParams(), {
         preserveState: true,
         preserveScroll: true,
     });
 }
+
+const declaredViews = computed<TableView[]>(() => props.views ?? []);
+const serverViews = computed<SavedView[]>(() => props.savedViews ?? []);
+const tableKeyRef = computed(() => props.tableKey ?? props.routeName);
+
+const tableViews = useTableViews({
+    tableKey: tableKeyRef,
+    savedViews: serverViews,
+    declared: declaredViews,
+    current: captureState,
+    apply: applyView,
+    can,
+    buildUrl: (payload) => {
+        const params = buildParams(payload);
+        const qs = new URLSearchParams();
+        for (const [key, value] of Object.entries(params)) {
+            if (value !== undefined && value !== null && value !== '') qs.append(key, String(value));
+        }
+        const query = qs.toString();
+        const path = typeof window !== 'undefined' ? window.location.pathname : '';
+        return query ? `${path}?${query}` : path;
+    },
+});
+
+const showViewsMenu = computed(() => !!props.tableKey || declaredViews.value.length > 0);
 
 function handleFilterChange(name: string, value: string) {
     filterValues.value[name] = value;
@@ -359,8 +406,38 @@ function clearFilters() {
         queryBuilderData.value[key] = { conjunction: 'and', rules: [], groups: [] };
     }
     queryBuilderDirty.value = false;
+    tableViews.active.value = null; // [B]
     applyFilters();
 }
+
+// A page-declared default view applies on first load only when the URL carries
+// no table params, and replaces the history entry so Back still works. [B]
+onMounted(() => {
+    const fallback = tableViews.defaultView.value;
+    if (!fallback) return;
+    if (typeof window === 'undefined') return;
+
+    for (const key of new URLSearchParams(window.location.search).keys()) {
+        if (key.startsWith(qp)) return;
+    }
+
+    tableViews.active.value = fallback;
+    assignState(fallback.payload);
+
+    // A default view that resolves to the params already in the URL must not
+    // navigate — that would remount and loop.
+    const next = new URLSearchParams();
+    for (const [key, value] of Object.entries(buildParams())) {
+        if (value !== undefined && value !== null && value !== '') next.append(key, String(value));
+    }
+    if (next.toString() === new URLSearchParams(window.location.search).toString()) return;
+
+    router.get(route(props.routeName, props.routeParams), buildParams(), {
+        preserveState: true,
+        preserveScroll: true,
+        replace: true,
+    });
+});
 
 function goToPage(url: string | null) {
     if (url) {
@@ -410,6 +487,8 @@ async function runAction(a: ActionSchema, row: any) {
 function toRowAction(a: AnyActionSchema, row: any): RowAction | null {
     if ((a as ActionGroupSchema).kind === 'group') {
         const g = a as ActionGroupSchema;
+        if (g.hiddenFn?.(row)) return null;
+        if (g.visibleFn && !g.visibleFn(row)) return null;
         const items = g.items.map(i => toRowAction(i, row)).filter((i): i is RowAction => i !== null);
         if (items.length === 0) return null;
         return {
@@ -513,6 +592,8 @@ function openModalAction(action: ActionSchema, row: any) {
         method: mc.method || 'put',
         defaults: mc.defaultsFn ? mc.defaultsFn(row) : {},
         submitLabel: mc.submitLabel || action.label,
+        payloadKey: mc.payloadKey,
+        extraPayload: mc.extraPayloadFn ? mc.extraPayloadFn(row) : undefined,
     };
     modalOpen.value = true;
 }
@@ -609,7 +690,7 @@ async function runInlineUpdate(col: ColumnSchema, row: any, value: any) {
 
     const message = c.confirmFn?.(row, value);
     if (message) {
-        const ok = await confirm({ title: 'Confirm', description: message });
+        const ok = await confirm({ title: t('common.confirm'), description: message });
         if (!ok) return;
     }
 
@@ -632,7 +713,10 @@ async function runInlineUpdate(col: ColumnSchema, row: any, value: any) {
         {
             preserveState: true,
             preserveScroll: true,
-            only: [],
+            replace: true,                    // inline edits stop stacking history entries
+            // `only: []` is a FULL visit — Inertia treats an empty array as "no
+            // partial". Default to the one genuinely shared prop instead.
+            only: props.inlineReloadProps,
             onSuccess: () => {
                 succeeded = true;
                 if (c.optimistic === false) row[col.key] = value;
@@ -643,7 +727,7 @@ async function runInlineUpdate(col: ColumnSchema, row: any, value: any) {
                 inFlight.delete(key);
                 if (!succeeded) {
                     if (c.optimistic !== false) row[col.key] = previous;
-                    toast.error('Update failed.');
+                    toast.error(t('table.updateFailed'));
                 }
             },
         },
@@ -674,6 +758,14 @@ onBeforeUnmount(() => {
     inlineTimers.clear();
 });
 
+// >>> MYRA v2.2 [D] START
+/** Total rules across a whole tree — the cap is global, not per group. */
+function countRules(group?: QueryGroup): number {
+    if (!group) return 0;
+    return group.rules.length + group.groups.reduce((n, g) => n + countRules(g), 0);
+}
+// <<< MYRA v2.2 [D] END
+
 defineExpose({ selectedIds });
 </script>
 
@@ -700,37 +792,41 @@ defineExpose({ selectedIds });
                     @click="showFilters = !showFilters"
                 >
                     <FilterIcon class="mr-2 size-4" />
-                    <span class="hidden sm:inline">Filters</span>
+                    <span class="hidden sm:inline">{{ t('table.filters') }}</span>
                     <Badge v-if="hasActiveFilters" variant="secondary" class="ml-1.5 h-5 min-w-5 px-1 text-xs">
                         {{ activeFilterCount }}
                     </Badge>
                 </Button>
 
-                <!-- Column manager -->
-                <Popover v-if="hasToggleableColumns">
-                    <PopoverTrigger as-child>
-                        <Button variant="outline" size="sm">
-                            <Columns3 class="mr-2 size-4" />
-                            <span class="hidden sm:inline">Columns</span>
-                        </Button>
-                    </PopoverTrigger>
-                    <PopoverContent class="w-48 p-3" align="end">
-                        <p class="mb-2 text-xs font-medium text-muted-foreground">Toggle columns</p>
-                        <div class="space-y-2">
-                            <label
-                                v-for="col in resolvedColumns.filter(c => c.toggleable)"
-                                :key="col.key"
-                                class="flex items-center gap-2 text-sm"
-                            >
-                                <Checkbox
-                                    :checked="visibleColumns.some(vc => vc.key === col.key)"
-                                    @update:checked="(v: boolean | 'indeterminate') => toggleColumnVisibility(col.key, v === true)"
-                                />
-                                {{ col.label }}
-                            </label>
-                        </div>
-                    </PopoverContent>
-                </Popover>
+                <!-- Saved views [B] -->
+                <TableViewsMenu
+                    v-if="showViewsMenu"
+                    :views="tableViews.all.value"
+                    :active="tableViews.active.value"
+                    :is-modified="tableViews.isModified.value"
+                    :busy="tableViews.busy.value"
+                    :can-share-with-team="canShareViews"
+                    :share-url="tableViews.shareUrl"
+                    @apply="tableViews.applyView"
+                    @save-as="tableViews.saveAs"
+                    @update-active="tableViews.updateActive"
+                    @rename="tableViews.rename"
+                    @remove="tableViews.remove"
+                    @make-default="tableViews.makeDefault"
+                />
+
+                <!-- Column manager [B] -->
+                <ColumnManager
+                    v-if="columnManagerEnabled && columnPrefs.entries.value.length > 0"
+                    :entries="columnPrefs.entries.value"
+                    :is-default="columnPrefs.isDefault.value"
+                    :reorderable="columnsReorderable"
+                    :id-prefix="`dt-col-${queryPrefix || 'main'}`"
+                    @toggle="columnPrefs.toggle"
+                    @move="columnPrefs.move"
+                    @reorder="columnPrefs.reorder"
+                    @reset="columnPrefs.reset"
+                />
 
                 <!-- Bulk actions -->
                 <template v-if="selectedIds.length > 0 && resolvedBulkActions.length > 0">
@@ -754,7 +850,7 @@ defineExpose({ selectedIds });
         <div v-if="showFilters && resolvedFilters.length > 0" class="rounded-lg border bg-card shadow-sm">
             <!-- Active filter tags -->
             <div v-if="hasActiveFilters" class="flex flex-wrap items-center gap-1.5 border-b px-4 py-2.5">
-                <span class="mr-1 text-xs font-medium text-muted-foreground">Active:</span>
+                <span class="mr-1 text-xs font-medium text-muted-foreground">{{ t('table.active') }}</span>
                 <template v-for="filter in resolvedFilters" :key="`tag-${filter.name}`">
                     <!-- Select / ternary tags -->
                     <Badge
@@ -795,9 +891,10 @@ defineExpose({ selectedIds });
                         variant="secondary"
                         class="gap-1 pr-1 text-xs font-normal"
                     >
-                        {{ filter.label }} ({{ queryBuilderData[filter.name]?.rules.length || 0 }} rules)
-                        <button class="ml-0.5 rounded-sm p-0.5 hover:bg-muted" @click="removeFilter(filter.name)">
-                            <X class="size-3" />
+                        <!-- MYRA v2.2 [D] -->
+                        {{ filter.label }} ({{ $t('filters.ruleCount', { n: countRules(queryBuilderData[filter.name]) }) }})
+                        <button type="button" class="ml-0.5 rounded-sm p-0.5 hover:bg-muted focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2" :aria-label="$t('filters.removeRule')" @click="removeFilter(filter.name)">
+                            <X class="size-3" aria-hidden="true" />
                         </button>
                     </Badge>
                 </template>
@@ -916,34 +1013,41 @@ defineExpose({ selectedIds });
                             </div>
 
                             <!-- Query builder filter -->
+                            <!-- >>> MYRA v2.2 [D] START -->
                             <div v-else-if="filter.type === 'query-builder'" class="space-y-2">
                                 <div class="flex items-center gap-1.5">
-                                    <Sparkles class="size-3.5 text-muted-foreground" />
+                                    <Sparkles class="size-3.5 text-muted-foreground" aria-hidden="true" />
                                     <label class="text-xs font-medium text-foreground">{{ filter.label }}</label>
                                 </div>
                                 <QueryBuilderGroup
                                     :group="queryBuilderData[filter.name] || { conjunction: 'and', rules: [], groups: [] }"
+                                    :constraints="(filter as any).constraints || []"
                                     :fields="(filter as any).fields || []"
                                     :depth="0"
+                                    :max-depth="(filter as any).maxDepth ?? 3"
+                                    :max-rules="(filter as any).maxRules ?? 25"
+                                    :rule-count="countRules(queryBuilderData[filter.name])"
                                     @update:group="(g: QueryGroup) => { queryBuilderData[filter.name] = g; queryBuilderDirty = true; }"
                                 />
                                 <div class="flex items-center gap-2">
-                                    <Button size="sm" class="h-7 text-xs" :disabled="!queryBuilderDirty" @click="queryBuilderDirty = false; applyFilters();">
-                                        <Check class="mr-1 size-3" />
-                                        Apply Query
+                                    <Button size="sm" type="button" class="h-7 text-xs focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2" :disabled="!queryBuilderDirty" @click="queryBuilderDirty = false; applyFilters();">
+                                        <Check class="mr-1 size-3" aria-hidden="true" />
+                                        {{ $t('filters.applyQuery') }}
                                     </Button>
                                     <Button
                                         v-if="queryBuilderData[filter.name]?.rules.length > 0 || queryBuilderData[filter.name]?.groups.length > 0"
                                         variant="ghost"
                                         size="sm"
-                                        class="h-7 text-xs text-muted-foreground"
+                                        type="button"
+                                        class="h-7 text-xs text-muted-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
                                         @click="queryBuilderData[filter.name] = { conjunction: 'and', rules: [], groups: [] }; queryBuilderDirty = false; applyFilters();"
                                     >
-                                        <RotateCcw class="mr-1 size-3" />
-                                        Clear Query
+                                        <RotateCcw class="mr-1 size-3" aria-hidden="true" />
+                                        {{ $t('filters.clearQuery') }}
                                     </Button>
                                 </div>
                             </div>
+                            <!-- <<< MYRA v2.2 [D] END -->
                         </template>
                     </div>
                 </div>
@@ -1084,7 +1188,7 @@ defineExpose({ selectedIds });
                                         variant="outline"
                                         class="ml-1 px-1 py-0 text-[10px] font-normal"
                                         title="Computed from the current page only"
-                                    >Page</Badge>
+                                    >{{ t('table.scope.page') }}</Badge>
                                 </span>
                             </TableCell>
                             <TableCell v-if="hasActions || $slots.actions" />

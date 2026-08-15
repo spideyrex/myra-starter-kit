@@ -8,7 +8,7 @@ import FormFields from '@/components/admin/FormFields.vue';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { RichEditor, Section, type SchemaItem } from '@/composables/useFormSchema';
+import { MarkdownEditor, RichEditor, Section, type SchemaItem } from '@/composables/useFormSchema';
 import { ArrowLeft } from 'lucide-vue-next';
 
 const page = usePage();
@@ -20,6 +20,7 @@ const minimalContent = ref('<p>A minimal editor with only essential formatting.<
 
 const formData = ref({
     content: '<p>This editor is rendered via the <strong>FormFields</strong> component using <code>RichEditor.make()</code> schema builder.</p>',
+    notes: '## Markdown with inline uploads\n\nPaste or drop an image straight into this editor.\n',
     errors: {} as Record<string, string>,
 });
 
@@ -32,6 +33,20 @@ const formSchema: SchemaItem[] = [
                 .label('Content')
                 .toolbar(['bold', 'italic', '|', 'h1', 'h2', '|', 'bulletList', 'orderedList', '|', 'blockquote', 'code', '|', 'link', '|', 'undo', 'redo'])
                 .editorPlaceholder('Write your content here...'),
+        ]),
+    Section.make('Markdown with inline image upload')
+        .description('Paste or drop an image: it is stored on the private disk and the markdown gets a permanent, permission-gated URL — no expiring signature to break a saved document.')
+        .columns(1)
+        .schema([
+            MarkdownEditor.make('notes')
+                .label('Notes')
+                .rows(12)
+                .counter()
+                .fullscreen()
+                .uploadRoute()
+                .maxUploadKb(5120)
+                .acceptedUploadTypes(['image/jpeg', 'image/png', 'image/gif', 'image/webp'])
+                .hint('Uploads require the media.create permission; reading an image back requires ownership or media.view.'),
         ]),
 ];
 </script>

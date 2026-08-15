@@ -27,6 +27,7 @@ import {
     Wand2,
     MapPin,
     Code,
+    Bookmark,
 } from 'lucide-vue-next';
 
 const demos = [
@@ -172,6 +173,13 @@ const demos = [
         icon: MapPin,
         route: 'admin.demo.map',
         badge: 'MapLibre',
+    },
+    {
+        title: 'Saved Views',
+        description: 'Named filter/sort/column presets per user, shareable with a team, plus the drag-and-keyboard column manager.',
+        icon: Bookmark,
+        route: 'admin.demo.saved-views',
+        badge: 'Views',
     },
 ];
 </script>

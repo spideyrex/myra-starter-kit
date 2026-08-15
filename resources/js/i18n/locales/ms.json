@@ -58,7 +58,8 @@
         "copyFailed": "Gagal menyalin ke papan keratan",
         "showAll": "Tunjuk semua {count} baris",
         "showLess": "Tunjuk kurang",
-        "linesTruncated": "Memaparkan {shown} daripada {total} baris."
+        "linesTruncated": "Memaparkan {shown} daripada {total} baris.",
+        "copiedToClipboard": "Disalin ke papan keratan"
     },
     "status": {
         "active": "Aktif",
@@ -87,7 +88,8 @@
         "email": "Sila masukkan alamat e-mel yang sah",
         "minLength": "{field} mestilah sekurang-kurangnya {min} aksara",
         "maxLength": "{field} tidak boleh melebihi {max} aksara",
-        "confirmed": "Pengesahan {field} tidak sepadan"
+        "confirmed": "Pengesahan {field} tidak sepadan",
+        "selectBetween": "Pilih antara {min} dan {max} pilihan."
     },
     "fields": {
         "copied": "Disalin ke papan keratan",
@@ -125,5 +127,193 @@
             "boldSample": "teks tebal",
             "italicSample": "teks condong"
         }
+    },
+    "table": {
+        "active": "Aktif:",
+        "filters": "Penapis",
+        "scope": {
+            "page": "Halaman"
+        },
+        "updateFailed": "Kemas kini gagal.",
+        "upload": {
+            "badType": "Jenis fail itu tidak disokong.",
+            "notAnImage": "Fail itu bukan imej yang sah.",
+            "tooLarge": "Imej itu melebihi {max} KB.",
+            "uploading": "Memuat naik imej..."
+        }
+    },
+    "views": {
+        "a11y": {
+            "menu": "Menu paparan tersimpan"
+        },
+        "copyLink": "Salin pautan",
+        "default": "Lalai",
+        "delete": "Padam paparan",
+        "deleted": "Paparan dipadam",
+        "limitReached": "Anda telah mencapai had paparan tersimpan bagi jadual ini.",
+        "linkCopied": "Pautan disalin ke papan klip",
+        "makeDefault": "Jadikan lalai",
+        "mine": "Paparan saya",
+        "modified": "Diubah suai",
+        "namePlaceholder": "Nama paparan",
+        "none": "Tiada paparan tersimpan lagi",
+        "rename": "Namakan semula paparan",
+        "save": "Simpan paparan",
+        "saveAs": "Simpan sebagai paparan baharu",
+        "saved": "Paparan disimpan",
+        "shareWithTeam": "Kongsi dengan pasukan saya",
+        "shared": "Dikongsi dengan pasukan",
+        "team": "Paparan pasukan",
+        "title": "Paparan",
+        "update": "Kemas kini paparan ini"
+    },
+    "columns": {
+        "a11y": {
+            "list": "Keterlihatan dan susunan lajur",
+            "moved": "{label} dialihkan ke kedudukan {position} daripada {total}."
+        },
+        "hidden": "Tersembunyi",
+        "moveDown": "Alih ke bawah",
+        "moveUp": "Alih ke atas",
+        "reset": "Set semula lajur",
+        "search": "Cari lajur",
+        "title": "Lajur",
+        "visible": "Kelihatan"
+    },
+    "transfer": {
+        "export": {
+            "button": "Eksport",
+            "columns": "Lajur",
+            "csv": "Eksport CSV",
+            "keyOrder": "Baris dieksport mengikut susunan ID, bukan susunan yang dipaparkan.",
+            "matchView": "Padan paparan semasa",
+            "preparing": "Menyediakan eksport anda...",
+            "selectAll": "Pilih semua",
+            "selectNone": "Kosongkan pilihan",
+            "tooManyRows": "Terlalu banyak baris untuk eksport pelayar (had {max}). Gunakan Eksport CSV yang distrim dari pelayan.",
+            "xlsx": "Eksport XLSX",
+            "xlsxPageOnly": "Eksport XLSX (halaman ini sahaja)"
+        },
+        "import": {
+            "a11y": {
+                "errorGrid": "Baris yang gagal pengesahan",
+                "progress": "Kemajuan import"
+            },
+            "aborted": "Import dihentikan: terlalu banyak baris gagal.",
+            "cellError": "Nilai tidak sah",
+            "columnsMapped": "{mapped} daripada {total} lajur dipadankan.",
+            "commit": "Mula import",
+            "done": "Import selesai.",
+            "downloadSample": "Muat turun contoh CSV",
+            "expected": "Lajur dijangka: {columns}",
+            "failuresCsv": "Muat turun baris gagal",
+            "file": "Fail CSV",
+            "invalidRows": "{count} baris mengandungi ralat.",
+            "map": "Padankan lajur",
+            "mappingRequired": "Setiap lajur yang diwajibkan mesti dipadankan sebelum import.",
+            "noErrors": "Tiada ralat ditemui dalam baris yang disemak.",
+            "progress": "{done} daripada {total} baris diproses.",
+            "required": "Wajib",
+            "result": "Keputusan",
+            "resume": "Sambung semula",
+            "rowsImported": "{imported} dicipta, {updated} dikemas kini, {failed} gagal.",
+            "skip": "Langkau baris tidak sah",
+            "skipColumn": "-- Langkau --",
+            "sourceColumn": "Lajur sumber",
+            "title": "Import",
+            "tooManyColumns": "Fail ini mempunyai lebih daripada {max} lajur.",
+            "tooManyRows": "Fail ini mempunyai lebih daripada {max} baris.",
+            "upload": "Muat naik",
+            "validate": "Semak baris"
+        }
+    },
+    "filters": {
+        "a11y": {
+            "condition": "Syarat {n}",
+            "conjunction": "Tukar mod padanan",
+            "valueFrom": "Nilai dari",
+            "valueList": "Nilai",
+            "valueTo": "Nilai hingga"
+        },
+        "addGroup": "Kumpulan",
+        "addRule": "Syarat",
+        "and": "dan",
+        "applyQuery": "Guna pertanyaan",
+        "clearQuery": "Kosongkan pertanyaan",
+        "depthLimit": "Sarangan terhad kepada {max} peringkat.",
+        "enterValue": "Masukkan nilai…",
+        "errors": {
+            "badValue": "Nilai itu tidak dibenarkan untuk syarat ini.",
+            "malformed": "Pertanyaan tidak dapat dibaca.",
+            "tooDeep": "Pertanyaan disarang terlalu dalam.",
+            "tooManyRules": "Pertanyaan mempunyai terlalu banyak syarat.",
+            "unknownField": "Medan tidak dikenali dalam pertanyaan.",
+            "unknownOperator": "Operator tidak dikenali dalam pertanyaan."
+        },
+        "field": {
+            "createdAt": "Dicipta",
+            "email": "E-mel",
+            "name": "Nama",
+            "phone": "Telefon",
+            "roles": "Peranan",
+            "status": "Status",
+            "verifiedAt": "Disahkan"
+        },
+        "matchAll": "Padan semua syarat",
+        "matchAny": "Padan mana-mana syarat",
+        "op": {
+            "between": "antara",
+            "contains": "mengandungi",
+            "count_eq": "mempunyai tepat",
+            "count_gte": "mempunyai sekurang-kurangnya",
+            "count_lte": "mempunyai paling banyak",
+            "date_after": "selepas",
+            "date_before": "sebelum",
+            "date_between": "antara",
+            "date_is": "pada",
+            "ends_with": "berakhir dengan",
+            "eq": "sama dengan",
+            "gt": "lebih besar daripada",
+            "gte": "sekurang-kurangnya",
+            "in": "salah satu daripada",
+            "in_month": "dalam bulan",
+            "in_year": "dalam tahun",
+            "is_blank": "kosong",
+            "is_false": "palsu",
+            "is_filled": "berisi",
+            "is_true": "benar",
+            "lt": "kurang daripada",
+            "lte": "paling banyak",
+            "neq": "tidak sama dengan",
+            "not_contains": "tidak mengandungi",
+            "not_in": "bukan salah satu daripada",
+            "not_related_to": "tidak berkaitan dengan",
+            "related_to": "berkaitan dengan",
+            "starts_with": "bermula dengan"
+        },
+        "or": "atau",
+        "removeGroup": "Buang kumpulan",
+        "removeRule": "Buang syarat",
+        "removeValue": "Buang nilai",
+        "ruleCount": "{n} syarat",
+        "ruleLimit": "Paling banyak {max} syarat.",
+        "selectField": "Pilih medan",
+        "selectOperator": "Pilih operator"
+    },
+    "search": {
+        "a11y": {
+            "hint": "Taip untuk mencari. Guna kekunci anak panah untuk bergerak antara keputusan dan Enter untuk membuka.",
+            "results": "{n} keputusan"
+        },
+        "commands": "Perintah",
+        "groups": {
+            "activity": "Log Aktiviti",
+            "pages": "Halaman",
+            "roles": "Peranan",
+            "users": "Pengguna"
+        },
+        "noResults": "Tiada padanan ditemui.",
+        "placeholder": "Cari semua…",
+        "recent": "Terkini"
     }
 }

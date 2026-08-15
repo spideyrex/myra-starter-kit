@@ -32,6 +32,8 @@ class AppServiceProvider extends ServiceProvider
             return $user->hasRole('super-admin') ? true : null;
         });
 
+        Gate::policy(\App\Models\TableView::class, \App\Policies\TableViewPolicy::class);
+
         Event::listen(Login::class, LogSuccessfulLogin::class);
         Event::listen(Failed::class, LogFailedLogin::class);
 

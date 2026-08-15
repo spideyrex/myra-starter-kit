@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue';
+import { useI18n } from 'vue-i18n';
 import { toast } from 'vue-sonner';
 import { Copy } from 'lucide-vue-next';
 
@@ -15,8 +16,9 @@ const props = withDefaults(defineProps<{
     shape: 'square',
     showValue: true,
     copyable: false,
-    copyMessage: 'Copied to clipboard',
 });
+
+const { t } = useI18n();
 
 // Only these forms may reach an inline style. Anything else renders as text.
 const COLOR_RE = /^(#(?:[0-9a-f]{3,4}|[0-9a-f]{6}|[0-9a-f]{8})|rgba?\(\s*[\d.\s,%/]+\)|hsla?\(\s*[\d.\s,%/deg]+\))$/i;
@@ -63,9 +65,9 @@ async function copy() {
             document.execCommand('copy');
             document.body.removeChild(el);
         }
-        toast.success(props.copyMessage);
+        toast.success(props.copyMessage ?? t('common.copiedToClipboard'));
     } catch {
-        toast.error('Could not copy to clipboard');
+        toast.error(t('common.copyFailed'));
     }
 }
 </script>

@@ -896,4 +896,26 @@ class DemoController extends Controller
             ],
         ];
     }
+
+    // >>> MYRA v2.2 [B] START
+    public function savedViews(Request $request)
+    {
+        $user = $request->user();
+        $tableKey = 'admin.demo.saved-views';
+
+        return Inertia::render('Admin/Demo/SavedViews', [
+            'products' => $this->paginateCollection($this->generateProducts(), $request, ['category', 'status']),
+            'filters' => (object) $request->only('search', 'sort', 'direction', 'category', 'status', 'per_page'),
+            'savedViews' => \App\Models\TableView::visibleTo($user)
+                ->where('table_key', $tableKey)
+                ->where('name', '!=', \App\Models\TableView::COLUMNS_NAME)
+                ->orderBy('sort')
+                ->orderBy('name')
+                ->get()
+                ->map(fn (\App\Models\TableView $view) => $view->toClientArray($user))
+                ->values(),
+            'canShareViews' => (bool) $user->current_team_id,
+        ]);
+    }
+    // <<< MYRA v2.2 [B] END
 }

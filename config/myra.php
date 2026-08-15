@@ -64,6 +64,20 @@ return [
         'widgets'            => ['demo' => 'Widgets',         'method' => 'forWidgets',         'request' => false, 'label' => 'Dashboard Widgets'],
         'reordering'         => ['demo' => 'Reordering',      'method' => 'forReordering',      'request' => false, 'label' => 'Reordering'],
         'map'                => ['demo' => 'Map',             'method' => null,                 'request' => false, 'label' => 'Map'],
+        'saved-views'        => ['demo' => 'SavedViews',      'method' => 'forSavedViews',      'request' => true,  'label' => 'Saved Views'],
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Saved table views
+    |--------------------------------------------------------------------------
+    |
+    | `max` caps how many views one user may store per table_key.
+    |
+    */
+
+    'views' => [
+        'max' => 25,
     ],
 
 ];

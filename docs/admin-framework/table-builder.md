@@ -395,3 +395,72 @@ const bulkActions = [
 - Existing slot-based rendering (`#cell-{key}`, `#actions`, `#toolbar`) continues to work
 - Slots override auto-rendering when present
 - You can mix schema columns with slot overrides
+
+## Saved Views & Column Manager
+
+### Adoption
+
+```vue
+<DataTable
+    :columns="columns" :data="users" :filters="filters" :table-filters="tableFilters"
+    route-name="admin.users.index"
+    table-key="admin.users.index"
+    :views="views"
+    :saved-views="savedViews"
+    :can-share-views="canShareViews"
+/>
+```
+
+`table-key` is the namespace a user's saved views are stored under; `saved-views` is the server
+prop; `views` are page-declared presets. The column manager is on by default — opt out with
+`:column-manager="false"`, or tune it with `:column-manager="{ persist: 'none', reorderable: false }"`.
+
+### Declaring views
+
+```ts
+import { TableView } from '@/composables/useTableViews';
+
+const views = [
+    TableView.make('Everyone').default(),
+    TableView.make('Suspended').filters({ status: 'suspended' }).sort('created_at', 'desc'),
+    TableView.make('Slim').columns({ phone: false }).columnOrder(['id', 'name', 'email']),
+];
+```
+
+A `.default()` view applies on first load **only** when the URL carries no table params, and it
+replaces the history entry so Back still works.
+
+### Server
+
+The controller supplies `savedViews` (and reloads it after a write):
+
+```php
+'savedViews' => TableView::visibleTo($user)
+    ->where('table_key', 'admin.users.index')
+    ->where('name', '!=', TableView::COLUMNS_NAME)
+    ->orderBy('sort')->orderBy('name')->get()
+    ->map(fn (TableView $v) => $v->toClientArray($user))->values(),
+```
+
+**Applying a view needs no controller changes.** A view is replayed as query params through the
+existing index route, so every `->when($request->x, …)` keeps working and the URL stays shareable.
+`?view={slug}` deep links are out of scope — `shareUrl()` therefore returns the **full parameter
+URL**, not a slug URL.
+
+`payload.query` is stored as an opaque blob. `App\Admin\Views\ViewShape` validates its shape and
+size only (25 rules, depth 3, 16 KB) and performs no field or operator whitelisting: the replayed
+tree passes through the same controller path as a live filter, so the same authority validates both.
+
+### Visibility
+
+`private` views are the author's. `team` views are readable by members of the author's current team
+and writable by nobody but the author. A view that is not visible to the caller returns **404**, not
+403. `myra.views.max` (default 25) caps views per user per `table_key`.
+
+### Column manager
+
+Column visibility and order persist to `localStorage` under
+`dt-columns-{routeName}[:{queryPrefix}]`, in the shape `{ v: 2, visible, order }` (a v1 bare
+`Record<string, boolean>` is migrated in place). Reorder by dragging the handle or with
+`Alt`+`ArrowUp` / `Alt`+`ArrowDown` on the focused row; moves are announced through an `aria-live`
+region. Any column that is not `hidden` is manageable; a hidden column opts in with `.toggleable()`.

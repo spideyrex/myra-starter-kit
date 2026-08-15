@@ -125,5 +125,43 @@
             "boldSample": "teks tebal",
             "italicSample": "teks condong"
         }
+    },
+    "views": {
+        "a11y": {
+            "menu": "Menu paparan tersimpan"
+        },
+        "copyLink": "Salin pautan",
+        "default": "Lalai",
+        "delete": "Padam paparan",
+        "deleted": "Paparan dipadam",
+        "limitReached": "Anda telah mencapai had paparan tersimpan bagi jadual ini.",
+        "linkCopied": "Pautan disalin ke papan klip",
+        "makeDefault": "Jadikan lalai",
+        "mine": "Paparan saya",
+        "modified": "Diubah suai",
+        "namePlaceholder": "Nama paparan",
+        "none": "Tiada paparan tersimpan lagi",
+        "rename": "Namakan semula paparan",
+        "save": "Simpan paparan",
+        "saveAs": "Simpan sebagai paparan baharu",
+        "saved": "Paparan disimpan",
+        "shareWithTeam": "Kongsi dengan pasukan saya",
+        "shared": "Dikongsi dengan pasukan",
+        "team": "Paparan pasukan",
+        "title": "Paparan",
+        "update": "Kemas kini paparan ini"
+    },
+    "columns": {
+        "a11y": {
+            "list": "Keterlihatan dan susunan lajur",
+            "moved": "{label} dialihkan ke kedudukan {position} daripada {total}."
+        },
+        "hidden": "Tersembunyi",
+        "moveDown": "Alih ke bawah",
+        "moveUp": "Alih ke atas",
+        "reset": "Set semula lajur",
+        "search": "Cari lajur",
+        "title": "Lajur",
+        "visible": "Kelihatan"
     }
 }

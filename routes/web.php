@@ -18,6 +18,7 @@ use App\Http\Controllers\Admin\SearchController;
 use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Admin\FirebaseSettingController;
 use App\Http\Controllers\Admin\SystemHealthController;
+use App\Http\Controllers\Admin\TableViewController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Auth\SessionController;
 use App\Http\Controllers\Auth\TwoFactorController;
@@ -222,6 +223,18 @@ Route::middleware(['auth', 'verified', 'active', '2fa'])->prefix('admin')->name(
     Route::put('/categories/{category}', [CategoryController::class, 'update'])->middleware('permission:categories.edit')->name('categories.update');
     Route::delete('/categories/{category}', [CategoryController::class, 'destroy'])->middleware('permission:categories.delete')->name('categories.destroy');
 
+    // >>> MYRA v2.2 [B] START
+    // Saved table views. No `permission:` middleware — a blanket views
+    // permission would grant nothing about the table being viewed, and the
+    // payload is opaque data replayed as query params through the existing
+    // index route, which keeps its own gate.
+    Route::get('/table-views', [TableViewController::class, 'index'])->name('table-views.index');
+    Route::post('/table-views', [TableViewController::class, 'store'])->middleware('throttle:30,1')->name('table-views.store');
+    Route::put('/table-views/{tableView}', [TableViewController::class, 'update'])->middleware('throttle:30,1')->name('table-views.update');
+    Route::delete('/table-views/{tableView}', [TableViewController::class, 'destroy'])->name('table-views.destroy');
+    Route::post('/table-views/{tableView}/default', [TableViewController::class, 'makeDefault'])->name('table-views.default');
+    // <<< MYRA v2.2 [B] END
+
     // Global Search
     Route::get('/search', [SearchController::class, 'index'])->middleware('permission:search.view')->name('search');
 
@@ -247,6 +260,9 @@ Route::middleware(['auth', 'verified', 'active', '2fa'])->prefix('admin')->name(
     Route::post('/demo/import/preview', [DemoController::class, 'demoImportPreview'])->name('demo.import-preview');
     Route::post('/demo/import/execute', [DemoController::class, 'demoImportExecute'])->name('demo.import-execute');
     Route::get('/demo/global-search', [DemoController::class, 'globalSearch'])->name('demo.global-search');
+    // >>> MYRA v2.2 [B] START
+    Route::get('/demo/saved-views', [DemoController::class, 'savedViews'])->name('demo.saved-views');
+    // <<< MYRA v2.2 [B] END
 
     // Advanced Feature Demos
     Route::get('/demo/inline-editing', [DemoController::class, 'inlineEditing'])->name('demo.inline-editing');

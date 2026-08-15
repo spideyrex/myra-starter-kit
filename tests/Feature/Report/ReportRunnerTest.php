@@ -58,7 +58,7 @@ class ReportRunnerTest extends TestCase
         return [$statements, $value];
     }
 
-    private function run(array $state, ?Authenticatable $actor = null, ?ReportDefinition $definition = null)
+    private function runReport(array $state, ?Authenticatable $actor = null, ?ReportDefinition $definition = null)
     {
         $definition ??= ReportRegistry::resolve('users');
         $request = ReportRequest::parse($state, $definition, $actor);
@@ -73,7 +73,7 @@ class ReportRunnerTest extends TestCase
         $actor = $this->warm($this->actingAsSuperAdmin());
         User::factory()->count(3)->create();
 
-        [$statements] = $this->capture(fn () => $this->run(['dimension' => 'created_at'], $actor));
+        [$statements] = $this->capture(fn () => $this->runReport(['dimension' => 'created_at'], $actor));
 
         $this->assertCount(2, $statements, 'A grouped run without a comparison must cost exactly 2 queries.');
 
@@ -94,7 +94,7 @@ class ReportRunnerTest extends TestCase
         $actor = $this->warm($this->actingAsSuperAdmin());
         User::factory()->count(2)->create();
 
-        [$statements] = $this->capture(fn () => $this->run(
+        [$statements] = $this->capture(fn () => $this->runReport(
             ['dimension' => 'created_at', 'compare' => 'previous'],
             $actor,
         ));
@@ -108,7 +108,7 @@ class ReportRunnerTest extends TestCase
         $role = Role::firstOrCreate(['name' => 'manager']);
         User::factory()->count(2)->create()->each(fn (User $u) => $u->assignRole($role->name));
 
-        [$statements] = $this->capture(fn () => $this->run(
+        [$statements] = $this->capture(fn () => $this->runReport(
             ['dimension' => 'role', 'compare' => 'previous'],
             $actor,
         ));
@@ -127,7 +127,7 @@ class ReportRunnerTest extends TestCase
         User::factory()->count(3)->create(['created_by' => $owner->id, 'status' => 'active']);
         User::factory()->count(7)->create(['created_by' => $stranger->id, 'status' => 'active']);
 
-        [$statements, $result] = $this->capture(fn () => $this->run([
+        [$statements, $result] = $this->capture(fn () => $this->runReport([
             'dimension' => 'created_at',
             'query' => [
                 'conjunction' => 'and',
@@ -156,7 +156,7 @@ class ReportRunnerTest extends TestCase
         User::factory()->count(3)->create(['created_at' => '2026-07-16 10:00:00']);
         User::factory()->count(5)->create(['created_at' => '2026-06-30 10:00:00']);
 
-        $result = $this->run([
+        $result = $this->runReport([
             'period' => ['preset' => 'custom', 'from' => '2026-07-16', 'to' => '2026-07-31'],
             'dimension' => 'created_at',
             'bucket' => 'day',
@@ -181,7 +181,7 @@ class ReportRunnerTest extends TestCase
         // Present only in the previous window.
         User::factory()->count(4)->create(['status' => 'suspended', 'created_at' => '2026-07-20 10:00:00']);
 
-        $result = $this->run([
+        $result = $this->runReport([
             'period' => ['preset' => 'custom', 'from' => '2026-08-01', 'to' => '2026-08-15'],
             'dimension' => 'status',
             'compare' => 'previous',
@@ -206,7 +206,7 @@ class ReportRunnerTest extends TestCase
             User::factory()->count($i)->create(['status' => 'status-' . str_pad((string) $i, 2, '0', STR_PAD_LEFT)]);
         }
 
-        $result = $this->run(['dimension' => 'status', 'measures' => ['signups', 'emails']], $actor);
+        $result = $this->runReport(['dimension' => 'status', 'measures' => ['signups', 'emails']], $actor);
         $rows = $result->rows();
 
         $this->assertTrue($result->truncated());
@@ -238,7 +238,7 @@ class ReportRunnerTest extends TestCase
 
         User::factory()->count(5)->create(['created_at' => '2026-08-10 10:00:00']);
 
-        $result = $this->run([
+        $result = $this->runReport([
             'period' => ['preset' => 'custom', 'from' => '2026-08-01', 'to' => '2026-08-15'],
             'dimension' => 'status',
             'compare' => 'previous',
@@ -259,7 +259,7 @@ class ReportRunnerTest extends TestCase
 
         $definition = $this->churnDefinition();
 
-        $result = $this->run([
+        $result = $this->runReport([
             'period' => ['preset' => 'custom', 'from' => '2026-08-01', 'to' => '2026-08-15'],
             'dimension' => 'created_at',
             'bucket' => 'day',
@@ -278,7 +278,7 @@ class ReportRunnerTest extends TestCase
     {
         $actor = $this->warm($this->actingAsSuperAdmin());
 
-        $result = $this->run([
+        $result = $this->runReport([
             'period' => ['preset' => 'custom', 'from' => '2026-01-01', 'to' => '2026-01-05'],
             'dimension' => 'created_at',
             'bucket' => 'day',
@@ -292,7 +292,7 @@ class ReportRunnerTest extends TestCase
     {
         $actor = $this->warm($this->actingAsSuperAdmin());
 
-        $result = $this->run([
+        $result = $this->runReport([
             'period' => ['preset' => 'custom', 'from' => '2026-01-01', 'to' => '2026-01-05'],
             'dimension' => 'status',
         ], $actor);
@@ -306,7 +306,7 @@ class ReportRunnerTest extends TestCase
         $actor = $this->warm($this->actingAsSuperAdmin());
         User::factory()->count(1)->create();
 
-        $result = $this->run(['dimension' => 'created_at'], $actor);
+        $result = $this->runReport(['dimension' => 'created_at'], $actor);
 
         foreach ($result->rows() as $row) {
             $this->assertNull($row->drill);

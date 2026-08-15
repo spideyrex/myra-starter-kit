@@ -235,7 +235,7 @@ final class Dimension
         ));
     }
 
-    public function effectiveBucket(?Bucket $requested, Period $p): ?Bucket
+    public function effectiveBucket(?Bucket $requested, Period $p, ?int $maxGroups = null): ?Bucket
     {
         if (! $this->isDate()) {
             return null;
@@ -249,7 +249,33 @@ final class Dimension
 
         $auto = $p->defaultBucket();
 
-        return in_array($auto, $allowed, true) ? $auto : ($this->bucket ?? $allowed[0] ?? Bucket::Day);
+        if (in_array($auto, $allowed, true)) {
+            return $auto;
+        }
+
+        // The auto granularity is not on offer. Falling back to the declared
+        // default can be far finer than the window warrants and guarantee a
+        // bucket-overflow 422, so pick the finest allowed bucket that still
+        // fits the cap, and the coarsest one on offer when none does.
+        $ordered = array_values(array_filter(
+            Bucket::cases(),
+            static fn (Bucket $b) => in_array($b, $allowed, true),
+        ));
+
+        if ($ordered === []) {
+            return $this->bucket ?? Bucket::Day;
+        }
+
+        $cap = $maxGroups ?? self::MAX_LIMIT;
+        $days = $p->days();
+
+        foreach ($ordered as $b) {
+            if ($b->approxCountForDays($days) <= $cap) {
+                return $b;
+            }
+        }
+
+        return end($ordered);
     }
 
     public function limitValue(): int

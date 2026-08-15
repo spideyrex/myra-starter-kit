@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, toRef } from 'vue';
+import { computed, shallowRef, toRef } from 'vue';
 import { Head, Link } from '@inertiajs/vue3';
 import { useI18n } from 'vue-i18n';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
@@ -41,7 +41,8 @@ const report = useReportState({
 const views = useTableViews({
     tableKey: computed(() => `report:${props.schema.key}`),
     savedViews: toRef(props, 'savedViews'),
-    declared: ref<TableView[]>([]),
+    // shallowRef: ref() deep-unwraps the TableView class and strips its private members.
+    declared: shallowRef<TableView[]>([]),
     current: () => report.toPayload(),
     apply: (payload: TableViewPayload) => report.applyPayload(payload),
 });

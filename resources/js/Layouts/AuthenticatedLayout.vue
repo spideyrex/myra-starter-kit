@@ -93,7 +93,6 @@ import {
     FlaskConical,
     LayoutGrid,
     BarChart3,
-    CalendarClock,
 } from 'lucide-vue-next';
 
 defineProps<{
@@ -183,7 +182,8 @@ const navGroups = computed(() => [
         label: t('navGroups.reports'),
         items: [
             { title: t('nav.reports'), href: route('admin.reports.index'), icon: BarChart3, permission: 'reports.view' },
-            { title: t('nav.reportSchedules'), href: route('admin.report-schedules.index'), icon: CalendarClock, permission: 'reports.schedule' },
+            // The schedules entry ships with the report-delivery bundle, which
+            // registers admin.report-schedules.index.
         ],
     },
     // <<< MYRA v2.3 [B] END

@@ -11,7 +11,7 @@ use Tests\TestCase;
 
 class ReportRequestValidationTest extends TestCase
 {
-    private function post(array $state): \Illuminate\Testing\TestResponse
+    private function postState(array $state): \Illuminate\Testing\TestResponse
     {
         return $this->postJson(route('admin.reports.data', 'users'), ['state' => $state]);
     }
@@ -27,7 +27,7 @@ class ReportRequestValidationTest extends TestCase
     {
         $this->actingAsSuperAdmin();
 
-        $response = $this->post(['measures' => ['nope', 'also_nope']]);
+        $response = $this->postState(['measures' => ['nope', 'also_nope']]);
 
         $response->assertOk();
         $this->assertSame(['signups'], array_column($response->json('measures'), 'key'));
@@ -37,7 +37,7 @@ class ReportRequestValidationTest extends TestCase
     {
         $this->actingAsSuperAdmin();
 
-        $response = $this->post(['dimension' => 'not_a_dimension']);
+        $response = $this->postState(['dimension' => 'not_a_dimension']);
 
         $response->assertOk();
         $this->assertSame('created_at', $response->json('dimension.key'));
@@ -48,7 +48,7 @@ class ReportRequestValidationTest extends TestCase
         $this->actingAsSuperAdmin();
 
         // `hour` is not in the users report's allowedBuckets().
-        $response = $this->post(['bucket' => 'hour']);
+        $response = $this->postState(['bucket' => 'hour']);
 
         $response->assertOk();
         $this->assertSame('day', $response->json('period.bucket'));
@@ -58,7 +58,10 @@ class ReportRequestValidationTest extends TestCase
     {
         $this->actingAsSuperAdmin();
 
-        $definition = ReportRegistry::resolve('users');
+        // The users report does not allow `hour`, so a disallowed bucket is
+        // dropped there (covered above). The cap is only reachable with a
+        // bucket the report actually allows — activity allows Hour.
+        $definition = ReportRegistry::resolve('activity');
 
         try {
             ReportRequest::parse([
@@ -73,11 +76,26 @@ class ReportRequestValidationTest extends TestCase
         }
     }
 
+    public function test_an_unavailable_auto_bucket_coarsens_instead_of_overflowing(): void
+    {
+        $this->actingAsSuperAdmin();
+
+        // Three years auto-buckets to Quarter, which activity does not allow.
+        // Falling back to its declared default (Day) would be 1095 groups and
+        // a guaranteed 422; the coarsening fallback must land inside the cap.
+        $request = ReportRequest::parse([
+            'period' => ['preset' => 'custom', 'from' => '2023-08-16', 'to' => '2026-08-15'],
+            'dimension' => 'created_at',
+        ], ReportRegistry::resolve('activity'), auth()->user());
+
+        $this->assertSame('week', $request->bucket()?->value);
+    }
+
     public function test_a_query_naming_an_unknown_field_is_a_422(): void
     {
         $this->actingAsSuperAdmin();
 
-        $this->post([
+        $this->postState([
             'query' => [
                 'conjunction' => 'and',
                 'rules' => [['field' => 'password', 'operator' => 'eq', 'value' => 'x']],
@@ -99,7 +117,7 @@ class ReportRequestValidationTest extends TestCase
             ];
         }
 
-        $this->post(['cross' => $cross])->assertStatus(422);
+        $this->postState(['cross' => $cross])->assertStatus(422);
     }
 
     public function test_eight_cross_filters_are_accepted(): void
@@ -115,7 +133,7 @@ class ReportRequestValidationTest extends TestCase
             ];
         }
 
-        $this->post(['cross' => $cross])->assertOk();
+        $this->postState(['cross' => $cross])->assertOk();
     }
 
     public function test_an_oversized_state_string_is_malformed(): void

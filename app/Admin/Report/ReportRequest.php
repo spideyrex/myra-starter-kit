@@ -70,6 +70,7 @@ final class ReportRequest
         $bucket = $dimension->effectiveBucket(
             Bucket::tryFrom((string) ($raw['bucket'] ?? '')),
             $period,
+            $def->maxGroupCount(),
         );
 
         if ($bucket !== null && $bucket->approxCountForDays($period->days()) > $def->maxGroupCount()) {

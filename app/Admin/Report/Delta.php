@@ -10,10 +10,24 @@ namespace App\Admin\Report;
  */
 final class Delta
 {
-    /** @return array{absolute:float|int,percent:float|null,direction:string,good:bool}|null */
-    public static function between(float|int|null $current, float|int|null $previous, bool $invertTrend = false): ?array
-    {
+    /**
+     * $additive says whether a missing current value means "zero" (count/sum)
+     * or "unknown" (avg/min/max/count_distinct). Coercing an unknown to 0
+     * would fabricate a -100% against a real previous window.
+     *
+     * @return array{absolute:float|int,percent:float|null,direction:string,good:bool}|null
+     */
+    public static function between(
+        float|int|null $current,
+        float|int|null $previous,
+        bool $invertTrend = false,
+        bool $additive = true,
+    ): ?array {
         if ($previous === null) {
+            return null;
+        }
+
+        if ($current === null && ! $additive) {
             return null;
         }
 

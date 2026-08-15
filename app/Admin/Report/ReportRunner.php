@@ -73,6 +73,7 @@ final class ReportRunner
                 $values[$m->key] ?? null,
                 $previousValues === null ? null : ($previousValues[$m->key] ?? null),
                 $m->invertsTrend(),
+                $m->isAdditive(),
             );
         }
 
@@ -247,6 +248,7 @@ final class ReportRunner
                 $totals[$m->key] ?? null,
                 $previousTotals === null ? null : ($previousTotals[$m->key] ?? null),
                 $m->invertsTrend(),
+                $m->isAdditive(),
             );
         }
 
@@ -398,7 +400,7 @@ final class ReportRunner
         foreach ($measures as $m) {
             $out[$m->key] = $previous === null
                 ? null
-                : Delta::between($values[$m->key] ?? null, $previous[$m->key] ?? null, $m->invertsTrend());
+                : Delta::between($values[$m->key] ?? null, $previous[$m->key] ?? null, $m->invertsTrend(), $m->isAdditive());
         }
 
         return $out;

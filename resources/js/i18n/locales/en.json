@@ -125,5 +125,52 @@
             "boldSample": "bold text",
             "italicSample": "italic text"
         }
+    },
+    "transfer": {
+        "export": {
+            "button": "Export",
+            "columns": "Columns",
+            "csv": "Export CSV",
+            "keyOrder": "Rows are exported in ID order, not the order shown on screen.",
+            "matchView": "Match current view",
+            "preparing": "Preparing your export...",
+            "selectAll": "Select all",
+            "selectNone": "Select none",
+            "tooManyRows": "Too many rows for a browser export (limit {max}). Use Export CSV, which streams from the server.",
+            "xlsx": "Export XLSX",
+            "xlsxPageOnly": "Export XLSX (this page only)"
+        },
+        "import": {
+            "a11y": {
+                "errorGrid": "Rows that failed validation",
+                "progress": "Import progress"
+            },
+            "aborted": "Import stopped: too many failed rows.",
+            "cellError": "Invalid value",
+            "columnsMapped": "{mapped} of {total} columns mapped.",
+            "commit": "Start import",
+            "done": "Import complete.",
+            "downloadSample": "Download a sample CSV",
+            "expected": "Expected columns: {columns}",
+            "failuresCsv": "Download failed rows",
+            "file": "CSV file",
+            "invalidRows": "{count} row(s) contain errors.",
+            "map": "Map columns",
+            "mappingRequired": "Every required column must be mapped before importing.",
+            "noErrors": "No errors found in the checked rows.",
+            "progress": "{done} of {total} rows processed.",
+            "required": "Required",
+            "result": "Result",
+            "resume": "Resume",
+            "rowsImported": "{imported} created, {updated} updated, {failed} failed.",
+            "skip": "Skip invalid rows",
+            "skipColumn": "-- Skip --",
+            "sourceColumn": "Source column",
+            "title": "Import",
+            "tooManyColumns": "The file has more than {max} columns.",
+            "tooManyRows": "The file has more than {max} rows.",
+            "upload": "Upload",
+            "validate": "Check rows"
+        }
     }
 }

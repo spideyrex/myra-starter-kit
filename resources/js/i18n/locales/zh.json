@@ -125,5 +125,52 @@
             "boldSample": "粗体文字",
             "italicSample": "斜体文字"
         }
+    },
+    "transfer": {
+        "export": {
+            "button": "导出",
+            "columns": "列",
+            "csv": "导出 CSV",
+            "keyOrder": "导出按 ID 顺序排列，而非当前屏幕上的顺序。",
+            "matchView": "与当前视图一致",
+            "preparing": "正在准备导出…",
+            "selectAll": "全选",
+            "selectNone": "全不选",
+            "tooManyRows": "行数超出浏览器导出上限（{max} 行），请使用由服务器流式导出的 CSV。",
+            "xlsx": "导出 XLSX",
+            "xlsxPageOnly": "导出 XLSX（仅当前页）"
+        },
+        "import": {
+            "a11y": {
+                "errorGrid": "未通过校验的行",
+                "progress": "导入进度"
+            },
+            "aborted": "导入已停止：失败行过多。",
+            "cellError": "无效值",
+            "columnsMapped": "已映射 {mapped}/{total} 列。",
+            "commit": "开始导入",
+            "done": "导入完成。",
+            "downloadSample": "下载示例 CSV",
+            "expected": "预期列：{columns}",
+            "failuresCsv": "下载失败行",
+            "file": "CSV 文件",
+            "invalidRows": "{count} 行存在错误。",
+            "map": "映射列",
+            "mappingRequired": "导入前必须映射所有必填列。",
+            "noErrors": "所检查的行未发现错误。",
+            "progress": "已处理 {done}/{total} 行。",
+            "required": "必填",
+            "result": "结果",
+            "resume": "继续",
+            "rowsImported": "新增 {imported} 条，更新 {updated} 条，失败 {failed} 条。",
+            "skip": "跳过无效行",
+            "skipColumn": "-- 跳过 --",
+            "sourceColumn": "源列",
+            "title": "导入",
+            "tooManyColumns": "该文件的列数超过 {max} 列。",
+            "tooManyRows": "该文件的行数超过 {max} 行。",
+            "upload": "上传",
+            "validate": "检查行"
+        }
     }
 }

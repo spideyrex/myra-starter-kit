@@ -111,9 +111,14 @@ Route::middleware(['auth', 'verified', 'active', '2fa'])->prefix('admin')->name(
     Route::post('/users/{user}/restore', [UserController::class, 'restore'])->middleware('permission:users.edit')->name('users.restore');
     Route::delete('/users/{user}/force-delete', [UserController::class, 'forceDelete'])->middleware('permission:users.delete')->name('users.force-delete');
 
-    // Import
-    Route::post('/import/preview', [ImportController::class, 'preview'])->middleware('permission:users.create')->name('import.preview');
-    Route::post('/import/execute', [ImportController::class, 'execute'])->middleware('permission:users.create')->name('import.execute');
+    // >>> MYRA v2.2 [C] START
+    // Import — the per-resource ability is resolved from the registry inside the
+    // controller, so a blanket permission: middleware would be the wrong gate.
+    Route::post('/import/{resource}/preview', [ImportController::class, 'preview'])->middleware('throttle:10,1')->name('import.preview');
+    Route::post('/import/{resource}/validate', [ImportController::class, 'validateRows'])->middleware('throttle:10,1')->name('import.validate');
+    Route::post('/import/{resource}/commit', [ImportController::class, 'commit'])->middleware('throttle:10,1')->name('import.commit');
+    Route::get('/import/{resource}/failures/{token}', [ImportController::class, 'failures'])->name('import.failures');
+    // <<< MYRA v2.2 [C] END
 
     // Roles
     Route::get('/roles', [RoleController::class, 'index'])->middleware('permission:roles.view')->name('roles.index');
@@ -242,10 +247,11 @@ Route::middleware(['auth', 'verified', 'active', '2fa'])->prefix('admin')->name(
     Route::delete('/demo/action-modals/{id}', [DemoController::class, 'demoDeleteTask'])->name('demo.delete-task');
     Route::post('/demo/action-modals/{id}/replicate', [DemoController::class, 'demoReplicateTask'])->name('demo.replicate-task');
     Route::post('/demo/action-modals/{id}/archive', [DemoController::class, 'demoArchiveTask'])->name('demo.archive-task');
+    // >>> MYRA v2.2 [C] START
     Route::get('/demo/import-export', [DemoController::class, 'importExport'])->name('demo.import-export');
     Route::get('/demo/export-csv', [DemoController::class, 'exportCsv'])->name('demo.export-csv');
-    Route::post('/demo/import/preview', [DemoController::class, 'demoImportPreview'])->name('demo.import-preview');
-    Route::post('/demo/import/execute', [DemoController::class, 'demoImportExecute'])->name('demo.import-execute');
+    Route::get('/demo/import-sample', [DemoController::class, 'importSample'])->name('demo.import-sample');
+    // <<< MYRA v2.2 [C] END
     Route::get('/demo/global-search', [DemoController::class, 'globalSearch'])->name('demo.global-search');
 
     // Advanced Feature Demos

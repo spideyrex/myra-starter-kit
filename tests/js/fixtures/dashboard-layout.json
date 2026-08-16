@@ -1,0 +1,93 @@
+{
+    "catalogue": [
+        {
+            "key": "trend",
+            "type": "chart",
+            "titleKey": "dashboardLayout.demo.trendTitle",
+            "descriptionKey": "dashboardLayout.demo.trendDescription",
+            "categoryKey": "dashboardLayout.categories.charts",
+            "icon": "ChartArea",
+            "dimensions": [
+                "created_at",
+                "status"
+            ],
+            "measures": [
+                "signups",
+                "emails"
+            ],
+            "chartTypes": [
+                "bar",
+                "area",
+                "doughnut"
+            ],
+            "defaults": {
+                "dimension": "created_at",
+                "measures": [
+                    "signups"
+                ],
+                "limit": 12
+            },
+            "defaultColSpan": {
+                "sm": 2,
+                "lg": 2
+            },
+            "maxInstances": 2,
+            "tags": [
+                "chart",
+                "trend"
+            ]
+        }
+    ],
+    "layout": {
+        "version": 1,
+        "entries": [
+            {
+                "key": "total_users",
+                "order": 0,
+                "colSpan": 1,
+                "rowSpan": 1,
+                "hidden": false
+            },
+            {
+                "key": "trend#fixture",
+                "order": 1,
+                "colSpan": {
+                    "sm": 2,
+                    "lg": 2
+                },
+                "rowSpan": 1,
+                "hidden": false
+            },
+            {
+                "key": "pending_verifications",
+                "order": 2,
+                "colSpan": 1,
+                "rowSpan": 1,
+                "hidden": true
+            }
+        ],
+        "instances": [
+            {
+                "key": "trend#fixture",
+                "type": "chart",
+                "title": "Fixture widget",
+                "colSpan": {
+                    "sm": 2,
+                    "lg": 2
+                },
+                "rowSpan": null,
+                "binding": {
+                    "dimension": "created_at",
+                    "measures": [
+                        "signups"
+                    ],
+                    "limit": 12,
+                    "report": "users"
+                },
+                "chartType": "bar",
+                "permission": null,
+                "catalogue": "trend"
+            }
+        ]
+    }
+}

@@ -20,4 +20,13 @@ window.Echo = new Echo({
     enabledTransports: ['ws', 'wss'],
 });
 
+/** Tear the socket down (logout). Never throws. */
+export function disconnect(): void {
+    try {
+        window.Echo?.disconnect();
+    } catch {
+        // Already gone.
+    }
+}
+
 export default window.Echo;

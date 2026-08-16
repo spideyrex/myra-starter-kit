@@ -52,6 +52,9 @@ final class UsersReport
             ->cacheFor(0)
             ->chart('area')
             ->formats(['csv', 'xlsx', 'pdf'])
+            // >>> MYRA v2.5 [B] START
+            ->versionedBy('updated_at')
+            // <<< MYRA v2.5 [B] END
             ->schedulable();
     }
 }

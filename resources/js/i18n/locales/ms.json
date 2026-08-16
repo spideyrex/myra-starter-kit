@@ -33,7 +33,7 @@
     },
     "plugins": {
         "title": "Plugin",
-        "description": "Pakej yang mendaftarkan halaman, kebenaran, laporan, import dan navigasi \u2014 diisytiharkan secara eksplisit, bukan ditemui secara automatik.",
+        "description": "Pakej yang mendaftarkan halaman, kebenaran, laporan, import dan navigasi — diisytiharkan secara eksplisit, bukan ditemui secara automatik.",
         "back": "Kembali ke demo",
         "loaded": "Plugin dimuatkan",
         "loadedDescription": "Setiap baris ialah manifes sebenar yang digunakan semasa but. Kiraan menunjukkan sumbangan setiap plugin.",
@@ -226,6 +226,86 @@
         "failClosedTitle": "Gagal tertutup",
         "failClosedBody": "Apabila skop aktif dan tiada penyewa diselesaikan, predikat menjadi 1 = 0. Tiada penyewa bermakna tiada baris, bukan semua baris."
     },
+    "dashboardLayout": {
+        "saved": "Susun atur papan pemuka disimpan.",
+        "reset": "Set semula",
+        "resetConfirm": "Ini membuang susun atur simpanan anda dan memulihkan papan pemuka lalai. Widget yang anda tambah akan dibuang.",
+        "edit": "Sesuaikan",
+        "done": "Simpan susun atur",
+        "saving": "Menyimpan…",
+        "cancel": "Batal",
+        "undo": "Buat asal",
+        "retry": "Cuba semula",
+        "addWidget": "Tambah widget",
+        "hide": "Sembunyi",
+        "restore": "Pulih",
+        "hiddenWidgets": "Tersembunyi:",
+        "remove": "Buang",
+        "rename": "Namakan semula",
+        "size": "Lebar",
+        "search": "Cari widget",
+        "allCategories": "Semua",
+        "catalogueDescription": "Hanya widget yang anda dibenarkan lihat disenaraikan. Pratonton adalah statik — menambah satu tidak menjalankan sebarang pertanyaan sehingga ia disimpan.",
+        "dimension": "Kumpul mengikut",
+        "measures": "Ukuran",
+        "chartType": "Jenis carta",
+        "untitled": "Widget tanpa tajuk",
+        "empty": "Tiada widget tersedia untuk ditambah.",
+        "limitReached": "Anda telah mencapai jumlah maksimum widget yang ditambah.",
+        "keys": {
+            "main": "Papan pemuka utama"
+        },
+        "categories": {
+            "general": "Umum",
+            "metrics": "Metrik",
+            "charts": "Carta",
+            "tables": "Jadual"
+        },
+        "a11y": {
+            "roledescription": "Widget papan pemuka boleh susun",
+            "instructions": "Tekan Space untuk mengangkat widget, kemudian gunakan kekunci anak panah untuk menggerakkannya. Tekan Space sekali lagi untuk melepaskannya, Home atau End untuk memindahkannya ke permulaan atau penghujung, atau Escape untuk membatalkan.",
+            "grabbed": "{label} diangkat, kedudukan {index} daripada {total}.",
+            "dropped": "{label} dilepaskan pada kedudukan {index} daripada {total}.",
+            "cancelled": "Pergerakan dibatalkan. {label} dikembalikan ke kedudukan {index}.",
+            "position": "{label}, kedudukan {index} daripada {total}.",
+            "grabHandle": "Susun semula {label}"
+        },
+        "errors": {
+            "shape": "Susun atur papan pemuka itu tidak sah.",
+            "tooManyEntries": "Susun atur papan pemuka itu mempunyai terlalu banyak widget.",
+            "tooManyInstances": "Susun atur papan pemuka itu mempunyai terlalu banyak widget tambahan.",
+            "unknownDashboard": "Papan pemuka tidak dikenali.",
+            "widget": "Widget ini tidak dapat dipaparkan."
+        },
+        "demo": {
+            "title": "Penyunting papan pemuka",
+            "subtitle": "Susun atur setiap pengguna dan katalog widget. Delta persembahan digunakan pada pelanggan selepas penapis kebenaran; widget tambahan diterbitkan semula di pelayan pada setiap muatan.",
+            "back": "Kembali ke Demo",
+            "active": "Pengguna aktif",
+            "signups": "Pendaftaran",
+            "trend": "Pertumbuhan",
+            "pending": "Menunggu",
+            "countTitle": "Bilangan pengguna",
+            "countDescription": "Satu nombor teragregat.",
+            "trendTitle": "Aliran pendaftaran",
+            "trendDescription": "Satu siri berkumpulan sepanjang tempoh.",
+            "breakdownTitle": "Jadual pecahan",
+            "breakdownDescription": "Baris dikumpulkan mengikut dimensi yang diisytiharkan.",
+            "pointerTitle": "Seret dengan penuding",
+            "pointerDescription": "Seret dengan pemegang. Penuding dan papan kekunci memanggil fungsi pergerakan yang sama.",
+            "announcerTitle": "Teks kawasan langsung",
+            "announcerDescription": "Setiap pergerakan, sembunyi dan tambah menulis satu ayat di sini. Pembaca skrin mendengarnya; panel ini mencerminkannya supaya anda dapat melihatnya.",
+            "tamperTitle": "Susun atur diusik",
+            "tamperDescription": "Susun atur yang disimpan ialah permintaan, bukan skema. Entri untuk widget yang tidak pernah diisytiharkan tidak boleh menambahnya, dan tika yang menamakan kunci katalog tidak dikenali tidak menghasilkan apa-apa.",
+            "tamperOn": "Suntik susun atur diusik",
+            "tamperOff": "Buang susun atur diusik",
+            "tamperEntryDropped": "Entri digugurkan oleh applyLayout:",
+            "tamperSubmitted": "Tika dihantar ke pelayan: {count}",
+            "tamperResolved": "Tika yang diselesaikan pelayan: {count}",
+            "payloadTitle": "Apa yang Simpan akan hantar",
+            "payloadDescription": "Tika bergerak sebagai kunci katalog serta pengikatan. Pelayan menerbitkan semula skema dan menolak apa-apa yang tidak dapat diselesaikan."
+        }
+    },
     "reports": {
         "title": "Laporan",
         "subtitle": "Pengagregatan di pelayan — pangkalan data mengira setiap nombor.",
@@ -385,6 +465,58 @@
             "uploading": "Memuat naik imej..."
         }
     },
+    "live": {
+        "connected": "Langsung",
+        "polling": "Tinjauan berkala",
+        "paused": "Dijeda",
+        "retry": "Cuba semula",
+        "updatedAgo": "Dikemas kini {ago}",
+        "justNow": "sebentar tadi",
+        "secondsAgo": "{count}s lalu",
+        "minutesAgo": "{count}m lalu",
+        "hoursAgo": "{count}j lalu",
+        "requests": "Permintaan",
+        "tooltip": {
+            "connected": "Bersambung — kemas kini tiba sebaik ia berlaku.",
+            "polling": "Tidak bersambung — menyegar mengikut pemasa."
+        },
+        "a11y": {
+            "loading": "Memuatkan {label}.",
+            "ready": "{label} dikemas kini.",
+            "empty": "{label} tiada data.",
+            "error": "{label} gagal dimuatkan.",
+            "offline": "{label} tidak tersedia semasa di luar talian.",
+            "streaming": "{label} masih tiba."
+        },
+        "errors": {
+            "batch": "Papan pemuka tidak dapat disegarkan.",
+            "slot": "Widget ini tidak dapat disegarkan.",
+            "tooManyReports": "Terlalu banyak widget diminta serentak."
+        },
+        "demo": {
+            "title": "Widget masa nyata dan keadaan pemuatan",
+            "subtitle": "Satu soket, satu kelompok bergabung, satu pemasa — tidak kira bilangan widget.",
+            "busTitle": "Bas papan pemuka",
+            "busDescription": "Setiap widget di bawah dijejaki oleh satu bas. Perhatikan pembilang permintaan.",
+            "mountSix": "Lekapkan enam widget",
+            "burst": "Letusan 30 isyarat",
+            "hide": "Simulasi tab tersembunyi",
+            "show": "Simulasi tab kelihatan",
+            "unchanged": "Balas {'{'}unchanged: true{'}'}",
+            "failOne": "Gagalkan satu slot",
+            "reset": "Set semula",
+            "requestCount": "Permintaan POST dihantar",
+            "signalCount": "Isyarat diterima",
+            "statesTitle": "Keadaan permukaan",
+            "statesDescription": "Setiap keadaan permukaan data, berserta pengumuman yang dibuatnya.",
+            "announcer": "Output pengumum",
+            "clsTitle": "Sifar anjakan susun atur",
+            "clsDescription": "Rangka menempah geometri sebenar dengan tepat, jadi tiada yang melompat.",
+            "skeleton": "Rangka",
+            "loaded": "Dimuatkan",
+            "heights": "Kedua-dua kotak setinggi {height} piksel."
+        }
+    },
     "views": {
         "a11y": {
             "menu": "Menu paparan tersimpan"
@@ -450,6 +582,266 @@
         "description": "100,000 baris, dua strategi penomboran, dan badan jadual yang divirtualkan.",
         "viewportHeight": "Tinggi port pandang",
         "virtualized": "Divirtualkan"
+    },
+    "gallery": {
+        "title": "Galeri ciri",
+        "subtitle": "Setiap halaman demo dalam satu katalog boleh dicari. Pilih kad untuk meneroka ciri itu.",
+        "search": "Cari demo",
+        "noResults": "Tiada demo sepadan dengan carian itu.",
+        "allTags": "Semua",
+        "viewDemo": "Lihat demo",
+        "since": "Sejak v{version}",
+        "back": "Kembali ke galeri",
+        "resultCount": "{n} demo dipaparkan.",
+        "tags": {
+            "forms": "Borang",
+            "tables": "Jadual",
+            "data": "Data",
+            "dashboard": "Papan pemuka",
+            "navigation": "Navigasi",
+            "layout": "Susun atur",
+            "platform": "Platform",
+            "content": "Kandungan",
+            "gallery": "Galeri"
+        },
+        "playground": {
+            "title": "Taman komponen",
+            "description": "Sunting prop secara langsung ke atas primitif sebenar dan salin cebisan yang dijana.",
+            "props": "Prop",
+            "code": "Kod dijana",
+            "copy": "Salin",
+            "copied": "Disalin",
+            "reset": "Set semula",
+            "viewport": "Port pandangan",
+            "scheme": "Skema warna",
+            "locale": "Bahasa",
+            "keyboard": "Panduan papan kekunci",
+            "schemeLight": "Cerah",
+            "schemeDark": "Gelap",
+            "disabledTitle": "Taman permainan dimatikan",
+            "disabledDescription": "Tetapkan bendera ini untuk memaparkan taman permainan langsung pada halaman ini.",
+            "viewports": {
+                "sm": "Telefon",
+                "md": "Tablet",
+                "lg": "Desktop"
+            },
+            "schemes": {
+                "light": "Cerah",
+                "dark": "Gelap",
+                "split": "Belah"
+            },
+            "specs": {
+                "statCard": "Kad statistik",
+                "button": "Butang",
+                "badge": "Lencana",
+                "emptyState": "Keadaan kosong"
+            },
+            "control": {
+                "title": "Tajuk",
+                "value": "Nilai",
+                "description": "Perihal",
+                "color": "Warna",
+                "label": "Label",
+                "variant": "Varian",
+                "size": "Saiz",
+                "disabled": "Dilumpuhkan"
+            },
+            "option": {
+                "blue": "Biru",
+                "green": "Hijau",
+                "violet": "Ungu",
+                "rose": "Merah jambu",
+                "default": "Lalai",
+                "secondary": "Sekunder",
+                "destructive": "Merosakkan",
+                "outline": "Garis luar",
+                "ghost": "Hantu",
+                "link": "Pautan",
+                "sm": "Kecil",
+                "lg": "Besar"
+            },
+            "keyboardSteps": {
+                "controls": "Tab ke panel prop dan ubah satu kawalan.",
+                "viewport": "Tab ke kumpulan port pandangan; kekunci anak panah menukar lebar.",
+                "scheme": "Tab ke kumpulan skema warna; kekunci anak panah menukar cerah, gelap dan belah.",
+                "locale": "Tab ke pilihan bahasa; Enter membukanya dan kekunci anak panah memilih en, ms atau zh.",
+                "snippet": "Tab ke tab bahasa di atas cebisan; kekunci anak panah menukar Vue, TS dan PHP.",
+                "copy": "Tab ke Salin dan tekan Enter; cebisan ialah teks biasa, bukan HTML dipaparkan."
+            }
+        },
+        "commands": {
+            "heading": "Arahan",
+            "themeToggle": "Togol mod gelap",
+            "shortcuts": "Pintasan papan kekunci",
+            "locale": {
+                "en": "Tukar ke bahasa Inggeris",
+                "ms": "Tukar ke Bahasa Melayu",
+                "zh": "Tukar ke bahasa Cina"
+            },
+            "group": {
+                "navigate": "Pergi ke",
+                "action": "Tindakan",
+                "theme": "Keutamaan",
+                "demo": "Demo"
+            }
+        },
+        "demos": {
+            "richTextEditor": {
+                "title": "Penyunting teks kaya",
+                "description": "Penyunting WYSIWYG berkuasa TipTap dengan bar alat boleh dikonfigur, sokongan imej dan pautan, serta integrasi FormField.",
+                "badge": "TipTap v3"
+            },
+            "repeaterField": {
+                "title": "Medan pengulang",
+                "description": "Tambah dan buang baris secara dinamik dengan penyusunan semula, item boleh runtuh dan skema medan bersarang.",
+                "badge": "Pembina borang"
+            },
+            "formBuilder": {
+                "title": "Pembina borang",
+                "description": "Setiap jenis medan dan komponen susun atur: seksyen, grid, tab, wizard dan kotak nota.",
+                "badge": "Semua medan"
+            },
+            "bulkActions": {
+                "title": "Tindakan pukal",
+                "description": "Pemilihan baris, tindakan pukal dengan dialog pengesahan, penapis dan eksport CSV.",
+                "badge": "DataTable"
+            },
+            "softDeletes": {
+                "title": "Padam lembut dan sampah",
+                "description": "Buang, pulih dan padam paksa dengan tindakan baris bersyarat serta penapis sampah.",
+                "badge": "SoftDeletes"
+            },
+            "actionModals": {
+                "title": "Modal tindakan",
+                "description": "CRUD dalam dialog modal dengan skema borang dinamik tanpa navigasi halaman.",
+                "badge": "Modal"
+            },
+            "importExport": {
+                "title": "Import dan eksport",
+                "description": "Import CSV dengan pemetaan lajur dan pratonton, serta eksport CSV secara penstriman.",
+                "badge": "CSV"
+            },
+            "globalSearch": {
+                "title": "Carian global",
+                "description": "Palet arahan dengan carian API ternyahlantun merentas setiap sumber.",
+                "badge": "Cmd+K"
+            },
+            "inlineEditing": {
+                "title": "Suntingan jadual dalam baris",
+                "description": "Sunting nilai sel terus dalam jadual dengan lajur pilihan, teks dan togol.",
+                "badge": "Sunting dalam baris"
+            },
+            "conditionalFields": {
+                "title": "Medan bersyarat",
+                "description": "Tunjuk atau sembunyi medan borang berdasarkan nilai medan lain menggunakan syarat rentetan atau fungsi.",
+                "badge": "Keterlihatan"
+            },
+            "infolist": {
+                "title": "Infolist dan halaman papar",
+                "description": "Paparan perincian baca sahaja berasaskan skema dengan entri teks, lencana, tarikh, boolean dan imej.",
+                "badge": "Infolist"
+            },
+            "relationManager": {
+                "title": "Pengurus perhubungan",
+                "description": "Jadual terbenam untuk mengurus rekod berkaitan pada halaman perincian, dengan modal cipta.",
+                "badge": "Perhubungan"
+            },
+            "grouping": {
+                "title": "Pengumpulan baris dan ringkasan",
+                "description": "Kumpulkan baris mengikut nilai lajur dengan pengepala boleh runtuh dan baris ringkasan teragregat.",
+                "badge": "Pengumpulan"
+            },
+            "reordering": {
+                "title": "Susun semula seret dan lepas",
+                "description": "Susun semula baris jadual dengan seretan atau papan kekunci, menyimpan susunan ke pelayan.",
+                "badge": "Boleh isih"
+            },
+            "widgets": {
+                "title": "Widget papan pemuka",
+                "description": "Pembina widget boleh dikonfigur: statistik, carta, jadual dan widget tersuai.",
+                "badge": "Widget"
+            },
+            "fieldTypes": {
+                "title": "Jenis medan baharu",
+                "description": "Petunjuk, butang togol, pemilih masa, senarai kotak semak, kunci-nilai dan penyunting markdown.",
+                "badge": "Medan"
+            },
+            "codeEditor": {
+                "title": "Medan penyunting kod",
+                "description": "CodeMirror 6 di sebalik import malas: bahasa setiap medan, nombor baris, balutan dan salin.",
+                "badge": "CodeMirror"
+            },
+            "advancedFilters": {
+                "title": "Penapis lanjutan",
+                "description": "Penapis julat tarikh dan pembina pertanyaan rekursif dengan kumpulan DAN/ATAU.",
+                "badge": "Penapis"
+            },
+            "wizard": {
+                "title": "Pengesahan wizard",
+                "description": "Wizard lima langkah dengan pengesahan setiap langkah, penyuntingan imej dan eksport XLSX.",
+                "badge": "Wizard"
+            },
+            "map": {
+                "title": "Peta",
+                "description": "Peta MapLibre GL sedar tema: lengkung penerbangan, penanda, pop timbul, garis laluan dan kelompok.",
+                "badge": "MapLibre"
+            },
+            "savedViews": {
+                "title": "Paparan tersimpan",
+                "description": "Pratetap penapis, isihan dan lajur bernama bagi setiap pengguna, boleh dikongsi dengan pasukan.",
+                "badge": "Paparan"
+            },
+            "reports": {
+                "title": "Laporan dan carta",
+                "description": "Takrifan laporan boleh gubah dengan setiap ukuran dikira dalam SQL: tempoh, perbandingan dan N teratas.",
+                "badge": "Laporan"
+            },
+            "reportDelivery": {
+                "title": "Penghantaran laporan",
+                "description": "Cip tapis silang, gerudi segmen dan dialog penghantaran berjadual.",
+                "badge": "Penghantaran"
+            },
+            "tenancy": {
+                "title": "Penyewaan",
+                "description": "Status penyewaan baca sahaja: model berskop, lajur penyewa dan dasar baris null.",
+                "badge": "Berbilang penyewa"
+            },
+            "plugins": {
+                "title": "Pemalam",
+                "description": "Pakej yang mendaftar halaman, kebenaran, laporan dan navigasi — diisytihar secara eksplisit.",
+                "badge": "Pemalam"
+            },
+            "scale": {
+                "title": "Skala",
+                "description": "100,000 baris, dua strategi penomboran, dan badan jadual maya.",
+                "badge": "Skala"
+            },
+            "playground": {
+                "title": "Taman komponen",
+                "description": "Suntingan prop langsung ke atas primitif sebenar, dengan cebisan salin-tampal dalam Vue, TypeScript dan PHP.",
+                "badge": "Baharu"
+            },
+            "dashboardEditor": {
+                "title": "Penyunting papan pemuka",
+                "description": "Seret jubin ke tempatnya dan simpan susun atur peribadi, atau tambah widget dari katalog tanpa menulis kod.",
+                "badge": "Baharu"
+            },
+            "liveWidgets": {
+                "title": "Widget langsung",
+                "description": "Widget yang menyegar melalui websocket apabila data berubah, dengan keadaan rangka semasa dimuatkan.",
+                "badge": "Masa nyata"
+            },
+            "aiFilter": {
+                "title": "Bar tanya",
+                "description": "Terangkan penapis dalam bahasa biasa; ia disusun menjadi pepohon peraturan yang disahkan, bukan SQL.",
+                "badge": "AI"
+            },
+            "offlineShell": {
+                "title": "Cengkerang luar talian",
+                "description": "Cengkerang aplikasi terus berfungsi tanpa sambungan. Hanya aset statik dicache, bukan data anda.",
+                "badge": "PWA"
+            }
+        }
     },
     "charts": {
         "a11y": {
@@ -800,5 +1192,81 @@
             "view": "Lihat {count} rekod",
             "viewUnavailable": "Segmen ini tidak boleh dibuka sebagai jadual."
         }
+    },
+    "assistant": {
+        "appliedTree": "Pepohon yang dihantar ke penapis",
+        "apply": "Guna",
+        "askHint": "Terangkan apa yang anda mahu lihat. Model hanya boleh menamakan medan dalam senarai putih {scope}.",
+        "askPlaceholder": "Terangkan baris yang anda mahu…",
+        "askTitle": "Minta satu penapis",
+        "compile": "Kompil",
+        "disabled": "Dimatikan",
+        "disabledHint": "Penapis AI dimatikan. Tetapkan bendera di bawah dan konfigurasikan pembekal dalam tetapan AI.",
+        "discard": "Buang",
+        "enabled": "Dihidupkan",
+        "errors": {
+            "couldNotUnderstand": "Itu tidak dapat dijadikan penapis. Cuba ubah ayat anda.",
+            "promptLength": "Tulis antara satu aksara dan 500 aksara.",
+            "providerDown": "Pembekal AI tidak memberi respons.",
+            "rateLimited": "Terlalu banyak permintaan. Cuba lagi seminit lagi.",
+            "sqlDetected": "Model membalas dengan SQL, yang tidak sekali-kali diterima."
+        },
+        "hostile": {
+            "column": "Lajur rekaan: password",
+            "description": "Setiap butang meminta output yang mungkin dihasilkan oleh model terjejas. Semuanya ditolak di pelayan.",
+            "operator": "Operator tidak dikenali: raw",
+            "overCap": "Lebih banyak peraturan daripada yang dibenarkan set medan",
+            "run": "Hantar",
+            "sql": "Rentetan SQL mentah",
+            "title": "Output model yang berniat jahat"
+        },
+        "offline": {
+            "banner": "Anda di luar talian. Data tidak tersedia sehingga sambungan kembali.",
+            "description": "Rangka aplikasi dan aset binaan dicache. Apa-apa di sebalik pengesahan tidak pernah dicache.",
+            "retry": "Cuba lagi",
+            "title": "Rangka luar talian"
+        },
+        "pipeline": {
+            "description": "Model hanya boleh menghasilkan pepohon peraturan yang sama seperti yang boleh ditaip manusia. Ia dihurai oleh RuleTree terhadap set operator tertutup dan senarai putih medan sebelum boleh menyentuh pangkalan data.",
+            "title": "Model tidak pernah menulis SQL"
+        },
+        "pwa": {
+            "allowListDescription": "Permintaan mesti benar-benar sepadan dengan rangka statik atau aset binaan bercincang. Selain itu tidak pernah sampai ke kod cache.",
+            "allowListTitle": "Senarai benar positif",
+            "cached": "Boleh dicache",
+            "decisionHint": "Dinilai secara langsung oleh fungsi yang sama yang dijalankan service worker.",
+            "decisionTable": "Keputusan cache",
+            "install": "Pasang aplikasi",
+            "no": "Tidak",
+            "notRegistered": "Tidak didaftarkan",
+            "online": "Dalam talian",
+            "purge": "Bersihkan cache",
+            "purged": "Cache dibersihkan.",
+            "registered": "Didaftarkan",
+            "registration": "Service worker",
+            "reload": "Muat semula",
+            "request": "Permintaan",
+            "unregister": "Nyahdaftar worker",
+            "updateAvailable": "Kemas kini tersedia",
+            "yes": "Ya"
+        },
+        "review": "Semak syarat sebelum menggunakannya. Tiada apa berjalan sehingga anda berbuat demikian.",
+        "schema": {
+            "command": "Arahan untuk dijalankan",
+            "draft": "Draf",
+            "title": "Draf skema"
+        },
+        "scope": {
+            "activity": "Log aktiviti",
+            "users": "Pengguna"
+        },
+        "subtitle": "Bahasa tabii dikompil menjadi pepohon peraturan yang disahkan — tidak pernah menjadi SQL.",
+        "summary": {
+            "generate": "Ringkaskan papan pemuka",
+            "streaming": "Sedang menulis…",
+            "title": "Ringkasan papan pemuka"
+        },
+        "title": "Penapis AI",
+        "unresolved": "Tiada syarat dihasilkan."
     }
 }

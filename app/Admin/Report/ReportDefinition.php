@@ -67,6 +67,10 @@ final class ReportDefinition
 
     private string $defaultChart = 'bar';
 
+    // >>> MYRA v2.5 [B] START
+    private ?string $versionColumn = null;
+    // <<< MYRA v2.5 [B] END
+
     private function __construct(private readonly string $key)
     {
         $this->scope = static fn (Builder $q, ?Authenticatable $actor) => $q;
@@ -374,6 +378,31 @@ final class ReportDefinition
     {
         return $this->defaultChart;
     }
+
+    // >>> MYRA v2.5 [B] START
+    /**
+     * Declare the column whose MAX() makes a cheap freshness stamp. Opt-in: a
+     * definition that never calls this is NEVER version-short-circuited, which
+     * is the safe answer for a report over a table with no updated_at or whose
+     * freshness comes through a join.
+     */
+    public function versionedBy(string $column): self
+    {
+        if (preg_match('/^[a-z_][a-z0-9_]*$/i', $column) !== 1) {
+            throw new LogicException("Invalid version column [{$column}].");
+        }
+
+        $this->versionColumn = $column;
+
+        return $this;
+    }
+
+    /** Null — the default — means "never short-circuit this report". */
+    public function versionKey(): ?string
+    {
+        return $this->versionColumn;
+    }
+    // <<< MYRA v2.5 [B] END
 
     /** @return array<string,mixed> permission-filtered */
     public function toClientSchema(?Authenticatable $user): array

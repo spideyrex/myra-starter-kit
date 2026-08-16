@@ -3,13 +3,14 @@ import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import StatCard from '@/components/StatCard.vue';
 import { Card, CardContent } from '@/components/ui/card';
-import { Skeleton } from '@/components/ui/skeleton';
+import DataSurface from '@/components/admin/DataSurface.vue';
 import DeltaBadge from '@/components/admin/charts/DeltaBadge.vue';
 import SparklineChart from '@/components/admin/charts/SparklineChart.vue';
 import { useChartTheme } from '@/components/admin/charts/chartTheme';
 import { formatMeasure } from '@/components/admin/charts/format';
 import type { ReportRow, StatResultPayload } from '@/components/admin/charts/types';
 import type { WidgetSchema } from '@/composables/useDashboardWidgets';
+import type { SurfaceState } from '@/composables/useAsyncSurface';
 
 const props = withDefaults(defineProps<{
     widget: WidgetSchema;
@@ -17,10 +18,13 @@ const props = withDefaults(defineProps<{
     /** Server-aggregated value. Absent for legacy closure widgets. */
     result?: StatResultPayload | null;
     loading?: boolean;
+    /** Overrides `loading` when given. Absent keeps the v2.4.0 two-state path. */
+    state?: SurfaceState;
 }>(), { result: null, loading: false });
 
 const emit = defineEmits<{
     (e: 'segment', row: ReportRow, measureKey: string): void;
+    (e: 'retry'): void;
 }>();
 
 const { t } = useI18n();
@@ -49,6 +53,13 @@ const goalPercent = computed(() => {
 
 const interactive = computed(() => (props.widget.segmentMode ?? 'none') !== 'none');
 
+const surfaceState = computed<SurfaceState>(() => {
+    if (props.state) return props.state;
+    return props.loading ? 'loading' : 'ready';
+});
+
+const surfaceKeys = { loading: 'charts.a11y.loading' } as const;
+
 function activate(): void {
     if (!interactive.value || !props.result) return;
 
@@ -66,17 +77,15 @@ function activate(): void {
 </script>
 
 <template>
-    <Card v-if="loading" class="animate-fade-in-up" aria-busy="true">
-        <CardContent class="space-y-3 p-5">
-            <span class="sr-only" role="status">{{ t('charts.a11y.loading') }}</span>
-            <Skeleton class="h-4 w-24" />
-            <Skeleton class="h-8 w-32" />
-            <Skeleton class="h-3 w-20" />
-        </CardContent>
-    </Card>
-
+    <DataSurface
+        :state="surfaceState"
+        skeleton="stat"
+        :label="widget.title"
+        :keys="surfaceKeys"
+        @retry="emit('retry')"
+    >
     <!-- Report-bound: direction is the arrow, verdict is the colour. -->
-    <Card v-else-if="isBound" class="animate-fade-in-up">
+    <Card v-if="isBound" class="animate-fade-in-up">
         <CardContent class="p-5">
             <component
                 :is="interactive ? 'button' : 'div'"
@@ -121,4 +130,5 @@ function activate(): void {
         :trend="legacyTrend"
         :color="widget.color"
     />
+    </DataSurface>
 </template>

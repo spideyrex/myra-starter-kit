@@ -1,0 +1,138 @@
+{
+    "scope": "users",
+    "applied": false,
+    "tree": {
+        "conjunction": "and",
+        "rules": [
+            {
+                "field": "status",
+                "operator": "in",
+                "value": [
+                    "suspended"
+                ]
+            }
+        ],
+        "groups": []
+    },
+    "constraints": {
+        "maxRules": 25,
+        "maxDepth": 3,
+        "fields": [
+            {
+                "name": "name",
+                "type": "text",
+                "labelKey": "filters.field.name",
+                "operators": [
+                    "eq",
+                    "neq",
+                    "starts_with",
+                    "ends_with",
+                    "is_filled",
+                    "is_blank",
+                    "contains",
+                    "not_contains"
+                ],
+                "nullable": false,
+                "integer": false
+            },
+            {
+                "name": "email",
+                "type": "text",
+                "labelKey": "filters.field.email",
+                "operators": [
+                    "eq",
+                    "neq",
+                    "starts_with",
+                    "ends_with",
+                    "is_filled",
+                    "is_blank",
+                    "contains",
+                    "not_contains"
+                ],
+                "nullable": false,
+                "integer": false
+            },
+            {
+                "name": "phone",
+                "type": "text",
+                "labelKey": "filters.field.phone",
+                "operators": [
+                    "eq",
+                    "neq",
+                    "starts_with",
+                    "ends_with",
+                    "is_filled",
+                    "is_blank"
+                ],
+                "nullable": true,
+                "integer": false
+            },
+            {
+                "name": "status",
+                "type": "select",
+                "labelKey": "filters.field.status",
+                "operators": [
+                    "in",
+                    "not_in",
+                    "is_filled",
+                    "is_blank"
+                ],
+                "options": [
+                    "active",
+                    "suspended",
+                    "pending"
+                ],
+                "nullable": false,
+                "integer": false
+            },
+            {
+                "name": "created_at",
+                "type": "date",
+                "labelKey": "filters.field.createdAt",
+                "operators": [
+                    "date_is",
+                    "date_before",
+                    "date_after",
+                    "date_between",
+                    "in_month",
+                    "in_year",
+                    "is_filled",
+                    "is_blank"
+                ],
+                "nullable": false,
+                "integer": false
+            },
+            {
+                "name": "email_verified_at",
+                "type": "date",
+                "labelKey": "filters.field.verifiedAt",
+                "operators": [
+                    "date_is",
+                    "date_before",
+                    "date_after",
+                    "date_between",
+                    "in_month",
+                    "in_year",
+                    "is_filled",
+                    "is_blank"
+                ],
+                "nullable": true,
+                "integer": false
+            },
+            {
+                "name": "roles",
+                "type": "relation",
+                "labelKey": "filters.field.roles",
+                "operators": [
+                    "related_to",
+                    "not_related_to",
+                    "count_gte",
+                    "count_lte",
+                    "count_eq"
+                ],
+                "nullable": false,
+                "integer": false
+            }
+        ]
+    }
+}

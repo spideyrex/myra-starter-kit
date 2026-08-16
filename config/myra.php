@@ -49,6 +49,30 @@ return [
     'plugin_config' => [],
     // <<< MYRA v2.4 [A] END
 
+    // >>> MYRA v2.5 [A] START
+    /*
+    |--------------------------------------------------------------------------
+    | Dashboard layouts
+    |--------------------------------------------------------------------------
+    |
+    | Editing is OFF until an operator turns it on. With it false the editor bar
+    | never renders, the routes still exist but the ability is unheld by default
+    | on every role except admin/super-admin, and a saved row is still HONOURED —
+    | turning the flag off must not silently discard a layout a user already
+    | saved. `catalogue` ships EMPTY: with it empty the sheet shows an empty
+    | state and nothing on the dashboard changes.
+    |
+    */
+
+    'dashboard' => [
+        'editable'      => env('MYRA_DASHBOARD_EDITABLE', false),
+        'keys'          => ['admin.dashboard' => 'dashboardLayout.keys.main'],
+        'max_entries'   => 48,
+        'max_instances' => 12,
+        'catalogue'     => [],
+    ],
+    // <<< MYRA v2.5 [A] END
+
     /*
     |--------------------------------------------------------------------------
     | Component registry
@@ -319,6 +343,30 @@ return [
     ],
     // <<< MYRA v2.3 [B] END
 
+    // >>> MYRA v2.5 [B] START
+    /*
+    |--------------------------------------------------------------------------
+    | Realtime widgets
+    |--------------------------------------------------------------------------
+    |
+    | OFF. With `enabled` false WidgetSignal is a no-op, no event is ever
+    | dispatched, and the dashboard bus falls back to polling. BROADCAST_CONNECTION
+    | is `log` on this deployment, so nothing reaches a socket regardless, and
+    | without VITE_REVERB_APP_KEY the client never opens one either.
+    |
+    | The broadcast payload is a CHANGE SIGNAL — report keys and a timestamp,
+    | never rows or aggregates. On receipt the client refetches through the
+    | existing Gate-checked, ownership-scoped widget batch endpoint.
+    |
+    */
+
+    'realtime' => [
+        'enabled'      => env('MYRA_REALTIME', false),
+        'coalesce_ms'  => 400,
+        'default_poll' => 120,
+    ],
+    // <<< MYRA v2.5 [B] END
+
     // >>> MYRA v2.3 [C] START
     /*
     |--------------------------------------------------------------------------
@@ -332,6 +380,24 @@ return [
         'lazy'            => true,
     ],
     // <<< MYRA v2.3 [C] END
+
+    // >>> MYRA v2.5 [C] START
+    /*
+    |--------------------------------------------------------------------------
+    | Component gallery
+    |--------------------------------------------------------------------------
+    |
+    | The playground is a demo-only surface behind `demo.view`, so it is safe
+    | on — but it is still a flag, because "safe" is a judgement and a flag is
+    | a fact. With it false the Playground page renders a disabled notice and
+    | the gallery cards stop advertising a playground.
+    |
+    */
+
+    'gallery' => [
+        'playgrounds' => env('MYRA_GALLERY_PLAYGROUNDS', true),
+    ],
+    // <<< MYRA v2.5 [C] END
 
     // >>> MYRA v2.3 [D] START
     /*
@@ -350,5 +416,47 @@ return [
         'pdf_ttl_minutes'   => 60,
     ],
     // <<< MYRA v2.3 [D] END
+
+    // >>> MYRA v2.5 [D] START
+    /*
+    |--------------------------------------------------------------------------
+    | AI surfaces
+    |--------------------------------------------------------------------------
+    |
+    | Every AI surface is OFF until an admin turns it on. Shipping dark is the
+    | only safe default on a live site. With these false the routes 404.
+    |
+    */
+
+    'ai' => [
+        'features' => [
+            'filter'    => env('MYRA_AI_FILTER', false),
+            'schema'    => env('MYRA_AI_SCHEMA', false),
+            'summarise' => env('MYRA_AI_SUMMARISE', false),
+        ],
+        // POST admin/ai/assist has no permission gate today. Turning this on
+        // adds one; false keeps v2.4.0 behaviour byte-for-byte.
+        'gate_assist'         => env('MYRA_AI_GATE_ASSIST', false),
+        'max_prompt'          => 500,
+        'json_max_bytes'      => 8192,
+        'summary_max_buckets' => 40,
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | PWA / offline shell
+    |--------------------------------------------------------------------------
+    |
+    | OFF. With this false: no manifest link is rendered, myra-sw.js is never
+    | registered, any previously-registered myra-sw.js is actively unregistered
+    | and its caches purged, and the FCM registration keeps its CURRENT root
+    | scope untouched.
+    |
+    */
+
+    'pwa' => [
+        'enabled' => env('MYRA_PWA', false),
+    ],
+    // <<< MYRA v2.5 [D] END
 
 ];

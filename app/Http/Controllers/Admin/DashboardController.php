@@ -2,8 +2,12 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Admin\Dashboard\LayoutResolver;
+use App\Admin\Dashboard\WidgetCatalogue;
 use App\Http\Controllers\Controller;
+use App\Models\DashboardLayout;
 use App\Models\User;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -11,7 +15,7 @@ use Spatie\Activitylog\Models\Activity;
 
 class DashboardController extends Controller
 {
-    public function index(): Response
+    public function index(Request $request): Response
     {
         $totalUsers = User::count();
         $activeUsers = User::where('status', 'active')->count();
@@ -92,6 +96,40 @@ class DashboardController extends Controller
             'recentActivity' => $recentActivity,
             'recentUsers' => $recentUsers,
             'userGrowth' => $userGrowth,
+
+            // >>> MYRA v2.5 [A] START
+            // Lazy and fail-soft. With no saved row, an empty catalogue and the
+            // editable flag off, these are null / [] / false and the grid renders
+            // byte-identically to v2.4.0.
+            'dashboardLayout' => fn () => $this->safely(fn () => LayoutResolver::forInertia(
+                DashboardLayout::forUser($request->user())
+                    ->where('dashboard_key', 'admin.dashboard')
+                    ->first(),
+                $request->user(),
+            )),
+            'dashboardCatalogue' => fn () => $this->safely(
+                fn () => WidgetCatalogue::forUser($request->user()),
+                [],
+            ),
+            'canCustomiseDashboard' => fn () => (bool) (
+                config('myra.dashboard.editable') === true
+                && $request->user()?->can('dashboard.customise')
+            ),
+            // <<< MYRA v2.5 [A] END
         ]);
     }
+
+    // >>> MYRA v2.5 [A] START
+    /** A missing table or a corrupt row must never white-screen the dashboard. */
+    private function safely(callable $fn, mixed $fallback = null): mixed
+    {
+        try {
+            return $fn();
+        } catch (\Throwable $e) {
+            report($e);
+
+            return $fallback;
+        }
+    }
+    // <<< MYRA v2.5 [A] END
 }

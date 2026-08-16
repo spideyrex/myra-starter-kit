@@ -1,232 +1,136 @@
 <script setup lang="ts">
+import { computed } from 'vue';
 import { Head, Link } from '@inertiajs/vue3';
+import { useI18n } from 'vue-i18n';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import PageHeader from '@/components/PageHeader.vue';
+import EmptyState from '@/components/EmptyState.vue';
+import SearchHighlight from '@/components/admin/SearchHighlight.vue';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import {
-    Type,
-    Repeat,
-    FormInput,
-    CheckSquare,
-    Trash2,
-    PanelTop,
-    Upload,
-    Search,
-    ArrowRight,
-    Pencil,
-    Eye,
-    Info,
-    Link2,
-    Layers,
-    GripVertical,
-    LayoutDashboard,
-    ListChecks,
-    SlidersHorizontal,
-    Wand2,
-    MapPin,
-    Code,
-    Bookmark,
-    BarChart3,
-} from 'lucide-vue-next';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { ArrowRight, SearchX } from 'lucide-vue-next';
+import { resolveDemoIcon, type DemoEntry } from '@/demo/registry';
+import { useDemoSearch } from '@/composables/useDemoSearch';
 
-const demos = [
-    // --- Original 8 features ---
-    {
-        title: 'Rich Text Editor',
-        description: 'TipTap-powered WYSIWYG editor with configurable toolbar, image/link support, and FormField integration.',
-        icon: Type,
-        route: 'admin.demo.rich-text-editor',
-        badge: 'TipTap v3',
-    },
-    {
-        title: 'Repeater Field',
-        description: 'Dynamic add/remove rows with reordering, collapsible items, and nested field schemas.',
-        icon: Repeat,
-        route: 'admin.demo.repeater-field',
-        badge: 'Form Builder',
-    },
-    {
-        title: 'Form Builder',
-        description: 'Complete showcase of all field types and layout components: Sections, Grids, Tabs, Wizard, Callouts, and more.',
-        icon: FormInput,
-        route: 'admin.demo.form-builder',
-        badge: 'All Fields',
-    },
-    {
-        title: 'Bulk Actions',
-        description: 'DataTable with row selection, bulk actions with confirmation dialogs, filters, and CSV export.',
-        icon: CheckSquare,
-        route: 'admin.demo.bulk-actions',
-        badge: 'DataTable',
-    },
-    {
-        title: 'Soft Deletes & Trash',
-        description: 'Trash/restore/force-delete workflow with conditional row actions and trashed filter.',
-        icon: Trash2,
-        route: 'admin.demo.soft-deletes',
-        badge: 'SoftDeletes',
-    },
-    {
-        title: 'Action Modals',
-        description: 'Inline CRUD via modal dialogs with dynamic form schemas, no page navigation required.',
-        icon: PanelTop,
-        route: 'admin.demo.action-modals',
-        badge: 'Modal',
-    },
-    {
-        title: 'Import & Export',
-        description: 'CSV import with column mapping and preview, plus streaming CSV export.',
-        icon: Upload,
-        route: 'admin.demo.import-export',
-        badge: 'CSV',
-    },
-    {
-        title: 'Global Search',
-        description: 'Command palette (Cmd+K) with debounced API search across all resources.',
-        icon: Search,
-        route: 'admin.demo.global-search',
-        badge: 'Cmd+K',
-    },
-    // --- 7 Advanced features ---
-    {
-        title: 'Inline Table Editing',
-        description: 'Edit cell values directly in the table with Select, TextInput, and Toggle columns.',
-        icon: Pencil,
-        route: 'admin.demo.inline-editing',
-        badge: 'Inline Edit',
-    },
-    {
-        title: 'Conditional Fields',
-        description: 'Show/hide form fields based on other field values using string or function conditions.',
-        icon: Eye,
-        route: 'admin.demo.conditional-fields',
-        badge: 'Visibility',
-    },
-    {
-        title: 'Infolist / Show Page',
-        description: 'Schema-based read-only detail views with Text, Badge, Date, Boolean, Image, and Repeatable entries.',
-        icon: Info,
-        route: 'admin.demo.infolist',
-        badge: 'Infolist',
-    },
-    {
-        title: 'Relation Managers',
-        description: 'Embedded DataTable for managing related records on a detail page with create modals.',
-        icon: Link2,
-        route: 'admin.demo.relation-manager',
-        badge: 'Relations',
-    },
-    {
-        title: 'Row Grouping & Summarizers',
-        description: 'Group rows by column values with collapsible headers and aggregated summary rows.',
-        icon: Layers,
-        route: 'admin.demo.grouping',
-        badge: 'Grouping',
-    },
-    {
-        title: 'Drag-and-Drop Reordering',
-        description: 'Reorder table rows with drag-and-drop, persists sort order to backend.',
-        icon: GripVertical,
-        route: 'admin.demo.reordering',
-        badge: 'Sortable',
-    },
-    {
-        title: 'Dashboard Widgets',
-        description: 'Configurable widget builders: StatWidget, ChartWidget, TableWidget, and CustomWidget.',
-        icon: LayoutDashboard,
-        route: 'admin.demo.widgets',
-        badge: 'Widgets',
-    },
-    // --- Medium Impact features ---
-    {
-        title: 'New Field Types',
-        description: 'Hints, ToggleButtons, TimePicker, CheckboxList, KeyValue, and the Markdown editor with toolbar and split preview.',
-        icon: ListChecks,
-        route: 'admin.demo.field-types',
-        badge: 'Fields',
-    },
-    {
-        title: 'Code Editor Field',
-        description: 'CodeMirror 6 behind a lazy import: per-field language, line numbers, wrapping, read-only and copy.',
-        icon: Code,
-        route: 'admin.demo.code-editor',
-        badge: 'CodeMirror',
-    },
-    {
-        title: 'Advanced Filters',
-        description: 'Date range filter with from/to inputs and recursive query builder with AND/OR groups.',
-        icon: SlidersHorizontal,
-        route: 'admin.demo.advanced-filters',
-        badge: 'Filters',
-    },
-    {
-        title: 'Wizard Validation',
-        description: '5-step onboarding wizard with per-step validation, image editor, XLSX export, and i18n awareness.',
-        icon: Wand2,
-        route: 'admin.demo.wizard',
-        badge: '5 Features',
-    },
-    {
-        title: 'Map',
-        description: 'Theme-aware MapLibre GL maps across Malaysia: flight arcs, markers, popups, route lines, and clustering.',
-        icon: MapPin,
-        route: 'admin.demo.map',
-        badge: 'MapLibre',
-    },
-    {
-        title: 'Saved Views',
-        description: 'Named filter/sort/column presets per user, shareable with a team, plus the drag-and-keyboard column manager.',
-        icon: Bookmark,
-        route: 'admin.demo.saved-views',
-        badge: 'Views',
-    },
-    {
-        title: 'Reports & Charts',
-        description: 'Composable report definitions with every measure computed in SQL: periods, comparisons, top-N with an Other row, and saved report views.',
-        icon: BarChart3,
-        route: 'admin.demo.reports',
-        badge: 'Reports',
-    },
+const props = withDefaults(defineProps<{ demos?: DemoEntry[] }>(), { demos: () => [] });
+
+const { t, te } = useI18n();
+
+/**
+ * FAIL-SOFT: if the registry failed to seed at boot the server sends `[]`, and
+ * the gallery falls back to the routes it can still name. This page must never
+ * render blank.
+ */
+const FALLBACK: DemoEntry[] = [
+    { key: 'formBuilder', titleKey: 'gallery.demos.formBuilder.title', descriptionKey: 'gallery.demos.formBuilder.description', route: 'admin.demo.form-builder', icon: 'FormInput', badgeKey: 'gallery.demos.formBuilder.badge', tags: ['forms'], since: '1.0.0' },
+    { key: 'bulkActions', titleKey: 'gallery.demos.bulkActions.title', descriptionKey: 'gallery.demos.bulkActions.description', route: 'admin.demo.bulk-actions', icon: 'CheckSquare', badgeKey: 'gallery.demos.bulkActions.badge', tags: ['tables'], since: '1.0.0' },
+    { key: 'globalSearch', titleKey: 'gallery.demos.globalSearch.title', descriptionKey: 'gallery.demos.globalSearch.description', route: 'admin.demo.global-search', icon: 'Search', badgeKey: 'gallery.demos.globalSearch.badge', tags: ['navigation'], since: '1.0.0' },
 ];
+
+const entries = computed<DemoEntry[]>(() => (props.demos.length > 0 ? props.demos : FALLBACK));
+
+const { query, tag, tags, results } = useDemoSearch(entries);
+
+function href(entry: DemoEntry): string | null {
+    try {
+        return route(entry.route) as string;
+    } catch {
+        return null;
+    }
+}
+
+function badgeLabel(entry: DemoEntry): string | null {
+    if (!entry.badgeKey) return null;
+
+    return te(entry.badgeKey) ? t(entry.badgeKey) : null;
+}
 </script>
 
 <template>
-    <AuthenticatedLayout :breadcrumbs="[{ label: 'Demo' }, { label: 'Feature Demos' }]">
-        <Head title="Feature Demos" />
+    <AuthenticatedLayout :breadcrumbs="[{ label: t('navGroups.demo') }, { label: t('gallery.title') }]">
+        <Head :title="t('gallery.title')" />
 
-        <PageHeader
-            title="Feature Demos"
-            description="Interactive demos showcasing all starter kit features. Click any card to explore."
-        />
+        <PageHeader :title="t('gallery.title')" :description="t('gallery.subtitle')" />
 
-        <div class="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        <div class="mt-6 flex flex-col gap-3 sm:flex-row sm:items-end">
+            <div class="min-w-0 flex-1 space-y-1.5">
+                <Label for="gallery-search">{{ t('gallery.search') }}</Label>
+                <Input
+                    id="gallery-search"
+                    v-model="query"
+                    type="search"
+                    autocomplete="off"
+                    :placeholder="t('gallery.search')"
+                />
+            </div>
+        </div>
+
+        <div class="mt-3 flex flex-wrap items-center gap-2" role="group" :aria-label="t('gallery.allTags')">
+            <Button
+                type="button"
+                size="sm"
+                :variant="tag === null ? 'default' : 'outline'"
+                :aria-pressed="tag === null"
+                @click="tag = null"
+            >
+                {{ t('gallery.allTags') }}
+            </Button>
+            <Button
+                v-for="entry in tags"
+                :key="entry.id"
+                type="button"
+                size="sm"
+                :variant="tag === entry.id ? 'default' : 'outline'"
+                :aria-pressed="tag === entry.id"
+                @click="tag = tag === entry.id ? null : entry.id"
+            >
+                {{ te(`gallery.tags.${entry.id}`) ? t(`gallery.tags.${entry.id}`) : entry.id }}
+                <span class="ml-1 text-xs opacity-70">{{ entry.count }}</span>
+            </Button>
+        </div>
+
+        <p class="sr-only" role="status" aria-live="polite" aria-atomic="true">
+            {{ t('gallery.resultCount', { n: results.length }) }}
+        </p>
+
+        <div v-if="results.length" class="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             <Card
-                v-for="(demo, index) in demos"
-                :key="demo.route"
-                class="group relative overflow-hidden transition-all hover:shadow-md hover:border-primary/50"
-                :class="`animate-stagger-${(index % 4) + 1}`"
+                v-for="demo in results"
+                :key="demo.key"
+                class="group relative overflow-hidden transition-all hover:border-primary/50 hover:shadow-md"
             >
                 <CardHeader class="pb-3">
-                    <div class="flex items-start justify-between">
+                    <div class="flex items-start justify-between gap-2">
                         <div class="flex size-10 items-center justify-center rounded-lg bg-primary/10 text-primary">
-                            <component :is="demo.icon" class="size-5" />
+                            <!-- Icons resolve by NAME through one allow-list map, not 27 inline imports. -->
+                            <component :is="resolveDemoIcon(demo.icon)" class="size-5" aria-hidden="true" />
                         </div>
-                        <Badge variant="secondary" class="text-xs">{{ demo.badge }}</Badge>
+                        <Badge v-if="badgeLabel(demo)" variant="secondary" class="text-xs">
+                            {{ badgeLabel(demo) }}
+                        </Badge>
                     </div>
-                    <CardTitle class="mt-3 text-base">{{ demo.title }}</CardTitle>
-                    <CardDescription class="text-sm">{{ demo.description }}</CardDescription>
+                    <CardTitle class="mt-3 text-base">
+                        <SearchHighlight :text="demo.title" :matches="demo.matches" field="title" />
+                    </CardTitle>
+                    <CardDescription class="text-sm">
+                        <SearchHighlight :text="demo.description" :matches="demo.matches" field="description" />
+                    </CardDescription>
                 </CardHeader>
-                <CardContent class="pt-0">
+                <CardContent class="flex items-center justify-between gap-2 pt-0">
                     <Button variant="ghost" size="sm" class="group/btn -ml-2 text-primary" as-child>
-                        <Link :href="route(demo.route)">
-                            View Demo
+                        <Link :href="href(demo) ?? '#'">
+                            {{ t('gallery.viewDemo') }}
                             <ArrowRight class="ml-1 size-4 transition-transform group-hover/btn:translate-x-1" />
                         </Link>
                     </Button>
+                    <span class="text-xs text-muted-foreground">{{ t('gallery.since', { version: demo.since }) }}</span>
                 </CardContent>
             </Card>
         </div>
+
+        <EmptyState v-else class="mt-6" :title="t('gallery.noResults')" :icon="SearchX" />
     </AuthenticatedLayout>
 </template>

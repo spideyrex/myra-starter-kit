@@ -253,6 +253,19 @@ Route::middleware(['auth', 'verified', 'active', '2fa'])->prefix('admin')->name(
     Route::post('/table-views/{tableView}/default', [TableViewController::class, 'makeDefault'])->name('table-views.default');
     // <<< MYRA v2.2 [B] END
 
+    // >>> MYRA v2.5 [A] START
+    // Per-user dashboard layouts. The stored blob is a request, never a schema:
+    // every instance is re-resolved server-side on read AND rejected on write.
+    Route::get('/dashboard-catalogue', [\App\Http\Controllers\Admin\DashboardLayoutController::class, 'catalogue'])
+        ->middleware('permission:dashboard.customise')->name('dashboard-catalogue.index');
+    Route::put('/dashboard-layouts/{dashboard}', [\App\Http\Controllers\Admin\DashboardLayoutController::class, 'update'])
+        ->middleware(['permission:dashboard.customise', 'throttle:30,1'])
+        ->name('dashboard-layouts.update');
+    Route::delete('/dashboard-layouts/{dashboard}', [\App\Http\Controllers\Admin\DashboardLayoutController::class, 'destroy'])
+        ->middleware(['permission:dashboard.customise', 'throttle:30,1'])
+        ->name('dashboard-layouts.destroy');
+    // <<< MYRA v2.5 [A] END
+
     // Global Search
     // >>> MYRA v2.2 [D] START
     Route::get('/search', [SearchController::class, 'index'])
@@ -286,12 +299,21 @@ Route::middleware(['auth', 'verified', 'active', '2fa'])->prefix('admin')->name(
     // >>> MYRA v2.4 [C] START
     Route::get('/demo/tenancy', [DemoController::class, 'tenancy'])->name('demo.tenancy');
     // <<< MYRA v2.4 [C] END
+    // >>> MYRA v2.5 [C] START
+    // ReportDelivery.vue has shipped since v2.3 with no route at all — the
+    // gallery registry makes that drift a failing test, so it gets one here.
+    Route::get('/demo/playground', [DemoController::class, 'playground'])->name('demo.playground');
+    Route::get('/demo/report-delivery', [DemoController::class, 'reportDelivery'])->name('demo.report-delivery');
+    // <<< MYRA v2.5 [C] END
     // >>> MYRA v2.2 [B] START
     Route::get('/demo/saved-views', [DemoController::class, 'savedViews'])->name('demo.saved-views');
     // <<< MYRA v2.2 [B] END
     // >>> MYRA v2.3 [B] START
     Route::get('/demo/reports', [DemoController::class, 'reports'])->name('demo.reports');
     // <<< MYRA v2.3 [B] END
+    // >>> MYRA v2.5 [B] START
+    Route::get('/demo/live-widgets', [DemoController::class, 'liveWidgets'])->name('demo.live-widgets');
+    // <<< MYRA v2.5 [B] END
 
     // Advanced Feature Demos
     Route::get('/demo/inline-editing', [DemoController::class, 'inlineEditing'])->name('demo.inline-editing');
@@ -319,6 +341,10 @@ Route::middleware(['auth', 'verified', 'active', '2fa'])->prefix('admin')->name(
     Route::get('/demo/scale', [DemoController::class, 'scale'])->name('demo.scale');
     Route::get('/demo/scale-cursor', [DemoController::class, 'scaleCursor'])->name('demo.scale-cursor');
     // <<< MYRA v2.4 [D] END
+    // >>> MYRA v2.5 [D] START
+    Route::get('/demo/ai-filter', [DemoController::class, 'aiFilter'])->name('demo.ai-filter');
+    Route::get('/demo/offline-shell', [DemoController::class, 'offlineShell'])->name('demo.offline-shell');
+    // <<< MYRA v2.5 [D] END
     Route::get('/demo/reordering', [DemoController::class, 'reordering'])->name('demo.reordering');
     Route::post('/demo/reorder', [DemoController::class, 'demoReorder'])->name('demo.reorder');
     Route::get('/demo/widgets', [DemoController::class, 'widgets'])->name('demo.widgets');
@@ -326,6 +352,9 @@ Route::middleware(['auth', 'verified', 'active', '2fa'])->prefix('admin')->name(
     // >>> MYRA v2.4 [A] START
     Route::get('/demo/plugins', [DemoController::class, 'plugins'])->name('demo.plugins');
     // <<< MYRA v2.4 [A] END
+    // >>> MYRA v2.5 [A] START
+    Route::get('/demo/dashboard-editor', [DemoController::class, 'dashboardEditor'])->name('demo.dashboard-editor');
+    // <<< MYRA v2.5 [A] END
     Route::get('/demo/code-editor', [DemoController::class, 'codeEditor'])->name('demo.code-editor');
     Route::get('/demo/advanced-filters', [DemoController::class, 'advancedFilters'])->name('demo.advanced-filters');
     Route::get('/demo/wizard', [DemoController::class, 'wizardDemo'])->name('demo.wizard');
@@ -364,6 +393,17 @@ Route::middleware(['auth', 'verified', 'active', '2fa'])->prefix('admin')->name(
     Route::post('/report-schedules/{reportSchedule}/test', [ReportScheduleController::class, 'test'])
         ->middleware(['permission:reports.schedule', 'throttle:3,10'])->name('report-schedules.test');
     // <<< MYRA v2.3 [D] END
+
+    // >>> MYRA v2.5 [D] START
+    // Tighter throttles than ai.assist's 30/min because each call is a paid
+    // provider round-trip. All three 404 while their config flag is false.
+    Route::post('/ai/filter', [\App\Http\Controllers\Admin\AiFilterController::class, 'compile'])
+        ->middleware(['permission:ai.filter', 'throttle:10,1'])->name('ai.filter');
+    Route::post('/ai/schema', [\App\Http\Controllers\Admin\AiFilterController::class, 'schema'])
+        ->middleware(['permission:ai.schema', 'throttle:5,1'])->name('ai.schema');
+    Route::post('/ai/summarise', [\App\Http\Controllers\Admin\AiFilterController::class, 'summarise'])
+        ->middleware(['permission:ai.summarise', 'throttle:10,1'])->name('ai.summarise');
+    // <<< MYRA v2.5 [D] END
 
     // myra:routes — make:myra-* commands insert generated routes above this line. Do not remove.
 });

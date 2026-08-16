@@ -4,11 +4,12 @@ import { Link } from '@inertiajs/vue3';
 import { useI18n } from 'vue-i18n';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Skeleton } from '@/components/ui/skeleton';
 import { ArrowRight } from 'lucide-vue-next';
+import DataSurface from '@/components/admin/DataSurface.vue';
 import { formatMeasure } from '@/components/admin/charts/format';
 import type { ReportResultPayload, ReportRow } from '@/components/admin/charts/types';
 import type { WidgetSchema } from '@/composables/useDashboardWidgets';
+import type { SurfaceState } from '@/composables/useAsyncSurface';
 
 const props = withDefaults(defineProps<{
     widget: WidgetSchema;
@@ -16,11 +17,23 @@ const props = withDefaults(defineProps<{
     /** Server-aggregated buckets. Absent for legacy `.data(fn)` widgets. */
     result?: ReportResultPayload | null;
     loading?: boolean;
-}>(), { result: null, loading: false });
+    /** Overrides `loading` when given. Absent keeps the v2.4.0 two-state path. */
+    state?: SurfaceState;
+    /** Skeleton row count. Reserving the real geometry is the point. */
+    skeletonRows?: number;
+}>(), { result: null, loading: false, skeletonRows: 4 });
 
 const emit = defineEmits<{
     (e: 'segment', row: ReportRow, measureKey: string): void;
+    (e: 'retry'): void;
 }>();
+
+const surfaceState = computed<SurfaceState>(() => {
+    if (props.state) return props.state;
+    return props.loading ? 'loading' : 'ready';
+});
+
+const surfaceKeys = { loading: 'charts.a11y.loading' } as const;
 
 const { t } = useI18n();
 
@@ -62,12 +75,15 @@ function activate(row: ReportRow): void {
             <CardTitle>{{ widget.title }}</CardTitle>
         </CardHeader>
         <CardContent>
-            <div v-if="loading" class="space-y-2" aria-busy="true">
-                <span class="sr-only" role="status">{{ t('charts.a11y.loading') }}</span>
-                <Skeleton v-for="i in 4" :key="i" class="h-8 w-full" />
-            </div>
-
-            <Table v-else>
+            <DataSurface
+                :state="surfaceState"
+                skeleton="table"
+                :rows="skeletonRows"
+                :label="widget.title"
+                :keys="surfaceKeys"
+                @retry="emit('retry')"
+            >
+            <Table>
                 <TableHeader>
                     <TableRow>
                         <TableHead v-for="col in columns" :key="col.key" scope="col" :class="col.class">
@@ -94,6 +110,7 @@ function activate(row: ReportRow): void {
                     </TableRow>
                 </TableBody>
             </Table>
+            </DataSurface>
 
             <div v-if="footerLink" class="mt-3 text-center">
                 <Link :href="footerLink.href" class="inline-flex items-center gap-1 text-sm text-primary hover:underline">

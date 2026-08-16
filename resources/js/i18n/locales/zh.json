@@ -226,6 +226,86 @@
         "failClosedTitle": "失败即关闭",
         "failClosedBody": "当限定生效但无法解析出租户时，谓词变为 1 = 0。没有租户意味着没有任何行，而不是所有行。"
     },
+    "dashboardLayout": {
+        "saved": "仪表盘布局已保存。",
+        "reset": "重置",
+        "resetConfirm": "这会删除你保存的布局并恢复默认仪表盘，你添加的小部件也会被移除。",
+        "edit": "自定义",
+        "done": "保存布局",
+        "saving": "保存中…",
+        "cancel": "取消",
+        "undo": "撤销",
+        "retry": "重试",
+        "addWidget": "添加小部件",
+        "hide": "隐藏",
+        "restore": "恢复",
+        "hiddenWidgets": "已隐藏：",
+        "remove": "移除",
+        "rename": "重命名",
+        "size": "宽度",
+        "search": "搜索小部件",
+        "allCategories": "全部",
+        "catalogueDescription": "此处只列出你有权查看的小部件。预览是静态的——在保存之前添加不会发起任何查询。",
+        "dimension": "分组维度",
+        "measures": "度量",
+        "chartType": "图表类型",
+        "untitled": "未命名小部件",
+        "empty": "没有可添加的小部件。",
+        "limitReached": "已达到可添加小部件的上限。",
+        "keys": {
+            "main": "主仪表盘"
+        },
+        "categories": {
+            "general": "通用",
+            "metrics": "指标",
+            "charts": "图表",
+            "tables": "表格"
+        },
+        "a11y": {
+            "roledescription": "可排序的仪表盘小部件",
+            "instructions": "按空格键拾起小部件，然后用方向键移动它。再次按空格键放下，按 Home 或 End 移到开头或末尾，按 Esc 取消。",
+            "grabbed": "已拾起 {label}，第 {index} 项，共 {total} 项。",
+            "dropped": "已将 {label} 放到第 {index} 项，共 {total} 项。",
+            "cancelled": "移动已取消。{label} 已回到第 {index} 项。",
+            "position": "{label}，第 {index} 项，共 {total} 项。",
+            "grabHandle": "重新排序 {label}"
+        },
+        "errors": {
+            "shape": "该仪表盘布局格式有误。",
+            "tooManyEntries": "该仪表盘布局的小部件过多。",
+            "tooManyInstances": "该仪表盘布局添加的小部件过多。",
+            "unknownDashboard": "未知的仪表盘。",
+            "widget": "该小部件无法渲染。"
+        },
+        "demo": {
+            "title": "仪表盘编辑器",
+            "subtitle": "按用户保存的布局与小部件目录。展示层增量在权限过滤之后于客户端应用；添加的小部件在每次加载时由服务端重新推导。",
+            "back": "返回演示",
+            "active": "活跃用户",
+            "signups": "注册数",
+            "trend": "增长",
+            "pending": "待处理",
+            "countTitle": "用户计数",
+            "countDescription": "单个聚合数值。",
+            "trendTitle": "注册趋势",
+            "trendDescription": "按时间段分组的序列。",
+            "breakdownTitle": "拆分表格",
+            "breakdownDescription": "按已声明维度分组的行。",
+            "pointerTitle": "指针拖拽",
+            "pointerDescription": "用手柄拖拽。指针与键盘调用完全相同的移动函数。",
+            "announcerTitle": "实时区域文本",
+            "announcerDescription": "每次移动、隐藏和添加都会在这里写入一句话。屏幕阅读器会朗读它；此面板将其镜像出来以便你看到。",
+            "tamperTitle": "被篡改的布局",
+            "tamperDescription": "保存的布局是一个请求，而不是一份 schema。指向从未声明过的小部件的条目无法凭空添加它，指向未知目录键的实例也解析不出任何东西。",
+            "tamperOn": "注入被篡改的布局",
+            "tamperOff": "移除被篡改的布局",
+            "tamperEntryDropped": "被 applyLayout 丢弃的条目：",
+            "tamperSubmitted": "提交给服务端的实例：{count}",
+            "tamperResolved": "服务端解析出的实例：{count}",
+            "payloadTitle": "保存时会发送的内容",
+            "payloadDescription": "实例以目录键加绑定的形式传输。服务端重新推导 schema，并拒绝任何无法解析的内容。"
+        }
+    },
     "reports": {
         "title": "报表",
         "subtitle": "服务端聚合——每一个数字都由数据库计算。",
@@ -385,6 +465,58 @@
             "uploading": "正在上传图片…"
         }
     },
+    "live": {
+        "connected": "实时",
+        "polling": "轮询中",
+        "paused": "已暂停",
+        "retry": "重试",
+        "updatedAgo": "更新于{ago}",
+        "justNow": "刚刚",
+        "secondsAgo": "{count}秒前",
+        "minutesAgo": "{count}分钟前",
+        "hoursAgo": "{count}小时前",
+        "requests": "请求",
+        "tooltip": {
+            "connected": "已连接 — 变更即时送达。",
+            "polling": "未连接 — 按定时器刷新。"
+        },
+        "a11y": {
+            "loading": "正在加载{label}。",
+            "ready": "{label}已更新。",
+            "empty": "{label}没有数据。",
+            "error": "{label}加载失败。",
+            "offline": "离线时无法使用{label}。",
+            "streaming": "{label}仍在传输。"
+        },
+        "errors": {
+            "batch": "仪表盘刷新失败。",
+            "slot": "该小组件刷新失败。",
+            "tooManyReports": "一次请求的小组件过多。"
+        },
+        "demo": {
+            "title": "实时小组件与加载状态",
+            "subtitle": "无论多少小组件，只有一个套接字、一个合并批次、一个定时器。",
+            "busTitle": "仪表盘总线",
+            "busDescription": "下方每个小组件都由同一条总线跟踪。请看请求计数器。",
+            "mountSix": "挂载六个小组件",
+            "burst": "突发 30 个信号",
+            "hide": "模拟隐藏标签页",
+            "show": "模拟可见标签页",
+            "unchanged": "返回 {'{'}unchanged: true{'}'}",
+            "failOne": "让一个槽位失败",
+            "reset": "重置",
+            "requestCount": "已发出的 POST 请求",
+            "signalCount": "已收到的信号",
+            "statesTitle": "数据面状态",
+            "statesDescription": "数据面的每一种状态，以及它发出的播报。",
+            "announcer": "播报器输出",
+            "clsTitle": "零布局偏移",
+            "clsDescription": "骨架屏精确预留加载后的尺寸，因此不会跳动。",
+            "skeleton": "骨架屏",
+            "loaded": "已加载",
+            "heights": "两个框的高度均为 {height} 像素。"
+        }
+    },
     "views": {
         "a11y": {
             "menu": "已保存视图菜单"
@@ -450,6 +582,266 @@
         "description": "10 万行数据、两种分页策略，以及虚拟化的表格主体。",
         "viewportHeight": "视口高度",
         "virtualized": "已虚拟化"
+    },
+    "gallery": {
+        "title": "功能展示库",
+        "subtitle": "所有演示页面汇总为一个可搜索目录，点击卡片即可查看。",
+        "search": "搜索演示",
+        "noResults": "没有匹配的演示。",
+        "allTags": "全部",
+        "viewDemo": "查看演示",
+        "since": "自 v{version}",
+        "back": "返回展示库",
+        "resultCount": "显示 {n} 个演示。",
+        "tags": {
+            "forms": "表单",
+            "tables": "表格",
+            "data": "数据",
+            "dashboard": "仪表板",
+            "navigation": "导航",
+            "layout": "布局",
+            "platform": "平台",
+            "content": "内容",
+            "gallery": "展示库"
+        },
+        "playground": {
+            "title": "组件试验场",
+            "description": "在真实基础组件上实时编辑属性，并复制生成的代码片段。",
+            "props": "属性",
+            "code": "生成的代码",
+            "copy": "复制",
+            "copied": "已复制",
+            "reset": "重置",
+            "viewport": "视口",
+            "scheme": "配色方案",
+            "locale": "语言",
+            "keyboard": "键盘操作指引",
+            "schemeLight": "浅色",
+            "schemeDark": "深色",
+            "disabledTitle": "试验场已关闭",
+            "disabledDescription": "设置此开关后本页将渲染实时试验场。",
+            "viewports": {
+                "sm": "手机",
+                "md": "平板",
+                "lg": "桌面"
+            },
+            "schemes": {
+                "light": "浅色",
+                "dark": "深色",
+                "split": "并排"
+            },
+            "specs": {
+                "statCard": "统计卡片",
+                "button": "按钮",
+                "badge": "徽章",
+                "emptyState": "空状态"
+            },
+            "control": {
+                "title": "标题",
+                "value": "数值",
+                "description": "描述",
+                "color": "颜色",
+                "label": "文本",
+                "variant": "变体",
+                "size": "尺寸",
+                "disabled": "禁用"
+            },
+            "option": {
+                "blue": "蓝色",
+                "green": "绿色",
+                "violet": "紫色",
+                "rose": "玫红",
+                "default": "默认",
+                "secondary": "次要",
+                "destructive": "危险",
+                "outline": "描边",
+                "ghost": "幽灵",
+                "link": "链接",
+                "sm": "小",
+                "lg": "大"
+            },
+            "keyboardSteps": {
+                "controls": "用 Tab 进入属性面板并修改控件。",
+                "viewport": "Tab 到视口分组，方向键切换宽度。",
+                "scheme": "Tab 到配色分组，方向键切换浅色、深色与并排。",
+                "locale": "Tab 到语言选择框，Enter 打开后用方向键选择 en、ms 或 zh。",
+                "snippet": "Tab 到片段上方的语言标签，方向键切换 Vue、TS 与 PHP。",
+                "copy": "Tab 到复制并回车；片段始终是纯文本，绝不作为 HTML 渲染。"
+            }
+        },
+        "commands": {
+            "heading": "命令",
+            "themeToggle": "切换深色模式",
+            "shortcuts": "键盘快捷键",
+            "locale": {
+                "en": "切换到英文",
+                "ms": "切换到马来文",
+                "zh": "切换到中文"
+            },
+            "group": {
+                "navigate": "前往",
+                "action": "操作",
+                "theme": "偏好设置",
+                "demo": "演示"
+            }
+        },
+        "demos": {
+            "richTextEditor": {
+                "title": "富文本编辑器",
+                "description": "基于 TipTap 的所见即所得编辑器，工具栏可配置，支持图片与链接，并与 FormField 集成。",
+                "badge": "TipTap v3"
+            },
+            "repeaterField": {
+                "title": "重复字段",
+                "description": "动态增删行，支持重新排序、可折叠条目与嵌套字段结构。",
+                "badge": "表单构建器"
+            },
+            "formBuilder": {
+                "title": "表单构建器",
+                "description": "涵盖全部字段类型与布局组件：分区、网格、标签页、向导与提示框。",
+                "badge": "全部字段"
+            },
+            "bulkActions": {
+                "title": "批量操作",
+                "description": "行选择、带确认对话框的批量操作、筛选与 CSV 导出。",
+                "badge": "数据表"
+            },
+            "softDeletes": {
+                "title": "软删除与回收站",
+                "description": "回收、恢复与强制删除，配合条件行操作与回收站筛选。",
+                "badge": "软删除"
+            },
+            "actionModals": {
+                "title": "操作弹窗",
+                "description": "在模态框中完成增删改查，表单结构动态生成，无需跳转页面。",
+                "badge": "模态框"
+            },
+            "importExport": {
+                "title": "导入与导出",
+                "description": "支持列映射与预览的 CSV 导入，以及流式 CSV 导出。",
+                "badge": "CSV"
+            },
+            "globalSearch": {
+                "title": "全局搜索",
+                "description": "命令面板，跨全部资源的防抖 API 搜索。",
+                "badge": "Cmd+K"
+            },
+            "inlineEditing": {
+                "title": "表格行内编辑",
+                "description": "在表格中直接编辑单元格，支持下拉、文本与开关列。",
+                "badge": "行内编辑"
+            },
+            "conditionalFields": {
+                "title": "条件字段",
+                "description": "依据其他字段的值显示或隐藏表单字段，条件可为字符串或函数。",
+                "badge": "可见性"
+            },
+            "infolist": {
+                "title": "信息列表与详情页",
+                "description": "基于结构定义的只读详情页，包含文本、徽章、日期、布尔与图片条目。",
+                "badge": "信息列表"
+            },
+            "relationManager": {
+                "title": "关联管理器",
+                "description": "详情页内嵌表格，管理关联记录并支持新建弹窗。",
+                "badge": "关联关系"
+            },
+            "grouping": {
+                "title": "行分组与汇总",
+                "description": "按列值分组，支持可折叠分组头与聚合汇总行。",
+                "badge": "分组"
+            },
+            "reordering": {
+                "title": "拖拽重排",
+                "description": "通过拖拽或键盘重排表格行，并将顺序持久化到服务端。",
+                "badge": "可排序"
+            },
+            "widgets": {
+                "title": "仪表板小组件",
+                "description": "可配置的小组件构建器：统计、图表、表格与自定义组件。",
+                "badge": "小组件"
+            },
+            "fieldTypes": {
+                "title": "新字段类型",
+                "description": "提示、切换按钮、时间选择器、复选列表、键值对与 Markdown 编辑器。",
+                "badge": "字段"
+            },
+            "codeEditor": {
+                "title": "代码编辑器字段",
+                "description": "懒加载的 CodeMirror 6：按字段设置语言、行号、自动换行与复制。",
+                "badge": "CodeMirror"
+            },
+            "advancedFilters": {
+                "title": "高级筛选",
+                "description": "日期区间筛选与支持 AND/OR 分组的递归查询构建器。",
+                "badge": "筛选器"
+            },
+            "wizard": {
+                "title": "向导校验",
+                "description": "五步引导向导，逐步校验，支持图片编辑与 XLSX 导出。",
+                "badge": "向导"
+            },
+            "map": {
+                "title": "地图",
+                "description": "随主题切换的 MapLibre GL 地图：航线弧、标记、弹窗、路线与聚合。",
+                "badge": "MapLibre"
+            },
+            "savedViews": {
+                "title": "已保存视图",
+                "description": "按用户保存的筛选、排序与列预设，可与团队共享。",
+                "badge": "视图"
+            },
+            "reports": {
+                "title": "报表与图表",
+                "description": "可组合的报表定义，所有度量均在 SQL 中计算：周期、对比与 Top-N。",
+                "badge": "报表"
+            },
+            "reportDelivery": {
+                "title": "报表投递",
+                "description": "交叉筛选标签、分段下钻与定时投递对话框。",
+                "badge": "投递"
+            },
+            "tenancy": {
+                "title": "多租户",
+                "description": "只读的租户状态：受限模型、租户列与空行策略。",
+                "badge": "多租户"
+            },
+            "plugins": {
+                "title": "插件",
+                "description": "注册页面、权限、报表与导航的扩展包 —— 全部显式声明。",
+                "badge": "插件"
+            },
+            "scale": {
+                "title": "规模",
+                "description": "十万行数据、两种分页策略与虚拟化表格主体。",
+                "badge": "规模"
+            },
+            "playground": {
+                "title": "组件试验场",
+                "description": "在真实基础组件上实时编辑属性，并生成 Vue、TypeScript 与 PHP 可复制片段。",
+                "badge": "新"
+            },
+            "dashboardEditor": {
+                "title": "仪表板编辑器",
+                "description": "拖动磁贴并保存个人布局，或从目录中添加小部件，无需编写代码。",
+                "badge": "新增"
+            },
+            "liveWidgets": {
+                "title": "实时小部件",
+                "description": "数据变化时通过 websocket 自动刷新的小部件，加载时显示骨架状态。",
+                "badge": "实时"
+            },
+            "aiFilter": {
+                "title": "提问栏",
+                "description": "用自然语言描述筛选条件；它会编译为经过校验的规则树，而非 SQL。",
+                "badge": "AI"
+            },
+            "offlineShell": {
+                "title": "离线外壳",
+                "description": "应用外壳在无网络时仍可使用。仅缓存静态资源，绝不缓存您的数据。",
+                "badge": "PWA"
+            }
+        }
     },
     "charts": {
         "a11y": {
@@ -800,5 +1192,81 @@
             "view": "查看 {count} 条记录",
             "viewUnavailable": "该分段无法以表格打开。"
         }
+    },
+    "assistant": {
+        "appliedTree": "交给筛选器的规则树",
+        "apply": "应用",
+        "askHint": "描述你想看到的内容。模型只能使用 {scope} 白名单中的字段。",
+        "askPlaceholder": "描述你想要的记录…",
+        "askTitle": "让 AI 生成筛选条件",
+        "compile": "编译",
+        "disabled": "已停用",
+        "disabledHint": "AI 筛选已关闭。请设置下方开关，并在 AI 设置中配置服务商。",
+        "discard": "放弃",
+        "enabled": "已启用",
+        "errors": {
+            "couldNotUnderstand": "无法将其转换为筛选条件，请换一种说法。",
+            "promptLength": "请输入 1 到 500 个字符。",
+            "providerDown": "AI 服务商没有响应。",
+            "rateLimited": "请求过于频繁，请一分钟后再试。",
+            "sqlDetected": "模型返回了 SQL，这永远不会被接受。"
+        },
+        "hostile": {
+            "column": "凭空捏造的字段：password",
+            "description": "每个按钮都会请求一段被攻陷的模型可能生成的输出，服务端一律拒绝。",
+            "operator": "未知运算符：raw",
+            "overCap": "规则数量超出字段集允许的上限",
+            "run": "发送",
+            "sql": "原始 SQL 字符串",
+            "title": "恶意的模型输出"
+        },
+        "offline": {
+            "banner": "你当前处于离线状态，恢复连接前无法获取数据。",
+            "description": "只缓存应用外壳与构建产物，任何需要登录才能访问的内容都不会被缓存。",
+            "retry": "重试",
+            "title": "离线外壳"
+        },
+        "pipeline": {
+            "description": "模型只能输出人工也能手写的同一套规则树。它先由 RuleTree 依据封闭的运算符集合与字段白名单校验，之后才可能触及数据库。",
+            "title": "模型永远不会写 SQL"
+        },
+        "pwa": {
+            "allowListDescription": "请求必须明确匹配静态外壳或带哈希的构建资源，其余请求根本不会进入缓存代码。",
+            "allowListTitle": "白名单放行",
+            "cached": "可缓存",
+            "decisionHint": "由 service worker 运行的同一个函数实时判定。",
+            "decisionTable": "缓存判定",
+            "install": "安装应用",
+            "no": "否",
+            "notRegistered": "未注册",
+            "online": "在线",
+            "purge": "清除缓存",
+            "purged": "缓存已清除。",
+            "registered": "已注册",
+            "registration": "Service worker",
+            "reload": "重新加载",
+            "request": "请求",
+            "unregister": "注销 worker",
+            "updateAvailable": "有可用更新",
+            "yes": "是"
+        },
+        "review": "应用前请先检查这些条件。在你确认之前不会执行任何操作。",
+        "schema": {
+            "command": "待执行的命令",
+            "draft": "草稿",
+            "title": "结构草稿"
+        },
+        "scope": {
+            "activity": "活动日志",
+            "users": "用户"
+        },
+        "subtitle": "自然语言编译为经过校验的规则树——永远不会编译成 SQL。",
+        "summary": {
+            "generate": "生成仪表盘摘要",
+            "streaming": "正在生成…",
+            "title": "仪表盘摘要"
+        },
+        "title": "AI 筛选",
+        "unresolved": "没有生成任何条件。"
     }
 }

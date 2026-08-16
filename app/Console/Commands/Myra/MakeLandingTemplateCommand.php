@@ -125,9 +125,9 @@ import { Head } from '@inertiajs/vue3';
 import { useThemeColors } from '@/composables/useThemeColors';
 import SiteNavbar from './_shared/SiteNavbar.vue';
 import SiteFooter from './_shared/SiteFooter.vue';
-import OrderedSections from './_shared/OrderedSections.vue';
+import TemplateBody from './_shared/TemplateBody.vue';
 import { useSiteBrand } from './_shared/useSiteBrand';
-import type { HomepageData } from '@/types';
+import type { HomepageData, PageSectionRow } from '@/types';
 
 withDefaults(
     defineProps<{
@@ -135,8 +135,9 @@ withDefaults(
         authenticated: boolean;
         sectionOrder?: string[];
         templateOptions?: Record<string, Record<string, unknown>>;
+        blocks?: PageSectionRow[];
     }>(),
-    { sectionOrder: () => [], templateOptions: () => ({}) },
+    { sectionOrder: () => [], templateOptions: () => ({}), blocks: () => [] },
 );
 
 useThemeColors();
@@ -151,7 +152,8 @@ const { name } = useSiteBrand();
         <SiteNavbar :settings="settings" :authenticated="authenticated" />
 
         <main id="content">
-            <OrderedSections
+            <TemplateBody
+                :blocks="blocks"
                 :settings="settings"
                 :order="sectionOrder"
                 :overrides="templateOptions"

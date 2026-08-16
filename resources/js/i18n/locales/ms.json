@@ -2231,5 +2231,10 @@
         },
         "title": "Penapis AI",
         "unresolved": "Tiada syarat dihasilkan."
+    },
+    "pageBuilder": {
+        "render": {
+            "unavailable": "Bahagian ini tidak dapat dipaparkan."
+        }
     }
 }

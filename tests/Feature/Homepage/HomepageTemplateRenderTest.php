@@ -52,6 +52,15 @@ class HomepageTemplateRenderTest extends TestCase
         foreach (['template', 'templateOptions', 'sectionOrder'] as $added) {
             $this->assertArrayHasKey($added, $props);
         }
+
+        // >>> MYRA v2.7 [A] START
+        // The raw list never ships inside settings — only the normalised one,
+        // as its own prop. The fixture below deliberately does not capture it:
+        // the ids are server-assigned ULIDs and would drift on every run.
+        $this->assertArrayNotHasKey('blocks', $props['settings']);
+        $this->assertArrayHasKey('blocks', $props);
+        $this->assertIsArray($props['blocks']);
+        // <<< MYRA v2.7 [A] END
     }
 
     /** A fresh install that never ran the chooser still lands on classic. */

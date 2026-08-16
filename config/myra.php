@@ -498,6 +498,30 @@ return [
     ],
     // <<< MYRA v2.6 [D] END
 
+    // >>> MYRA v2.7 [A] START
+    /*
+    |--------------------------------------------------------------------------
+    | Page builder sections
+    |--------------------------------------------------------------------------
+    |
+    | The authorable sections of the public page. A package contributes one the
+    | same way it contributes a template: a class with a static define().
+    | SectionRegistry::seed() reads this list and then
+    | myra.pagebuilder_extra.extra_sections, so two owners never share an array.
+    |
+    */
+
+    'pagebuilder' => [
+        'sections' => [
+            \App\Homepage\Sections\Types\HeroSectionType::class,
+            \App\Homepage\Sections\Types\FeaturesSectionType::class,
+            \App\Homepage\Sections\Types\TestimonialsSectionType::class,
+            \App\Homepage\Sections\Types\PricingSectionType::class,
+            \App\Homepage\Sections\Types\CtaSectionType::class,
+        ],
+    ],
+    // <<< MYRA v2.7 [A] END
+
     // >>> MYRA v2.5 [D] START
     /*
     |--------------------------------------------------------------------------

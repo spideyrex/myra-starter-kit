@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Homepage\Sections\LegacyHomepageBlocks;
 use App\Settings\AppearanceSettings;
 use App\Settings\GeneralSettings;
 use App\Settings\HomepageSettings;
@@ -128,6 +129,24 @@ class SettingsSeeder extends Seeder
             ['group' => 'firebase', 'name' => 'app_id', 'payload' => json_encode(null)],
             ['group' => 'firebase', 'name' => 'vapid_key', 'payload' => json_encode(null)],
         ];
+
+        // >>> MYRA v2.7 [A] START
+        // One conversion function for both the seeder and the migration, so a
+        // fresh install and an upgrade can never produce a different page.
+        $homepageDefaults = [];
+
+        foreach ($settings as $setting) {
+            if ($setting['group'] === 'homepage') {
+                $homepageDefaults[$setting['name']] = json_decode((string) $setting['payload'], true);
+            }
+        }
+
+        $settings[] = [
+            'group' => 'homepage',
+            'name' => 'blocks',
+            'payload' => json_encode(LegacyHomepageBlocks::fromRows($homepageDefaults)),
+        ];
+        // <<< MYRA v2.7 [A] END
 
         foreach ($settings as $setting) {
             DB::table('settings')->updateOrInsert(

@@ -2231,5 +2231,10 @@
         },
         "title": "AI 筛选",
         "unresolved": "没有生成任何条件。"
+    },
+    "pageBuilder": {
+        "render": {
+            "unavailable": "此版块无法显示。"
+        }
     }
 }

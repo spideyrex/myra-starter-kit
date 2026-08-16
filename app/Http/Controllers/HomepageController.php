@@ -3,6 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Homepage\HomepageTemplate;
+// >>> MYRA v2.7 [A] START
+use App\Homepage\Sections\PreviewSlot;
+use App\Homepage\Sections\SectionNormalizer;
+// <<< MYRA v2.7 [A] END
 use App\Homepage\TemplateRegistry;
 use App\Settings\HomepageSettings;
 use Illuminate\Http\Request;
@@ -25,6 +29,13 @@ class HomepageController extends Controller
             ? Storage::disk('public')->url($settings->hero_image_path)
             : null;
 
+        // >>> MYRA v2.7 [A] START
+        // The raw list never ships inside settings; only the normalised one does.
+        unset($data['blocks']);
+
+        $raw = PreviewSlot::pull($request) ?? ($settings->blocks ?? []);
+        // <<< MYRA v2.7 [A] END
+
         // >>> MYRA v2.6 [D] START
         $template = TemplateRegistry::resolve($settings->template ?? null, $request);
 
@@ -34,6 +45,9 @@ class HomepageController extends Controller
             'template' => $template->key(),
             'templateOptions' => (object) ($settings->template_options[$template->key()] ?? []),
             'sectionOrder' => $this->sectionOrder($settings, $template),
+            // >>> MYRA v2.7 [A] START
+            'blocks' => SectionNormalizer::normalize($raw),
+            // <<< MYRA v2.7 [A] END
         ]);
         // <<< MYRA v2.6 [D] END
     }

@@ -1,11 +1,14 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import { Head, Link, useForm } from '@inertiajs/vue3';
+import { useI18n } from 'vue-i18n';
 import GuestLayout from '@/Layouts/GuestLayout.vue';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import LoadingButton from '@/components/LoadingButton.vue';
 import PasswordInput from '@/components/PasswordInput.vue';
+
+const { t } = useI18n();
 
 const form = useForm({
     name: '',
@@ -27,8 +30,9 @@ const passwordScore = computed(() => {
 });
 
 const strengthLabel = computed(() => {
-    const labels = ['', 'Weak', 'Fair', 'Good', 'Strong', 'Very Strong'];
-    return labels[passwordScore.value] || '';
+    const keys = ['', 'weak', 'fair', 'good', 'strong', 'veryStrong'];
+    const key = keys[passwordScore.value];
+    return key ? t(`auth.strength.${key}`) : '';
 });
 
 const strengthColor = computed(() => {
@@ -45,29 +49,29 @@ function submit() {
 
 <template>
     <GuestLayout>
-        <Head title="Register" />
+        <Head :title="t('auth.register')" />
 
         <div class="space-y-6">
             <div>
-                <h2 class="text-2xl font-bold">Create an account</h2>
-                <p class="text-sm text-muted-foreground">Enter your details to get started</p>
+                <h2 class="text-2xl font-bold">{{ t('auth.registerTitle') }}</h2>
+                <p class="text-sm text-muted-foreground">{{ t('auth.registerSubtitle') }}</p>
             </div>
 
             <form @submit.prevent="submit" class="space-y-4">
                 <div class="space-y-2">
-                    <Label for="name">Name</Label>
+                    <Label for="name">{{ t('auth.name') }}</Label>
                     <Input id="name" v-model="form.name" required autofocus autocomplete="name" />
                     <p v-if="form.errors.name" class="text-sm text-destructive">{{ form.errors.name }}</p>
                 </div>
 
                 <div class="space-y-2">
-                    <Label for="email">Email</Label>
+                    <Label for="email">{{ t('auth.email') }}</Label>
                     <Input id="email" v-model="form.email" type="email" required autocomplete="username" />
                     <p v-if="form.errors.email" class="text-sm text-destructive">{{ form.errors.email }}</p>
                 </div>
 
                 <div class="space-y-2">
-                    <Label for="password">Password</Label>
+                    <Label for="password">{{ t('auth.password') }}</Label>
                     <PasswordInput id="password" v-model="form.password" required autocomplete="new-password" />
                     <div v-if="form.password" class="space-y-1">
                         <div class="flex gap-1">
@@ -84,17 +88,17 @@ function submit() {
                 </div>
 
                 <div class="space-y-2">
-                    <Label for="password_confirmation">Confirm Password</Label>
+                    <Label for="password_confirmation">{{ t('auth.confirmPasswordLabel') }}</Label>
                     <PasswordInput id="password_confirmation" v-model="form.password_confirmation" required autocomplete="new-password" />
                 </div>
 
                 <LoadingButton :loading="form.processing" class="w-full">
-                    Register
+                    {{ t('auth.register') }}
                 </LoadingButton>
 
                 <p class="text-center text-sm text-muted-foreground">
-                    Already have an account?
-                    <Link :href="route('login')" class="text-foreground underline hover:text-foreground/80">Log in</Link>
+                    {{ t('auth.haveAccount') }}
+                    <Link :href="route('login')" class="text-foreground underline hover:text-foreground/80">{{ t('auth.login') }}</Link>
                 </p>
             </form>
         </div>

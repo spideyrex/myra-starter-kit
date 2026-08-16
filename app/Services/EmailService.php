@@ -117,10 +117,20 @@ class EmailService
 
         // MailManager::build() only wires the transport — the global addresses are
         // set in resolve(), which build() never reaches. So apply "from" here.
+        // >>> MYRA v2.6 [C] START
+        // config('mail.from.name') is "Laravel" out of the box AND is what the
+        // settings seeder copied into mail_from_name, so an install that never
+        // touched the field is treated as unset and the brand wins. An operator
+        // who typed a name still wins over the brand.
+        $brand = app(\App\Brand\BrandManager::class)->current();
+        $configured = (string) ($settings->mail_from_name ?? '');
+        $untouched = $configured === '' || $configured === (string) config('mail.from.name');
+
         $mailer->alwaysFrom(
             (string) ($settings->mail_from_address ?: config('mail.from.address')),
-            $settings->mail_from_name ?: config('mail.from.name'),
+            $brand->enabled && $untouched ? $brand->name : ($configured ?: config('mail.from.name')),
         );
+        // <<< MYRA v2.6 [C] END
 
         return $mailer;
     }
@@ -138,6 +148,12 @@ class EmailService
 
     private function replaceVariables(string $content, array $variables): string
     {
+        // >>> MYRA v2.6 [C] START
+        // Caller keys still win; {{app_name}} now ALWAYS resolves. With the brand
+        // manager off mailTokens() is empty and this is the identity operation.
+        $variables = array_merge(app(\App\Brand\BrandManager::class)->mailTokens(), $variables);
+        // <<< MYRA v2.6 [C] END
+
         foreach ($variables as $key => $value) {
             $content = str_replace("{{" . $key . "}}", (string) $value, $content);
         }

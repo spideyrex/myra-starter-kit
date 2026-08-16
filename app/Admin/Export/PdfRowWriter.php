@@ -26,10 +26,15 @@ final class PdfRowWriter implements RowWriter
 
     public function open(): void
     {
+        // >>> MYRA v2.6 [C] START
+        $meta = app(\App\Brand\BrandManager::class)->pdfMeta();
+
         $this->doc = PdfDocument::make('A4', 'landscape')
-            ->meta($this->title, (string) config('app.name'))
+            ->producer($meta['producer'])
+            ->meta($this->title, $meta['author'])
             ->runningHeader($this->title, now()->toDateString())
-            ->runningFooter((string) config('app.name'));
+            ->runningFooter($meta['footer']);
+        // <<< MYRA v2.6 [C] END
     }
 
     public function header(array $labels): void

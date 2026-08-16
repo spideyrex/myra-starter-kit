@@ -76,6 +76,9 @@ class SettingController extends Controller
         $settings->save();
 
         cache()->forget('site_settings_shared');
+        // >>> MYRA v2.6 [C] START
+        app(\App\Brand\BrandManager::class)->forget();
+        // <<< MYRA v2.6 [C] END
 
         return back()->with('success', ucfirst($group) . ' settings updated successfully.');
     }
@@ -83,8 +86,13 @@ class SettingController extends Controller
     public function updateAppearance(Request $request): RedirectResponse
     {
         $request->validate([
-            'logo' => ['nullable', 'image', 'max:2048'],
-            'favicon' => ['nullable', 'image', 'max:1024'],
+            // >>> MYRA v2.6 [C] START
+            // 'image' ACCEPTS SVG onto the public disk (same-origin stored XSS)
+            // and REJECTS .ico, the one format a favicon wants. SafeImage sniffs
+            // magic bytes and ignores the client extension entirely.
+            'logo' => ['nullable', new \App\Rules\SafeImage('logo')],
+            'favicon' => ['nullable', new \App\Rules\SafeImage('favicon')],
+            // <<< MYRA v2.6 [C] END
             'primary_color' => ['nullable', 'string', 'max:20'],
             'theme' => ['nullable', 'string', 'max:20'],
             'logo_position' => ['nullable', 'string', 'in:sidebar,header'],
@@ -152,7 +160,16 @@ class SettingController extends Controller
 
         $settings->save();
 
+        // >>> MYRA v2.6 [C] START
+        // The Appearance tab keeps working unchanged; when the brand manager is
+        // ON it writes through, so there is exactly one source of truth.
+        $this->mirrorAppearanceToBrand($settings);
+        // <<< MYRA v2.6 [C] END
+
         cache()->forget('site_settings_shared');
+        // >>> MYRA v2.6 [C] START
+        app(\App\Brand\BrandManager::class)->forget();
+        // <<< MYRA v2.6 [C] END
 
         return back()->with('success', 'Appearance settings updated successfully.');
     }
@@ -220,7 +237,37 @@ class SettingController extends Controller
         $settings->save();
 
         cache()->forget('site_settings_shared');
+        // >>> MYRA v2.6 [C] START
+        app(\App\Brand\BrandManager::class)->forget();
+        // <<< MYRA v2.6 [C] END
 
         return back()->with('success', 'Homepage settings updated successfully.');
     }
+
+    // >>> MYRA v2.6 [C] START
+    /** No-op while the brand manager is off. */
+    private function mirrorAppearanceToBrand(AppearanceSettings $appearance): void
+    {
+        try {
+            $brand = app(\App\Settings\BrandSettings::class);
+
+            if (! $brand->enabled) {
+                return;
+            }
+
+            $brand->primary = $appearance->primary_color;
+            $brand->preset = $appearance->theme;
+            $brand->logo_path = $appearance->logo_path;
+            $brand->favicon_path = $appearance->favicon_path;
+            $brand->logo_position = $appearance->logo_position;
+            $brand->sidebar_background = $appearance->sidebar_background;
+            $brand->sidebar_foreground = $appearance->sidebar_foreground;
+            $brand->sidebar_accent = $appearance->sidebar_accent;
+            $brand->version = $brand->version + 1;
+            $brand->save();
+        } catch (\Throwable) {
+            // A missing brand group must never break the Appearance tab.
+        }
+    }
+    // <<< MYRA v2.6 [C] END
 }

@@ -85,9 +85,17 @@ final class PdfDocument
 
     private string $author = '';
 
+    // >>> MYRA v2.6 [C] START
+    private string $producer = 'Myra';
+    // <<< MYRA v2.6 [C] END
+
     private string $headerTitle = '';
 
     private string $headerSubtitle = '';
+
+    // >>> MYRA v2.6 [C] START — optional running-header logo (raw PNG bytes)
+    private ?string $headerLogo = null;
+    // <<< MYRA v2.6 [C] END
 
     private string $footerLeft = '';
 
@@ -144,7 +152,9 @@ final class PdfDocument
         $doc->pageWidth = $w;
         $doc->pageHeight = $h;
 
-        $path = tempnam(sys_get_temp_dir(), 'myra-pdf-');
+        // >>> MYRA v2.6 [C] START — brand-derived temp prefix
+        $path = tempnam(sys_get_temp_dir(), self::tempPrefix());
+        // <<< MYRA v2.6 [C] END
 
         if ($path === false) {
             throw new RuntimeException('Unable to allocate a temporary file for the PDF.');
@@ -157,6 +167,29 @@ final class PdfDocument
         return $doc;
     }
 
+    // >>> MYRA v2.6 [C] START
+    public function producer(string $name): self
+    {
+        $this->producer = $name !== '' ? $name : $this->producer;
+
+        return $this;
+    }
+
+    /** Slug of the brand name; falls back to the historic prefix. */
+    private static function tempPrefix(): string
+    {
+        try {
+            $brand = app(\App\Brand\BrandManager::class)->current();
+            $slug = preg_replace('/[^a-z0-9]+/', '-', strtolower($brand->name)) ?: '';
+            $slug = trim((string) $slug, '-');
+
+            return ($brand->enabled && $slug !== '' ? $slug : 'myra').'-pdf-';
+        } catch (\Throwable) {
+            return 'myra-pdf-';
+        }
+    }
+    // <<< MYRA v2.6 [C] END
+
     public function meta(string $title, string $author): self
     {
         $this->title = $title;
@@ -165,10 +198,11 @@ final class PdfDocument
         return $this;
     }
 
-    public function runningHeader(string $title, string $subtitle = ''): self
+    public function runningHeader(string $title, string $subtitle = '', ?string $logoPng = null): self
     {
         $this->headerTitle = $title;
         $this->headerSubtitle = $subtitle;
+        $this->headerLogo = ($logoPng !== null && $logoPng !== '') ? $logoPng : null;
 
         return $this;
     }
@@ -380,9 +414,10 @@ final class PdfDocument
 
         $this->writeFonts();
         $this->writeObject(self::OBJ_INFO, sprintf(
-            '<< /Title (%s) /Author (%s) /Producer (Myra) /CreationDate (D:%s) >>',
+            '<< /Title (%s) /Author (%s) /Producer (%s) /CreationDate (D:%s) >>',
             $this->escape($this->title ?: 'Report'),
-            $this->escape($this->author ?: 'Myra'),
+            $this->escape($this->author ?: $this->producer),
+            $this->escape($this->producer),
             date('YmdHis'),
         ));
 
@@ -588,8 +623,25 @@ final class PdfDocument
     {
         $top = $this->pageHeight - 26;
 
+        // >>> MYRA v2.6 [C] START
+        $offset = 0.0;
+
+        if ($this->headerLogo !== null) {
+            $ref = $this->registerImage($this->headerLogo);
+
+            if ($ref !== null) {
+                $this->raw(sprintf(
+                    "q %.2F 0 0 %.2F %.2F %.2F cm /%s Do Q
+",
+                    14.0, 14.0, $this->margin, $top - 4.0, $ref,
+                ));
+                $offset = 18.0;
+            }
+        }
+        // <<< MYRA v2.6 [C] END
+
         if ($this->headerTitle !== '') {
-            $this->text($this->clip($this->headerTitle, $this->contentWidth() * 0.7, 9.0, 'bold'), $this->margin, $top, 9.0, 'bold', [0.35, 0.38, 0.44]);
+            $this->text($this->clip($this->headerTitle, $this->contentWidth() * 0.7 - $offset, 9.0, 'bold'), $this->margin + $offset, $top, 9.0, 'bold', [0.35, 0.38, 0.44]);
         }
 
         if ($this->headerSubtitle !== '') {

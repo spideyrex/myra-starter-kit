@@ -45,6 +45,10 @@ Route::get('/pages/{slug}', [PublicPageController::class, 'show'])->name('pages.
 Route::get('/blog', [PublicArticleController::class, 'index'])->name('articles.index');
 Route::get('/blog/{slug}', [PublicArticleController::class, 'show'])->name('articles.show');
 
+// >>> MYRA v2.6 [C] START
+require __DIR__.'/myra/brand.php';
+// <<< MYRA v2.6 [C] END
+
 Route::get('/dashboard', [DashboardController::class, 'index'])
     ->middleware(['auth', 'verified', 'active', '2fa'])
     ->name('dashboard');

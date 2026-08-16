@@ -148,7 +148,118 @@
         "email": "Email",
         "password": "Password",
         "rememberMe": "Remember me",
-        "alreadyRegistered": "Already registered?"
+        "alreadyRegistered": "Already registered?",
+        "defaultTagline": "The best admin experience starts with a great foundation.",
+        "loginTitle": "Log in",
+        "loginSubtitle": "Enter your credentials to access your account",
+        "registerTitle": "Create an account",
+        "registerSubtitle": "Enter your details to get started",
+        "name": "Name",
+        "confirmPasswordLabel": "Confirm Password",
+        "forgotPasswordLink": "Forgot password?",
+        "noAccount": "Don't have an account?",
+        "signUp": "Sign up",
+        "haveAccount": "Already have an account?",
+        "strength": {
+            "weak": "Weak",
+            "fair": "Fair",
+            "good": "Good",
+            "strong": "Strong",
+            "veryStrong": "Very Strong"
+        }
+    },
+    "brand": {
+        "title": "Brand",
+        "description": "One source of truth for the name, logo, colour and typography every surface uses.",
+        "save": "Save brand",
+        "enable": {
+            "label": "Enable brand manager",
+            "help": "Off by default. While it is off every surface keeps its pre-2.6 behaviour exactly."
+        },
+        "tabs": {
+            "identity": "Identity",
+            "colour": "Colour",
+            "typography": "Typography",
+            "assets": "Assets",
+            "preview": "Preview"
+        },
+        "fields": {
+            "name": "Name",
+            "shortName": "Short name",
+            "tagline": "Tagline",
+            "description": "Description",
+            "primary": "Primary colour",
+            "accent": "Accent colour",
+            "preset": "Palette preset",
+            "fontSans": "Sans family",
+            "fontMono": "Mono family",
+            "radius": "Corner radius",
+            "darkDefault": "Dark by default",
+            "logoPosition": "Logo position",
+            "sidebarBackground": "Sidebar background",
+            "sidebarForeground": "Sidebar foreground",
+            "sidebarAccent": "Sidebar accent"
+        },
+        "logoPositions": {
+            "sidebar": "Sidebar",
+            "header": "Header"
+        },
+        "assets": {
+            "logo": "Logo",
+            "logoDark": "Logo (dark)",
+            "mark": "Square mark",
+            "favicon": "Favicon",
+            "ogImage": "Social share image",
+            "upload": "Upload",
+            "remove": "Remove",
+            "rejectedSvg": "SVG is refused: it is script-bearing markup and the asset disk is same-origin.",
+            "icoAccepted": "PNG, JPEG, WebP and ICO are accepted. The file type is read from its bytes, not its name."
+        },
+        "preview": {
+            "surfaces": {
+                "admin": "Admin shell",
+                "login": "Login",
+                "public": "Public site",
+                "email": "Email",
+                "pdf": "PDF export",
+                "install": "Install / PWA"
+            }
+        },
+        "contrast": {
+            "ok": "Contrast {ratio}:1 — passes AA.",
+            "warning": "Contrast {ratio}:1 is below the {minimum}:1 minimum."
+        },
+        "reset": {
+            "label": "Reset to defaults",
+            "confirm": "Reset every brand value and switch the brand manager off?"
+        },
+        "errors": {
+            "home": "Back to home",
+            "403": {
+                "title": "Forbidden",
+                "body": "You do not have permission to view this page."
+            },
+            "404": {
+                "title": "Page not found",
+                "body": "The page you are looking for does not exist or has been moved."
+            },
+            "419": {
+                "title": "Page expired",
+                "body": "Your session timed out. Refresh the page and try again."
+            },
+            "500": {
+                "title": "Something went wrong",
+                "body": "An unexpected error occurred. The team has been notified."
+            },
+            "503": {
+                "title": "Under maintenance",
+                "body": "We are performing maintenance. We will be back shortly."
+            }
+        },
+        "settingsLink": {
+            "label": "Brand manager",
+            "help": "Name, logo, favicon, palette and typography for every surface."
+        }
     },
     "validation": {
         "required": "{field} is required",

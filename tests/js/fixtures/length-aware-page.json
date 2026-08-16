@@ -47,9 +47,9 @@
         }
     ],
     "links": {
-        "first": "http://localhost/admin/demo/scale?per_page=5&page=1",
-        "last": "http://localhost/admin/demo/scale?per_page=5&page=3",
-        "next": "http://localhost/admin/demo/scale?per_page=5&page=2",
+        "first": "http://localhost/dashboard/demo/scale?per_page=5&page=1",
+        "last": "http://localhost/dashboard/demo/scale?per_page=5&page=3",
+        "next": "http://localhost/dashboard/demo/scale?per_page=5&page=2",
         "prev": null
     },
     "meta": {
@@ -67,28 +67,28 @@
                 "active": true,
                 "label": "1",
                 "page": 1,
-                "url": "http://localhost/admin/demo/scale?per_page=5&page=1"
+                "url": "http://localhost/dashboard/demo/scale?per_page=5&page=1"
             },
             {
                 "active": false,
                 "label": "2",
                 "page": 2,
-                "url": "http://localhost/admin/demo/scale?per_page=5&page=2"
+                "url": "http://localhost/dashboard/demo/scale?per_page=5&page=2"
             },
             {
                 "active": false,
                 "label": "3",
                 "page": 3,
-                "url": "http://localhost/admin/demo/scale?per_page=5&page=3"
+                "url": "http://localhost/dashboard/demo/scale?per_page=5&page=3"
             },
             {
                 "active": false,
                 "label": "Next &raquo;",
                 "page": 2,
-                "url": "http://localhost/admin/demo/scale?per_page=5&page=2"
+                "url": "http://localhost/dashboard/demo/scale?per_page=5&page=2"
             }
         ],
-        "path": "http://localhost/admin/demo/scale",
+        "path": "http://localhost/dashboard/demo/scale",
         "per_page": 5,
         "to": 5,
         "total": 12

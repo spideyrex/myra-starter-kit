@@ -3,6 +3,7 @@
 namespace Tests\Feature\Performance;
 
 use App\Admin\Testing\InteractsWithMyra;
+use App\Support\Myra;
 use Tests\TestCase;
 
 /**
@@ -23,7 +24,7 @@ class CursorPayloadTest extends TestCase
 
     public function test_cursor_payload_matches_the_committed_fixture(): void
     {
-        $response = $this->get('/admin/demo/scale-cursor?per_page=5');
+        $response = $this->get(Myra::adminPath('demo/scale-cursor').'?per_page=5');
         $response->assertSuccessful();
 
         $this->syncFixture(
@@ -34,7 +35,7 @@ class CursorPayloadTest extends TestCase
 
     public function test_length_aware_payload_matches_the_committed_fixture(): void
     {
-        $response = $this->get('/admin/demo/scale?per_page=5');
+        $response = $this->get(Myra::adminPath('demo/scale').'?per_page=5');
         $response->assertSuccessful();
 
         $this->syncFixture(

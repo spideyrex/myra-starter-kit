@@ -21,11 +21,28 @@ final class Myra
         return (string) config('myra.version', 'dev');
     }
 
+    /**
+     * The URL segment every admin route sits under. Configurable via
+     * `myra.admin.prefix`; route names stay `admin.*` whatever this is.
+     */
+    public static function adminPrefix(): string
+    {
+        $prefix = trim((string) config('myra.admin.prefix', 'dashboard'), '/');
+
+        return $prefix === '' ? 'dashboard' : $prefix;
+    }
+
+    /** The prefix as a rooted path, e.g. `/dashboard`. */
+    public static function adminPath(string $path = ''): string
+    {
+        return '/'.self::adminPrefix().($path === '' ? '' : '/'.ltrim($path, '/'));
+    }
+
     /** Register routes into the admin group without re-declaring the stack. */
     public static function adminRoutes(callable $routes): void
     {
         Route::middleware(self::ADMIN_MIDDLEWARE)
-            ->prefix('admin')
+            ->prefix(self::adminPrefix())
             ->name('admin.')
             ->group($routes);
     }

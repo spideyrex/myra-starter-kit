@@ -3,6 +3,7 @@ import axios from 'axios';
 import { usePage } from '@inertiajs/vue3';
 import { useDocumentVisibility } from '@vueuse/core';
 import { useEchoChannel } from '@/composables/useEchoChannel';
+import { adminPath } from '@/lib/adminPath';
 import type { ReportBinding } from '@/composables/useDashboardWidgets';
 import type { ReportResultPayload, StatResultPayload } from '@/components/admin/charts/types';
 
@@ -61,16 +62,16 @@ interface TrackedSlot {
     lastPoll: number;
 }
 
-const WIDGETS_URL_FALLBACK = '/admin/dashboard/widgets/data';
+const widgetsUrlFallback = () => adminPath('dashboard/widgets/data');
 const MIN_POLL_SECONDS = 5;
 
 function widgetsUrl(): string {
     try {
         const resolve = (globalThis as any).route;
         const url = typeof resolve === 'function' ? resolve('admin.reports.widgets') : null;
-        return typeof url === 'string' && url !== '' ? url : WIDGETS_URL_FALLBACK;
+        return typeof url === 'string' && url !== '' ? url : widgetsUrlFallback();
     } catch {
-        return WIDGETS_URL_FALLBACK;
+        return widgetsUrlFallback();
     }
 }
 

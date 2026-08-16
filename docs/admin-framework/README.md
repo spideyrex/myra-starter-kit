@@ -7,6 +7,7 @@ An admin framework built on Laravel + Inertia.js + Vue 3 (TypeScript) with shadc
 | Document | Description |
 |----------|-------------|
 | [Getting Started](getting-started.md) | Quick start guide, creating your first resource |
+| [Admin URL Prefix](admin-prefix.md) | The configurable `/dashboard` segment, and why route names never change |
 | [Form Builder](form-builder.md) | Schema-driven form API with field types, layouts, and chaining |
 | [Table Builder](table-builder.md) | Schema-driven table API with columns, filters, and actions |
 | [Components](components.md) | All reusable Vue components (FormField, DataTable, etc.) |

@@ -8,6 +8,7 @@ use App\Admin\QueryBuilder\Operator;
 use App\Admin\QueryBuilder\QueryBuilderException;
 use App\Admin\Traits\HandlesQueryBuilder;
 use App\Models\User;
+use App\Support\Myra;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use InvalidArgumentException;
@@ -33,7 +34,7 @@ class QueryCompilerTest extends TestCase
 
     private function request(mixed $tree, ?User $actor = null): Request
     {
-        $request = Request::create('/admin/demo/advanced-filters', 'GET', [
+        $request = Request::create(Myra::adminPath('demo/advanced-filters'), 'GET', [
             'q' => is_string($tree) ? $tree : json_encode($tree),
         ]);
         $request->setUserResolver(fn () => $actor);

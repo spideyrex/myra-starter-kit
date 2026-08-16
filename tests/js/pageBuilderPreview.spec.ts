@@ -52,7 +52,7 @@ describe('SectionPreview — the draft reaches the real public page', () => {
         await settle();
 
         expect(post).toHaveBeenCalledTimes(1);
-        expect(post.mock.calls[0][0]).toBe('/admin/landing/builder/preview');
+        expect(post.mock.calls[0][0]).toBe('/dashboard/landing/builder/preview');
         expect(post.mock.calls[0][1]).toEqual({ blocks: [draftRow('One')] });
 
         expect(wrapper.get('iframe').attributes('src')).toBe('/?preview=tok-1&template=saas');

@@ -1,10 +1,11 @@
 <?php
 
 use App\Http\Controllers\Admin\ExampleController;
+use App\Support\Myra;
 use Illuminate\Support\Facades\Route;
 
 // >>> MYRA v2.6 [B] START
-Route::middleware(['auth', 'verified', 'active', '2fa'])->prefix('admin')->name('admin.')->group(function () {
+Route::middleware(['auth', 'verified', 'active', '2fa'])->prefix(Myra::adminPrefix())->name('admin.')->group(function () {
     Route::middleware('permission:examples.view')->group(function () {
         Route::get('/examples', [ExampleController::class, 'index'])->name('examples.index');
         Route::get('/examples/{example}', [ExampleController::class, 'show'])->name('examples.show');

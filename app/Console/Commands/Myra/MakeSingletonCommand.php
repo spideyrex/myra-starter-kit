@@ -59,7 +59,7 @@ class MakeSingletonCommand extends Command
         $this->registerRoute($routes, "{$routePrefix}.show", $print);
 
         $this->newLine();
-        $this->components->info("Singular resource '{$name}' scaffolded → /admin/{$routePath} (run `npm run build`).");
+        $this->components->info("Singular resource '{$name}' scaffolded → ".\App\Support\Myra::adminPath($routePath).' (run `npm run build`).');
         $this->line('Create the model and its migration next; the page renders with null values until the first save.');
 
         return self::SUCCESS;

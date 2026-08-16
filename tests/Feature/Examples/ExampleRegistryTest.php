@@ -4,7 +4,7 @@ namespace Tests\Feature\Examples;
 
 use App\Admin\Examples\ExampleEntry;
 use App\Admin\Examples\ExampleRegistry;
-use Illuminate\Support\Facades\Route;
+use App\Support\Myra;
 use Tests\TestCase;
 
 class ExampleRegistryTest extends TestCase
@@ -241,9 +241,9 @@ class ExampleRegistryTest extends TestCase
 
         $this->assertNull(ExampleRegistry::get('not-an-example'));
 
-        $this->get('/admin/examples/not-an-example')->assertNotFound();
-        $this->get('/admin/examples/not-an-example/preview')->assertNotFound();
-        $this->get('/admin/examples/not-an-example/source')->assertNotFound();
+        $this->get(Myra::adminPath('examples/not-an-example'))->assertNotFound();
+        $this->get(Myra::adminPath('examples/not-an-example/preview'))->assertNotFound();
+        $this->get(Myra::adminPath('examples/not-an-example/source'))->assertNotFound();
     }
 
     public function test_source_is_served_from_the_manifest_not_the_url_param(): void
@@ -251,7 +251,7 @@ class ExampleRegistryTest extends TestCase
         $this->actingAsSuperAdmin();
 
         foreach (['..%2F..%2Fapp', '..%2F..%2F..%2Fetc%2Fpasswd', 'mail%2F..%2F..%2Fapp'] as $traversal) {
-            $this->get("/admin/examples/{$traversal}/source")->assertNotFound();
+            $this->get(Myra::adminPath("examples/{$traversal}/source"))->assertNotFound();
         }
 
         $payload = $this->get(route('admin.examples.source', 'mail'))->assertOk()->json();

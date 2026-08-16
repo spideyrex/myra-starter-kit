@@ -4,7 +4,7 @@ namespace Tests\Feature\Blocks;
 
 use App\Admin\Blocks\BlockEntry;
 use App\Admin\Blocks\BlockRegistry;
-use Illuminate\Support\Facades\Route;
+use App\Support\Myra;
 use Tests\TestCase;
 
 class BlockRegistryTest extends TestCase
@@ -234,17 +234,17 @@ class BlockRegistryTest extends TestCase
     {
         $this->actingAsSuperAdmin();
 
-        $this->get('/admin/blocks/not-a-block')->assertNotFound();
-        $this->get('/admin/blocks/not-a-block/preview')->assertNotFound();
-        $this->get('/admin/blocks/not-a-block/source')->assertNotFound();
+        $this->get(Myra::adminPath('blocks/not-a-block'))->assertNotFound();
+        $this->get(Myra::adminPath('blocks/not-a-block/preview'))->assertNotFound();
+        $this->get(Myra::adminPath('blocks/not-a-block/source'))->assertNotFound();
     }
 
     public function test_source_is_served_from_the_manifest_not_the_url_param(): void
     {
         $this->actingAsSuperAdmin();
 
-        $this->get('/admin/blocks/..%2F..%2Fapp/source')->assertNotFound();
-        $this->get('/admin/blocks/'.urlencode('../../composer.json'))->assertNotFound();
+        $this->get(Myra::adminPath('blocks/..%2F..%2Fapp/source'))->assertNotFound();
+        $this->get(Myra::adminPath('blocks/').urlencode('../../composer.json'))->assertNotFound();
     }
 
     public function test_a_contributed_entry_defaults_its_i18n_keys_from_its_own_key(): void

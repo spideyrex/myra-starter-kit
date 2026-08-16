@@ -32,6 +32,7 @@ class HandleInertiaRequests extends Middleware
     {
         return [
             ...parent::share($request),
+            'adminPrefix' => \App\Support\Myra::adminPrefix(),
             'auth' => [
                 'user' => $request->user() ? array_merge(
                     $request->user()->only(['id', 'name', 'email', 'phone', 'avatar', 'status', 'email_verified_at', 'created_at', 'updated_at']),
@@ -97,10 +98,10 @@ class HandleInertiaRequests extends Middleware
                 }
 
                 // Compute public URLs for logo and favicon
-                if (!empty($settings['logo_path'])) {
+                if (! empty($settings['logo_path'])) {
                     $settings['logo_url'] = Storage::disk('public')->url($settings['logo_path']);
                 }
-                if (!empty($settings['favicon_path'])) {
+                if (! empty($settings['favicon_path'])) {
                     $settings['favicon_url'] = Storage::disk('public')->url($settings['favicon_path']);
                 }
 
@@ -146,7 +147,7 @@ class HandleInertiaRequests extends Middleware
             'firebaseConfig' => fn () => cache()->remember('firebase_web_config', 3600, function () {
                 try {
                     $settings = app(FirebaseSettings::class);
-                    if (!$settings->enabled) {
+                    if (! $settings->enabled) {
                         return null;
                     }
 

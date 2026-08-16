@@ -4,6 +4,7 @@ namespace Tests\Feature\Navigation;
 
 use App\Admin\Clusters\LearningCluster;
 use App\Admin\Navigation\NavRegistry;
+use App\Support\Myra;
 use Tests\TestCase;
 
 class NavRegistryFilterTest extends TestCase
@@ -46,14 +47,14 @@ class NavRegistryFilterTest extends TestCase
         $cluster = $groups[0]['items'][0];
         $this->assertSame('clusters.learning.label', $cluster['labelKey']);
         $this->assertNull($cluster['href']);
-        $this->assertSame('/admin/learning', $cluster['activePrefix']);
+        $this->assertSame(Myra::adminPath('learning'), $cluster['activePrefix']);
 
         $this->assertSame(
             ['clusters.learning.courses.label', 'clusters.learning.siteIdentity.label'],
             array_column($cluster['items'], 'labelKey'),
         );
         $this->assertSame(
-            ['/admin/learning/courses', '/admin/learning/site-identity'],
+            [Myra::adminPath('learning/courses'), Myra::adminPath('learning/site-identity')],
             array_column($cluster['items'], 'href'),
         );
     }
@@ -99,7 +100,7 @@ class NavRegistryFilterTest extends TestCase
     {
         config(['myra.clusters' => []]);
 
-        NavRegistry::addRaw('navGroups.demo', ['href' => '/admin/nope'], 'plugin');
+        NavRegistry::addRaw('navGroups.demo', ['href' => Myra::adminPath('nope')], 'plugin');
 
         $this->assertSame([], NavRegistry::forUser($this->actingAsSuperAdmin()));
     }
@@ -110,7 +111,7 @@ class NavRegistryFilterTest extends TestCase
 
         NavRegistry::addRaw('navGroups.demo', [
             'labelKey' => 'plugins.blog.posts',
-            'href' => '/admin/blog/posts',
+            'href' => Myra::adminPath('blog/posts'),
             'icon' => 'Newspaper',
             'permission' => null,
             'sort' => 5,
@@ -150,10 +151,10 @@ class PartialCluster extends \App\Admin\Navigation\Cluster
     {
         return [
             \App\Admin\Navigation\NavItem::make('clusters.partial.allowed.label')
-                ->url('/admin/partial/allowed')
+                ->url(Myra::adminPath('partial/allowed'))
                 ->permission('demo.view'),
             \App\Admin\Navigation\NavItem::make('clusters.partial.denied.label')
-                ->url('/admin/partial/denied')
+                ->url(Myra::adminPath('partial/denied'))
                 ->permission('backups.delete'),
         ];
     }

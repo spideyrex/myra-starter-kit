@@ -11,6 +11,7 @@ import SegmentPopover from '@/components/admin/reportDelivery/SegmentPopover.vue
 import ReportScheduleDialog from '@/components/admin/reportDelivery/ReportScheduleDialog.vue';
 import { provideCrossFilter, type CrossFilterChip } from '@/composables/useCrossFilter';
 import type { ReportRow } from '@/types/report-delivery';
+import { adminPath } from '@/lib/adminPath';
 
 /**
  * Client-side showcase: the rows below stand in for a ReportResult so the
@@ -23,13 +24,13 @@ const rows: ReportRow[] = [
         key: 'active', label: 'Active', values: { signups: 812 }, previous: { signups: 741 },
         deltas: { signups: { absolute: 71, percent: 9.6, direction: 'up', good: true } },
         isOther: false,
-        drill: { url: '/admin/users', params: { query: '{"conjunction":"and","rules":[{"field":"status","operator":"in","value":["active"]}],"groups":[]}' } },
+        drill: { url: adminPath('users'), params: { query: '{"conjunction":"and","rules":[{"field":"status","operator":"in","value":["active"]}],"groups":[]}' } },
     },
     {
         key: 'pending', label: 'Pending', values: { signups: 214 }, previous: { signups: 260 },
         deltas: { signups: { absolute: -46, percent: -17.7, direction: 'down', good: false } },
         isOther: false,
-        drill: { url: '/admin/users', params: { query: '{"conjunction":"and","rules":[{"field":"status","operator":"in","value":["pending"]}],"groups":[]}' } },
+        drill: { url: adminPath('users'), params: { query: '{"conjunction":"and","rules":[{"field":"status","operator":"in","value":["pending"]}],"groups":[]}' } },
     },
     {
         key: '__other', label: 'Other', values: { signups: 96 }, previous: null,

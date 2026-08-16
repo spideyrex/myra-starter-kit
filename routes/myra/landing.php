@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\ComponentDemoController;
 use App\Http\Controllers\Admin\LandingController;
+use App\Support\Myra;
 use Illuminate\Support\Facades\Route;
 
 /**
@@ -10,7 +11,7 @@ use Illuminate\Support\Facades\Route;
  * The demo routes replicate the demo group's middleware rather than editing
  * routes/web.php's demo block, so the shared file carries a single `require`.
  */
-Route::middleware(['auth', 'verified', 'active', '2fa'])->prefix('admin')->name('admin.')->group(function () {
+Route::middleware(['auth', 'verified', 'active', '2fa'])->prefix(Myra::adminPrefix())->name('admin.')->group(function () {
     Route::middleware('permission:settings.edit')->group(function () {
         Route::get('/landing', [LandingController::class, 'index'])->name('landing.index');
         Route::put('/landing', [LandingController::class, 'update'])->name('landing.update');

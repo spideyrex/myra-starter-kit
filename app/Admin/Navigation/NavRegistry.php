@@ -91,7 +91,7 @@ final class NavRegistry
                     'icon' => $class::$icon,
                     'permission' => $class::$permission,
                     'sort' => $class::$sort,
-                    'activePrefix' => ($class::$prefixesUrls && $slug !== '') ? '/admin/'.$slug : null,
+                    'activePrefix' => ($class::$prefixesUrls && $slug !== '') ? \App\Support\Myra::adminPath($slug) : null,
                     'items' => $children,
                 ], 'cluster');
             } catch (\Throwable $e) {

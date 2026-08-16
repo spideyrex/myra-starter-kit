@@ -23,6 +23,29 @@ return [
     'nav_group' => 'Custom',
     'nav_icon' => 'LayoutGrid',
 
+    /*
+    |--------------------------------------------------------------------------
+    | Admin URL prefix
+    |--------------------------------------------------------------------------
+    |
+    | The single URL segment every admin page sits under. Change `prefix` (or
+    | set MYRA_ADMIN_PREFIX) and every admin route moves with it — route NAMES
+    | stay `admin.*` regardless, so `route('admin.users.index')` keeps working
+    | and nothing else needs touching. Read it via Myra::adminPrefix(), never
+    | as a literal.
+    |
+    | `legacy_redirect` keeps old `/admin/...` links alive by 302-ing them to
+    | the current prefix. Turn it off once the old URLs are gone; while it is
+    | on, an unknown `/admin/...` path redirects instead of 404-ing.
+    |
+    */
+
+    'admin' => [
+        'prefix' => env('MYRA_ADMIN_PREFIX', 'dashboard'),
+        'legacy_redirect' => env('MYRA_ADMIN_LEGACY_REDIRECT', true),
+        'legacy_prefix' => 'admin',
+    ],
+
     // >>> MYRA v2.4 [A] START
     /*
     |--------------------------------------------------------------------------
@@ -38,7 +61,7 @@ return [
     |
     */
     'extensions' => [
-        'strict'  => env('MYRA_PLUGINS_STRICT', false),
+        'strict' => env('MYRA_PLUGINS_STRICT', false),
         'plugins' => [
             \App\Plugins\Example\ExamplePlugin::class,
             // myra:plugins — make:myra-plugin inserts classes above this line.
@@ -84,11 +107,11 @@ return [
     */
 
     'dashboard' => [
-        'editable'      => env('MYRA_DASHBOARD_EDITABLE', false),
-        'keys'          => ['admin.dashboard' => 'dashboardLayout.keys.main'],
-        'max_entries'   => 48,
+        'editable' => env('MYRA_DASHBOARD_EDITABLE', false),
+        'keys' => ['admin.dashboard' => 'dashboardLayout.keys.main'],
+        'max_entries' => 48,
         'max_instances' => 12,
-        'catalogue'     => [],
+        'catalogue' => [],
 
         // >>> MYRA v2.7 [A] START
         // The page's own tiles, key => ability|null. All null ships today's
@@ -96,12 +119,12 @@ return [
         // LayoutResolver::fromPayload stops that tile's KEY from reaching an
         // unprivileged browser. Keys must match Dashboard.vue's *Widget.make().
         'static_widgets' => [
-            'total_users'           => null,
-            'active_users'          => null,
-            'new_users'             => null,
+            'total_users' => null,
+            'active_users' => null,
+            'new_users' => null,
             'pending_verifications' => null,
-            'user_growth'           => null,
-            'users_by_status'       => null,
+            'user_growth' => null,
+            'users_by_status' => null,
         ],
         // <<< MYRA v2.7 [A] END
     ],
@@ -126,30 +149,30 @@ return [
 
     'components' => [
         // Static (self-contained) demos — trivial controller
-        'form-builder'       => ['demo' => 'FormBuilder',       'method' => null, 'request' => false, 'label' => 'Form Builder'],
-        'rich-text-editor'   => ['demo' => 'RichTextEditor',    'method' => null, 'request' => false, 'label' => 'Rich Text Editor'],
-        'repeater-field'     => ['demo' => 'RepeaterField',     'method' => null, 'request' => false, 'label' => 'Repeater Field'],
+        'form-builder' => ['demo' => 'FormBuilder',       'method' => null, 'request' => false, 'label' => 'Form Builder'],
+        'rich-text-editor' => ['demo' => 'RichTextEditor',    'method' => null, 'request' => false, 'label' => 'Rich Text Editor'],
+        'repeater-field' => ['demo' => 'RepeaterField',     'method' => null, 'request' => false, 'label' => 'Repeater Field'],
         'conditional-fields' => ['demo' => 'ConditionalFields', 'method' => null, 'request' => false, 'label' => 'Conditional Fields'],
-        'wizard'             => ['demo' => 'WizardDemo',        'method' => null, 'request' => false, 'label' => 'Wizard'],
-        'field-types'        => ['demo' => 'FieldTypes',        'method' => null, 'request' => false, 'label' => 'Field Types'],
-        'global-search'      => ['demo' => 'GlobalSearch',      'method' => null, 'request' => false, 'label' => 'Global Search'],
+        'wizard' => ['demo' => 'WizardDemo',        'method' => null, 'request' => false, 'label' => 'Wizard'],
+        'field-types' => ['demo' => 'FieldTypes',        'method' => null, 'request' => false, 'label' => 'Field Types'],
+        'global-search' => ['demo' => 'GlobalSearch',      'method' => null, 'request' => false, 'label' => 'Global Search'],
 
         // Data-driven demos — controller pulls mock props from HasSampleData
-        'data-table'         => ['demo' => 'BulkActions',     'method' => 'forBulkActions',     'request' => true,  'label' => 'Data Table'],
-        'bulk-actions'       => ['demo' => 'BulkActions',     'method' => 'forBulkActions',     'request' => true,  'label' => 'Bulk Actions'],
-        'advanced-filters'   => ['demo' => 'AdvancedFilters', 'method' => 'forAdvancedFilters', 'request' => true,  'label' => 'Advanced Filters'],
-        'inline-editing'     => ['demo' => 'InlineEditing',   'method' => 'forInlineEditing',   'request' => true,  'label' => 'Inline Editing'],
-        'grouping'           => ['demo' => 'Grouping',        'method' => 'forGrouping',        'request' => true,  'label' => 'Row Grouping'],
-        'import-export'      => ['demo' => 'ImportExport',    'method' => 'forImportExport',    'request' => true,  'label' => 'Import / Export'],
-        'action-modals'      => ['demo' => 'ActionModals',    'method' => 'forActionModals',    'request' => true,  'label' => 'Action Modals'],
-        'soft-deletes'       => ['demo' => 'SoftDeletes',     'method' => 'forSoftDeletes',     'request' => true,  'label' => 'Soft Deletes'],
-        'infolist'           => ['demo' => 'Infolist',        'method' => 'forInfolist',        'request' => false, 'label' => 'Infolist'],
-        'relation-manager'   => ['demo' => 'RelationManager', 'method' => 'forRelationManager', 'request' => true,  'label' => 'Relation Manager'],
-        'widgets'            => ['demo' => 'Widgets',         'method' => 'forWidgets',         'request' => false, 'label' => 'Dashboard Widgets'],
-        'reordering'         => ['demo' => 'Reordering',      'method' => 'forReordering',      'request' => false, 'label' => 'Reordering'],
-        'map'                => ['demo' => 'Map',             'method' => null,                 'request' => false, 'label' => 'Map'],
-        'saved-views'        => ['demo' => 'SavedViews',      'method' => 'forSavedViews',      'request' => true,  'label' => 'Saved Views'],
-        'reports'            => ['demo' => 'Reports',         'method' => null,                 'request' => false, 'label' => 'Reports & Charts'],
+        'data-table' => ['demo' => 'BulkActions',     'method' => 'forBulkActions',     'request' => true,  'label' => 'Data Table'],
+        'bulk-actions' => ['demo' => 'BulkActions',     'method' => 'forBulkActions',     'request' => true,  'label' => 'Bulk Actions'],
+        'advanced-filters' => ['demo' => 'AdvancedFilters', 'method' => 'forAdvancedFilters', 'request' => true,  'label' => 'Advanced Filters'],
+        'inline-editing' => ['demo' => 'InlineEditing',   'method' => 'forInlineEditing',   'request' => true,  'label' => 'Inline Editing'],
+        'grouping' => ['demo' => 'Grouping',        'method' => 'forGrouping',        'request' => true,  'label' => 'Row Grouping'],
+        'import-export' => ['demo' => 'ImportExport',    'method' => 'forImportExport',    'request' => true,  'label' => 'Import / Export'],
+        'action-modals' => ['demo' => 'ActionModals',    'method' => 'forActionModals',    'request' => true,  'label' => 'Action Modals'],
+        'soft-deletes' => ['demo' => 'SoftDeletes',     'method' => 'forSoftDeletes',     'request' => true,  'label' => 'Soft Deletes'],
+        'infolist' => ['demo' => 'Infolist',        'method' => 'forInfolist',        'request' => false, 'label' => 'Infolist'],
+        'relation-manager' => ['demo' => 'RelationManager', 'method' => 'forRelationManager', 'request' => true,  'label' => 'Relation Manager'],
+        'widgets' => ['demo' => 'Widgets',         'method' => 'forWidgets',         'request' => false, 'label' => 'Dashboard Widgets'],
+        'reordering' => ['demo' => 'Reordering',      'method' => 'forReordering',      'request' => false, 'label' => 'Reordering'],
+        'map' => ['demo' => 'Map',             'method' => null,                 'request' => false, 'label' => 'Map'],
+        'saved-views' => ['demo' => 'SavedViews',      'method' => 'forSavedViews',      'request' => true,  'label' => 'Saved Views'],
+        'reports' => ['demo' => 'Reports',         'method' => null,                 'request' => false, 'label' => 'Reports & Charts'],
     ],
 
     /*
@@ -223,29 +246,29 @@ return [
     |
     */
     'tenancy' => [
-        'enabled'            => env('MYRA_TENANCY', false),
-        'model'              => \App\Models\Team::class,
-        'column'             => 'team_id',
-        'null_rows'          => 'strict',   // 'strict' | 'shared'
+        'enabled' => env('MYRA_TENANCY', false),
+        'model' => \App\Models\Team::class,
+        'column' => 'team_id',
+        'null_rows' => 'strict',   // 'strict' | 'shared'
         'super_admin_bypass' => true,
-        'models'             => [],
+        'models' => [],
 
         // Rows that belong to a tenant through the team pivot rather than a
         // tenant column — `users` is the only such table today.
-        'membership_table'    => 'team_user',
+        'membership_table' => 'team_user',
         'membership_user_key' => 'user_id',
-        'membership_tables'   => ['users'],
+        'membership_tables' => ['users'],
 
         // The public, unauthenticated surface. A guest resolves no tenant and
         // the predicate fails closed, so scoping the public site would blank it
         // the day Article/Page/Category are listed above. Opt in only if the
         // public site really is per-tenant (and a tenant is resolvable there).
-        'scope_public'        => false,
+        'scope_public' => false,
 
         // Tables an operator has DELIBERATELY declared tenant-shared. Anything
         // not listed here, not carrying the tenant column and not scoped by
         // membership returns zero rows rather than every tenant's rows.
-        'shared_tables'       => [],
+        'shared_tables' => [],
     ],
     // <<< MYRA v2.4 [C] END
 
@@ -282,11 +305,11 @@ return [
     */
 
     'performance' => [
-        'stable_sort'          => env('MYRA_STABLE_SORT', false),
-        'virtualize_above'     => 200,
-        'row_height'           => 44,
-        'viewport_height'      => 600,
-        'overscan'             => 8,
+        'stable_sort' => env('MYRA_STABLE_SORT', false),
+        'virtualize_above' => 200,
+        'row_height' => 44,
+        'viewport_height' => 600,
+        'overscan' => 8,
         'assert_indexed_sorts' => env('MYRA_ASSERT_INDEXES', false),
     ],
     // <<< MYRA v2.4 [D] END
@@ -362,15 +385,15 @@ return [
     */
 
     'reports' => [
-        'max_groups'      => 200,
+        'max_groups' => 200,
         'hard_max_groups' => 2000,
-        'max_measures'    => 6,
+        'max_measures' => 6,
         'max_period_days' => 1830,
-        'max_batch'       => 12,
-        'cache_ttl'       => 120,
-        'formats'         => ['csv', 'xlsx', 'pdf'],
-        'definitions'     => [
-            'users'    => \App\Admin\Report\Reports\UsersReport::class,
+        'max_batch' => 12,
+        'cache_ttl' => 120,
+        'formats' => ['csv', 'xlsx', 'pdf'],
+        'definitions' => [
+            'users' => \App\Admin\Report\Reports\UsersReport::class,
             'activity' => \App\Admin\Report\Reports\ActivityReport::class,
             // myra:reports — make:myra-report inserts definitions above this line.
         ],
@@ -395,8 +418,8 @@ return [
     */
 
     'realtime' => [
-        'enabled'      => env('MYRA_REALTIME', false),
-        'coalesce_ms'  => 400,
+        'enabled' => env('MYRA_REALTIME', false),
+        'coalesce_ms' => 400,
         'default_poll' => 120,
     ],
     // <<< MYRA v2.5 [B] END
@@ -427,9 +450,9 @@ return [
     */
 
     'charts' => [
-        'default_type'    => 'bar',
-        'sparkline_points'=> 30,
-        'lazy'            => true,
+        'default_type' => 'bar',
+        'sparkline_points' => 30,
+        'lazy' => true,
     ],
     // <<< MYRA v2.3 [C] END
 
@@ -478,13 +501,13 @@ return [
     */
 
     'report_schedules' => [
-        'max_per_user'      => 20,
-        'max_recipients'    => 25,
+        'max_per_user' => 20,
+        'max_recipients' => 25,
         'pause_after_fails' => 3,
-        'dispatch_limit'    => 200,
-        'dispatch_window'   => 15,
-        'pdf_disk'          => 'local',
-        'pdf_ttl_minutes'   => 60,
+        'dispatch_limit' => 200,
+        'dispatch_window' => 15,
+        'pdf_disk' => 'local',
+        'pdf_ttl_minutes' => 60,
     ],
     // <<< MYRA v2.3 [D] END
 
@@ -550,15 +573,15 @@ return [
 
     'ai' => [
         'features' => [
-            'filter'    => env('MYRA_AI_FILTER', false),
-            'schema'    => env('MYRA_AI_SCHEMA', false),
+            'filter' => env('MYRA_AI_FILTER', false),
+            'schema' => env('MYRA_AI_SCHEMA', false),
             'summarise' => env('MYRA_AI_SUMMARISE', false),
         ],
         // POST admin/ai/assist has no permission gate today. Turning this on
         // adds one; false keeps v2.4.0 behaviour byte-for-byte.
-        'gate_assist'         => env('MYRA_AI_GATE_ASSIST', false),
-        'max_prompt'          => 500,
-        'json_max_bytes'      => 8192,
+        'gate_assist' => env('MYRA_AI_GATE_ASSIST', false),
+        'max_prompt' => 500,
+        'json_max_bytes' => 8192,
         'summary_max_buckets' => 40,
     ],
 

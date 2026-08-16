@@ -5,6 +5,7 @@ import axios from 'axios';
 import { Button } from '@/components/ui/button';
 import BlockViewportBar from '@/components/admin/blocks/BlockViewportBar.vue';
 import { ExternalLink, RefreshCw } from 'lucide-vue-next';
+import { adminPath } from '@/lib/adminPath';
 
 /**
  * The page-builder preview pane.
@@ -34,7 +35,7 @@ const props = withDefaults(
 const { t } = useI18n();
 
 const PREVIEW_ROUTE = 'admin.landing.builder.preview';
-const PREVIEW_PATH = '/admin/landing/builder/preview';
+const previewPath = () => adminPath('landing/builder/preview');
 
 const token = ref('');
 const pending = ref(false);
@@ -60,7 +61,7 @@ function endpoint(): string {
         // Fall through to the literal path.
     }
 
-    return PREVIEW_PATH;
+    return previewPath();
 }
 
 const previewUrl = computed(() => {

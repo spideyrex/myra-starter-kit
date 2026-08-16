@@ -11,6 +11,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { ArrowDown, ArrowUp, ExternalLink, LayoutTemplate } from 'lucide-vue-next';
 import { routeExists } from '@/lib/routeExists';
 import type { TemplateSchema } from '@/types';
+import { adminPath } from '@/lib/adminPath';
 
 const props = defineProps<{
     templates: TemplateSchema[];
@@ -63,7 +64,7 @@ const builderRouteName = computed(() =>
 );
 
 const builderHref = computed(() =>
-    builderRouteName.value ? route(builderRouteName.value) : '/admin/landing/builder',
+    builderRouteName.value ? route(builderRouteName.value) : adminPath('landing/builder'),
 );
 // <<< MYRA v2.7 [D] END
 

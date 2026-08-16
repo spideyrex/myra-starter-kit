@@ -3,6 +3,7 @@
 namespace Tests\Feature\Performance;
 
 use App\Admin\Testing\InteractsWithMyra;
+use App\Support\Myra;
 use Tests\TestCase;
 
 /**
@@ -31,7 +32,7 @@ class CursorPaginationTest extends TestCase
 
     public function test_the_cursor_endpoint_stamps_its_mode_and_omits_the_count(): void
     {
-        $rows = $this->rows('/admin/demo/scale-cursor');
+        $rows = $this->rows(Myra::adminPath('demo/scale-cursor'));
 
         $this->assertSame('cursor', $rows['meta']['mode']);
         $this->assertNotNull($rows['links']['next']);
@@ -43,7 +44,7 @@ class CursorPaginationTest extends TestCase
 
     public function test_the_probe_reads_the_cursor_mode_from_the_real_response(): void
     {
-        $this->myraTable($this->get('/admin/demo/scale-cursor'), 'rows')
+        $this->myraTable($this->get(Myra::adminPath('demo/scale-cursor')), 'rows')
             ->assertPaginationMode('cursor')
             ->assertCountRecords(50)
             ->assertHasNextPage()
@@ -52,14 +53,14 @@ class CursorPaginationTest extends TestCase
 
     public function test_length_aware_responses_carry_no_mode(): void
     {
-        $this->myraTable($this->get('/admin/demo/scale'), 'rows')
+        $this->myraTable($this->get(Myra::adminPath('demo/scale')), 'rows')
             ->assertPaginationMode('length-aware')
             ->assertTotal(250);
     }
 
     public function test_following_the_next_link_yields_a_disjoint_page(): void
     {
-        $first = $this->rows('/admin/demo/scale-cursor');
+        $first = $this->rows(Myra::adminPath('demo/scale-cursor'));
         $second = $this->rows($first['links']['next']);
 
         $firstIds = array_column($first['data'], 'id');
@@ -77,7 +78,7 @@ class CursorPaginationTest extends TestCase
     public function test_a_walk_over_a_non_unique_sort_column_loses_and_repeats_nothing(): void
     {
         $seen = [];
-        $url = '/admin/demo/scale-cursor?sort=status&direction=asc';
+        $url = Myra::adminPath('demo/scale-cursor').'?sort=status&direction=asc';
         $pages = 0;
 
         while ($url !== null && $pages < 20) {
@@ -96,18 +97,18 @@ class CursorPaginationTest extends TestCase
 
     public function test_per_page_is_capped_and_an_unknown_sort_is_ignored(): void
     {
-        $capped = $this->rows('/admin/demo/scale-cursor?per_page=999');
+        $capped = $this->rows(Myra::adminPath('demo/scale-cursor').'?per_page=999');
         $this->assertSame(100, $capped['meta']['per_page']);
 
-        $baseline = array_column($this->rows('/admin/demo/scale-cursor')['data'], 'id');
-        $attempt = array_column($this->rows('/admin/demo/scale-cursor?sort=password')['data'], 'id');
+        $baseline = array_column($this->rows(Myra::adminPath('demo/scale-cursor'))['data'], 'id');
+        $attempt = array_column($this->rows(Myra::adminPath('demo/scale-cursor').'?sort=password')['data'], 'id');
 
         $this->assertSame($baseline, $attempt);
     }
 
     public function test_the_cursor_page_still_respects_the_search_whitelist(): void
     {
-        $rows = $this->rows('/admin/demo/scale-cursor?search=scale7@example.test');
+        $rows = $this->rows(Myra::adminPath('demo/scale-cursor').'?search=scale7@example.test');
 
         $this->assertCount(1, $rows['data']);
         $this->assertSame('scale7@example.test', $rows['data'][0]['email']);

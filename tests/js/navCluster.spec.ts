@@ -52,8 +52,8 @@ describe('server-contributed cluster', () => {
         expect(cluster.href).toBeNull();
         expect(cluster.items.map((c: any) => c.title)).toEqual(['Courses', 'Site Identity']);
         expect(cluster.items.map((c: any) => c.href)).toEqual([
-            '/admin/learning/courses',
-            '/admin/learning/site-identity',
+            '/dashboard/learning/courses',
+            '/dashboard/learning/site-identity',
         ]);
     });
 
@@ -67,16 +67,16 @@ describe('server-contributed cluster', () => {
     it('is open when the current url is one of its children', () => {
         const cluster = hydrateNavItem(serverNav[0].items[0], t);
 
-        expect(isNavItemActive(cluster, '/admin/learning/courses')).toBe(true);
-        expect(isNavItemActive(cluster, '/admin/learning/site-identity')).toBe(true);
-        expect(isNavItemActive(cluster, '/admin/users')).toBe(false);
+        expect(isNavItemActive(cluster, '/dashboard/learning/courses')).toBe(true);
+        expect(isNavItemActive(cluster, '/dashboard/learning/site-identity')).toBe(true);
+        expect(isNavItemActive(cluster, '/dashboard/users')).toBe(false);
     });
 
     it('marks only the matching child active', () => {
         const cluster = hydrateNavItem(serverNav[0].items[0], t);
 
-        expect(isNavItemActive(cluster.items![0], '/admin/learning/courses')).toBe(true);
-        expect(isNavItemActive(cluster.items![1], '/admin/learning/courses')).toBe(false);
+        expect(isNavItemActive(cluster.items![0], '/dashboard/learning/courses')).toBe(true);
+        expect(isNavItemActive(cluster.items![1], '/dashboard/learning/courses')).toBe(false);
     });
 
     it('keeps both children reachable from the command palette', () => {

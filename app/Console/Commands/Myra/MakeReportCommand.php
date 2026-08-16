@@ -35,7 +35,7 @@ class MakeReportCommand extends Command
         }
 
         $this->newLine();
-        $this->components->info("Report '{$key}' scaffolded → /admin/reports/{$key}");
+        $this->components->info("Report '{$key}' scaffolded → ".\App\Support\Myra::adminPath("reports/{$key}"));
         $this->components->bulletList([
             'Every dimension that is not a date MUST declare limit() — an unbounded GROUP BY is a mis-declaration.',
             'Measures are computed by the database. Never post-process rows in PHP.',
@@ -56,7 +56,7 @@ class MakeReportCommand extends Command
             return;
         }
 
-        $anchor = "        // myra:reports — make:myra-report inserts definitions above this line.";
+        $anchor = '        // myra:reports — make:myra-report inserts definitions above this line.';
 
         if (! str_contains($config, $anchor)) {
             $this->components->warn('Anchor not found in config/myra.php; add the definition manually:');
@@ -65,7 +65,7 @@ class MakeReportCommand extends Command
             return;
         }
 
-        file_put_contents($path, str_replace($anchor, $line . "\n" . $anchor, $config));
+        file_put_contents($path, str_replace($anchor, $line."\n".$anchor, $config));
         $this->components->info('config/myra.php updated.');
     }
 

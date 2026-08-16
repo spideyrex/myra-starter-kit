@@ -30,7 +30,7 @@ class MakeImportCommand extends Command
         $this->registerImport($entry, $prefix, $print);
 
         $this->newLine();
-        $this->components->info("Import scaffolded → POST /admin/import/{$prefix}/preview | /validate | /commit");
+        $this->components->info('Import scaffolded → POST '.\App\Support\Myra::adminPath("import/{$prefix}").'/preview | /validate | /commit');
         $this->components->bulletList([
             "Refine the columns, rules and resolveRecord() in app/Admin/Import/{$name}Import.php.",
             'authorizeRow() is mandatory — it runs per record, before any write.',

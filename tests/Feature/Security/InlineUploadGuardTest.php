@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Security;
 
+use App\Support\Myra;
 use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
@@ -34,7 +35,7 @@ class InlineUploadGuardTest extends TestCase
     {
         $this->withoutMiddleware();
 
-        $this->get('/admin/uploads/inline/inline/1/not-a-ulid.png')->assertNotFound();
+        $this->get(Myra::adminPath('uploads/inline/inline/1/not-a-ulid.png'))->assertNotFound();
     }
 
     public function test_an_unauthenticated_request_never_reaches_the_controller(): void

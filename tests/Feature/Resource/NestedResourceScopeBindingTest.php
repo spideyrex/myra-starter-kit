@@ -5,6 +5,7 @@ namespace Tests\Feature\Resource;
 use App\Models\MyraCourse;
 use App\Models\MyraLesson;
 use App\Models\User;
+use App\Support\Myra;
 use Tests\TestCase;
 
 class NestedResourceScopeBindingTest extends TestCase
@@ -53,12 +54,12 @@ class NestedResourceScopeBindingTest extends TestCase
             ->viewData('page')['props'];
 
         $this->assertSame([
-            ['labelKey' => 'clusters.learning.courses.label', 'label' => null, 'href' => '/admin/learning/courses'],
+            ['labelKey' => 'clusters.learning.courses.label', 'label' => null, 'href' => Myra::adminPath('learning/courses')],
             ['labelKey' => null, 'label' => 'First', 'href' => null],
             ['labelKey' => 'clusters.learning.lessons.label', 'label' => null, 'href' => null],
         ], $props['crumbs']);
 
-        $this->assertSame("/admin/learning/courses/{$course->id}/lessons", $props['storeUrl']);
+        $this->assertSame(Myra::adminPath("learning/courses/{$course->id}/lessons"), $props['storeUrl']);
     }
 
     public function test_a_child_of_another_parent_is_a_404(): void

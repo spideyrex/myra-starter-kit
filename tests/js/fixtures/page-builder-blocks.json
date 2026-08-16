@@ -4,12 +4,14 @@
             "data": {
                 "cta_text": "Start now",
                 "cta_url": "/register",
+                "image_path": "",
+                "image_url": null,
                 "subtitle": "Compose the page out of sections.",
                 "title": "Ship faster"
             },
             "id": "row-0",
             "type": "hero",
-            "variant": {}
+            "variant": []
         },
         {
             "data": {
@@ -35,18 +37,18 @@
             },
             "id": "row-1",
             "type": "features",
-            "variant": {}
+            "variant": []
         },
         {
             "data": {
                 "button_text": "Open builder",
-                "button_url": "/admin/landing/builder",
+                "button_url": "/dashboard/landing/builder",
                 "subtitle": "Open the builder.",
                 "title": "Ready when you are"
             },
             "id": "row-2",
             "type": "cta",
-            "variant": {}
+            "variant": []
         }
     ],
     "sectionOrder": [

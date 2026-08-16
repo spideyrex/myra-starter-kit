@@ -17,7 +17,7 @@ class PluginRouteTest extends TestCase
         $route = Route::getRoutes()->getByName('admin.myra-example.ping');
 
         $this->assertNotNull($route, 'The example plugin did not register its route.');
-        $this->assertSame('admin/myra-example/ping', $route->uri());
+        $this->assertSame(ltrim(\App\Support\Myra::adminPath('myra-example/ping'), '/'), $route->uri());
     }
 
     public function test_a_permitted_user_gets_the_real_json_body(): void

@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\BrandController;
 use App\Http\Controllers\BrandAssetController;
 use App\Http\Controllers\BrandManifestController;
+use App\Support\Myra;
 use Illuminate\Support\Facades\Route;
 
 // Public. The manifest route registers regardless of myra.pwa.enabled; without
@@ -24,7 +25,7 @@ Route::get('/brand/icon-{size}.png', [BrandAssetController::class, 'icon'])
     ->name('brand.icon');
 Route::get('/brand/favicon.svg', [BrandAssetController::class, 'favicon'])->name('brand.favicon');
 
-Route::middleware(['auth', 'verified', 'active', '2fa'])->prefix('admin')->name('admin.')->group(function () {
+Route::middleware(['auth', 'verified', 'active', '2fa'])->prefix(Myra::adminPrefix())->name('admin.')->group(function () {
     Route::get('/brand', [BrandController::class, 'index'])->middleware('permission:brand.view')->name('brand.index');
     Route::put('/brand', [BrandController::class, 'update'])->middleware('permission:brand.update')->name('brand.update');
     Route::post('/brand/asset/{slot}', [BrandController::class, 'uploadAsset'])->middleware('permission:brand.update')->name('brand.asset.store');

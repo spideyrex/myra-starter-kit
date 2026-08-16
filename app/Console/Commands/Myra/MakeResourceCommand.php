@@ -95,9 +95,9 @@ class MakeResourceCommand extends Command
 
         $this->newLine();
         if (! $this->option('model')) {
-            $this->components->warn("No model generated. Re-run with --model, or create it yourself using stubs/admin/model.stub.");
+            $this->components->warn('No model generated. Re-run with --model, or create it yourself using stubs/admin/model.stub.');
         }
-        $this->components->info("Resource '{$name}' scaffolded → /admin/{$prefix} under the '{$group}' nav group (run `npm run build`).");
+        $this->components->info("Resource '{$name}' scaffolded → ".\App\Support\Myra::adminPath($prefix)." under the '{$group}' nav group (run `npm run build`).");
 
         return self::SUCCESS;
     }
@@ -155,10 +155,10 @@ class MakeResourceCommand extends Command
             "generated.{$prefix}.searchPlaceholder" => "Search {$lower}...",
             "generated.{$prefix}.section" => "{$singular} details",
             "generated.{$prefix}.createTitle" => "Create {$singular}",
-            "generated.{$prefix}.createDescription" => "Add a new ".Str::lower($singular).'.',
-            "generated.{$prefix}.confirmCreate" => "Create this ".Str::lower($singular)."?",
+            "generated.{$prefix}.createDescription" => 'Add a new '.Str::lower($singular).'.',
+            "generated.{$prefix}.confirmCreate" => 'Create this '.Str::lower($singular).'?',
             "generated.{$prefix}.editTitle" => "Edit {$singular}",
-            "generated.{$prefix}.editDescription" => "Update ".Str::lower($singular).' details.',
+            "generated.{$prefix}.editDescription" => 'Update '.Str::lower($singular).' details.',
             "generated.{$prefix}.confirmUpdate" => 'Save these changes?',
             "generated.{$prefix}.columns.name" => 'Name',
             "generated.{$prefix}.columns.createdAt" => 'Created',

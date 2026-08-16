@@ -35,7 +35,7 @@ class ExamplePlugin extends MyraPlugin
             ->navItems([[
                 'group' => 'navGroups.demo',
                 'labelKey' => 'plugins.example.nav',
-                'href' => '/admin/myra-example',
+                'href' => \App\Support\Myra::adminPath('myra-example'),
                 'icon' => 'Puzzle',
                 'permission' => 'myra-example.view',
                 'sort' => 0,

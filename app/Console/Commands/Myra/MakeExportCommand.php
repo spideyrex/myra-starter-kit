@@ -32,11 +32,11 @@ class MakeExportCommand extends Command
         $this->registerRoute($route, "{$prefix}.export-csv", $print);
 
         $this->newLine();
-        $this->components->info("Export scaffolded → GET /admin/{$prefix}/export-csv");
+        $this->components->info('Export scaffolded → GET '.\App\Support\Myra::adminPath($prefix).'/export-csv');
         $this->components->bulletList([
             "Declare your columns on the ExportDefinition in {$name}ExportController.",
             'Pass the SAME scoped query your index uses — the definition adds columns, never rows.',
-            'Add <ExportDropdown :csv-route="\'admin.' . $prefix . '.export-csv\'" ... /> to your index page.',
+            'Add <ExportDropdown :csv-route="\'admin.'.$prefix.'.export-csv\'" ... /> to your index page.',
         ]);
 
         return self::SUCCESS;

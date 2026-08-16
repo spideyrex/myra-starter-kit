@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\User;
+use App\Support\Myra;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -79,9 +80,9 @@ class InlineUploadTest extends TestCase
         $response->assertOk();
         // One 'inline' segment, not two: the route re-adds the storage prefix.
         $url = (string) $response->json('url');
-        $this->assertStringContainsString('/uploads/inline/' . $user->id . '/', $url);
+        $this->assertStringContainsString('/uploads/inline/'.$user->id.'/', $url);
         $this->assertStringNotContainsString('/uploads/inline/inline/', $url);
-        $this->assertCount(1, Storage::disk('local')->files('inline/' . $user->id));
+        $this->assertCount(1, Storage::disk('local')->files('inline/'.$user->id));
     }
 
     public function test_a_file_that_only_claims_to_be_an_image_is_rejected(): void
@@ -139,11 +140,11 @@ class InlineUploadTest extends TestCase
 
         // The URL carries the path without its storage prefix...
         $this->assertMatchesRegularExpression(
-            '#^' . $owner->id . '/[0-9A-HJKMNP-TV-Z]{26}\.png$#',
+            '#^'.$owner->id.'/[0-9A-HJKMNP-TV-Z]{26}\.png$#',
             $path,
         );
         // ...and still resolves to the exact key on the private disk.
-        $this->assertTrue(Storage::disk('local')->exists('inline/' . $path));
+        $this->assertTrue(Storage::disk('local')->exists('inline/'.$path));
     }
 
     public function test_the_owner_may_read_their_own_upload(): void
@@ -192,6 +193,6 @@ class InlineUploadTest extends TestCase
     {
         $this->actingAsUserWith(['media.view']);
 
-        $this->get('/admin/uploads/inline/' . $path)->assertNotFound();
+        $this->get(Myra::adminPath('uploads/inline/').$path)->assertNotFound();
     }
 }

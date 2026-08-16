@@ -35,7 +35,7 @@ class MakeSettingCommand extends Command
         $this->writeRaw("app/Settings/{$name}Settings.php", $this->settingsClass($name, $group));
 
         // 2. Seeding migration
-        $migration = date('Y_m_d_His') . "_add_{$group}_settings.php";
+        $migration = date('Y_m_d_His')."_add_{$group}_settings.php";
         $this->writeRaw("database/migrations/{$migration}", $this->migration($group));
 
         // 3. Controller
@@ -58,8 +58,8 @@ class MakeSettingCommand extends Command
         $this->registerNav("{$name} Settings", "admin.{$prefix}.index", $icon, "{$prefix}.view", $print);
 
         $this->newLine();
-        $this->components->info("Settings group '{$name}' scaffolded → /admin/{$prefix}");
-        $this->components->warn("Run `php artisan migrate` to seed defaults, then `npm run build`.");
+        $this->components->info("Settings group '{$name}' scaffolded → ".\App\Support\Myra::adminPath($prefix));
+        $this->components->warn('Run `php artisan migrate` to seed defaults, then `npm run build`.');
 
         return self::SUCCESS;
     }

@@ -29,7 +29,8 @@ class MakeComponentCommand extends Command
         $components = config('myra.components', []);
         if (! isset($components[$component])) {
             $this->error("Unknown component '{$component}'.");
-            $this->line('Available: ' . implode(', ', array_keys($components)));
+            $this->line('Available: '.implode(', ', array_keys($components)));
+
             return self::FAILURE;
         }
 
@@ -55,7 +56,7 @@ class MakeComponentCommand extends Command
         $this->registerNav($name, "admin.{$prefix}.index", $icon, "{$prefix}.view", $print);
 
         $this->newLine();
-        $this->components->info("'{$name}' scaffolded from '{$component}' demo → /admin/{$prefix} (run `npm run build`).");
+        $this->components->info("'{$name}' scaffolded from '{$component}' demo → ".\App\Support\Myra::adminPath($prefix).' (run `npm run build`).');
         $this->components->warn('The page ships with sample data — wire it to your model when ready.');
 
         return self::SUCCESS;

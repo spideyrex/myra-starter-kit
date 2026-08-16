@@ -2,24 +2,27 @@
 
 use App\Http\Controllers\Admin\ActivityLogController;
 use App\Http\Controllers\Admin\AdminNotificationController;
-use App\Http\Controllers\Admin\ApiTokenController;
-use App\Http\Controllers\Admin\BackupController;
 use App\Http\Controllers\Admin\AiController;
+use App\Http\Controllers\Admin\ApiTokenController;
+use App\Http\Controllers\Admin\ArticleController;
+use App\Http\Controllers\Admin\BackupController;
+use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\DemoController;
 use App\Http\Controllers\Admin\EmailLogController;
 use App\Http\Controllers\Admin\EmailSettingController;
 use App\Http\Controllers\Admin\EmailTemplateController;
+use App\Http\Controllers\Admin\FirebaseSettingController;
 use App\Http\Controllers\Admin\ImportController;
 use App\Http\Controllers\Admin\InlineUploadController;
 use App\Http\Controllers\Admin\MediaController;
+use App\Http\Controllers\Admin\PageController;
 use App\Http\Controllers\Admin\PermissionController;
 use App\Http\Controllers\Admin\ReportController;
 use App\Http\Controllers\Admin\ReportScheduleController;
 use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Admin\SearchController;
 use App\Http\Controllers\Admin\SettingController;
-use App\Http\Controllers\Admin\FirebaseSettingController;
 use App\Http\Controllers\Admin\SystemHealthController;
 use App\Http\Controllers\Admin\TableViewController;
 use App\Http\Controllers\Admin\UserController;
@@ -28,14 +31,12 @@ use App\Http\Controllers\Auth\TwoFactorController;
 use App\Http\Controllers\FcmTokenController;
 use App\Http\Controllers\HomepageController;
 use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\NotificationPreferenceController;
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PublicArticleController;
 use App\Http\Controllers\PublicPageController;
 use App\Http\Controllers\TeamController;
-use App\Http\Controllers\NotificationPreferenceController;
-use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\Admin\ArticleController;
-use App\Http\Controllers\Admin\CategoryController;
-use App\Http\Controllers\Admin\PageController;
+use App\Support\Myra;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [HomepageController::class, 'index'])->name('home');
@@ -69,9 +70,10 @@ Route::middleware(['auth', 'active', '2fa'])->group(function () {
     // Profile Security
     Route::get('/profile/security', function () {
         $sessions = app(SessionController::class)->index(request());
+
         return inertia('Profile/Security', array_merge($sessions, [
             'twoFactorEnabled' => request()->user()->hasTwoFactorEnabled(),
-            'qrCode' => request()->user()->two_factor_secret && !request()->user()->two_factor_confirmed_at
+            'qrCode' => request()->user()->two_factor_secret && ! request()->user()->two_factor_confirmed_at
                 ? app(TwoFactorController::class)->qrCode(request())->getData(true)
                 : null,
         ]));
@@ -95,7 +97,7 @@ Route::middleware(['auth', 'active', '2fa'])->group(function () {
     Route::put('/notifications/preferences', [NotificationPreferenceController::class, 'update'])->name('notifications.preferences.update');
 
     // Impersonate stop
-    Route::post('/admin/stop-impersonate', [UserController::class, 'stopImpersonate'])->name('admin.stop-impersonate');
+    Route::post(Myra::adminPath('stop-impersonate'), [UserController::class, 'stopImpersonate'])->name('admin.stop-impersonate');
 
     // FCM Tokens
     Route::post('/fcm-tokens', [FcmTokenController::class, 'store'])->name('fcm-tokens.store');
@@ -109,7 +111,7 @@ Route::middleware(['auth', 'active', '2fa'])->group(function () {
 });
 
 // Admin Routes
-Route::middleware(['auth', 'verified', 'active', '2fa'])->prefix('admin')->name('admin.')->group(function () {
+Route::middleware(['auth', 'verified', 'active', '2fa'])->prefix(Myra::adminPrefix())->name('admin.')->group(function () {
     // Users
     Route::get('/users', [UserController::class, 'index'])->middleware('permission:users.view')->name('users.index');
     Route::get('/users/create', [UserController::class, 'create'])->middleware('permission:users.create')->name('users.create');
@@ -304,93 +306,93 @@ Route::middleware(['auth', 'verified', 'active', '2fa'])->prefix('admin')->name(
 
     // Demo / Feature Showcase (all gated by demo.view)
     Route::middleware('permission:demo.view')->group(function () {
-    Route::get('/demo', [DemoController::class, 'index'])->name('demo.index');
-    Route::get('/demo/rich-text-editor', [DemoController::class, 'richTextEditor'])->name('demo.rich-text-editor');
-    Route::get('/demo/repeater-field', [DemoController::class, 'repeaterField'])->name('demo.repeater-field');
-    Route::get('/demo/form-builder', [DemoController::class, 'formBuilder'])->name('demo.form-builder');
-    Route::get('/demo/bulk-actions', [DemoController::class, 'bulkActions'])->name('demo.bulk-actions');
-    Route::post('/demo/bulk-action', [DemoController::class, 'bulkAction'])->name('demo.bulk-action');
-    Route::get('/demo/soft-deletes', [DemoController::class, 'softDeletes'])->name('demo.soft-deletes');
-    Route::post('/demo/soft-deletes/{id}/restore', [DemoController::class, 'demoRestore'])->name('demo.restore');
-    Route::delete('/demo/soft-deletes/{id}/force-delete', [DemoController::class, 'demoForceDelete'])->name('demo.force-delete');
-    Route::delete('/demo/soft-deletes/{id}', [DemoController::class, 'demoSoftDelete'])->name('demo.soft-delete');
-    Route::get('/demo/action-modals', [DemoController::class, 'actionModals'])->name('demo.action-modals');
-    Route::put('/demo/action-modals/{id}', [DemoController::class, 'demoUpdateTask'])->name('demo.update-task');
-    Route::delete('/demo/action-modals/{id}', [DemoController::class, 'demoDeleteTask'])->name('demo.delete-task');
-    Route::post('/demo/action-modals/{id}/replicate', [DemoController::class, 'demoReplicateTask'])->name('demo.replicate-task');
-    Route::post('/demo/action-modals/{id}/archive', [DemoController::class, 'demoArchiveTask'])->name('demo.archive-task');
-    // >>> MYRA v2.2 [C] START
-    Route::get('/demo/import-export', [DemoController::class, 'importExport'])->name('demo.import-export');
-    Route::get('/demo/export-csv', [DemoController::class, 'exportCsv'])->name('demo.export-csv');
-    Route::get('/demo/import-sample', [DemoController::class, 'importSample'])->name('demo.import-sample');
-    // <<< MYRA v2.2 [C] END
-    Route::get('/demo/global-search', [DemoController::class, 'globalSearch'])->name('demo.global-search');
-    // >>> MYRA v2.4 [C] START
-    Route::get('/demo/tenancy', [DemoController::class, 'tenancy'])->name('demo.tenancy');
-    // <<< MYRA v2.4 [C] END
-    // >>> MYRA v2.5 [C] START
-    // ReportDelivery.vue has shipped since v2.3 with no route at all — the
-    // gallery registry makes that drift a failing test, so it gets one here.
-    Route::get('/demo/playground', [DemoController::class, 'playground'])->name('demo.playground');
-    Route::get('/demo/report-delivery', [DemoController::class, 'reportDelivery'])->name('demo.report-delivery');
-    // <<< MYRA v2.5 [C] END
-    // >>> MYRA v2.2 [B] START
-    Route::get('/demo/saved-views', [DemoController::class, 'savedViews'])->name('demo.saved-views');
-    // <<< MYRA v2.2 [B] END
-    // >>> MYRA v2.3 [B] START
-    Route::get('/demo/reports', [DemoController::class, 'reports'])->name('demo.reports');
-    // <<< MYRA v2.3 [B] END
-    // >>> MYRA v2.5 [B] START
-    Route::get('/demo/live-widgets', [DemoController::class, 'liveWidgets'])->name('demo.live-widgets');
-    // <<< MYRA v2.5 [B] END
+        Route::get('/demo', [DemoController::class, 'index'])->name('demo.index');
+        Route::get('/demo/rich-text-editor', [DemoController::class, 'richTextEditor'])->name('demo.rich-text-editor');
+        Route::get('/demo/repeater-field', [DemoController::class, 'repeaterField'])->name('demo.repeater-field');
+        Route::get('/demo/form-builder', [DemoController::class, 'formBuilder'])->name('demo.form-builder');
+        Route::get('/demo/bulk-actions', [DemoController::class, 'bulkActions'])->name('demo.bulk-actions');
+        Route::post('/demo/bulk-action', [DemoController::class, 'bulkAction'])->name('demo.bulk-action');
+        Route::get('/demo/soft-deletes', [DemoController::class, 'softDeletes'])->name('demo.soft-deletes');
+        Route::post('/demo/soft-deletes/{id}/restore', [DemoController::class, 'demoRestore'])->name('demo.restore');
+        Route::delete('/demo/soft-deletes/{id}/force-delete', [DemoController::class, 'demoForceDelete'])->name('demo.force-delete');
+        Route::delete('/demo/soft-deletes/{id}', [DemoController::class, 'demoSoftDelete'])->name('demo.soft-delete');
+        Route::get('/demo/action-modals', [DemoController::class, 'actionModals'])->name('demo.action-modals');
+        Route::put('/demo/action-modals/{id}', [DemoController::class, 'demoUpdateTask'])->name('demo.update-task');
+        Route::delete('/demo/action-modals/{id}', [DemoController::class, 'demoDeleteTask'])->name('demo.delete-task');
+        Route::post('/demo/action-modals/{id}/replicate', [DemoController::class, 'demoReplicateTask'])->name('demo.replicate-task');
+        Route::post('/demo/action-modals/{id}/archive', [DemoController::class, 'demoArchiveTask'])->name('demo.archive-task');
+        // >>> MYRA v2.2 [C] START
+        Route::get('/demo/import-export', [DemoController::class, 'importExport'])->name('demo.import-export');
+        Route::get('/demo/export-csv', [DemoController::class, 'exportCsv'])->name('demo.export-csv');
+        Route::get('/demo/import-sample', [DemoController::class, 'importSample'])->name('demo.import-sample');
+        // <<< MYRA v2.2 [C] END
+        Route::get('/demo/global-search', [DemoController::class, 'globalSearch'])->name('demo.global-search');
+        // >>> MYRA v2.4 [C] START
+        Route::get('/demo/tenancy', [DemoController::class, 'tenancy'])->name('demo.tenancy');
+        // <<< MYRA v2.4 [C] END
+        // >>> MYRA v2.5 [C] START
+        // ReportDelivery.vue has shipped since v2.3 with no route at all — the
+        // gallery registry makes that drift a failing test, so it gets one here.
+        Route::get('/demo/playground', [DemoController::class, 'playground'])->name('demo.playground');
+        Route::get('/demo/report-delivery', [DemoController::class, 'reportDelivery'])->name('demo.report-delivery');
+        // <<< MYRA v2.5 [C] END
+        // >>> MYRA v2.2 [B] START
+        Route::get('/demo/saved-views', [DemoController::class, 'savedViews'])->name('demo.saved-views');
+        // <<< MYRA v2.2 [B] END
+        // >>> MYRA v2.3 [B] START
+        Route::get('/demo/reports', [DemoController::class, 'reports'])->name('demo.reports');
+        // <<< MYRA v2.3 [B] END
+        // >>> MYRA v2.5 [B] START
+        Route::get('/demo/live-widgets', [DemoController::class, 'liveWidgets'])->name('demo.live-widgets');
+        // <<< MYRA v2.5 [B] END
 
-    // Advanced Feature Demos
-    Route::get('/demo/inline-editing', [DemoController::class, 'inlineEditing'])->name('demo.inline-editing');
-    Route::match(['put', 'patch'], '/demo/inline-update/{id}', [DemoController::class, 'demoInlineUpdate'])->name('demo.inline-update');
-    Route::get('/demo/conditional-fields', [DemoController::class, 'conditionalFields'])->name('demo.conditional-fields');
-    Route::get('/demo/infolist', [DemoController::class, 'infolist'])->name('demo.infolist');
-    Route::get('/demo/relation-manager', [DemoController::class, 'relationManager'])->name('demo.relation-manager');
-    // >>> MYRA v2.4 [B] START
-    // Clusters demo: a nested resource (courses → lessons) and a singular
-    // resource (site identity). scopeBindings() turns a child that belongs to a
-    // different parent into a 404 with no controller code at all.
-    Route::get('/learning/courses', [\App\Http\Controllers\Admin\MyraCourseController::class, 'index'])->name('learning.courses.index');
-    Route::get('/learning/courses/{course}/lessons', [\App\Http\Controllers\Admin\MyraLessonController::class, 'index'])
-        ->scopeBindings()->name('learning.courses.lessons.index');
-    Route::post('/learning/courses/{course}/lessons', [\App\Http\Controllers\Admin\MyraLessonController::class, 'store'])
-        ->scopeBindings()->name('learning.courses.lessons.store');
-    Route::delete('/learning/courses/{course}/lessons/{lesson}', [\App\Http\Controllers\Admin\MyraLessonController::class, 'destroy'])
-        ->scopeBindings()->name('learning.courses.lessons.destroy');
-    Route::get('/learning/site-identity', [\App\Http\Controllers\Admin\MyraSiteIdentityController::class, 'show'])->name('learning.site-identity.show');
-    Route::put('/learning/site-identity', [\App\Http\Controllers\Admin\MyraSiteIdentityController::class, 'update'])->name('learning.site-identity.update');
-    // <<< MYRA v2.4 [B] END
-    Route::post('/demo/relation-create', [DemoController::class, 'demoRelationCreate'])->name('demo.relation-create');
-    Route::get('/demo/grouping', [DemoController::class, 'grouping'])->name('demo.grouping');
-    // >>> MYRA v2.4 [D] START
-    Route::get('/demo/scale', [DemoController::class, 'scale'])->name('demo.scale');
-    Route::get('/demo/scale-cursor', [DemoController::class, 'scaleCursor'])->name('demo.scale-cursor');
-    // <<< MYRA v2.4 [D] END
-    // >>> MYRA v2.5 [D] START
-    Route::get('/demo/ai-filter', [DemoController::class, 'aiFilter'])->name('demo.ai-filter');
-    Route::get('/demo/offline-shell', [DemoController::class, 'offlineShell'])->name('demo.offline-shell');
-    // <<< MYRA v2.5 [D] END
-    Route::get('/demo/reordering', [DemoController::class, 'reordering'])->name('demo.reordering');
-    Route::post('/demo/reorder', [DemoController::class, 'demoReorder'])->name('demo.reorder');
-    Route::get('/demo/widgets', [DemoController::class, 'widgets'])->name('demo.widgets');
-    Route::get('/demo/field-types', [DemoController::class, 'fieldTypes'])->name('demo.field-types');
-    // >>> MYRA v2.4 [A] START
-    Route::get('/demo/plugins', [DemoController::class, 'plugins'])->name('demo.plugins');
-    // <<< MYRA v2.4 [A] END
-    // >>> MYRA v2.5 [A] START
-    Route::get('/demo/dashboard-editor', [DemoController::class, 'dashboardEditor'])->name('demo.dashboard-editor');
-    // <<< MYRA v2.5 [A] END
-    Route::get('/demo/code-editor', [DemoController::class, 'codeEditor'])->name('demo.code-editor');
-    Route::get('/demo/advanced-filters', [DemoController::class, 'advancedFilters'])->name('demo.advanced-filters');
-    Route::get('/demo/wizard', [DemoController::class, 'wizardDemo'])->name('demo.wizard');
-    Route::get('/demo/map', [DemoController::class, 'map'])->name('demo.map');
-    // >>> MYRA v2.7 [D] START
-    Route::get('/demo/role-dashboards', [DemoController::class, 'roleDashboards'])->name('demo.role-dashboards');
-    // <<< MYRA v2.7 [D] END
+        // Advanced Feature Demos
+        Route::get('/demo/inline-editing', [DemoController::class, 'inlineEditing'])->name('demo.inline-editing');
+        Route::match(['put', 'patch'], '/demo/inline-update/{id}', [DemoController::class, 'demoInlineUpdate'])->name('demo.inline-update');
+        Route::get('/demo/conditional-fields', [DemoController::class, 'conditionalFields'])->name('demo.conditional-fields');
+        Route::get('/demo/infolist', [DemoController::class, 'infolist'])->name('demo.infolist');
+        Route::get('/demo/relation-manager', [DemoController::class, 'relationManager'])->name('demo.relation-manager');
+        // >>> MYRA v2.4 [B] START
+        // Clusters demo: a nested resource (courses → lessons) and a singular
+        // resource (site identity). scopeBindings() turns a child that belongs to a
+        // different parent into a 404 with no controller code at all.
+        Route::get('/learning/courses', [\App\Http\Controllers\Admin\MyraCourseController::class, 'index'])->name('learning.courses.index');
+        Route::get('/learning/courses/{course}/lessons', [\App\Http\Controllers\Admin\MyraLessonController::class, 'index'])
+            ->scopeBindings()->name('learning.courses.lessons.index');
+        Route::post('/learning/courses/{course}/lessons', [\App\Http\Controllers\Admin\MyraLessonController::class, 'store'])
+            ->scopeBindings()->name('learning.courses.lessons.store');
+        Route::delete('/learning/courses/{course}/lessons/{lesson}', [\App\Http\Controllers\Admin\MyraLessonController::class, 'destroy'])
+            ->scopeBindings()->name('learning.courses.lessons.destroy');
+        Route::get('/learning/site-identity', [\App\Http\Controllers\Admin\MyraSiteIdentityController::class, 'show'])->name('learning.site-identity.show');
+        Route::put('/learning/site-identity', [\App\Http\Controllers\Admin\MyraSiteIdentityController::class, 'update'])->name('learning.site-identity.update');
+        // <<< MYRA v2.4 [B] END
+        Route::post('/demo/relation-create', [DemoController::class, 'demoRelationCreate'])->name('demo.relation-create');
+        Route::get('/demo/grouping', [DemoController::class, 'grouping'])->name('demo.grouping');
+        // >>> MYRA v2.4 [D] START
+        Route::get('/demo/scale', [DemoController::class, 'scale'])->name('demo.scale');
+        Route::get('/demo/scale-cursor', [DemoController::class, 'scaleCursor'])->name('demo.scale-cursor');
+        // <<< MYRA v2.4 [D] END
+        // >>> MYRA v2.5 [D] START
+        Route::get('/demo/ai-filter', [DemoController::class, 'aiFilter'])->name('demo.ai-filter');
+        Route::get('/demo/offline-shell', [DemoController::class, 'offlineShell'])->name('demo.offline-shell');
+        // <<< MYRA v2.5 [D] END
+        Route::get('/demo/reordering', [DemoController::class, 'reordering'])->name('demo.reordering');
+        Route::post('/demo/reorder', [DemoController::class, 'demoReorder'])->name('demo.reorder');
+        Route::get('/demo/widgets', [DemoController::class, 'widgets'])->name('demo.widgets');
+        Route::get('/demo/field-types', [DemoController::class, 'fieldTypes'])->name('demo.field-types');
+        // >>> MYRA v2.4 [A] START
+        Route::get('/demo/plugins', [DemoController::class, 'plugins'])->name('demo.plugins');
+        // <<< MYRA v2.4 [A] END
+        // >>> MYRA v2.5 [A] START
+        Route::get('/demo/dashboard-editor', [DemoController::class, 'dashboardEditor'])->name('demo.dashboard-editor');
+        // <<< MYRA v2.5 [A] END
+        Route::get('/demo/code-editor', [DemoController::class, 'codeEditor'])->name('demo.code-editor');
+        Route::get('/demo/advanced-filters', [DemoController::class, 'advancedFilters'])->name('demo.advanced-filters');
+        Route::get('/demo/wizard', [DemoController::class, 'wizardDemo'])->name('demo.wizard');
+        Route::get('/demo/map', [DemoController::class, 'map'])->name('demo.map');
+        // >>> MYRA v2.7 [D] START
+        Route::get('/demo/role-dashboards', [DemoController::class, 'roleDashboards'])->name('demo.role-dashboards');
+        // <<< MYRA v2.7 [D] END
     }); // end demo group
 
     // >>> MYRA v2.3 [B] START
@@ -460,8 +462,26 @@ require __DIR__.'/myra/pagebuilder-preview.php';
 // Replicates the demo group's middleware rather than editing that block, so
 // this shared file only ever grows at the end.
 Route::middleware(['auth', 'verified', 'active', '2fa', 'permission:demo.view'])
-    ->prefix('admin')->name('admin.')->group(function () {
+    ->prefix(Myra::adminPrefix())->name('admin.')->group(function () {
         Route::get('/demo/page-builder', [\App\Http\Controllers\Admin\ComponentDemoController::class, 'pageBuilder'])
             ->name('demo.page-builder');
     });
 // <<< MYRA v2.7 [D] END
+
+// >>> MYRA v2.8 [PREFIX] START
+// Old /admin/... links keep working after the prefix moved. GET only: a 302
+// turns a POST into a GET, so redirecting writes would silently drop the body.
+// Registered last, and only when the legacy prefix is not the live one.
+if (config('myra.admin.legacy_redirect')) {
+    $legacyPrefix = trim((string) config('myra.admin.legacy_prefix', 'admin'), '/');
+
+    if ($legacyPrefix !== '' && $legacyPrefix !== Myra::adminPrefix()) {
+        Route::get($legacyPrefix.'/{path?}', function (\Illuminate\Http\Request $request, string $path = '') {
+            $target = Myra::adminPath($path);
+            $query = $request->getQueryString();
+
+            return redirect($query === null ? $target : $target.'?'.$query);
+        })->where('path', '.*')->name('myra.admin-legacy');
+    }
+}
+// <<< MYRA v2.8 [PREFIX] END

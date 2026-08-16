@@ -15,6 +15,7 @@ import {
     Quote, Rocket, Search, Settings as SettingsIcon, Shield, Star, TrendingUp, Type, Users, Zap,
 } from 'lucide-vue-next';
 import { routeExists } from '@/lib/routeExists';
+import { adminPath } from '@/lib/adminPath';
 
 /**
  * Bundle D owns the gallery page only. The section schema, the renderer and the
@@ -248,7 +249,7 @@ const builderRouteName = computed(() =>
 );
 
 const builderHref = computed(() =>
-    builderRouteName.value ? route(builderRouteName.value) : '/admin/landing/builder',
+    builderRouteName.value ? route(builderRouteName.value) : adminPath('landing/builder'),
 );
 </script>
 

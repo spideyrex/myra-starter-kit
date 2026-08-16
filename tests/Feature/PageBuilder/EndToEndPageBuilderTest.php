@@ -5,6 +5,7 @@ namespace Tests\Feature\PageBuilder;
 use App\Homepage\Sections\SectionRegistry;
 use App\Homepage\TemplateRegistry;
 use App\Settings\HomepageSettings;
+use App\Support\Myra;
 use Illuminate\Support\Facades\Auth;
 use Tests\TestCase;
 
@@ -144,7 +145,7 @@ class EndToEndPageBuilderTest extends TestCase
                 'title' => 'Ready when you are',
                 'subtitle' => 'Open the builder.',
                 'button_text' => 'Open builder',
-                'button_url' => '/admin/landing/builder',
+                'button_url' => Myra::adminPath('landing/builder'),
             ]),
         ];
 

@@ -12,6 +12,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { ArrowLeft, Check, ShieldCheck, X } from 'lucide-vue-next';
 import { isCacheableRequest, unregisterAppShell } from '@/pwa/register';
 import { useServiceWorker } from '@/composables/useServiceWorker';
+import { adminPath } from '@/lib/adminPath';
 
 defineProps<{ pwaEnabled: boolean }>();
 
@@ -31,13 +32,13 @@ const samples: Sample[] = [
     { label: 'GET /offline.html', method: 'GET', path: '/offline.html' },
     { label: 'GET /manifest.webmanifest', method: 'GET', path: '/manifest.webmanifest' },
     { label: 'GET /favicon.ico', method: 'GET', path: '/favicon.ico' },
-    { label: 'GET /admin/dashboard', method: 'GET', path: '/admin/dashboard' },
-    { label: 'GET /admin/users?page=2', method: 'GET', path: '/admin/users?page=2' },
-    { label: 'GET /admin/dashboard (X-Inertia)', method: 'GET', path: '/admin/dashboard', headers: { 'X-Inertia': 'true' } },
-    { label: 'POST /admin/dashboard/widgets/data', method: 'POST', path: '/admin/dashboard/widgets/data' },
-    { label: 'GET /admin/reports/users/data (JSON)', method: 'GET', path: '/admin/reports/users/data', headers: { Accept: 'application/json' } },
-    { label: 'POST /admin/ai/assist (SSE)', method: 'POST', path: '/admin/ai/assist', headers: { Accept: 'text/event-stream' } },
-    { label: 'GET /admin/search (XHR)', method: 'GET', path: '/admin/search', headers: { 'X-Requested-With': 'XMLHttpRequest' } },
+    { label: `GET ${adminPath('dashboard')}`, method: 'GET', path: adminPath('dashboard') },
+    { label: `GET ${adminPath('users')}?page=2`, method: 'GET', path: `${adminPath('users')}?page=2` },
+    { label: `GET ${adminPath('dashboard')} (X-Inertia)`, method: 'GET', path: adminPath('dashboard'), headers: { 'X-Inertia': 'true' } },
+    { label: `POST ${adminPath('dashboard/widgets/data')}`, method: 'POST', path: adminPath('dashboard/widgets/data') },
+    { label: `GET ${adminPath('reports/users/data')} (JSON)`, method: 'GET', path: adminPath('reports/users/data'), headers: { Accept: 'application/json' } },
+    { label: `POST ${adminPath('ai/assist')} (SSE)`, method: 'POST', path: adminPath('ai/assist'), headers: { Accept: 'text/event-stream' } },
+    { label: `GET ${adminPath('search')} (XHR)`, method: 'GET', path: adminPath('search'), headers: { 'X-Requested-With': 'XMLHttpRequest' } },
     { label: 'GET https://cdn.example.com/a.js', method: 'GET', path: '/a.js', origin: 'https://cdn.example.com' },
 ];
 

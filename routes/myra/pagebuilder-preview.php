@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\LandingPreviewController;
+use App\Support\Myra;
 use Illuminate\Support\Facades\Route;
 
 /**
@@ -9,7 +10,7 @@ use Illuminate\Support\Facades\Route;
  * Mirrors routes/myra/landing.php's middleware stack rather than editing the
  * shared admin group, so routes/web.php carries a single `require`.
  */
-Route::middleware(['auth', 'verified', 'active', '2fa'])->prefix('admin')->name('admin.')->group(function () {
+Route::middleware(['auth', 'verified', 'active', '2fa'])->prefix(Myra::adminPrefix())->name('admin.')->group(function () {
     Route::post('/landing/builder/preview', [LandingPreviewController::class, 'store'])
         ->middleware(['permission:settings.edit', 'throttle:120,1'])
         ->name('landing.builder.preview');

@@ -3,6 +3,7 @@
 namespace Tests\Feature\Performance;
 
 use App\Admin\Testing\InteractsWithMyra;
+use App\Support\Myra;
 use Illuminate\Support\Facades\DB;
 use Tests\TestCase;
 
@@ -32,7 +33,7 @@ class StableSortTest extends TestCase
             }
         });
 
-        $this->get('/admin/demo/scale')->assertSuccessful();
+        $this->get(Myra::adminPath('demo/scale'))->assertSuccessful();
 
         $this->assertNotEmpty($captured, 'The demo issued no select against myra_scale_rows.');
 
@@ -66,10 +67,10 @@ class StableSortTest extends TestCase
     public function test_the_row_set_is_unchanged_either_way(): void
     {
         config(['myra.performance.stable_sort' => false]);
-        $off = $this->myraTable($this->get('/admin/demo/scale'), 'rows')->data();
+        $off = $this->myraTable($this->get(Myra::adminPath('demo/scale')), 'rows')->data();
 
         config(['myra.performance.stable_sort' => true]);
-        $on = $this->myraTable($this->get('/admin/demo/scale'), 'rows')->data();
+        $on = $this->myraTable($this->get(Myra::adminPath('demo/scale')), 'rows')->data();
 
         $this->assertSame(array_column($off, 'id'), array_column($on, 'id'));
     }

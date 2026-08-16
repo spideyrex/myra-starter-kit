@@ -49,13 +49,13 @@
     "links": {
         "first": null,
         "last": null,
-        "next": "http://localhost/admin/demo/scale-cursor?per_page=5&cursor=eyJjcmVhdGVkX2F0IjoiMjAyNi0wMS0wMSAwMDowODowMCIsIm15cmFfc2NhbGVfcm93cy5pZCI6OCwiX3BvaW50c1RvTmV4dEl0ZW1zIjp0cnVlfQ",
+        "next": "http://localhost/dashboard/demo/scale-cursor?per_page=5&cursor=eyJjcmVhdGVkX2F0IjoiMjAyNi0wMS0wMSAwMDowODowMCIsIm15cmFfc2NhbGVfcm93cy5pZCI6OCwiX3BvaW50c1RvTmV4dEl0ZW1zIjp0cnVlfQ",
         "prev": null
     },
     "meta": {
         "mode": "cursor",
         "next_cursor": "eyJjcmVhdGVkX2F0IjoiMjAyNi0wMS0wMSAwMDowODowMCIsIm15cmFfc2NhbGVfcm93cy5pZCI6OCwiX3BvaW50c1RvTmV4dEl0ZW1zIjp0cnVlfQ",
-        "path": "http://localhost/admin/demo/scale-cursor",
+        "path": "http://localhost/dashboard/demo/scale-cursor",
         "per_page": 5,
         "prev_cursor": null
     }

@@ -168,7 +168,7 @@ describe('page builder demo — the page', () => {
         const link = w.findAll('a').find(a => a.text().includes(en.pageBuilder.demo.openBuilder));
 
         expect(link).toBeTruthy();
-        expect(link!.attributes('href')).toBe('/admin/landing/builder');
+        expect(link!.attributes('href')).toBe('/dashboard/landing/builder');
     });
 
     it('ships no hardcoded English — every visible string came from t()', async () => {

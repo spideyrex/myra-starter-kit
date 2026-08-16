@@ -3,6 +3,7 @@
 namespace Tests\Feature\Plugin;
 
 use App\Admin\Plugin\PluginRegistry;
+use App\Support\Myra;
 use Illuminate\Support\Facades\Route;
 use Tests\TestCase;
 
@@ -48,8 +49,8 @@ class PluginNavRendersInertiaTest extends TestCase
                 'application/json',
                 $contentType,
                 "Plugin nav item [{$href}] returns JSON. Inertia rejects a plain-JSON response "
-                . 'and the admin is blocked by an error modal. Point the nav item at a route that '
-                . 'renders an Inertia page and keep JSON routes out of the navigation.',
+                .'and the admin is blocked by an error modal. Point the nav item at a route that '
+                .'renders an Inertia page and keep JSON routes out of the navigation.',
             );
         }
     }
@@ -73,7 +74,7 @@ class PluginNavRendersInertiaTest extends TestCase
             ->flatMap(fn ($manifest) => $manifest->navItemArrays())
             ->pluck('href')->filter()->all();
 
-        $this->assertNotContains('/admin/myra-example/ping', $hrefs,
+        $this->assertNotContains(Myra::adminPath('myra-example/ping'), $hrefs,
             'The plain-JSON ping route must never be a nav target.');
     }
 }

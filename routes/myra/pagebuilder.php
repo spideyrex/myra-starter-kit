@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\PageBuilderController;
+use App\Support\Myra;
 use Illuminate\Support\Facades\Route;
 
 /**
@@ -9,7 +10,7 @@ use Illuminate\Support\Facades\Route;
  * Middleware mirrors routes/myra/landing.php exactly; /admin/landing keeps
  * working unchanged beside it.
  */
-Route::middleware(['auth', 'verified', 'active', '2fa'])->prefix('admin')->name('admin.')->group(function () {
+Route::middleware(['auth', 'verified', 'active', '2fa'])->prefix(Myra::adminPrefix())->name('admin.')->group(function () {
     Route::middleware('permission:settings.edit')->group(function () {
         Route::get('/landing/builder', [PageBuilderController::class, 'index'])->name('landing.builder.index');
         Route::put('/landing/builder', [PageBuilderController::class, 'update'])->name('landing.builder.update');

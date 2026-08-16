@@ -43,7 +43,7 @@ class MakePageCommand extends Command
 
         $translations = [
             "generated.{$prefix}.title" => $label,
-            "generated.{$prefix}.description" => "Manage ".Str::lower($label).'.',
+            "generated.{$prefix}.description" => 'Manage '.Str::lower($label).'.',
         ];
 
         if ($print) {
@@ -73,7 +73,7 @@ class MakePageCommand extends Command
         $this->registerNav($label, "admin.{$prefix}.index", $icon, "{$prefix}.view", false, $group);
 
         $this->newLine();
-        $this->components->info("Page '{$name}' scaffolded → /admin/{$prefix} under the '{$group}' nav group (run `npm run build`).");
+        $this->components->info("Page '{$name}' scaffolded → ".\App\Support\Myra::adminPath($prefix)." under the '{$group}' nav group (run `npm run build`).");
 
         return self::SUCCESS;
     }

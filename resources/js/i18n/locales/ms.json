@@ -1013,7 +1013,7 @@
         "gaps": {
             "title": "Jurang diketahui",
             "calendar": "Tiada blok kalendar Vue di hulu, jadi tiada yang dibawa masuk.",
-            "charts": "Blok carta dibawa masuk sebagai sumber sahaja: ia memerlukan pakej carta unovis dan komponen registri carta, yang kedua-duanya tidak dipasang di sini."
+            "sourceOnly": "Blok yang memerlukan kebergantungan tidak disertakan dalam pemasangan ini ditanda “Sumber sahaja”: pratontonnya ditahan, tetapi sumber yang dibawa masuk adalah lengkap dan dipaparkan sepenuhnya."
         },
         "entries": {
             "sidebar-01": {

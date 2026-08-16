@@ -30,6 +30,9 @@ const category = ref(ALL);
 
 const byKey = computed(() => new Map(props.blocks.map(block => [block.key, block])));
 
+/** The gap notice reads off the payload, so it can never outlive the gap it describes. */
+const hasSourceOnly = computed(() => props.blocks.some(block => block.available === false));
+
 const visible = computed(() =>
     category.value === ALL ? props.blocks : props.blocks.filter(block => block.category === category.value),
 );
@@ -80,7 +83,7 @@ function href(key: string): string | null {
             <AlertTitle>{{ t('blocks.gaps.title') }}</AlertTitle>
             <AlertDescription>
                 <span class="block">{{ t('blocks.gaps.calendar') }}</span>
-                <span class="block">{{ t('blocks.gaps.charts') }}</span>
+                <span v-if="hasSourceOnly" class="block">{{ t('blocks.gaps.sourceOnly') }}</span>
             </AlertDescription>
         </Alert>
 

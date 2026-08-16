@@ -143,7 +143,7 @@ const STATIC = {
         gaps: {
             title: 'Known gaps',
             calendar: 'No Vue calendar block exists upstream, so none is vendored.',
-            charts: 'Chart blocks are vendored as source only: they need the unovis charting packages and the chart registry component, neither of which is installed here.',
+            sourceOnly: 'A block whose dependencies this install does not ship is marked “Source only”: its preview is withheld, but the vendored source is complete and shown in full.',
         },
     },
     ms: {
@@ -178,7 +178,7 @@ const STATIC = {
         gaps: {
             title: 'Jurang diketahui',
             calendar: 'Tiada blok kalendar Vue di hulu, jadi tiada yang dibawa masuk.',
-            charts: 'Blok carta dibawa masuk sebagai sumber sahaja: ia memerlukan pakej carta unovis dan komponen registri carta, yang kedua-duanya tidak dipasang di sini.',
+            sourceOnly: 'Blok yang memerlukan kebergantungan tidak disertakan dalam pemasangan ini ditanda “Sumber sahaja”: pratontonnya ditahan, tetapi sumber yang dibawa masuk adalah lengkap dan dipaparkan sepenuhnya.',
         },
     },
     zh: {
@@ -213,7 +213,7 @@ const STATIC = {
         gaps: {
             title: '已知缺口',
             calendar: '上游没有 Vue 版日历区块，因此未引入。',
-            charts: '图表区块仅引入源码：它们需要 unovis 图表包与 chart 注册表组件，本项目均未安装。',
+            sourceOnly: '依赖本安装未提供的区块会标记为“仅源码”：其预览被暂停，但引入的源码完整并全文显示。',
         },
     },
 };

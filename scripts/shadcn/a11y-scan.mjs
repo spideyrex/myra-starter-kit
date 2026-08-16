@@ -18,6 +18,15 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { parse } from '@vue/compiler-sfc';
 
+/**
+ * R4 applies to things that ARE a form control: the native elements, and the
+ * registry wrappers that render exactly one of them and forward attributes.
+ * The composite <Select> is deliberately absent — it renders no control of its
+ * own, its focusable element is <SelectTrigger>, and naming it there is correct.
+ */
+const NATIVE_CONTROLS = new Set(['input', 'select', 'textarea']);
+const CONTROL_COMPONENTS = new Set(['Input', 'Textarea', 'NativeSelect', 'SidebarInput']);
+
 const ELEMENT = 1;
 const TEXT = 2;
 const INTERPOLATION = 5;
@@ -96,7 +105,7 @@ export function scanTemplate(source) {
         const tabindex = attribute(node, 'tabindex');
         if (tabindex !== null && tabindex !== '__bound__' && Number(tabindex) > 0) broken.add('R3');
 
-        if (['input', 'select', 'textarea'].includes(tag)) {
+        if (NATIVE_CONTROLS.has(node.tag) || CONTROL_COMPONENTS.has(node.tag)) {
             const id = attribute(node, 'id');
             const labelled = (id !== null && id !== '__bound__' && labelTargets.has(id))
                 || attribute(node, 'aria-label') !== null

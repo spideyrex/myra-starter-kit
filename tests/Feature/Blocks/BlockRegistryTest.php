@@ -115,7 +115,11 @@ class BlockRegistryTest extends TestCase
      */
     public function test_no_hardcoded_file_count_is_asserted_anywhere(): void
     {
-        foreach (glob(base_path('tests/Feature/Blocks/*.php')) ?: [] as $file) {
+        $files = glob(base_path('tests/Feature/Blocks/*.php')) ?: [];
+
+        $this->assertNotEmpty($files, 'The meta-guard scanned nothing; it has to read this bundle\'s own tests.');
+
+        foreach ($files as $file) {
             preg_match_all('/assertCount\(\s*(\d+)/', (string) file_get_contents($file), $matches);
 
             foreach ($matches[1] as $literal) {
@@ -136,7 +140,7 @@ class BlockRegistryTest extends TestCase
             'zh' => $this->locale('zh'),
         ];
 
-        $keys = ['blocks.title', 'blocks.description', 'blocks.gaps.calendar', 'blocks.gaps.charts'];
+        $keys = ['blocks.title', 'blocks.description', 'blocks.gaps.calendar', 'blocks.gaps.sourceOnly'];
 
         foreach ($this->entries() as $entry) {
             $keys[] = $entry['titleKey'];
@@ -185,18 +189,21 @@ class BlockRegistryTest extends TestCase
         );
     }
 
-    public function test_preview_response_does_not_set_the_sidebar_state_cookie(): void
+    /**
+     * Neither set nor cleared. withoutCookie() would emit a past-dated
+     * sidebar_state, which the browser honours by DELETING the admin's own
+     * sidebar preference on every preview open.
+     */
+    public function test_the_preview_response_leaves_the_sidebar_state_cookie_alone(): void
     {
         $this->actingAsSuperAdmin();
 
         $key = $this->entries()[0]['key'];
         $response = $this->get(route('admin.blocks.preview', $key))->assertOk();
 
-        $cookie = collect($response->headers->getCookies())->firstWhere('name', 'sidebar_state');
-
-        $this->assertTrue(
-            $cookie === null || $cookie->getExpiresTime() < time(),
-            'The preview must never leave a live sidebar_state cookie behind: the block owns its own provider.',
+        $this->assertNull(
+            collect($response->headers->getCookies())->firstWhere('name', 'sidebar_state'),
+            'The preview must not touch sidebar_state: setting it hijacks the admin shell, clearing it wipes the user preference.',
         );
     }
 

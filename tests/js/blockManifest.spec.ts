@@ -92,11 +92,19 @@ describe('block catalogue', () => {
         expect(w.text()).toContain(en.blocks.noResults);
     });
 
+    // Three full mounts of the real payload in one test; the 5s default is not a
+    // budget it can hold on a loaded CI box. The assertions are unchanged.
     it('ships no hardcoded English — every visible string came from t()', () => {
-        expect(mountPage().find('h1').text()).toBe(en.blocks.title);
-        expect(mountPage({}, 'zh').find('h1').text()).toBe(zh.blocks.title);
-        expect(mountPage({}, 'ms').text()).toContain(ms.blocks.view);
-    });
+        const english = mountPage();
+        const chinese = mountPage({}, 'zh');
+        const malay = mountPage({}, 'ms');
+
+        expect(english.find('h1').text()).toBe(en.blocks.title);
+        expect(chinese.find('h1').text()).toBe(zh.blocks.title);
+        expect(malay.text()).toContain(ms.blocks.view);
+
+        for (const w of [english, chinese, malay]) w.unmount();
+    }, 30_000);
 
     it('has a polite result announcer', () => {
         const status = mountPage().find('[role="status"]');

@@ -13,6 +13,6 @@
   "categoryOrder": ["sidebar", "dashboard", "login", "signup", "otp", "products", "chart"],
   "gaps": {
     "calendar": "https://shadcn-vue.com/api/category/calendar returns an empty block list: no Vue calendar block exists upstream.",
-    "chart": "The block API serves chart blocks with empty file contents; source is recovered from the pinned GitHub ref, but @unovis/vue and the chart registry component are absent from this install."
+    "chart": "The block API serves chart blocks with empty file contents; their source is recovered from the pinned GitHub ref instead."
   }
 }

@@ -401,7 +401,6 @@
             "npmDependencies": [
                 "@dnd-kit/abstract",
                 "@tabler/icons-vue",
-                "@unovis/vue",
                 "dnd-kit-vue"
             ],
             "registryDependencies": [
@@ -424,7 +423,7 @@
                 "dashboard"
             ],
             "titleKey": "blocks.entries.dashboard-01.title",
-            "unavailableReason": "npm: @dnd-kit/abstract, @tabler/icons-vue, @unovis/vue, dnd-kit-vue · registry: chart",
+            "unavailableReason": "npm: @dnd-kit/abstract, @tabler/icons-vue, dnd-kit-vue",
             "viewport": "full"
         },
         {
@@ -644,7 +643,7 @@
             "viewport": "full"
         },
         {
-            "available": false,
+            "available": true,
             "category": "otp",
             "descriptionKey": "blocks.entries.otp-01.description",
             "entryFile": "otp-01/Page.vue",
@@ -662,11 +661,11 @@
                 "otp"
             ],
             "titleKey": "blocks.entries.otp-01.title",
-            "unavailableReason": "registry: input-otp",
+            "unavailableReason": null,
             "viewport": "full"
         },
         {
-            "available": false,
+            "available": true,
             "category": "otp",
             "descriptionKey": "blocks.entries.otp-02.description",
             "entryFile": "otp-02/Page.vue",
@@ -683,11 +682,11 @@
                 "otp"
             ],
             "titleKey": "blocks.entries.otp-02.title",
-            "unavailableReason": "registry: input-otp",
+            "unavailableReason": null,
             "viewport": "full"
         },
         {
-            "available": false,
+            "available": true,
             "category": "otp",
             "descriptionKey": "blocks.entries.otp-03.description",
             "entryFile": "otp-03/Page.vue",
@@ -705,11 +704,11 @@
                 "otp"
             ],
             "titleKey": "blocks.entries.otp-03.title",
-            "unavailableReason": "registry: input-otp",
+            "unavailableReason": null,
             "viewport": "full"
         },
         {
-            "available": false,
+            "available": true,
             "category": "otp",
             "descriptionKey": "blocks.entries.otp-04.description",
             "entryFile": "otp-04/Page.vue",
@@ -727,11 +726,11 @@
                 "otp"
             ],
             "titleKey": "blocks.entries.otp-04.title",
-            "unavailableReason": "registry: input-otp",
+            "unavailableReason": null,
             "viewport": "full"
         },
         {
-            "available": false,
+            "available": true,
             "category": "otp",
             "descriptionKey": "blocks.entries.otp-05.description",
             "entryFile": "otp-05/Page.vue",
@@ -748,7 +747,7 @@
                 "otp"
             ],
             "titleKey": "blocks.entries.otp-05.title",
-            "unavailableReason": "registry: input-otp",
+            "unavailableReason": null,
             "viewport": "full"
         },
         {
@@ -777,14 +776,12 @@
             "viewport": "full"
         },
         {
-            "available": false,
+            "available": true,
             "category": "chart",
             "descriptionKey": "blocks.entries.ChartAreaAxes.description",
             "entryFile": "ChartAreaAxes/Page.vue",
             "key": "ChartAreaAxes",
-            "npmDependencies": [
-                "@unovis/vue"
-            ],
+            "npmDependencies": [],
             "registryDependencies": [
                 "card",
                 "chart"
@@ -795,18 +792,16 @@
                 "chart-area"
             ],
             "titleKey": "blocks.entries.ChartAreaAxes.title",
-            "unavailableReason": "npm: @unovis/vue · registry: chart",
+            "unavailableReason": null,
             "viewport": "768"
         },
         {
-            "available": false,
+            "available": true,
             "category": "chart",
             "descriptionKey": "blocks.entries.ChartAreaGradient.description",
             "entryFile": "ChartAreaGradient/Page.vue",
             "key": "ChartAreaGradient",
-            "npmDependencies": [
-                "@unovis/vue"
-            ],
+            "npmDependencies": [],
             "registryDependencies": [
                 "card",
                 "chart"
@@ -817,18 +812,16 @@
                 "chart-area"
             ],
             "titleKey": "blocks.entries.ChartAreaGradient.title",
-            "unavailableReason": "npm: @unovis/vue · registry: chart",
+            "unavailableReason": null,
             "viewport": "768"
         },
         {
-            "available": false,
+            "available": true,
             "category": "chart",
             "descriptionKey": "blocks.entries.ChartAreaIcons.description",
             "entryFile": "ChartAreaIcons/Page.vue",
             "key": "ChartAreaIcons",
-            "npmDependencies": [
-                "@unovis/vue"
-            ],
+            "npmDependencies": [],
             "registryDependencies": [
                 "card",
                 "chart"
@@ -839,18 +832,16 @@
                 "chart-area"
             ],
             "titleKey": "blocks.entries.ChartAreaIcons.title",
-            "unavailableReason": "npm: @unovis/vue · registry: chart",
+            "unavailableReason": null,
             "viewport": "768"
         },
         {
-            "available": false,
+            "available": true,
             "category": "chart",
             "descriptionKey": "blocks.entries.ChartAreaInteractive.description",
             "entryFile": "ChartAreaInteractive/Page.vue",
             "key": "ChartAreaInteractive",
-            "npmDependencies": [
-                "@unovis/vue"
-            ],
+            "npmDependencies": [],
             "registryDependencies": [
                 "card",
                 "chart",
@@ -862,18 +853,16 @@
                 "chart-area"
             ],
             "titleKey": "blocks.entries.ChartAreaInteractive.title",
-            "unavailableReason": "npm: @unovis/vue · registry: chart",
+            "unavailableReason": null,
             "viewport": "768"
         },
         {
-            "available": false,
+            "available": true,
             "category": "chart",
             "descriptionKey": "blocks.entries.ChartBarDefault.description",
             "entryFile": "ChartBarDefault/Page.vue",
             "key": "ChartBarDefault",
-            "npmDependencies": [
-                "@unovis/vue"
-            ],
+            "npmDependencies": [],
             "registryDependencies": [
                 "card",
                 "chart"
@@ -884,19 +873,16 @@
                 "chart-bar"
             ],
             "titleKey": "blocks.entries.ChartBarDefault.title",
-            "unavailableReason": "npm: @unovis/vue · registry: chart",
+            "unavailableReason": null,
             "viewport": "768"
         },
         {
-            "available": false,
+            "available": true,
             "category": "chart",
             "descriptionKey": "blocks.entries.ChartBarHorizontal.description",
             "entryFile": "ChartBarHorizontal/Page.vue",
             "key": "ChartBarHorizontal",
-            "npmDependencies": [
-                "@unovis/ts",
-                "@unovis/vue"
-            ],
+            "npmDependencies": [],
             "registryDependencies": [
                 "card",
                 "chart"
@@ -907,18 +893,16 @@
                 "chart-bar"
             ],
             "titleKey": "blocks.entries.ChartBarHorizontal.title",
-            "unavailableReason": "npm: @unovis/ts, @unovis/vue · registry: chart",
+            "unavailableReason": null,
             "viewport": "768"
         },
         {
-            "available": false,
+            "available": true,
             "category": "chart",
             "descriptionKey": "blocks.entries.ChartBarInteractive.description",
             "entryFile": "ChartBarInteractive/Page.vue",
             "key": "ChartBarInteractive",
-            "npmDependencies": [
-                "@unovis/vue"
-            ],
+            "npmDependencies": [],
             "registryDependencies": [
                 "card",
                 "chart"
@@ -929,18 +913,16 @@
                 "chart-bar"
             ],
             "titleKey": "blocks.entries.ChartBarInteractive.title",
-            "unavailableReason": "npm: @unovis/vue · registry: chart",
+            "unavailableReason": null,
             "viewport": "768"
         },
         {
-            "available": false,
+            "available": true,
             "category": "chart",
             "descriptionKey": "blocks.entries.ChartBarMultiple.description",
             "entryFile": "ChartBarMultiple/Page.vue",
             "key": "ChartBarMultiple",
-            "npmDependencies": [
-                "@unovis/vue"
-            ],
+            "npmDependencies": [],
             "registryDependencies": [
                 "card",
                 "chart"
@@ -951,19 +933,16 @@
                 "chart-bar"
             ],
             "titleKey": "blocks.entries.ChartBarMultiple.title",
-            "unavailableReason": "npm: @unovis/vue · registry: chart",
+            "unavailableReason": null,
             "viewport": "768"
         },
         {
-            "available": false,
+            "available": true,
             "category": "chart",
             "descriptionKey": "blocks.entries.ChartLineDefault.description",
             "entryFile": "ChartLineDefault/Page.vue",
             "key": "ChartLineDefault",
-            "npmDependencies": [
-                "@unovis/ts",
-                "@unovis/vue"
-            ],
+            "npmDependencies": [],
             "registryDependencies": [
                 "card",
                 "chart"
@@ -974,18 +953,16 @@
                 "chart-line"
             ],
             "titleKey": "blocks.entries.ChartLineDefault.title",
-            "unavailableReason": "npm: @unovis/ts, @unovis/vue · registry: chart",
+            "unavailableReason": null,
             "viewport": "768"
         },
         {
-            "available": false,
+            "available": true,
             "category": "chart",
             "descriptionKey": "blocks.entries.ChartLineInteractive.description",
             "entryFile": "ChartLineInteractive/Page.vue",
             "key": "ChartLineInteractive",
-            "npmDependencies": [
-                "@unovis/vue"
-            ],
+            "npmDependencies": [],
             "registryDependencies": [
                 "card",
                 "chart"
@@ -996,19 +973,16 @@
                 "chart-line"
             ],
             "titleKey": "blocks.entries.ChartLineInteractive.title",
-            "unavailableReason": "npm: @unovis/vue · registry: chart",
+            "unavailableReason": null,
             "viewport": "768"
         },
         {
-            "available": false,
+            "available": true,
             "category": "chart",
             "descriptionKey": "blocks.entries.ChartLineLinear.description",
             "entryFile": "ChartLineLinear/Page.vue",
             "key": "ChartLineLinear",
-            "npmDependencies": [
-                "@unovis/ts",
-                "@unovis/vue"
-            ],
+            "npmDependencies": [],
             "registryDependencies": [
                 "card",
                 "chart"
@@ -1019,19 +993,16 @@
                 "chart-line"
             ],
             "titleKey": "blocks.entries.ChartLineLinear.title",
-            "unavailableReason": "npm: @unovis/ts, @unovis/vue · registry: chart",
+            "unavailableReason": null,
             "viewport": "768"
         },
         {
-            "available": false,
+            "available": true,
             "category": "chart",
             "descriptionKey": "blocks.entries.ChartLineStep.description",
             "entryFile": "ChartLineStep/Page.vue",
             "key": "ChartLineStep",
-            "npmDependencies": [
-                "@unovis/ts",
-                "@unovis/vue"
-            ],
+            "npmDependencies": [],
             "registryDependencies": [
                 "card",
                 "chart"
@@ -1042,19 +1013,16 @@
                 "chart-line"
             ],
             "titleKey": "blocks.entries.ChartLineStep.title",
-            "unavailableReason": "npm: @unovis/ts, @unovis/vue · registry: chart",
+            "unavailableReason": null,
             "viewport": "768"
         },
         {
-            "available": false,
+            "available": true,
             "category": "chart",
             "descriptionKey": "blocks.entries.ChartPieDonut.description",
             "entryFile": "ChartPieDonut/Page.vue",
             "key": "ChartPieDonut",
-            "npmDependencies": [
-                "@unovis/ts",
-                "@unovis/vue"
-            ],
+            "npmDependencies": [],
             "registryDependencies": [
                 "card",
                 "chart"
@@ -1065,19 +1033,16 @@
                 "chart-pie"
             ],
             "titleKey": "blocks.entries.ChartPieDonut.title",
-            "unavailableReason": "npm: @unovis/ts, @unovis/vue · registry: chart",
+            "unavailableReason": null,
             "viewport": "768"
         },
         {
-            "available": false,
+            "available": true,
             "category": "chart",
             "descriptionKey": "blocks.entries.ChartPieDonutText.description",
             "entryFile": "ChartPieDonutText/Page.vue",
             "key": "ChartPieDonutText",
-            "npmDependencies": [
-                "@unovis/ts",
-                "@unovis/vue"
-            ],
+            "npmDependencies": [],
             "registryDependencies": [
                 "card",
                 "chart"
@@ -1088,19 +1053,16 @@
                 "chart-pie"
             ],
             "titleKey": "blocks.entries.ChartPieDonutText.title",
-            "unavailableReason": "npm: @unovis/ts, @unovis/vue · registry: chart",
+            "unavailableReason": null,
             "viewport": "768"
         },
         {
-            "available": false,
+            "available": true,
             "category": "chart",
             "descriptionKey": "blocks.entries.ChartPieSimple.description",
             "entryFile": "ChartPieSimple/Page.vue",
             "key": "ChartPieSimple",
-            "npmDependencies": [
-                "@unovis/ts",
-                "@unovis/vue"
-            ],
+            "npmDependencies": [],
             "registryDependencies": [
                 "card",
                 "chart"
@@ -1111,19 +1073,16 @@
                 "chart-pie"
             ],
             "titleKey": "blocks.entries.ChartPieSimple.title",
-            "unavailableReason": "npm: @unovis/ts, @unovis/vue · registry: chart",
+            "unavailableReason": null,
             "viewport": "768"
         },
         {
-            "available": false,
+            "available": true,
             "category": "chart",
             "descriptionKey": "blocks.entries.ChartPieStacked.description",
             "entryFile": "ChartPieStacked/Page.vue",
             "key": "ChartPieStacked",
-            "npmDependencies": [
-                "@unovis/ts",
-                "@unovis/vue"
-            ],
+            "npmDependencies": [],
             "registryDependencies": [
                 "card",
                 "chart"
@@ -1134,18 +1093,16 @@
                 "chart-pie"
             ],
             "titleKey": "blocks.entries.ChartPieStacked.title",
-            "unavailableReason": "npm: @unovis/ts, @unovis/vue · registry: chart",
+            "unavailableReason": null,
             "viewport": "768"
         },
         {
-            "available": false,
+            "available": true,
             "category": "chart",
             "descriptionKey": "blocks.entries.ChartTooltipDefault.description",
             "entryFile": "ChartTooltipDefault/Page.vue",
             "key": "ChartTooltipDefault",
-            "npmDependencies": [
-                "@unovis/vue"
-            ],
+            "npmDependencies": [],
             "registryDependencies": [
                 "card",
                 "chart"
@@ -1156,18 +1113,16 @@
                 "chart-tooltip"
             ],
             "titleKey": "blocks.entries.ChartTooltipDefault.title",
-            "unavailableReason": "npm: @unovis/vue · registry: chart",
+            "unavailableReason": null,
             "viewport": "768"
         },
         {
-            "available": false,
+            "available": true,
             "category": "chart",
             "descriptionKey": "blocks.entries.ChartTooltipIcons.description",
             "entryFile": "ChartTooltipIcons/Page.vue",
             "key": "ChartTooltipIcons",
-            "npmDependencies": [
-                "@unovis/vue"
-            ],
+            "npmDependencies": [],
             "registryDependencies": [
                 "card",
                 "chart"
@@ -1178,18 +1133,16 @@
                 "chart-tooltip"
             ],
             "titleKey": "blocks.entries.ChartTooltipIcons.title",
-            "unavailableReason": "npm: @unovis/vue · registry: chart",
+            "unavailableReason": null,
             "viewport": "768"
         },
         {
-            "available": false,
+            "available": true,
             "category": "chart",
             "descriptionKey": "blocks.entries.ChartTooltipIndicatorLine.description",
             "entryFile": "ChartTooltipIndicatorLine/Page.vue",
             "key": "ChartTooltipIndicatorLine",
-            "npmDependencies": [
-                "@unovis/vue"
-            ],
+            "npmDependencies": [],
             "registryDependencies": [
                 "card",
                 "chart"
@@ -1200,18 +1153,16 @@
                 "chart-tooltip"
             ],
             "titleKey": "blocks.entries.ChartTooltipIndicatorLine.title",
-            "unavailableReason": "npm: @unovis/vue · registry: chart",
+            "unavailableReason": null,
             "viewport": "768"
         },
         {
-            "available": false,
+            "available": true,
             "category": "chart",
             "descriptionKey": "blocks.entries.ChartTooltipIndicatorNone.description",
             "entryFile": "ChartTooltipIndicatorNone/Page.vue",
             "key": "ChartTooltipIndicatorNone",
-            "npmDependencies": [
-                "@unovis/vue"
-            ],
+            "npmDependencies": [],
             "registryDependencies": [
                 "card",
                 "chart"
@@ -1222,18 +1173,16 @@
                 "chart-tooltip"
             ],
             "titleKey": "blocks.entries.ChartTooltipIndicatorNone.title",
-            "unavailableReason": "npm: @unovis/vue · registry: chart",
+            "unavailableReason": null,
             "viewport": "768"
         },
         {
-            "available": false,
+            "available": true,
             "category": "chart",
             "descriptionKey": "blocks.entries.ChartTooltipLabelCustom.description",
             "entryFile": "ChartTooltipLabelCustom/Page.vue",
             "key": "ChartTooltipLabelCustom",
-            "npmDependencies": [
-                "@unovis/vue"
-            ],
+            "npmDependencies": [],
             "registryDependencies": [
                 "card",
                 "chart"
@@ -1244,18 +1193,16 @@
                 "chart-tooltip"
             ],
             "titleKey": "blocks.entries.ChartTooltipLabelCustom.title",
-            "unavailableReason": "npm: @unovis/vue · registry: chart",
+            "unavailableReason": null,
             "viewport": "768"
         },
         {
-            "available": false,
+            "available": true,
             "category": "chart",
             "descriptionKey": "blocks.entries.ChartTooltipLabelFormatter.description",
             "entryFile": "ChartTooltipLabelFormatter/Page.vue",
             "key": "ChartTooltipLabelFormatter",
-            "npmDependencies": [
-                "@unovis/vue"
-            ],
+            "npmDependencies": [],
             "registryDependencies": [
                 "card",
                 "chart"
@@ -1266,18 +1213,16 @@
                 "chart-tooltip"
             ],
             "titleKey": "blocks.entries.ChartTooltipLabelFormatter.title",
-            "unavailableReason": "npm: @unovis/vue · registry: chart",
+            "unavailableReason": null,
             "viewport": "768"
         },
         {
-            "available": false,
+            "available": true,
             "category": "chart",
             "descriptionKey": "blocks.entries.ChartTooltipLabelNone.description",
             "entryFile": "ChartTooltipLabelNone/Page.vue",
             "key": "ChartTooltipLabelNone",
-            "npmDependencies": [
-                "@unovis/vue"
-            ],
+            "npmDependencies": [],
             "registryDependencies": [
                 "card",
                 "chart"
@@ -1288,7 +1233,7 @@
                 "chart-tooltip"
             ],
             "titleKey": "blocks.entries.ChartTooltipLabelNone.title",
-            "unavailableReason": "npm: @unovis/vue · registry: chart",
+            "unavailableReason": null,
             "viewport": "768"
         }
     ],

@@ -45,6 +45,10 @@ class BlockController extends Controller
      * BARE page: no admin shell. Rendered inside a same-origin iframe because a
      * sidebar block mounts its own SidebarProvider, binds Cmd+B and persists a
      * sidebar_state cookie — inline mounting would hijack the live admin shell.
+     *
+     * The response deliberately touches no cookie. withoutCookie() would not
+     * suppress one: it QUEUES a deletion cookie, so every preview would wipe the
+     * admin's own sidebar preference. The frame shields that name client-side.
      */
     public function preview(Request $request, string $block)
     {
@@ -56,9 +60,7 @@ class BlockController extends Controller
             'block' => $entry->toClientSchema(),
             'dark' => $request->query('dark') === '1',
             'reduced' => $request->query('reduced') === '1',
-        ])
-            ->toResponse($request)
-            ->withoutCookie('sidebar_state');
+        ]);
     }
 
     public function source(Request $request, string $block): JsonResponse

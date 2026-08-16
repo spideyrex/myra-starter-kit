@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { SidebarProps } from "@/components/ui/sidebar"
+import { Plus } from "lucide-vue-next"
 
 import Calendars from './Calendars.vue'
 import DatePicker from './DatePicker.vue'

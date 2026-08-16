@@ -1013,7 +1013,7 @@
         "gaps": {
             "title": "Known gaps",
             "calendar": "No Vue calendar block exists upstream, so none is vendored.",
-            "charts": "Chart blocks are vendored as source only: they need the unovis charting packages and the chart registry component, neither of which is installed here."
+            "sourceOnly": "A block whose dependencies this install does not ship is marked “Source only”: its preview is withheld, but the vendored source is complete and shown in full."
         },
         "entries": {
             "sidebar-01": {

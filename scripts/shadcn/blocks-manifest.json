@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-16T10:44:30.914Z",
+  "generatedAt": "2026-08-16T11:56:29.521Z",
   "source": "https://shadcn-vue.com/api",
   "ref": "dev",
   "blocks": {
@@ -468,7 +468,7 @@
         },
         {
           "path": "resources/js/blocks/sidebar-12/components/AppSidebar.vue",
-          "sha256": "39bf76ad441ee061d59867fb30ebec55bfb951c5017ebe82529141b39fd1271e"
+          "sha256": "7801460677bbc6b4371bc909bba9f6631e7ed64c148a58b18feb9e9022d0af24"
         },
         {
           "path": "resources/js/blocks/sidebar-12/components/Calendars.vue",
@@ -607,7 +607,7 @@
         },
         {
           "path": "resources/js/blocks/sidebar-15/components/SidebarRight.vue",
-          "sha256": "95b9ba58a897124bfc26d925d935902609c596765257e31ec2ec82b67202a50b"
+          "sha256": "c0e4efc755fa3a92c1095dc69d77586008e7065cc14f943f05196c59ce346ed9"
         },
         {
           "path": "resources/js/blocks/sidebar-15/components/TeamSwitcher.vue",
@@ -716,14 +716,11 @@
       "npmDependencies": [
         "@dnd-kit/abstract",
         "@tabler/icons-vue",
-        "@unovis/vue",
         "dnd-kit-vue"
       ],
-      "missingRegistryComponents": [
-        "chart"
-      ],
+      "missingRegistryComponents": [],
       "available": false,
-      "unavailableReason": "npm: @dnd-kit/abstract, @tabler/icons-vue, @unovis/vue, dnd-kit-vue · registry: chart",
+      "unavailableReason": "npm: @dnd-kit/abstract, @tabler/icons-vue, dnd-kit-vue",
       "entryFile": "dashboard-01/Page.vue",
       "tags": [
         "dashboard"
@@ -1090,11 +1087,9 @@
         "input-otp"
       ],
       "npmDependencies": [],
-      "missingRegistryComponents": [
-        "input-otp"
-      ],
-      "available": false,
-      "unavailableReason": "registry: input-otp",
+      "missingRegistryComponents": [],
+      "available": true,
+      "unavailableReason": null,
       "entryFile": "otp-01/Page.vue",
       "tags": [
         "authentication",
@@ -1103,11 +1098,11 @@
       "viewport": "full",
       "files": [
         {
-          "path": "resources/js/blocks/_unavailable/otp-01/Page.vue.txt",
+          "path": "resources/js/blocks/otp-01/Page.vue",
           "sha256": "fd9c7b713088a39f5d0ecb913984761df3465164452335b205384e3c8ea3adb4"
         },
         {
-          "path": "resources/js/blocks/_unavailable/otp-01/components/OTPForm.vue.txt",
+          "path": "resources/js/blocks/otp-01/components/OTPForm.vue",
           "sha256": "d7d572f094a1154d36ccbebbe4c2fbe409b154b0f366c696e53455f5663faafc"
         }
       ]
@@ -1121,11 +1116,9 @@
         "input-otp"
       ],
       "npmDependencies": [],
-      "missingRegistryComponents": [
-        "input-otp"
-      ],
-      "available": false,
-      "unavailableReason": "registry: input-otp",
+      "missingRegistryComponents": [],
+      "available": true,
+      "unavailableReason": null,
       "entryFile": "otp-02/Page.vue",
       "tags": [
         "authentication",
@@ -1134,11 +1127,11 @@
       "viewport": "full",
       "files": [
         {
-          "path": "resources/js/blocks/_unavailable/otp-02/Page.vue.txt",
+          "path": "resources/js/blocks/otp-02/Page.vue",
           "sha256": "11613dc306b3e5a70d7f552ff30c53826a7a730c7a1b77181b124a9eef124b95"
         },
         {
-          "path": "resources/js/blocks/_unavailable/otp-02/components/OTPForm.vue.txt",
+          "path": "resources/js/blocks/otp-02/components/OTPForm.vue",
           "sha256": "abca972d67ebbedf20e4162d3b5fbfb20af9cc96a081e0fc74852db049289f1b"
         }
       ]
@@ -1153,11 +1146,9 @@
         "input-otp"
       ],
       "npmDependencies": [],
-      "missingRegistryComponents": [
-        "input-otp"
-      ],
-      "available": false,
-      "unavailableReason": "registry: input-otp",
+      "missingRegistryComponents": [],
+      "available": true,
+      "unavailableReason": null,
       "entryFile": "otp-03/Page.vue",
       "tags": [
         "authentication",
@@ -1166,11 +1157,11 @@
       "viewport": "full",
       "files": [
         {
-          "path": "resources/js/blocks/_unavailable/otp-03/Page.vue.txt",
+          "path": "resources/js/blocks/otp-03/Page.vue",
           "sha256": "13bce85ca2dc67908f11b049b1f3d803b7f6191ad238c808460c83fa13945934"
         },
         {
-          "path": "resources/js/blocks/_unavailable/otp-03/components/OTPForm.vue.txt",
+          "path": "resources/js/blocks/otp-03/components/OTPForm.vue",
           "sha256": "2c31cace9ad19c8f4a993eb2d03d96e50e2d637659b5e1f6d09242c45df1d003"
         }
       ]
@@ -1185,11 +1176,9 @@
         "input-otp"
       ],
       "npmDependencies": [],
-      "missingRegistryComponents": [
-        "input-otp"
-      ],
-      "available": false,
-      "unavailableReason": "registry: input-otp",
+      "missingRegistryComponents": [],
+      "available": true,
+      "unavailableReason": null,
       "entryFile": "otp-04/Page.vue",
       "tags": [
         "authentication",
@@ -1198,11 +1187,11 @@
       "viewport": "full",
       "files": [
         {
-          "path": "resources/js/blocks/_unavailable/otp-04/Page.vue.txt",
+          "path": "resources/js/blocks/otp-04/Page.vue",
           "sha256": "4ba75aafad136a6951284c1b1f1090645f7866c410541a8ee8de00dd1fc813c1"
         },
         {
-          "path": "resources/js/blocks/_unavailable/otp-04/components/OTPForm.vue.txt",
+          "path": "resources/js/blocks/otp-04/components/OTPForm.vue",
           "sha256": "94363f98868a06a0a01710245a660dbee6a200fc00caebea9f837d981227954a"
         }
       ]
@@ -1216,11 +1205,9 @@
         "input-otp"
       ],
       "npmDependencies": [],
-      "missingRegistryComponents": [
-        "input-otp"
-      ],
-      "available": false,
-      "unavailableReason": "registry: input-otp",
+      "missingRegistryComponents": [],
+      "available": true,
+      "unavailableReason": null,
       "entryFile": "otp-05/Page.vue",
       "tags": [
         "authentication",
@@ -1229,11 +1216,11 @@
       "viewport": "full",
       "files": [
         {
-          "path": "resources/js/blocks/_unavailable/otp-05/Page.vue.txt",
+          "path": "resources/js/blocks/otp-05/Page.vue",
           "sha256": "3ffd5ccc84c38d3f31f9689a6c87b6fe0742574a11ca80c93552d85b50c488c4"
         },
         {
-          "path": "resources/js/blocks/_unavailable/otp-05/components/OTPForm.vue.txt",
+          "path": "resources/js/blocks/otp-05/components/OTPForm.vue",
           "sha256": "2ba611ed404f9a870829aeb8b104250d74a4d9473913fcb86f889420c81583b0"
         }
       ]
@@ -1278,14 +1265,10 @@
         "card",
         "chart"
       ],
-      "npmDependencies": [
-        "@unovis/vue"
-      ],
-      "missingRegistryComponents": [
-        "chart"
-      ],
-      "available": false,
-      "unavailableReason": "npm: @unovis/vue · registry: chart",
+      "npmDependencies": [],
+      "missingRegistryComponents": [],
+      "available": true,
+      "unavailableReason": null,
       "entryFile": "ChartAreaAxes/Page.vue",
       "tags": [
         "chart",
@@ -1294,7 +1277,7 @@
       "viewport": "768",
       "files": [
         {
-          "path": "resources/js/blocks/_unavailable/ChartAreaAxes/Page.vue.txt",
+          "path": "resources/js/blocks/ChartAreaAxes/Page.vue",
           "sha256": "8cf96657bb7da7b0d72fc630d5b0b5467c81f7f9eef686cde57f26837e5e24fc"
         }
       ]
@@ -1306,14 +1289,10 @@
         "card",
         "chart"
       ],
-      "npmDependencies": [
-        "@unovis/vue"
-      ],
-      "missingRegistryComponents": [
-        "chart"
-      ],
-      "available": false,
-      "unavailableReason": "npm: @unovis/vue · registry: chart",
+      "npmDependencies": [],
+      "missingRegistryComponents": [],
+      "available": true,
+      "unavailableReason": null,
       "entryFile": "ChartAreaGradient/Page.vue",
       "tags": [
         "chart",
@@ -1322,7 +1301,7 @@
       "viewport": "768",
       "files": [
         {
-          "path": "resources/js/blocks/_unavailable/ChartAreaGradient/Page.vue.txt",
+          "path": "resources/js/blocks/ChartAreaGradient/Page.vue",
           "sha256": "c5e183de0810dd98131f49a725d4913896b61f73279f261568a836ba68a62a5e"
         }
       ]
@@ -1334,14 +1313,10 @@
         "card",
         "chart"
       ],
-      "npmDependencies": [
-        "@unovis/vue"
-      ],
-      "missingRegistryComponents": [
-        "chart"
-      ],
-      "available": false,
-      "unavailableReason": "npm: @unovis/vue · registry: chart",
+      "npmDependencies": [],
+      "missingRegistryComponents": [],
+      "available": true,
+      "unavailableReason": null,
       "entryFile": "ChartAreaIcons/Page.vue",
       "tags": [
         "chart",
@@ -1350,7 +1325,7 @@
       "viewport": "768",
       "files": [
         {
-          "path": "resources/js/blocks/_unavailable/ChartAreaIcons/Page.vue.txt",
+          "path": "resources/js/blocks/ChartAreaIcons/Page.vue",
           "sha256": "1c2dd34d0613f4bf0019aa52f24e5e8298ab1ef6a09aa761c03f73ab995eba6a"
         }
       ]
@@ -1363,14 +1338,10 @@
         "chart",
         "select"
       ],
-      "npmDependencies": [
-        "@unovis/vue"
-      ],
-      "missingRegistryComponents": [
-        "chart"
-      ],
-      "available": false,
-      "unavailableReason": "npm: @unovis/vue · registry: chart",
+      "npmDependencies": [],
+      "missingRegistryComponents": [],
+      "available": true,
+      "unavailableReason": null,
       "entryFile": "ChartAreaInteractive/Page.vue",
       "tags": [
         "chart",
@@ -1379,7 +1350,7 @@
       "viewport": "768",
       "files": [
         {
-          "path": "resources/js/blocks/_unavailable/ChartAreaInteractive/Page.vue.txt",
+          "path": "resources/js/blocks/ChartAreaInteractive/Page.vue",
           "sha256": "282d1ec899d9c35fd53314d911fc164cf064188892e13fc0fa3de3ad05a186ee"
         }
       ]
@@ -1391,14 +1362,10 @@
         "card",
         "chart"
       ],
-      "npmDependencies": [
-        "@unovis/vue"
-      ],
-      "missingRegistryComponents": [
-        "chart"
-      ],
-      "available": false,
-      "unavailableReason": "npm: @unovis/vue · registry: chart",
+      "npmDependencies": [],
+      "missingRegistryComponents": [],
+      "available": true,
+      "unavailableReason": null,
       "entryFile": "ChartBarDefault/Page.vue",
       "tags": [
         "chart",
@@ -1407,7 +1374,7 @@
       "viewport": "768",
       "files": [
         {
-          "path": "resources/js/blocks/_unavailable/ChartBarDefault/Page.vue.txt",
+          "path": "resources/js/blocks/ChartBarDefault/Page.vue",
           "sha256": "1fc077b010f862246f29f910ca4a592779e62cb8a64d4a5539d07e2eede3dd05"
         }
       ]
@@ -1419,15 +1386,10 @@
         "card",
         "chart"
       ],
-      "npmDependencies": [
-        "@unovis/ts",
-        "@unovis/vue"
-      ],
-      "missingRegistryComponents": [
-        "chart"
-      ],
-      "available": false,
-      "unavailableReason": "npm: @unovis/ts, @unovis/vue · registry: chart",
+      "npmDependencies": [],
+      "missingRegistryComponents": [],
+      "available": true,
+      "unavailableReason": null,
       "entryFile": "ChartBarHorizontal/Page.vue",
       "tags": [
         "chart",
@@ -1436,7 +1398,7 @@
       "viewport": "768",
       "files": [
         {
-          "path": "resources/js/blocks/_unavailable/ChartBarHorizontal/Page.vue.txt",
+          "path": "resources/js/blocks/ChartBarHorizontal/Page.vue",
           "sha256": "39bf0309cc575896c29dd58e80a5b0ee81651d2ae8f66758741284fbac06cbcd"
         }
       ]
@@ -1448,14 +1410,10 @@
         "card",
         "chart"
       ],
-      "npmDependencies": [
-        "@unovis/vue"
-      ],
-      "missingRegistryComponents": [
-        "chart"
-      ],
-      "available": false,
-      "unavailableReason": "npm: @unovis/vue · registry: chart",
+      "npmDependencies": [],
+      "missingRegistryComponents": [],
+      "available": true,
+      "unavailableReason": null,
       "entryFile": "ChartBarInteractive/Page.vue",
       "tags": [
         "chart",
@@ -1464,7 +1422,7 @@
       "viewport": "768",
       "files": [
         {
-          "path": "resources/js/blocks/_unavailable/ChartBarInteractive/Page.vue.txt",
+          "path": "resources/js/blocks/ChartBarInteractive/Page.vue",
           "sha256": "33da2d9a2201bc236c33e6ec05286748888b8e0e6df394bfac0c2f5b824a5856"
         }
       ]
@@ -1476,14 +1434,10 @@
         "card",
         "chart"
       ],
-      "npmDependencies": [
-        "@unovis/vue"
-      ],
-      "missingRegistryComponents": [
-        "chart"
-      ],
-      "available": false,
-      "unavailableReason": "npm: @unovis/vue · registry: chart",
+      "npmDependencies": [],
+      "missingRegistryComponents": [],
+      "available": true,
+      "unavailableReason": null,
       "entryFile": "ChartBarMultiple/Page.vue",
       "tags": [
         "chart",
@@ -1492,7 +1446,7 @@
       "viewport": "768",
       "files": [
         {
-          "path": "resources/js/blocks/_unavailable/ChartBarMultiple/Page.vue.txt",
+          "path": "resources/js/blocks/ChartBarMultiple/Page.vue",
           "sha256": "72fbdce279789e20b93b20c07a761b75ce8aaaadaba8e42b2b0e15c94d43bff0"
         }
       ]
@@ -1504,15 +1458,10 @@
         "card",
         "chart"
       ],
-      "npmDependencies": [
-        "@unovis/ts",
-        "@unovis/vue"
-      ],
-      "missingRegistryComponents": [
-        "chart"
-      ],
-      "available": false,
-      "unavailableReason": "npm: @unovis/ts, @unovis/vue · registry: chart",
+      "npmDependencies": [],
+      "missingRegistryComponents": [],
+      "available": true,
+      "unavailableReason": null,
       "entryFile": "ChartLineDefault/Page.vue",
       "tags": [
         "chart",
@@ -1521,7 +1470,7 @@
       "viewport": "768",
       "files": [
         {
-          "path": "resources/js/blocks/_unavailable/ChartLineDefault/Page.vue.txt",
+          "path": "resources/js/blocks/ChartLineDefault/Page.vue",
           "sha256": "dd5949633251c43a04432e3e1fde8f12ee17419cbd2430a266d78b8ce9210d6f"
         }
       ]
@@ -1533,14 +1482,10 @@
         "card",
         "chart"
       ],
-      "npmDependencies": [
-        "@unovis/vue"
-      ],
-      "missingRegistryComponents": [
-        "chart"
-      ],
-      "available": false,
-      "unavailableReason": "npm: @unovis/vue · registry: chart",
+      "npmDependencies": [],
+      "missingRegistryComponents": [],
+      "available": true,
+      "unavailableReason": null,
       "entryFile": "ChartLineInteractive/Page.vue",
       "tags": [
         "chart",
@@ -1549,7 +1494,7 @@
       "viewport": "768",
       "files": [
         {
-          "path": "resources/js/blocks/_unavailable/ChartLineInteractive/Page.vue.txt",
+          "path": "resources/js/blocks/ChartLineInteractive/Page.vue",
           "sha256": "8f3225cbe0a49e5e536cd53b0847f121687a9f11c02464acd06bc5f6a7cd204b"
         }
       ]
@@ -1561,15 +1506,10 @@
         "card",
         "chart"
       ],
-      "npmDependencies": [
-        "@unovis/ts",
-        "@unovis/vue"
-      ],
-      "missingRegistryComponents": [
-        "chart"
-      ],
-      "available": false,
-      "unavailableReason": "npm: @unovis/ts, @unovis/vue · registry: chart",
+      "npmDependencies": [],
+      "missingRegistryComponents": [],
+      "available": true,
+      "unavailableReason": null,
       "entryFile": "ChartLineLinear/Page.vue",
       "tags": [
         "chart",
@@ -1578,7 +1518,7 @@
       "viewport": "768",
       "files": [
         {
-          "path": "resources/js/blocks/_unavailable/ChartLineLinear/Page.vue.txt",
+          "path": "resources/js/blocks/ChartLineLinear/Page.vue",
           "sha256": "66958d1a2d4da092f8e308aa8671c37e88a05e84d6b1d2c3c2fee69d0c886bd2"
         }
       ]
@@ -1590,15 +1530,10 @@
         "card",
         "chart"
       ],
-      "npmDependencies": [
-        "@unovis/ts",
-        "@unovis/vue"
-      ],
-      "missingRegistryComponents": [
-        "chart"
-      ],
-      "available": false,
-      "unavailableReason": "npm: @unovis/ts, @unovis/vue · registry: chart",
+      "npmDependencies": [],
+      "missingRegistryComponents": [],
+      "available": true,
+      "unavailableReason": null,
       "entryFile": "ChartLineStep/Page.vue",
       "tags": [
         "chart",
@@ -1607,7 +1542,7 @@
       "viewport": "768",
       "files": [
         {
-          "path": "resources/js/blocks/_unavailable/ChartLineStep/Page.vue.txt",
+          "path": "resources/js/blocks/ChartLineStep/Page.vue",
           "sha256": "375c29966a8631a69115eec6da198acfd86ac77b2cfe04bfb015a06111651643"
         }
       ]
@@ -1619,15 +1554,10 @@
         "card",
         "chart"
       ],
-      "npmDependencies": [
-        "@unovis/ts",
-        "@unovis/vue"
-      ],
-      "missingRegistryComponents": [
-        "chart"
-      ],
-      "available": false,
-      "unavailableReason": "npm: @unovis/ts, @unovis/vue · registry: chart",
+      "npmDependencies": [],
+      "missingRegistryComponents": [],
+      "available": true,
+      "unavailableReason": null,
       "entryFile": "ChartPieDonut/Page.vue",
       "tags": [
         "chart",
@@ -1636,7 +1566,7 @@
       "viewport": "768",
       "files": [
         {
-          "path": "resources/js/blocks/_unavailable/ChartPieDonut/Page.vue.txt",
+          "path": "resources/js/blocks/ChartPieDonut/Page.vue",
           "sha256": "5f0e5b1147085bb3d58c8484e75b9fc77529603257c579f2d5c89124d2f0a272"
         }
       ]
@@ -1648,15 +1578,10 @@
         "card",
         "chart"
       ],
-      "npmDependencies": [
-        "@unovis/ts",
-        "@unovis/vue"
-      ],
-      "missingRegistryComponents": [
-        "chart"
-      ],
-      "available": false,
-      "unavailableReason": "npm: @unovis/ts, @unovis/vue · registry: chart",
+      "npmDependencies": [],
+      "missingRegistryComponents": [],
+      "available": true,
+      "unavailableReason": null,
       "entryFile": "ChartPieDonutText/Page.vue",
       "tags": [
         "chart",
@@ -1665,7 +1590,7 @@
       "viewport": "768",
       "files": [
         {
-          "path": "resources/js/blocks/_unavailable/ChartPieDonutText/Page.vue.txt",
+          "path": "resources/js/blocks/ChartPieDonutText/Page.vue",
           "sha256": "4d8e0d8aa781cc952b1fe3e56bca42d05a599c70499a2b6daf30e919bccd654f"
         }
       ]
@@ -1677,15 +1602,10 @@
         "card",
         "chart"
       ],
-      "npmDependencies": [
-        "@unovis/ts",
-        "@unovis/vue"
-      ],
-      "missingRegistryComponents": [
-        "chart"
-      ],
-      "available": false,
-      "unavailableReason": "npm: @unovis/ts, @unovis/vue · registry: chart",
+      "npmDependencies": [],
+      "missingRegistryComponents": [],
+      "available": true,
+      "unavailableReason": null,
       "entryFile": "ChartPieSimple/Page.vue",
       "tags": [
         "chart",
@@ -1694,7 +1614,7 @@
       "viewport": "768",
       "files": [
         {
-          "path": "resources/js/blocks/_unavailable/ChartPieSimple/Page.vue.txt",
+          "path": "resources/js/blocks/ChartPieSimple/Page.vue",
           "sha256": "d018a8119b30ef5ca16a1ef1c32f5b5f89a18dcf3ce602015f4a7c9854b46b44"
         }
       ]
@@ -1706,15 +1626,10 @@
         "card",
         "chart"
       ],
-      "npmDependencies": [
-        "@unovis/ts",
-        "@unovis/vue"
-      ],
-      "missingRegistryComponents": [
-        "chart"
-      ],
-      "available": false,
-      "unavailableReason": "npm: @unovis/ts, @unovis/vue · registry: chart",
+      "npmDependencies": [],
+      "missingRegistryComponents": [],
+      "available": true,
+      "unavailableReason": null,
       "entryFile": "ChartPieStacked/Page.vue",
       "tags": [
         "chart",
@@ -1723,7 +1638,7 @@
       "viewport": "768",
       "files": [
         {
-          "path": "resources/js/blocks/_unavailable/ChartPieStacked/Page.vue.txt",
+          "path": "resources/js/blocks/ChartPieStacked/Page.vue",
           "sha256": "313ec59ee2158fed5d2ca7a4e421ad8c780e28eb59c7a894f473dc34935a1dc1"
         }
       ]
@@ -1735,14 +1650,10 @@
         "card",
         "chart"
       ],
-      "npmDependencies": [
-        "@unovis/vue"
-      ],
-      "missingRegistryComponents": [
-        "chart"
-      ],
-      "available": false,
-      "unavailableReason": "npm: @unovis/vue · registry: chart",
+      "npmDependencies": [],
+      "missingRegistryComponents": [],
+      "available": true,
+      "unavailableReason": null,
       "entryFile": "ChartTooltipDefault/Page.vue",
       "tags": [
         "chart",
@@ -1751,7 +1662,7 @@
       "viewport": "768",
       "files": [
         {
-          "path": "resources/js/blocks/_unavailable/ChartTooltipDefault/Page.vue.txt",
+          "path": "resources/js/blocks/ChartTooltipDefault/Page.vue",
           "sha256": "e9b164167d875fb953d285060a2c4074514eae31c39281c5fff78f8f6d66906d"
         }
       ]
@@ -1763,14 +1674,10 @@
         "card",
         "chart"
       ],
-      "npmDependencies": [
-        "@unovis/vue"
-      ],
-      "missingRegistryComponents": [
-        "chart"
-      ],
-      "available": false,
-      "unavailableReason": "npm: @unovis/vue · registry: chart",
+      "npmDependencies": [],
+      "missingRegistryComponents": [],
+      "available": true,
+      "unavailableReason": null,
       "entryFile": "ChartTooltipIcons/Page.vue",
       "tags": [
         "chart",
@@ -1779,7 +1686,7 @@
       "viewport": "768",
       "files": [
         {
-          "path": "resources/js/blocks/_unavailable/ChartTooltipIcons/Page.vue.txt",
+          "path": "resources/js/blocks/ChartTooltipIcons/Page.vue",
           "sha256": "b1264e966db28cf1328b72ac7f6e904a2b8822022b11f84d087e255fc73c67bb"
         }
       ]
@@ -1791,14 +1698,10 @@
         "card",
         "chart"
       ],
-      "npmDependencies": [
-        "@unovis/vue"
-      ],
-      "missingRegistryComponents": [
-        "chart"
-      ],
-      "available": false,
-      "unavailableReason": "npm: @unovis/vue · registry: chart",
+      "npmDependencies": [],
+      "missingRegistryComponents": [],
+      "available": true,
+      "unavailableReason": null,
       "entryFile": "ChartTooltipIndicatorLine/Page.vue",
       "tags": [
         "chart",
@@ -1807,7 +1710,7 @@
       "viewport": "768",
       "files": [
         {
-          "path": "resources/js/blocks/_unavailable/ChartTooltipIndicatorLine/Page.vue.txt",
+          "path": "resources/js/blocks/ChartTooltipIndicatorLine/Page.vue",
           "sha256": "a08a58f38f64ba3056ded03c3f1699b76c86d91151ec140014a53df8b0387010"
         }
       ]
@@ -1819,14 +1722,10 @@
         "card",
         "chart"
       ],
-      "npmDependencies": [
-        "@unovis/vue"
-      ],
-      "missingRegistryComponents": [
-        "chart"
-      ],
-      "available": false,
-      "unavailableReason": "npm: @unovis/vue · registry: chart",
+      "npmDependencies": [],
+      "missingRegistryComponents": [],
+      "available": true,
+      "unavailableReason": null,
       "entryFile": "ChartTooltipIndicatorNone/Page.vue",
       "tags": [
         "chart",
@@ -1835,7 +1734,7 @@
       "viewport": "768",
       "files": [
         {
-          "path": "resources/js/blocks/_unavailable/ChartTooltipIndicatorNone/Page.vue.txt",
+          "path": "resources/js/blocks/ChartTooltipIndicatorNone/Page.vue",
           "sha256": "76a6faeb1018cea707cf4b349ad8f188ed5a1b7ff87edcbdbc101c762226c417"
         }
       ]
@@ -1847,14 +1746,10 @@
         "card",
         "chart"
       ],
-      "npmDependencies": [
-        "@unovis/vue"
-      ],
-      "missingRegistryComponents": [
-        "chart"
-      ],
-      "available": false,
-      "unavailableReason": "npm: @unovis/vue · registry: chart",
+      "npmDependencies": [],
+      "missingRegistryComponents": [],
+      "available": true,
+      "unavailableReason": null,
       "entryFile": "ChartTooltipLabelCustom/Page.vue",
       "tags": [
         "chart",
@@ -1863,7 +1758,7 @@
       "viewport": "768",
       "files": [
         {
-          "path": "resources/js/blocks/_unavailable/ChartTooltipLabelCustom/Page.vue.txt",
+          "path": "resources/js/blocks/ChartTooltipLabelCustom/Page.vue",
           "sha256": "e628a43d194f8f25730b5ed419b3fd0efdd639ce8866f7a4fe28ae736c6dda47"
         }
       ]
@@ -1875,14 +1770,10 @@
         "card",
         "chart"
       ],
-      "npmDependencies": [
-        "@unovis/vue"
-      ],
-      "missingRegistryComponents": [
-        "chart"
-      ],
-      "available": false,
-      "unavailableReason": "npm: @unovis/vue · registry: chart",
+      "npmDependencies": [],
+      "missingRegistryComponents": [],
+      "available": true,
+      "unavailableReason": null,
       "entryFile": "ChartTooltipLabelFormatter/Page.vue",
       "tags": [
         "chart",
@@ -1891,7 +1782,7 @@
       "viewport": "768",
       "files": [
         {
-          "path": "resources/js/blocks/_unavailable/ChartTooltipLabelFormatter/Page.vue.txt",
+          "path": "resources/js/blocks/ChartTooltipLabelFormatter/Page.vue",
           "sha256": "3a9a2e86d9a8315a117b7498897a28bece33fefad8cfd5ddf7d14fa8e3c1e8dd"
         }
       ]
@@ -1903,14 +1794,10 @@
         "card",
         "chart"
       ],
-      "npmDependencies": [
-        "@unovis/vue"
-      ],
-      "missingRegistryComponents": [
-        "chart"
-      ],
-      "available": false,
-      "unavailableReason": "npm: @unovis/vue · registry: chart",
+      "npmDependencies": [],
+      "missingRegistryComponents": [],
+      "available": true,
+      "unavailableReason": null,
       "entryFile": "ChartTooltipLabelNone/Page.vue",
       "tags": [
         "chart",
@@ -1919,7 +1806,7 @@
       "viewport": "768",
       "files": [
         {
-          "path": "resources/js/blocks/_unavailable/ChartTooltipLabelNone/Page.vue.txt",
+          "path": "resources/js/blocks/ChartTooltipLabelNone/Page.vue",
           "sha256": "09bce6dcff2edf0c2deb117905eb00ab320aaef183b3d4cc9b4fab1024f7806c"
         }
       ]

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, defineAsyncComponent, onMounted, type Component } from 'vue';
+import { computed, defineAsyncComponent, onMounted, onUnmounted, type Component } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from '@/components/ui/empty';
 import { PackageX } from 'lucide-vue-next';
@@ -32,6 +32,33 @@ const loader = computed(() => {
 });
 
 const block = computed(() => (loader.value ? defineAsyncComponent(loader.value) : null));
+
+/**
+ * The frame shares a cookie jar with the live admin. A sidebar block mounts its
+ * own SidebarProvider, which writes sidebar_state at path=/ the moment it is
+ * toggled — that would hand the real admin shell the preview's state. Writes to
+ * that one name are dropped while the frame is mounted; reads and every other
+ * cookie are untouched. Installed here, synchronously, because the block chunk
+ * resolves after setup.
+ */
+const SHIELDED_COOKIE = 'sidebar_state';
+const cookieAccessor = Object.getOwnPropertyDescriptor(Document.prototype, 'cookie');
+const shielded = Boolean(cookieAccessor?.get && cookieAccessor.set);
+
+if (shielded) {
+    Object.defineProperty(document, 'cookie', {
+        configurable: true,
+        get: () => cookieAccessor!.get!.call(document),
+        set: (value: unknown) => {
+            if (String(value).trimStart().startsWith(`${SHIELDED_COOKIE}=`)) return;
+            cookieAccessor!.set!.call(document, value);
+        },
+    });
+}
+
+onUnmounted(() => {
+    if (shielded) Reflect.deleteProperty(document, 'cookie');
+});
 
 // The frame owns its own document, so the theme is applied before the block mounts.
 onMounted(() => {

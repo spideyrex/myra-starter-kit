@@ -2,6 +2,90 @@
 
 All notable changes to the Myra Starter Kit are documented here.
 
+## v2.7.0 — 2026-08 — "Per-role dashboards"
+
+Every role can carry a default dashboard. Users of that role get it automatically, may personalise
+it, and can reset back. **Inert until an admin configures one** — with no rows the dashboard renders
+exactly as before, which is why there is no feature flag.
+
+### Resolution chain
+
+- `role_dashboards` table (role_id cascade-on-delete, dashboard_key, payload) and
+  `roles.priority` — both strictly additive migrations.
+- `App\Models\RoleDashboard`; `App\Models\Role` gains `priority` cast, `dashboards()`
+  and `scopeByPriority()`.
+- `App\Admin\Dashboard\LayoutSource` — the resolution chain: personal layout →
+  highest-priority active role default → today's behaviour. One indexed query,
+  ordering in SQL, no caching, so losing/deactivating/deleting a role corrects
+  itself on the next request.
+- `App\Admin\Dashboard\ResolvedLayout` and the new `dashboardLayoutSource` Inertia
+  prop (`{source, role, hasRoleDefault}`) — always an object, never null.
+- `LayoutResolver::fromPayload()` — THE single per-viewer filter for both tables.
+  A stored role layout is untrusted at render: instances are re-derived through
+  `WidgetInstance` for the VIEWING user and entries are narrowed to keys that
+  viewer may see.
+- `LayoutShape::filter()` — non-throwing read-time sibling of `assert()`.
+- `App\Admin\Dashboard\StaticWidgetRegistry` + `myra.dashboard.static_widgets`
+  (all abilities `null`, so today's behaviour is bit-identical).
+- `App\Admin\Dashboard\RolePrincipal` — answers abilities from a role's own
+  permission set, deliberately bypassing `Gate::before`, so an authoring preview
+  cannot lie to a super-admin.
+- New ability `dashboard.manage-roles` + `RoleDashboardPolicy`; `config/shield.php`
+  now declares the `dashboard` module (repairing existing drift around
+  `dashboard.customise`). Role priorities seeded 50/40/30/20/10.
+
+Inert by default: with `role_dashboards` empty the chain returns `none` and the
+dashboard renders exactly as it did in v2.6.
+
+### Role dashboard authoring
+
+- `GET /admin/role-dashboards` lists every role in priority order with its dashboard state
+  (configured / not configured, widget count, last edited) and Configure / Clear actions.
+- `GET /admin/role-dashboards/{role}/edit` renders the **same** `Dashboard` page through a shared
+  private `DashboardController::render()`, resolved through a `RolePrincipal` for the target role —
+  so the catalogue and the preview are the role's, not the author's, even for a super-admin.
+- `PUT` / `DELETE /admin/role-dashboards/{role}` persist and clear the row. The write path resolves
+  every instance against the target role and filters entries to what that role may see, so a role
+  dashboard cannot be authored containing a widget that role cannot see.
+- `GET /admin/dashboard-catalogue` takes an optional `role` parameter, gated by the new
+  `dashboard.manage-roles` ability. Absent it, behaviour is unchanged.
+- Authoring banner (`role="status"`) states whose dashboard is on screen; nav entry and
+  `roleDashboardAdmin.*` strings in en/ms/zh.
+
+With no `role_dashboards` row, nothing on the dashboard changes.
+
+### Role-default indicator
+
+- Dashboard source badge: the dashboard says whether it is the role default (naming the role) or the viewer's own arrangement. Nothing is rendered when no role dashboard is configured.
+- "Reset to {role} default" — the existing personal-layout DELETE endpoint, correctly labelled. No new endpoint.
+- Role priority ordering on Roles & Permissions: a keyboard- and pointer-operable drag list over the existing `useReorderable` protocol, plus a Priority column and a "Configured" marker per role. `POST /admin/roles/reorder` assigns `priority = (count - index) * 10` in one transaction, super-admin only.
+- `roleDashboard.*` strings in en/ms/zh.
+
+### Fixed
+- `useDashboardLayout` offered "Reset" to every user of a role dashboard: `customised` now follows `dashboardLayoutSource.source === 'personal'` instead of "a payload arrived". With no source prop the v2.6 reading stands.
+- Resetting a layout blanked local state and fought the `watch(saved)` rehydration, leaving the freshly-reset dashboard instantly dirty. Reset now re-derives from the payload the partial reload returned.
+- `save()` and `reset()` reload `dashboardLayoutSource` alongside `dashboardLayout`, so the badge and the reset label cannot go stale.
+
+### Starter dashboards
+
+- **Starter role dashboards** for `super-admin`, `admin`, `manager`, `editor` and `viewer`, seeded
+  explicitly with `php artisan myra:role-dashboards:seed`. Idempotent — an existing role dashboard is
+  never overwritten. Deliberately **not** wired into `DatabaseSeeder`, so an upgrade never rearranges
+  a live deployment's dashboards; a drift test enforces that.
+- Starters are **entries-only** (order, column span, `hidden`) over the six widgets the dashboard page
+  already declares. Every payload is shape-checked and resolved against that role's own permission set
+  before it is written, so a starter naming something the role cannot see fails loudly.
+- Feature gallery entry **Role dashboards** (`admin.demo.role-dashboards`, gated by
+  `dashboard.manage-roles`) explaining the precedence ladder, the resolution chain, role priority and
+  the two render-time security guarantees.
+- `docs/admin-framework/dashboard.md` gains a **Role dashboards** section covering precedence,
+  multi-role priority, the untrusted-payload rule and the seeding workflow.
+
+### Notes
+
+- Hiding a widget in a starter is **tidying, not access control**. Every widget named is something the
+  role could already see, and every widget is still re-filtered for the viewing user on each render.
+
 ## v2.6.2 — 2026-08
 
 ### Fixed

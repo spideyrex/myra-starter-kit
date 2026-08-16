@@ -1,9 +1,12 @@
 <script setup lang="ts">
-import { ref, computed, onBeforeUnmount } from 'vue';
+import { ref, computed, onBeforeUnmount, useSlots, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { router } from '@inertiajs/vue3';
 import { toast } from 'vue-sonner';
-import type { PaginatedData } from '@/types';
+import type { CursorPaginatedData, PaginatedData, TableData } from '@/types';
+// [D] scale
+import { isCursor } from '@/lib/pagination';
+import { useVirtualRows } from '@/composables/useVirtualRows';
 import type { ColumnSchema, FilterSchema, ActionSchema, ActionGroupSchema, BulkActionSchema, RowAction, RowActionsConfig, QueryGroup, QueryRule } from '@/types/admin';
 import { BaseColumn } from '@/composables/useTableSchema';
 import { BaseFilter } from '@/composables/useTableFilters';
@@ -34,7 +37,7 @@ import { Separator } from '@/components/ui/separator';
 import { Search, ChevronUp, ChevronDown, ChevronsUpDown, Check, X, Filter as FilterIcon, GripVertical, ChevronRight, Columns3, CalendarDays, Sparkles, RotateCcw } from 'lucide-vue-next';
 // [B] saved views + column manager
 import { onMounted } from 'vue';
-import { useTableViews, buildTableParams, type TableView } from '@/composables/useTableViews';
+import { useTableViews, buildTableParams, stripVolatile, type TableView } from '@/composables/useTableViews';
 import { useColumnManager } from '@/composables/useColumnManager';
 import TableViewsMenu from '@/components/admin/TableViewsMenu.vue';
 import ColumnManager from '@/components/admin/ColumnManager.vue';
@@ -55,7 +58,7 @@ type BulkActionInput = BulkAction;
 
 const props = withDefaults(defineProps<{
     columns: ColumnInput[];
-    data: PaginatedData<any>;
+    data: TableData<any>;
     searchable?: boolean;
     searchPlaceholder?: string;
     selectable?: boolean;
@@ -78,6 +81,10 @@ const props = withDefaults(defineProps<{
     views?: TableView[];                            // [B]
     columnManager?: boolean | ColumnManagerOptions; // [B]
     canShareViews?: boolean;                        // [B]
+    virtualized?: boolean;                          // [D]
+    rowHeight?: number;                             // [D]
+    viewportHeight?: number;                        // [D]
+    overscan?: number;                              // [D]
 }>(), {
     searchable: true,
     searchPlaceholder: 'Search...',
@@ -89,11 +96,26 @@ const props = withDefaults(defineProps<{
     inlineReloadProps: () => ['flash'],       // [A]
     columnManager: true,                            // [B]
     canShareViews: false,                           // [B]
+    virtualized: false,                             // [D]
+    rowHeight: 44,                                  // [D]
+    viewportHeight: 600,                            // [D]
+    overscan: 8,                                    // [D]
 });
 
 const { can } = usePermissions();
 const { confirm } = useConfirm();
 const { t } = useI18n();
+const slots = useSlots();
+
+// >>> MYRA v2.4 [D] START
+/** An absent meta.mode means length-aware — every pre-2.4 payload lands here. */
+const cursorData = computed<CursorPaginatedData<any> | null>(() =>
+    isCursor(props.data) ? (props.data as CursorPaginatedData<any>) : null,
+);
+const lengthAwareData = computed<PaginatedData<any> | null>(() =>
+    isCursor(props.data) ? null : (props.data as PaginatedData<any>),
+);
+// <<< MYRA v2.4 [D] END
 
 function decodePaginationLabel(label: string): string {
     return label
@@ -417,7 +439,11 @@ onMounted(() => {
     if (!fallback) return;
     if (typeof window === 'undefined') return;
 
-    for (const key of new URLSearchParams(window.location.search).keys()) {
+    // [D] `page` / `cursor` describe a position, not a query — they must not
+    // count as "the URL already carries table params".
+    const stable = stripVolatile(window.location.search, qp);
+
+    for (const key of new URLSearchParams(stable).keys()) {
         if (key.startsWith(qp)) return;
     }
 
@@ -430,7 +456,7 @@ onMounted(() => {
     for (const [key, value] of Object.entries(buildParams())) {
         if (value !== undefined && value !== null && value !== '') next.append(key, String(value));
     }
-    if (next.toString() === new URLSearchParams(window.location.search).toString()) return;
+    if (next.toString() === new URLSearchParams(stable).toString()) return;
 
     router.get(route(props.routeName, props.routeParams), buildParams(), {
         preserveState: true,
@@ -664,9 +690,13 @@ function groupSummaryValue(col: ColumnSchema, rows: any[]): string | number {
 const localRows = ref<any[]>([]);
 const isDragging = ref(false);
 
-if (props.reorderable) {
-    localRows.value = [...props.data.data];
-}
+// [D] Standing bug: the local copy was filled once at setup and never tracked a
+// new page of rows, so reordering silently kept showing page 1.
+watch(
+    () => props.data.data,
+    (rows) => { if (props.reorderable) localRows.value = [...rows]; },
+    { immediate: true },
+);
 
 function handleReorder() {
     if (!props.reorderRoute) return;
@@ -766,7 +796,52 @@ function countRules(group?: QueryGroup): number {
 }
 // <<< MYRA v2.2 [D] END
 
-defineExpose({ selectedIds });
+// >>> MYRA v2.4 [D] START — row virtualisation
+const tableContainer = ref<HTMLElement | null>(null);
+
+/**
+ * Grouping only groups the current page, and an expanded row has no measurable
+ * height — virtualising either would show the wrong rows, so the flag is refused
+ * rather than half-honoured.
+ */
+const virtualBlockedBy = computed<string | null>(() => {
+    if (props.groupBy) return 'groupBy';
+    if (props.reorderable) return 'reorderable';
+    if (slots['expanded-row']) return 'the expanded-row slot';
+    return null;
+});
+
+const useVirtual = computed(() => props.virtualized && virtualBlockedBy.value === null);
+
+const virtualSource = computed<any[]>(() => (props.reorderable ? localRows.value : props.data.data));
+
+const virtual = useVirtualRows<any>({
+    rows: virtualSource,
+    container: tableContainer,
+    enabled: useVirtual,
+    rowHeight: props.rowHeight,
+    viewportHeight: props.viewportHeight,
+    overscan: props.overscan,
+});
+
+const virtualPadTop = virtual.padTop;
+const virtualPadBottom = virtual.padBottom;
+const onVirtualScroll = () => virtual.onScroll();
+
+/** Keyed by row.id, never by index — inline editing keys its in-flight set the same way. */
+const renderRows = computed<any[]>(() =>
+    useVirtual.value ? virtual.windowRows.value : virtualSource.value,
+);
+
+onMounted(() => {
+    if (import.meta.env.DEV && props.virtualized && virtualBlockedBy.value) {
+        console.warn(`[DataTable] virtualized is ignored because ${virtualBlockedBy.value} is in use.`);
+    }
+});
+// <<< MYRA v2.4 [D] END
+
+// captureState is exposed so a test can prove no volatile param is ever persisted. [D]
+defineExpose({ selectedIds, captureState });
 </script>
 
 <template>
@@ -1055,7 +1130,13 @@ defineExpose({ selectedIds });
         </div>
 
         <!-- Table -->
-        <div :class="[stickyHeader ? 'overflow-auto max-h-[600px] rounded-md border' : 'overflow-x-auto rounded-md border']">
+        <div
+            ref="tableContainer"
+            data-slot="table-scroll"
+            :class="[useVirtual || stickyHeader ? 'overflow-auto rounded-md border' : 'overflow-x-auto rounded-md border', !useVirtual && stickyHeader ? 'max-h-[600px]' : '']"
+            :style="useVirtual ? { maxHeight: viewportHeight + 'px' } : undefined"
+            @scroll.passive="onVirtualScroll"
+        >
             <Table>
                 <TableHeader :class="stickyHeader ? 'sticky top-0 z-10 bg-background' : ''">
                     <TableRow>
@@ -1152,7 +1233,10 @@ defineExpose({ selectedIds });
 
                         <!-- Non-grouped rows -->
                         <template v-else>
-                            <template v-for="row in (reorderable ? localRows : data.data)" :key="row.id">
+                            <!-- [D] spacers keep this a real <table>: colgroup widths,
+                                 sticky header and the column manager all keep working -->
+                            <tr v-if="useVirtual && virtualPadTop > 0" :style="{ height: virtualPadTop + 'px' }" aria-hidden="true" />
+                            <template v-for="row in renderRows" :key="row.id">
                                 <TableRow class="transition-colors hover:bg-muted/50 even:bg-muted/20">
                                     <TableCell v-if="reorderable" class="w-10 cursor-grab drag-handle">
                                         <GripVertical class="size-4 text-muted-foreground" />
@@ -1173,6 +1257,7 @@ defineExpose({ selectedIds });
                                 </TableRow>
                                 <slot name="expanded-row" :row="row" />
                             </template>
+                            <tr v-if="useVirtual && virtualPadBottom > 0" :style="{ height: virtualPadBottom + 'px' }" aria-hidden="true" />
                         </template>
 
                         <!-- Summary footer row -->
@@ -1198,14 +1283,14 @@ defineExpose({ selectedIds });
             </Table>
         </div>
 
-        <!-- Pagination -->
-        <div v-if="data.meta.last_page > 1" class="flex flex-col items-center gap-3 sm:flex-row sm:justify-between">
+        <!-- Pagination — length-aware (unchanged) -->
+        <div v-if="lengthAwareData && lengthAwareData.meta.last_page > 1" class="flex flex-col items-center gap-3 sm:flex-row sm:justify-between">
             <p class="text-xs text-muted-foreground sm:text-sm">
-                Showing {{ data.meta.from }}-{{ data.meta.to }} of {{ data.meta.total }}
+                Showing {{ lengthAwareData.meta.from }}-{{ lengthAwareData.meta.to }} of {{ lengthAwareData.meta.total }}
             </p>
             <div class="flex flex-wrap justify-center gap-1">
                 <Button
-                    v-for="link in data.meta.links"
+                    v-for="link in lengthAwareData.meta.links"
                     :key="link.label"
                     variant="outline"
                     size="sm"
@@ -1213,6 +1298,29 @@ defineExpose({ selectedIds });
                     :disabled="!link.url || link.active"
                     @click="goToPage(link.url)"
                 >{{ decodePaginationLabel(link.label) }}</Button>
+            </div>
+        </div>
+
+        <!-- Pagination — cursor [D]. There is no total and no last page by design. -->
+        <div v-else-if="cursorData" class="flex flex-col items-center gap-3 sm:flex-row sm:justify-between">
+            <p class="text-xs text-muted-foreground sm:text-sm">
+                {{ t('scale.showingRows', { n: cursorData.data.length }) }}
+            </p>
+            <div class="flex justify-center gap-1">
+                <Button
+                    variant="outline"
+                    size="sm"
+                    class="h-8 px-3 text-xs sm:text-sm"
+                    :disabled="!cursorData.links.prev"
+                    @click="goToPage(cursorData.links.prev)"
+                >{{ t('common.previous') }}</Button>
+                <Button
+                    variant="outline"
+                    size="sm"
+                    class="h-8 px-3 text-xs sm:text-sm"
+                    :disabled="!cursorData.links.next"
+                    @click="goToPage(cursorData.links.next)"
+                >{{ t('common.next') }}</Button>
             </div>
         </div>
 

@@ -1,0 +1,96 @@
+{
+    "data": [
+        {
+            "amount": 444,
+            "created_at": "2026-01-01T00:12:00.000000Z",
+            "email": "scale12@example.test",
+            "id": 12,
+            "name": "Scale Row 00012",
+            "status": "active",
+            "updated_at": "2026-01-01T00:12:00.000000Z"
+        },
+        {
+            "amount": 407,
+            "created_at": "2026-01-01T00:11:00.000000Z",
+            "email": "scale11@example.test",
+            "id": 11,
+            "name": "Scale Row 00011",
+            "status": "archived",
+            "updated_at": "2026-01-01T00:11:00.000000Z"
+        },
+        {
+            "amount": 370,
+            "created_at": "2026-01-01T00:10:00.000000Z",
+            "email": "scale10@example.test",
+            "id": 10,
+            "name": "Scale Row 00010",
+            "status": "suspended",
+            "updated_at": "2026-01-01T00:10:00.000000Z"
+        },
+        {
+            "amount": 333,
+            "created_at": "2026-01-01T00:09:00.000000Z",
+            "email": "scale9@example.test",
+            "id": 9,
+            "name": "Scale Row 00009",
+            "status": "pending",
+            "updated_at": "2026-01-01T00:09:00.000000Z"
+        },
+        {
+            "amount": 296,
+            "created_at": "2026-01-01T00:08:00.000000Z",
+            "email": "scale8@example.test",
+            "id": 8,
+            "name": "Scale Row 00008",
+            "status": "active",
+            "updated_at": "2026-01-01T00:08:00.000000Z"
+        }
+    ],
+    "links": {
+        "first": "http://localhost/admin/demo/scale?per_page=5&page=1",
+        "last": "http://localhost/admin/demo/scale?per_page=5&page=3",
+        "next": "http://localhost/admin/demo/scale?per_page=5&page=2",
+        "prev": null
+    },
+    "meta": {
+        "current_page": 1,
+        "from": 1,
+        "last_page": 3,
+        "links": [
+            {
+                "active": false,
+                "label": "&laquo; Previous",
+                "page": null,
+                "url": null
+            },
+            {
+                "active": true,
+                "label": "1",
+                "page": 1,
+                "url": "http://localhost/admin/demo/scale?per_page=5&page=1"
+            },
+            {
+                "active": false,
+                "label": "2",
+                "page": 2,
+                "url": "http://localhost/admin/demo/scale?per_page=5&page=2"
+            },
+            {
+                "active": false,
+                "label": "3",
+                "page": 3,
+                "url": "http://localhost/admin/demo/scale?per_page=5&page=3"
+            },
+            {
+                "active": false,
+                "label": "Next &raquo;",
+                "page": 2,
+                "url": "http://localhost/admin/demo/scale?per_page=5&page=2"
+            }
+        ],
+        "path": "http://localhost/admin/demo/scale",
+        "per_page": 5,
+        "to": 5,
+        "total": 12
+    }
+}

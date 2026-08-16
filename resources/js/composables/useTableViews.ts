@@ -5,6 +5,33 @@ import type { SavedView, TableViewPayload } from '@/types/table-views';
 /** Reserved name for a future server-side column-preference record. */
 export const RESERVED_COLUMNS_VIEW = '__columns';
 
+// >>> MYRA v2.4 [D] START
+/**
+ * Params that describe a POSITION, not a QUERY. Never emitted, never persisted,
+ * never compared. `page` already behaved this way; `cursor` joins it — a cursor
+ * saved into table_views.payload would later be replayed against a changed
+ * dataset and silently land the user mid-results.
+ */
+export const VOLATILE_PARAMS = ['page', 'cursor'] as const;
+
+/** Strips volatile params (prefix-aware) from a query string. */
+export function stripVolatile(search: string, queryPrefix = ''): string {
+    const params = new URLSearchParams(search);
+
+    for (const key of VOLATILE_PARAMS) {
+        params.delete(key);
+        if (queryPrefix) params.delete(queryPrefix + key);
+    }
+
+    const qs = params.toString();
+    return qs ? `?${qs}` : '';
+}
+
+function isVolatileParam(key: string, queryPrefix = ''): boolean {
+    return VOLATILE_PARAMS.some(v => key === v || (!!queryPrefix && key === queryPrefix + v));
+}
+// <<< MYRA v2.4 [D] END
+
 /**
  * Stable JSON serialisation with sorted keys and empty values dropped, so two
  * payloads that describe the same table state compare equal regardless of the
@@ -34,7 +61,8 @@ function normalize(value: any): any {
 /**
  * The exact param set a DataTable sends for a given state. Pure — extracted
  * verbatim from the old applyFilters() so the same params drive a live filter
- * change, a replayed saved view and a share link. `page` is never emitted.
+ * change, a replayed saved view and a share link. Neither `page` nor `cursor` is
+ * ever emitted — see VOLATILE_PARAMS.
  */
 export function buildTableParams(state: TableViewPayload, opts: {
     queryPrefix?: string;
@@ -47,7 +75,7 @@ export function buildTableParams(state: TableViewPayload, opts: {
 
     if (qp && opts.currentSearch) {
         new URLSearchParams(opts.currentSearch).forEach((val, key) => {
-            if (!key.startsWith(qp)) params[key] = val;
+            if (!key.startsWith(qp) && !isVolatileParam(key)) params[key] = val;
         });
     }
 

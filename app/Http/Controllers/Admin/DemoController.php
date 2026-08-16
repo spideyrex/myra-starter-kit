@@ -44,6 +44,66 @@ class DemoController extends Controller
         return Inertia::render('Admin/Demo/RepeaterField');
     }
 
+    // >>> MYRA v2.4 [D] START
+    use \App\Admin\Traits\CursorPaginatedQuery;
+
+    /** Length-aware over a real table, virtualised on the client. */
+    public function scale(Request $request)
+    {
+        $rows = $this->applySearchAndPaginate(
+            \App\Models\MyraScaleRow::query(),
+            $request,
+            searchable: ['name', 'email'],
+            defaultSort: 'created_at',
+            defaultDir: 'desc',
+            // 100 is the hard cap applySearchAndPaginate enforces; asking for more
+            // would be silently clamped and the page would lie about its page size.
+            perPage: 100,
+            sortable: ['id', 'name', 'status', 'amount', 'created_at'],
+        );
+
+        return Inertia::render('Admin/Demo/Scale', $this->scaleProps(
+            \Illuminate\Http\Resources\Json\JsonResource::collection($rows),
+            $request,
+        ));
+    }
+
+    /** The SAME dataset, walked by cursor: no OFFSET, no COUNT(*). */
+    public function scaleCursor(Request $request)
+    {
+        $rows = $this->applySearchAndCursorPaginate(
+            \App\Models\MyraScaleRow::query(),
+            $request,
+            searchable: ['name', 'email'],
+            defaultSort: 'created_at',
+            defaultDir: 'desc',
+            perPage: 50,
+            sortable: ['id', 'name', 'status', 'amount', 'created_at'],
+        );
+
+        return Inertia::render('Admin/Demo/Scale', $this->scaleProps(
+            \App\Admin\Http\PaginatorShape::cursor($rows),
+            $request,
+        ));
+    }
+
+    private function scaleProps(mixed $rows, Request $request): array
+    {
+        return [
+            'rows' => $rows,
+            'filters' => (object) $request->only('search', 'sort', 'direction', 'per_page'),
+            'total' => \App\Models\MyraScaleRow::query()->count(),
+            'perf' => [
+                'virtualizeAbove' => (int) config('myra.performance.virtualize_above', 200),
+                'rowHeight' => (int) config('myra.performance.row_height', 44),
+                'viewportHeight' => (int) config('myra.performance.viewport_height', 600),
+                'overscan' => (int) config('myra.performance.overscan', 8),
+                'stableSort' => (bool) config('myra.performance.stable_sort', false),
+            ],
+        ];
+    }
+    // <<< MYRA v2.4 [D] END
+
     public function formBuilder()
     {
         return Inertia::render('Admin/Demo/FormBuilder');

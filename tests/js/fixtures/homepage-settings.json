@@ -106,7 +106,7 @@
             "cta"
         ],
         "template": "classic",
-        "template_options": {},
+        "template_options": [],
         "testimonials": [
             {
                 "name": "Sarah Chen",

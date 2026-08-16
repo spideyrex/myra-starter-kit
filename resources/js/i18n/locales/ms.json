@@ -756,6 +756,32 @@
         "failClosedTitle": "Gagal tertutup",
         "failClosedBody": "Apabila skop aktif dan tiada penyewa diselesaikan, predikat menjadi 1 = 0. Tiada penyewa bermakna tiada baris, bukan semua baris."
     },
+    "roleDashboard": {
+        "source": {
+            "role": "Lalai peranan · {role}",
+            "personal": "Susun atur anda"
+        },
+        "resetToRole": "Set semula kepada lalai {role}",
+        "resetToRoleConfirm": "Ini membuang susunan anda sendiri dan memulihkan lalai {role}. Widget yang anda tambah akan dibuang.",
+        "configure": "Papan pemuka",
+        "configureRole": "Konfigur papan pemuka {role}",
+        "configured": "Dikonfigur",
+        "notConfigured": "Belum dikonfigur",
+        "priority": {
+            "column": "Keutamaan",
+            "title": "Keutamaan peranan",
+            "description": "Pengguna yang memegang beberapa peranan mendapat papan pemuka peranan berkeutamaan tertinggi. Seret peranan untuk menyusun semula — tertinggi dahulu.",
+            "save": "Simpan susunan",
+            "saving": "Menyimpan…",
+            "reset": "Buang perubahan"
+        },
+        "a11y": {
+            "roledescription": "Peranan boleh susun",
+            "instructions": "Tekan Space untuk mengangkat peranan, kemudian gunakan kekunci anak panah untuk menggerakkannya. Tekan Space sekali lagi untuk melepaskannya, Home atau End untuk memindahkannya ke permulaan atau penghujung, atau Escape untuk membatalkan.",
+            "position": "{label}, keutamaan {index} daripada {total}.",
+            "grabHandle": "Susun semula {label}"
+        }
+    },
     "dashboardLayout": {
         "saved": "Susun atur papan pemuka disimpan.",
         "reset": "Set semula",

@@ -22,6 +22,9 @@ import type { ReportResultPayload, ReportState } from '@/components/admin/charts
 import { useDashboardLayout } from '@/composables/useDashboardLayout';
 import { useInstanceResults } from '@/composables/useInstanceResults';
 // <<< MYRA v2.5 [A] END
+// >>> MYRA v2.7 [C] START
+import type { DashboardLayoutSource } from '@/composables/useDashboardLayout';
+// <<< MYRA v2.7 [C] END
 
 const page = usePage<PageProps>();
 const { t, locale } = useI18n();
@@ -125,6 +128,14 @@ const DashboardEditorBar = defineAsyncComponent(() => import('@/components/admin
 
 const canCustomise = computed(() => (page.props as any).canCustomiseDashboard === true);
 
+// >>> MYRA v2.7 [C] START
+// Whose layout is on screen, and (on the authoring path) which role it is being
+// authored for. Both absent on a stock install: the composable then behaves
+// exactly as it did in v2.6.
+const layoutSource = computed<DashboardLayoutSource | null>(() => (page.props as any).dashboardLayoutSource ?? null);
+const authoringRole = computed<{ id: number; name: string } | null>(() => (page.props as any).dashboardAuthoringRole ?? null);
+// <<< MYRA v2.7 [C] END
+
 const dashboard = useDashboardLayout({
     dashboard: 'admin.dashboard',
     declared: () => [...statWidgets.value, ...chartWidgets.value],
@@ -132,11 +143,10 @@ const dashboard = useDashboardLayout({
     catalogue: () => (page.props as any).dashboardCatalogue ?? [],
     editable: canCustomise,
     t: (key, params) => t(key, (params ?? {}) as any),
-    // >>> MYRA v2.7 [B] START
-    // Spread so the option is optional at type level until C declares it; the
-    // composable switches its save/reset URLs to the role endpoints on it.
-    ...({ authoringRole: () => (page.props as any).dashboardAuthoringRole ?? null } as any),
-    // <<< MYRA v2.7 [B] END
+    // >>> MYRA v2.7 [C] START
+    source: layoutSource,
+    authoringRole,
+    // <<< MYRA v2.7 [C] END
 });
 
 // A saved layout is honoured even with editing turned off — the flag hides the
@@ -257,10 +267,9 @@ function getInitials(name: string): string {
 // Authoring a ROLE's dashboard renders this very page, resolved through that
 // role's eyes. Null on the real dashboard, so everything below is inert there.
 const RoleAuthoringBanner = defineAsyncComponent(() => import('@/components/admin/RoleAuthoringBanner.vue'));
+const DashboardSourceBadge = defineAsyncComponent(() => import('@/components/admin/DashboardSourceBadge.vue'));
 
-const authoringRole = computed<{ id: number; name: string } | null>(
-    () => (page.props as any).dashboardAuthoringRole ?? null,
-);
+// authoringRole is declared once above, alongside layoutSource.
 
 const roleDashboardsHref = computed<string | null>(() => (
     (route as any)().has('admin.role-dashboards.index') ? route('admin.role-dashboards.index') : null
@@ -312,6 +321,15 @@ const quickActions = computed(() => [
                 </div>
             </div>
 
+            <!--
+                The badge lives outside the editor bar on purpose: a user who
+                cannot customise still needs to know the layout they are looking
+                at came from their role, and the bar is gated on canCustomise.
+            -->
+            <div v-if="!canCustomise && layoutSource?.source === 'role'" class="mb-4 flex">
+                <DashboardSourceBadge :source="layoutSource" />
+            </div>
+
             <!-- >>> MYRA v2.7 [B] START -->
             <RoleAuthoringBanner
                 v-if="authoringRole"
@@ -331,6 +349,8 @@ const quickActions = computed(() => [
                 :catalogue="(page.props as any).dashboardCatalogue ?? []"
                 :used="dashboard.usedCatalogueKeys.value"
                 :hidden="dashboard.hidden.value"
+                :source="layoutSource"
+                :role-default="dashboard.roleDefault.value"
                 @update:editing="dashboard.editing.value = $event"
                 @add="(key: string, binding: any) => dashboard.addInstance(key, binding)"
                 @restore="dashboard.toggleHidden($event)"

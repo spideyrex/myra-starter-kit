@@ -31,7 +31,11 @@ class RoleDashboardControllerTest extends TestCase
         config(['myra.dashboard.catalogue' => [], 'myra.dashboard.editable' => true]);
         WidgetCatalogue::flush();
 
+        // Gated on purpose: the whole point of these tests is that a viewer
+        // cannot see it while a manager can. Registered ungated it was visible
+        // to everyone, which contradicted the assertions below.
         WidgetCatalogue::add(CatalogueWidget::chart('trend')
+            ->permission('reports.view')
             ->titleKey('dashboardLayout.demo.trendTitle')
             ->report('users')
             ->dimensions(['created_at', 'status'])

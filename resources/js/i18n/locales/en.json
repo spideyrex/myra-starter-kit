@@ -756,6 +756,32 @@
         "failClosedTitle": "Fail closed",
         "failClosedBody": "When scoping is active and no tenant resolves, the predicate becomes 1 = 0. No tenant means no rows, never all rows."
     },
+    "roleDashboard": {
+        "source": {
+            "role": "Role default · {role}",
+            "personal": "Your layout"
+        },
+        "resetToRole": "Reset to {role} default",
+        "resetToRoleConfirm": "This removes your own arrangement and restores the {role} default. Widgets you added are removed.",
+        "configure": "Dashboard",
+        "configureRole": "Configure {role} dashboard",
+        "configured": "Configured",
+        "notConfigured": "Not configured",
+        "priority": {
+            "column": "Priority",
+            "title": "Role priority",
+            "description": "A user holding several roles gets the dashboard of their highest-priority role. Drag a role to reorder — highest first.",
+            "save": "Save order",
+            "saving": "Saving…",
+            "reset": "Discard changes"
+        },
+        "a11y": {
+            "roledescription": "Sortable role",
+            "instructions": "Press Space to pick up a role, then use the arrow keys to move it. Press Space again to drop it, Home or End to move it to the start or the end, or Escape to cancel.",
+            "position": "{label}, priority {index} of {total}.",
+            "grabHandle": "Reorder {label}"
+        }
+    },
     "dashboardLayout": {
         "saved": "Dashboard layout saved.",
         "reset": "Reset",

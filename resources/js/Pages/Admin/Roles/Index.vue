@@ -1,6 +1,11 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { ref, computed, watch } from 'vue';
 import { Head, Link, router } from '@inertiajs/vue3';
+// >>> MYRA v2.7 [C] START
+import { useI18n } from 'vue-i18n';
+import { REORDER_INSTRUCTIONS_ID, useReorderable } from '@/composables/useReorderable';
+import { GripVertical, LayoutDashboard } from 'lucide-vue-next';
+// <<< MYRA v2.7 [C] END
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import PageHeader from '@/components/PageHeader.vue';
 import { Button } from '@/components/ui/button';
@@ -12,6 +17,7 @@ import { Separator } from '@/components/ui/separator';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
 import { RowActions } from '@/components/admin';
+import type { RowAction } from '@/types/admin';
 import { useConfirmAction } from '@/composables/useConfirmAction';
 import { usePermissions } from '@/composables/usePermissions';
 import {
@@ -30,6 +36,10 @@ interface RoleItem {
     visible: boolean;
     is_locked: boolean;
     is_privileged: boolean;
+    // >>> MYRA v2.7 [C] START
+    priority: number;
+    has_dashboard: boolean;
+    // <<< MYRA v2.7 [C] END
     created_at: string;
 }
 
@@ -41,6 +51,9 @@ const props = defineProps<{
     totalUsersWithRoles: number;
     totalPermissions: number;
     isSuperAdmin: boolean;
+    // >>> MYRA v2.7 [C] START
+    canManageRoleDashboards?: boolean;
+    // <<< MYRA v2.7 [C] END
 }>();
 
 const { can } = usePermissions();
@@ -80,6 +93,95 @@ function toggleActive(roleId: number) {
 function toggleVisible(roleId: number) {
     router.post(route('admin.roles.toggle-visible', roleId), {}, { preserveScroll: true });
 }
+
+// >>> MYRA v2.7 [C] START
+const { t } = useI18n();
+
+// A local working copy: reordering is a draft until it is saved, so an arrow key
+// never fires a request and a reload always wins.
+const orderedRoles = ref<RoleItem[]>([...props.roles]);
+const savingOrder = ref(false);
+
+watch(() => props.roles, next => { orderedRoles.value = [...next]; }, { deep: false });
+
+const canReorder = computed(() => props.isSuperAdmin === true);
+const orderDirty = computed(() =>
+    orderedRoles.value.map(r => r.id).join(',') !== props.roles.map(r => r.id).join(','));
+
+function moveRole(key: string, toIndex: number): void {
+    const from = orderedRoles.value.findIndex(r => String(r.id) === key);
+    if (from === -1 || toIndex === from) return;
+
+    const next = [...orderedRoles.value];
+    const [moved] = next.splice(from, 1);
+    next.splice(Math.max(0, Math.min(toIndex, next.length)), 0, moved);
+    orderedRoles.value = next;
+}
+
+const priorityReorder = useReorderable<RoleItem>({
+    items: orderedRoles,
+    keyOf: role => String(role.id),
+    onMove: moveRole,
+    announce: (role, index, total) => t('roleDashboard.a11y.position', { label: role.name, index: index + 1, total }),
+    enabled: canReorder,
+    roleDescription: () => t('roleDashboard.a11y.roledescription'),
+});
+
+/** The handle lives in a table cell; `listitem` there would be a lie. */
+function handleAttrs(role: RoleItem, index: number): Record<string, unknown> {
+    return { ...priorityReorder.handleProps(role, index), role: undefined };
+}
+
+// The contract is an ordered ID SEQUENCE, highest priority first — never an index.
+function savePriority(): void {
+    savingOrder.value = true;
+
+    router.post(route('admin.roles.reorder'), { ids: orderedRoles.value.map(r => r.id) }, {
+        preserveScroll: true,
+        onFinish: () => { savingOrder.value = false; },
+    });
+}
+
+function discardOrder(): void {
+    orderedRoles.value = [...props.roles];
+}
+
+/** Ziggy's client-side `app()->bound()`: bundle B's route may not exist yet. */
+function hasRoute(name: string): boolean {
+    try {
+        const ziggy = (route as any)();
+
+        return typeof ziggy?.has === 'function' ? ziggy.has(name) === true : false;
+    } catch {
+        return false;
+    }
+}
+
+const canConfigureDashboards = computed(() =>
+    props.canManageRoleDashboards === true && hasRoute('admin.role-dashboards.edit'));
+
+function rowActions(role: RoleItem): RowAction[] {
+    return [
+        { label: 'Edit', icon: Pencil, href: route('admin.roles.edit', role.id), permission: 'roles.edit' },
+        {
+            label: t('roleDashboard.configure'),
+            icon: LayoutDashboard,
+            show: canConfigureDashboards.value,
+            href: canConfigureDashboards.value ? route('admin.role-dashboards.edit', role.id) : undefined,
+            tooltip: t('roleDashboard.configureRole', { role: role.name }),
+        },
+        { label: 'Clone', icon: Copy, permission: 'roles.create', onClick: () => cloneRole(role.id) },
+        {
+            label: 'Delete', icon: Trash2, permission: 'roles.delete', destructive: true, separator: true,
+            show: !['super-admin', 'admin'].includes(role.name),
+            onClick: () => confirmDelete('admin.roles.destroy', role.id, {
+                title: 'Delete Role',
+                description: 'Are you sure? Users with this role will lose their permissions.',
+            }),
+        },
+    ];
+}
+// <<< MYRA v2.7 [C] END
 
 const totalModules = computed(() => Object.keys(props.permissionMatrix).length);
 
@@ -170,32 +272,83 @@ function getModuleStatus(roleName: string, module: string): { label: string; cla
 
         <!-- Roles Table -->
         <Card class="mt-6">
-            <CardHeader class="pb-3">
+            <CardHeader class="flex-row items-center justify-between space-y-0 pb-3">
                 <CardTitle class="text-base">Roles</CardTitle>
+                <!-- >>> MYRA v2.7 [C] START -->
+                <div v-if="canReorder && orderDirty" class="flex items-center gap-2">
+                    <Button variant="ghost" size="sm" :disabled="savingOrder" @click="discardOrder">
+                        {{ t('roleDashboard.priority.reset') }}
+                    </Button>
+                    <Button size="sm" :disabled="savingOrder" @click="savePriority">
+                        {{ savingOrder ? t('roleDashboard.priority.saving') : t('roleDashboard.priority.save') }}
+                    </Button>
+                </div>
+                <!-- <<< MYRA v2.7 [C] END -->
             </CardHeader>
+            <!-- >>> MYRA v2.7 [C] START -->
+            <p v-if="canReorder" class="px-6 pb-3 text-xs text-muted-foreground">
+                {{ t('roleDashboard.priority.description') }}
+            </p>
+            <p role="status" aria-live="polite" aria-atomic="true" class="sr-only">
+                {{ priorityReorder.announcement.value }}
+            </p>
+            <p :id="REORDER_INSTRUCTIONS_ID" class="sr-only">
+                {{ t('roleDashboard.a11y.instructions') }}
+            </p>
+            <!-- <<< MYRA v2.7 [C] END -->
             <CardContent class="p-0">
                 <div class="overflow-x-auto">
                     <table class="w-full text-sm">
+                        <caption class="sr-only">{{ t('roleDashboard.priority.title') }}</caption>
                         <thead>
                             <tr class="border-b bg-muted/50">
-                                <th class="px-4 py-3 text-left font-medium">Role</th>
-                                <th class="px-4 py-3 text-center font-medium">Users</th>
-                                <th class="hidden px-4 py-3 text-left font-medium sm:table-cell">Permissions</th>
-                                <th v-if="isSuperAdmin" class="px-4 py-3 text-center font-medium">Status</th>
-                                <th class="px-4 py-3 text-right font-medium">Actions</th>
+                                <th scope="col" class="px-4 py-3 text-left font-medium">Role</th>
+                                <th scope="col" class="px-4 py-3 text-center font-medium">{{ t('roleDashboard.priority.column') }}</th>
+                                <th scope="col" class="px-4 py-3 text-center font-medium">Users</th>
+                                <th scope="col" class="hidden px-4 py-3 text-left font-medium sm:table-cell">Permissions</th>
+                                <th v-if="isSuperAdmin" scope="col" class="px-4 py-3 text-center font-medium">Status</th>
+                                <th scope="col" class="px-4 py-3 text-right font-medium">Actions</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr v-for="role in roles" :key="role.id" class="border-b last:border-b-0 hover:bg-muted/20">
+                            <tr
+                                v-for="(role, index) in orderedRoles"
+                                :key="role.id"
+                                class="border-b last:border-b-0 hover:bg-muted/20"
+                                :class="{ 'bg-accent/40': priorityReorder.grabbed.value === String(role.id) }"
+                                data-testid="role-row"
+                            >
                                 <td class="px-4 py-3">
                                     <div class="flex items-center gap-2">
+                                        <!-- >>> MYRA v2.7 [C] START -->
+                                        <button
+                                            v-if="canReorder"
+                                            type="button"
+                                            v-bind="handleAttrs(role, index)"
+                                            class="inline-flex size-7 shrink-0 cursor-grab items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-accent hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                                            :aria-label="t('roleDashboard.a11y.grabHandle', { label: role.name })"
+                                        >
+                                            <GripVertical class="size-4" aria-hidden="true" />
+                                        </button>
+                                        <!-- <<< MYRA v2.7 [C] END -->
                                         <ShieldAlert v-if="role.name === 'super-admin'" class="size-4 shrink-0 text-destructive" />
                                         <Shield v-else class="size-4 shrink-0 text-muted-foreground" />
                                         <span class="font-medium">{{ role.name }}</span>
                                         <Badge v-if="role.name === 'super-admin'" variant="destructive" class="text-xs">System</Badge>
                                         <Badge v-else-if="role.name === 'admin'" variant="default" class="text-xs">System</Badge>
+                                        <!-- >>> MYRA v2.7 [C] START -->
+                                        <Badge v-if="role.has_dashboard" variant="outline" class="gap-1 text-xs">
+                                            <LayoutDashboard class="size-3" aria-hidden="true" />
+                                            {{ t('roleDashboard.configured') }}
+                                        </Badge>
+                                        <!-- <<< MYRA v2.7 [C] END -->
                                     </div>
                                 </td>
+                                <!-- >>> MYRA v2.7 [C] START -->
+                                <td class="px-4 py-3 text-center tabular-nums text-muted-foreground" data-testid="role-priority">
+                                    {{ role.priority }}
+                                </td>
+                                <!-- <<< MYRA v2.7 [C] END -->
                                 <td class="px-4 py-3 text-center">
                                     <Badge variant="secondary" class="text-xs">
                                         {{ role.users_count }}
@@ -242,11 +395,7 @@ function getModuleStatus(roleName: string, module: string): { label: string; cla
                                     </div>
                                 </td>
                                 <td class="px-4 py-3 text-right">
-                                    <RowActions :actions="[
-                                        { label: 'Edit', icon: Pencil, href: route('admin.roles.edit', role.id), permission: 'roles.edit' },
-                                        { label: 'Clone', icon: Copy, permission: 'roles.create', onClick: () => cloneRole(role.id) },
-                                        { label: 'Delete', icon: Trash2, permission: 'roles.delete', destructive: true, separator: true, show: !['super-admin', 'admin'].includes(role.name), onClick: () => confirmDelete('admin.roles.destroy', role.id, { title: 'Delete Role', description: 'Are you sure? Users with this role will lose their permissions.' }) },
-                                    ]" />
+                                    <RowActions :actions="rowActions(role)" />
                                 </td>
                             </tr>
                         </tbody>

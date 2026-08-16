@@ -756,6 +756,32 @@
         "failClosedTitle": "失败即关闭",
         "failClosedBody": "当限定生效但无法解析出租户时，谓词变为 1 = 0。没有租户意味着没有任何行，而不是所有行。"
     },
+    "roleDashboard": {
+        "source": {
+            "role": "角色默认 · {role}",
+            "personal": "你的布局"
+        },
+        "resetToRole": "重置为 {role} 默认布局",
+        "resetToRoleConfirm": "这会删除你自己的布局并恢复 {role} 的默认布局，你添加的小部件也会被移除。",
+        "configure": "仪表盘",
+        "configureRole": "配置 {role} 仪表盘",
+        "configured": "已配置",
+        "notConfigured": "未配置",
+        "priority": {
+            "column": "优先级",
+            "title": "角色优先级",
+            "description": "拥有多个角色的用户会看到优先级最高的角色的仪表盘。拖动角色即可排序——最高的排在最前。",
+            "save": "保存顺序",
+            "saving": "保存中…",
+            "reset": "放弃更改"
+        },
+        "a11y": {
+            "roledescription": "可排序的角色",
+            "instructions": "按空格键拾起角色，然后用方向键移动它。再次按空格键放下，按 Home 或 End 移到开头或末尾，按 Esc 取消。",
+            "position": "{label}，优先级第 {index} 位，共 {total} 位。",
+            "grabHandle": "重新排序 {label}"
+        }
+    },
     "dashboardLayout": {
         "saved": "仪表盘布局已保存。",
         "reset": "重置",

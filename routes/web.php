@@ -142,6 +142,9 @@ Route::middleware(['auth', 'verified', 'active', '2fa'])->prefix('admin')->name(
     Route::post('/roles/{role}/toggle-active', [RoleController::class, 'toggleActive'])->middleware('permission:roles.edit')->name('roles.toggle-active');
     Route::post('/roles/{role}/toggle-visible', [RoleController::class, 'toggleVisible'])->middleware('permission:roles.edit')->name('roles.toggle-visible');
     Route::delete('/roles/{role}', [RoleController::class, 'destroy'])->middleware('permission:roles.delete')->name('roles.destroy');
+    // >>> MYRA v2.7 [C] START
+    Route::post('/roles/reorder', [RoleController::class, 'reorder'])->middleware('permission:roles.edit')->name('roles.reorder');
+    // <<< MYRA v2.7 [C] END
 
     // Permissions
     Route::get('/permissions', [PermissionController::class, 'index'])->middleware('permission:permissions.view')->name('permissions.index');

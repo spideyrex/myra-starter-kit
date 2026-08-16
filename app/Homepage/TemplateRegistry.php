@@ -69,10 +69,19 @@ final class TemplateRegistry
         return array_map(fn (HomepageTemplate $t) => $t->toClientSchema(), self::all());
     }
 
+    /**
+     * Drops every template contributed by $source and keeps it dropped.
+     *
+     * Seeds first so the removal is deterministic, and deliberately leaves the
+     * seeded flag set: has()/get()/all() all seed on read, so clearing it here
+     * would rebuild the very rows this call just withdrew. flush() is the only
+     * way back.
+     */
     public static function forget(string $source): void
     {
+        self::seed();
+
         self::$templates = array_filter(self::$templates, fn (array $row) => $row['source'] !== $source);
-        self::$seeded = false;
     }
 
     public static function flush(): void

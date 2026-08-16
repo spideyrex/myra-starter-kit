@@ -13,31 +13,51 @@ class MakeLandingTemplateCommand extends Command
     use ScaffoldsNavigation;
 
     protected $signature = 'make:myra-landing {name : Template name in PascalCase (e.g. Gallery)}
-        {--print : Print the config snippet instead of editing config/myra.php}';
+        {--print : Dry run — print every file instead of writing anything}';
 
     protected $description = 'Scaffold a public landing-page template (Vue page + registry class + en/ms/zh keys) and register it in config/myra.php';
 
     public function handle(): int
     {
         $name = Str::studly($this->argument('name'));
-        $key = Str::kebab($name);
 
-        $this->writeRaw("app/Homepage/Templates/{$name}Template.php", $this->registryClass($name, $key));
-        $this->writeRaw("resources/js/Pages/Public/Templates/{$name}.vue", $this->page());
+        // Home.vue derives the dispatcher key by lower-casing the .vue filename,
+        // so the registry key must be exactly that — kebab() would never match.
+        $key = Str::lower($name);
 
-        $this->writeNavLocaleKeys([
+        $plan = [
+            "app/Homepage/Templates/{$name}Template.php" => $this->registryClass($name, $key),
+            "resources/js/Pages/Public/Templates/{$name}.vue" => $this->page(),
+        ];
+
+        $translations = [
             "landing.templates.{$key}.title" => $name,
             "landing.templates.{$key}.description" => "The {$name} landing-page template.",
-        ]);
+        ];
 
         $entry = "\\App\\Homepage\\Templates\\{$name}Template::class";
 
         if ($this->option('print')) {
-            $this->newLine();
+            foreach ($plan as $dest => $content) {
+                $this->raw("===== {$dest} =====");
+                $this->raw($content);
+            }
+            $this->raw('===== i18n keys =====');
+            foreach ($translations as $translationKey => $value) {
+                $this->raw("{$translationKey} = {$value}");
+            }
+            $this->raw('===== config/myra.php =====');
             $this->raw("            {$entry},");
-        } else {
-            $this->registerTemplate($entry);
+
+            return self::SUCCESS;
         }
+
+        foreach ($plan as $dest => $content) {
+            $this->writeRaw($dest, $content);
+        }
+
+        $this->writeNavLocaleKeys($translations);
+        $this->registerTemplate($entry);
 
         $this->newLine();
         $this->components->info("Landing template '{$key}' scaffolded.");

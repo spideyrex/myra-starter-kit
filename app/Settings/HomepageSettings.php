@@ -48,7 +48,9 @@ class HomepageSettings extends Settings
     /** @var array<int,string> */
     public array $section_order;
 
-    /** @var array<string,array<string,mixed>> keyed by template key */
+    // Keyed by template key; the value is that template's option bag.
+    // No @var docblock: spatie's PropertyReflector cannot resolve a nested
+    // array generic and throws CouldNotResolveDocblockType at hydration.
     public array $template_options;
     // <<< MYRA v2.6 [D] END
 

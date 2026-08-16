@@ -62,9 +62,9 @@ class NewComponentDemoTest extends TestCase
     }
 
     /**
-     * fake() lives in fakerphp/faker, a require-dev package that production
-     * installs with --no-dev. A demo controller that calls it 500s on deploy,
-     * which is exactly how two pages broke for four releases.
+     * A random data generator in a demo controller makes the props differ on
+     * every request, which breaks the committed JS fixtures and any screenshot
+     * diff. The guard reads the raw source, so the ban covers comments too.
      */
     public function test_the_new_demo_controller_never_calls_fake(): void
     {

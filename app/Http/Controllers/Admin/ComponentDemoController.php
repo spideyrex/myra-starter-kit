@@ -11,9 +11,10 @@ use Inertia\Response;
 /**
  * MYRA v2.6 [D] — demos for the shadcn-vue primitives added in this release.
  *
- * Every payload is a static array. fake() lives in fakerphp/faker, a
- * require-dev package that production installs with --no-dev, so calling it
- * from a controller 500s the page on a real deploy.
+ * Every payload is a static array: no random data generator, so two requests
+ * return byte-identical props and the committed JS fixture stays valid.
+ * NewComponentDemoTest asserts that over this file's raw source, so keep the
+ * generator's name out of the text as well as out of the code.
  */
 class ComponentDemoController extends Controller
 {

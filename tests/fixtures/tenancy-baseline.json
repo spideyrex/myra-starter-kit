@@ -1,0 +1,78 @@
+{
+    "App\\Models\\Article": {
+        "guest": {
+            "bindings": [],
+            "sql": "select * from \"articles\" where \"articles\".\"deleted_at\" is null order by \"created_at\" desc"
+        },
+        "member": {
+            "bindings": [
+                ":actor"
+            ],
+            "sql": "select * from \"articles\" where \"articles\".\"deleted_at\" is null and \"articles\".\"created_by\" = ? order by \"created_at\" desc"
+        },
+        "scopes": [
+            "Illuminate\\Database\\Eloquent\\SoftDeletingScope",
+            "owned"
+        ],
+        "super": {
+            "bindings": [],
+            "sql": "select * from \"articles\" where \"articles\".\"deleted_at\" is null order by \"created_at\" desc"
+        }
+    },
+    "App\\Models\\Category": {
+        "guest": {
+            "bindings": [],
+            "sql": "select * from \"categories\" order by \"created_at\" desc"
+        },
+        "member": {
+            "bindings": [
+                ":actor"
+            ],
+            "sql": "select * from \"categories\" where \"categories\".\"created_by\" = ? order by \"created_at\" desc"
+        },
+        "scopes": [
+            "owned"
+        ],
+        "super": {
+            "bindings": [],
+            "sql": "select * from \"categories\" order by \"created_at\" desc"
+        }
+    },
+    "App\\Models\\Page": {
+        "guest": {
+            "bindings": [],
+            "sql": "select * from \"pages\" where \"pages\".\"deleted_at\" is null order by \"created_at\" desc"
+        },
+        "member": {
+            "bindings": [
+                ":actor"
+            ],
+            "sql": "select * from \"pages\" where \"pages\".\"deleted_at\" is null and \"pages\".\"created_by\" = ? order by \"created_at\" desc"
+        },
+        "scopes": [
+            "Illuminate\\Database\\Eloquent\\SoftDeletingScope",
+            "owned"
+        ],
+        "super": {
+            "bindings": [],
+            "sql": "select * from \"pages\" where \"pages\".\"deleted_at\" is null order by \"created_at\" desc"
+        }
+    },
+    "App\\Models\\User": {
+        "guest": {
+            "bindings": [],
+            "sql": "select * from \"users\" where \"users\".\"deleted_at\" is null order by \"created_at\" desc"
+        },
+        "member": {
+            "bindings": [],
+            "sql": "select * from \"users\" where \"users\".\"deleted_at\" is null order by \"created_at\" desc"
+        },
+        "scopes": [
+            "Illuminate\\Database\\Eloquent\\SoftDeletingScope"
+        ],
+        "super": {
+            "bindings": [],
+            "sql": "select * from \"users\" where \"users\".\"deleted_at\" is null order by \"created_at\" desc"
+        }
+    }
+}

@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Admin\Tenancy\Tenancy;
 use App\Admin\Traits\SearchableQuery;
 use App\DTOs\UserData;
 use App\Models\Role;
@@ -38,6 +39,10 @@ class UserService
             ->when(! $this->isSuperAdmin($current), fn ($q) => $q
                 ->where('created_by', $current?->id)
                 ->whereDoesntHave('roles', fn ($r) => $r->where('name', config('shield.super_admin_role', 'super-admin'))))
+            // Tenant predicate sits AFTER ownership and never replaces it. Users
+            // belong to a tenant through the membership pivot, not a column. A
+            // literal no-op while myra.tenancy.enabled is false.
+            ->tap(fn (Builder $q) => Tenancy::applyMembership($q, 'users'))
             ->when($request->status, fn ($q, $status) => $q->where('status', $status))
             ->when($request->role, function ($q, $role) {
                 $q->whereHas('roles', fn ($q) => $q->where('name', $role));

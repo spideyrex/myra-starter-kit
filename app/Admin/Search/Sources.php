@@ -2,6 +2,7 @@
 
 namespace App\Admin\Search;
 
+use App\Admin\Tenancy\Tenancy;
 use App\Models\Role;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
@@ -21,10 +22,12 @@ final class Sources
                 ->attributes(['name' => 3.0, 'email' => 2.0, 'phone' => 0.5])
                 // Ownership scope INLINED on purpose: UserService is being
                 // refactored in the same window. Unify in C3.
-                ->scope(fn (Builder $q, $actor) => $q->when(
-                    ! ($actor?->hasRole(config('shield.super_admin_role', 'super-admin')) ?? false),
-                    fn ($q) => $q->where('created_by', $actor?->getAuthIdentifier()),
-                ))
+                ->scope(fn (Builder $q, $actor) => $q
+                    ->when(
+                        ! ($actor?->hasRole(config('shield.super_admin_role', 'super-admin')) ?? false),
+                        fn ($q) => $q->where('created_by', $actor?->getAuthIdentifier()),
+                    )
+                    ->tap(fn (Builder $q) => Tenancy::applyMembership($q, 'users')))
                 ->titleUsing(fn (User $u) => (string) $u->name)
                 ->descriptionUsing(fn (User $u) => (string) $u->email)
                 ->urlUsing(fn (User $u) => route('admin.users.edit', $u))

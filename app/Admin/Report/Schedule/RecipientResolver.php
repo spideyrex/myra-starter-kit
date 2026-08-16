@@ -2,6 +2,7 @@
 
 namespace App\Admin\Report\Schedule;
 
+use App\Admin\Tenancy\Tenancy;
 use App\Models\ReportSchedule;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
@@ -97,7 +98,9 @@ final class RecipientResolver
             $q->whereKey($owner->getKey())
                 ->orWhere('created_by', $owner->getKey())
                 ->orWhereHas('teams', fn (Builder $t) => $t->whereIn('teams.id', $teamIds));
-        });
+        })
+            // A 3 a.m. mail must not fan out past the tenant it was scheduled in.
+            ->tap(fn (Builder $q) => Tenancy::applyMembership($q, 'users'));
     }
 
     public static function localeOf(User $user): string

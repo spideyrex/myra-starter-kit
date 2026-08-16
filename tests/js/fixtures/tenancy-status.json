@@ -1,0 +1,29 @@
+{
+    "column": "team_id",
+    "currentTeam": null,
+    "enabled": false,
+    "models": [
+        {
+            "class": "App\\Models\\Article",
+            "hasColumn": true,
+            "nullRows": 0,
+            "scoped": false,
+            "usesTrait": true
+        },
+        {
+            "class": "App\\Models\\Page",
+            "hasColumn": true,
+            "nullRows": 0,
+            "scoped": false,
+            "usesTrait": true
+        },
+        {
+            "class": "App\\Models\\Category",
+            "hasColumn": true,
+            "nullRows": 0,
+            "scoped": false,
+            "usesTrait": true
+        }
+    ],
+    "nullRows": "strict"
+}

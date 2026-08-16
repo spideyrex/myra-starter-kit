@@ -6,11 +6,13 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use App\Models\Traits\BelongsToTenant;
 use App\Models\Traits\OwnedByUser;
 
 class Category extends Model
 {
-    use HasFactory, OwnedByUser;
+    // Inert until both tenancy locks are open. See app/Admin/Tenancy/Tenancy.php.
+    use HasFactory, OwnedByUser, BelongsToTenant;
 
     protected $fillable = [
         'name',

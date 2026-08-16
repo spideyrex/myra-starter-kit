@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Admin\Tenancy\Tenancy;
 use App\Models\Article;
 use App\Models\Category;
 use Illuminate\Http\Request;
@@ -14,11 +15,12 @@ class PublicArticleController extends Controller
 {
     public function index(Request $request): Response
     {
-        $articles = Article::query()
-            ->withoutGlobalScope('owned')
+        // publicQuery() lifts the tenant scope on this unauthenticated surface;
+        // a no-op while tenancy is disabled. See Tenancy::publicQuery().
+        $articles = Tenancy::publicQuery(Article::query()->withoutGlobalScope('owned'))
             ->publiclyVisible()
-            ->with(['creator', 'category' => fn ($q) => $q->withoutGlobalScope('owned'), 'media'])
-            ->when($request->category, fn ($q, $slug) => $q->whereHas('category', fn ($q) => $q->withoutGlobalScope('owned')->where('slug', $slug)))
+            ->with(['creator', 'category' => fn ($q) => Tenancy::publicQuery($q->withoutGlobalScope('owned')), 'media'])
+            ->when($request->category, fn ($q, $slug) => $q->whereHas('category', fn ($q) => Tenancy::publicQuery($q->withoutGlobalScope('owned'))->where('slug', $slug)))
             ->orderByDesc('published_at')
             ->paginate(12)
             ->withQueryString();
@@ -36,7 +38,7 @@ class PublicArticleController extends Controller
 
         return Inertia::render('Public/ArticleIndex', [
             'articles' => $articles,
-            'categories' => Category::withoutGlobalScope('owned')->withCount(['articles' => fn ($q) => $q->withoutGlobalScope('owned')->publiclyVisible()])->orderBy('name')->get(['id', 'name', 'slug']),
+            'categories' => Tenancy::publicQuery(Category::withoutGlobalScope('owned'))->withCount(['articles' => fn ($q) => Tenancy::publicQuery($q->withoutGlobalScope('owned'))->publiclyVisible()])->orderBy('name')->get(['id', 'name', 'slug']),
             'currentCategory' => $request->category,
             'authenticated' => Auth::check(),
         ]);
@@ -44,18 +46,17 @@ class PublicArticleController extends Controller
 
     public function show(string $slug): Response|HttpResponse
     {
-        $article = Article::withoutGlobalScope('owned')->where('slug', $slug)->published()->with(['creator', 'category' => fn ($q) => $q->withoutGlobalScope('owned'), 'media'])->firstOrFail();
+        $article = Tenancy::publicQuery(Article::withoutGlobalScope('owned'))->where('slug', $slug)->published()->with(['creator', 'category' => fn ($q) => Tenancy::publicQuery($q->withoutGlobalScope('owned')), 'media'])->firstOrFail();
 
         if (!$article->is_public && !Auth::check()) {
             return redirect()->route('login');
         }
 
-        $relatedArticles = Article::query()
-            ->withoutGlobalScope('owned')
+        $relatedArticles = Tenancy::publicQuery(Article::query()->withoutGlobalScope('owned'))
             ->publiclyVisible()
             ->where('id', '!=', $article->id)
             ->when($article->category_id, fn ($q) => $q->where('category_id', $article->category_id))
-            ->with(['category' => fn ($q) => $q->withoutGlobalScope('owned'), 'media'])
+            ->with(['category' => fn ($q) => Tenancy::publicQuery($q->withoutGlobalScope('owned')), 'media'])
             ->orderByDesc('published_at')
             ->limit(3)
             ->get()

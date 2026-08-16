@@ -2,6 +2,7 @@
 
 namespace App\Admin\Search;
 
+use App\Admin\Tenancy\Tenancy;
 use App\Support\Sql;
 use Illuminate\Contracts\Auth\Access\Authorizable;
 use Illuminate\Contracts\Auth\Authenticatable;
@@ -244,8 +245,9 @@ class GlobalSearch
     }
 
     /**
-     * In non-production, a source whose model carries `created_by` but declares
-     * no scope() is a boot error. Forgetting the scope must never be a leak.
+     * In non-production, a source whose model carries `created_by` — or, once
+     * tenancy is on, the tenant column — but declares no scope() is a boot
+     * error. Forgetting the scope must never be a leak.
      */
     private function assertScoped(SearchSource $source): void
     {
@@ -253,11 +255,14 @@ class GlobalSearch
             return;
         }
 
+        $tenantColumn = Tenancy::enabled() ? Tenancy::column() : null;
+
         try {
             /** @var Model $model */
             $model = new ($source->modelClass());
-            $hasOwner = Schema::connection($model->getConnectionName())
-                ->hasColumn($model->getTable(), 'created_by');
+            $schema = Schema::connection($model->getConnectionName());
+            $hasOwner = $schema->hasColumn($model->getTable(), 'created_by');
+            $hasTenant = $tenantColumn !== null && $schema->hasColumn($model->getTable(), $tenantColumn);
         } catch (\Throwable) {
             return; // DB unavailable at boot — nothing to assert against.
         }
@@ -265,6 +270,12 @@ class GlobalSearch
         if ($hasOwner) {
             throw new MissingSearchScopeException(
                 "Search source [{$source->key}] has an owner column but no scope().",
+            );
+        }
+
+        if ($hasTenant) {
+            throw new MissingSearchScopeException(
+                "Search source [{$source->key}] has a {$tenantColumn} column but no scope().",
             );
         }
     }

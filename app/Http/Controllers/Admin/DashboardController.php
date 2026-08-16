@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Admin\Dashboard\DashboardKey;
 use App\Admin\Dashboard\LayoutResolver;
+use App\Admin\Dashboard\LayoutSource;
+use App\Admin\Dashboard\ResolvedLayout;
 use App\Admin\Dashboard\WidgetCatalogue;
 use App\Http\Controllers\Controller;
-use App\Models\DashboardLayout;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -101,12 +103,18 @@ class DashboardController extends Controller
             // Lazy and fail-soft. With no saved row, an empty catalogue and the
             // editable flag off, these are null / [] / false and the grid renders
             // byte-identically to v2.4.0.
-            'dashboardLayout' => fn () => $this->safely(fn () => LayoutResolver::forInertia(
-                DashboardLayout::forUser($request->user())
-                    ->where('dashboard_key', 'admin.dashboard')
-                    ->first(),
-                $request->user(),
-            )),
+            // >>> MYRA v2.7 [A] START
+            // The ONE seam: the row chooser becomes the resolution chain
+            // (personal → highest-priority role default → nothing). With
+            // role_dashboards empty this returns exactly what v2.6 returned.
+            'dashboardLayout' => fn () => $this->safely(
+                fn () => LayoutResolver::fromPayload($this->resolvedLayout($request)->payload, $request->user()),
+            ),
+            'dashboardLayoutSource' => fn () => $this->safely(
+                fn () => $this->resolvedLayout($request)->toInertia(),
+                ['source' => 'none', 'role' => null, 'hasRoleDefault' => false],
+            ),
+            // <<< MYRA v2.7 [A] END
             'dashboardCatalogue' => fn () => $this->safely(
                 fn () => WidgetCatalogue::forUser($request->user()),
                 [],
@@ -118,6 +126,14 @@ class DashboardController extends Controller
             // <<< MYRA v2.5 [A] END
         ]);
     }
+
+    // >>> MYRA v2.7 [A] START
+    /** Memoised per request so the two lazy props share one execution. */
+    private function resolvedLayout(Request $request): ResolvedLayout
+    {
+        return once(fn () => LayoutSource::resolve($request->user(), DashboardKey::MAIN));
+    }
+    // <<< MYRA v2.7 [A] END
 
     // >>> MYRA v2.5 [A] START
     /** A missing table or a corrupt row must never white-screen the dashboard. */

@@ -66,6 +66,9 @@ class RoleAndPermissionSeeder extends Seeder
             // >>> MYRA v2.5 [A] START
             'dashboard.customise',
             // <<< MYRA v2.5 [A] END
+            // >>> MYRA v2.7 [A] START
+            'dashboard.manage-roles',
+            // <<< MYRA v2.7 [A] END
 
             // Firebase
             'firebase.view',
@@ -158,5 +161,18 @@ class RoleAndPermissionSeeder extends Seeder
             'articles.view',
             'categories.view',
         ]);
+
+        // >>> MYRA v2.7 [A] START
+        // Role-dashboard precedence. Only ever seeded onto an unset (0) role, so
+        // re-running never overwrites an admin's ordering.
+        foreach (['super-admin' => 50, 'admin' => 40, 'manager' => 30, 'editor' => 20, 'viewer' => 10] as $name => $priority) {
+            $role = Role::firstOrCreate(['name' => $name]);
+
+            if ((int) ($role->priority ?? 0) === 0) {
+                $role->priority = $priority;
+                $role->save();
+            }
+        }
+        // <<< MYRA v2.7 [A] END
     }
 }

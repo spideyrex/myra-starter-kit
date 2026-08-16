@@ -66,6 +66,10 @@ class AppServiceProvider extends ServiceProvider
         }
         // <<< MYRA v2.5 [A] END
 
+        // >>> MYRA v2.7 [A] START
+        Gate::policy(\App\Models\RoleDashboard::class, \App\Policies\RoleDashboardPolicy::class);
+        // <<< MYRA v2.7 [A] END
+
         Event::listen(Login::class, LogSuccessfulLogin::class);
         Event::listen(Failed::class, LogFailedLogin::class);
 

@@ -112,6 +112,7 @@ double the `inline` path segment.
 ## Table of Contents
 
 - [What's New](#whats-new)
+- [Screen Reference](docs/admin-framework/screens.md) — every page, screenshotted
 - [Highlights](#highlights)
 - [Screenshots](#screenshots)
 - [Scaffolding CLI](#scaffolding-cli)

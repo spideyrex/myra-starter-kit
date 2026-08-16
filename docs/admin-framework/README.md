@@ -14,6 +14,7 @@ An admin framework built on Laravel + Inertia.js + Vue 3 (TypeScript) with shadc
 | [Scaffold Commands](scaffold-commands.md) | Artisan commands for generating resources and pages |
 | [PHP Backend](php-backend.md) | Controllers, services, and the SearchableQuery trait |
 | [Type Definitions](type-definitions.md) | TypeScript interfaces and types |
+| [Screen Reference](screens.md) | Every admin page, screenshotted against production |
 | [Reporting](reporting.md) | Report builder, 15 chart types, drill-down, scheduled delivery, PDF |
 | [Dashboard & Realtime](dashboard.md) | Dashboard editor, live widgets, AI ask bar, PWA shell, gallery |
 | [Tenancy](tenancy.md) | Multi-tenant scoping (opt-in, off by default) |

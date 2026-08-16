@@ -370,6 +370,9 @@ Route::middleware(['auth', 'verified', 'active', '2fa'])->prefix('admin')->name(
     Route::get('/demo/advanced-filters', [DemoController::class, 'advancedFilters'])->name('demo.advanced-filters');
     Route::get('/demo/wizard', [DemoController::class, 'wizardDemo'])->name('demo.wizard');
     Route::get('/demo/map', [DemoController::class, 'map'])->name('demo.map');
+    // >>> MYRA v2.7 [D] START
+    Route::get('/demo/role-dashboards', [DemoController::class, 'roleDashboards'])->name('demo.role-dashboards');
+    // <<< MYRA v2.7 [D] END
     }); // end demo group
 
     // >>> MYRA v2.3 [B] START

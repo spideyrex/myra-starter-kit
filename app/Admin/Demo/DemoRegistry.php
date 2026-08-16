@@ -156,6 +156,9 @@ final class DemoRegistry
             'mapMarkers' => ['route' => 'admin.demo.map-markers', 'icon' => 'MapPin', 'tags' => ['data'], 'since' => '2.6.0'],
             'landingTemplates' => ['route' => 'admin.demo.landing-templates', 'icon' => 'Layout', 'tags' => ['platform'], 'since' => '2.6.0'],
             // <<< MYRA v2.6 [D] END
+            // >>> MYRA v2.7 [D] START
+            'roleDashboards' => ['route' => 'admin.demo.role-dashboards', 'icon' => 'LayoutDashboard', 'tags' => ['dashboard', 'platform'], 'since' => '2.7.0', 'permission' => 'dashboard.manage-roles'],
+            // <<< MYRA v2.7 [D] END
         ];
     }
 }

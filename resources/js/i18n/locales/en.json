@@ -1406,6 +1406,11 @@
                 "title": "Landing templates",
                 "description": "Every registered public homepage template, with the sections each one renders and a live preview link.",
                 "badge": "New"
+            },
+            "roleDashboards": {
+                "title": "Role dashboards",
+                "description": "A default dashboard per role, personalisable by each user, resettable to the role default at any time.",
+                "badge": "New"
             }
         },
         "references": {
@@ -1522,6 +1527,80 @@
                 "separator": "Selection",
                 "selected": "Selected {name}.",
                 "none": "No location selected yet."
+            }
+        }
+    },
+    "demos": {
+        "roleDashboards": {
+            "title": "Role dashboards",
+            "description": "Every role can carry a default dashboard. A user of that role gets it automatically, may rearrange it, and can reset back to the default at any time.",
+            "ladder": {
+                "title": "Precedence",
+                "description": "Three rungs, evaluated top to bottom. The first one that matches wins — nothing is ever merged.",
+                "personal": {
+                    "label": "Your layout",
+                    "body": "A personal layout wins unconditionally, including one where every widget is hidden. Hiding everything is a deliberate choice, not an empty state."
+                },
+                "role": {
+                    "label": "Role default",
+                    "body": "With no personal layout, the default authored for the highest-priority role the user holds is shown. There is nothing to reset, so no reset control appears."
+                },
+                "none": {
+                    "label": "Nothing configured",
+                    "body": "No personal layout and no role default means the dashboard renders exactly as it did before this feature existed. No badge, no reset, no flag."
+                }
+            },
+            "chain": {
+                "title": "Resolution chain",
+                "description": "One entry point, evaluated on every request. Nothing in it is cached, so losing or disabling a role corrects itself on the next page load.",
+                "caption": "The steps a dashboard layout is resolved through, and the result of each.",
+                "step": "Step",
+                "result": "Result",
+                "steps": {
+                    "key": {
+                        "label": "Key gate",
+                        "result": "The dashboard key is a closed set and is never taken from a request. An unknown key resolves to nothing."
+                    },
+                    "guest": {
+                        "label": "No user",
+                        "result": "Nothing to resolve against, so nothing is returned."
+                    },
+                    "personal": {
+                        "label": "Personal row",
+                        "result": "Found, so it wins. The source is reported as personal and the reset control appears."
+                    },
+                    "role": {
+                        "label": "Role default",
+                        "result": "One indexed query joins the role assignments, ordered by role priority. The first row found wins."
+                    },
+                    "none": {
+                        "label": "Nothing",
+                        "result": "The layout is null and the dashboard falls back to its declared order."
+                    }
+                }
+            },
+            "priority": {
+                "title": "Holding several roles",
+                "description": "Roles carry an admin-orderable priority. A user holding several gets the dashboard of their highest-priority role that has one. Predictable, never merged.",
+                "fallThrough": "A role without a dashboard is invisible to the ordering, so the next role down supplies one. A user is never blanked by their top role's silence.",
+                "tie": "Two roles sharing a priority are separated by role id, ascending — deterministic on every database, never left to assignment order.",
+                "revocation": "Deactivating a role, deleting it, or unassigning it takes effect on the very next request. A personal layout survives all three, because it carries no role provenance."
+            },
+            "security": {
+                "title": "Two facts that hold at render time",
+                "instances": "A role dashboard is authored by one person and rendered for another, so the stored payload is untrusted input. Every widget instance is re-derived against the VIEWING user's abilities on every render — an admin who drops a revenue widget into the viewer dashboard produces exactly zero instances for a viewer.",
+                "entries": "Entries are filtered the same way. A widget key the viewer may not see never reaches their browser, so the payload cannot become an enumeration oracle for tiles they are not entitled to."
+            },
+            "starters": {
+                "title": "Starter dashboards",
+                "description": "Sensible opening arrangements for the five built-in roles. Ordering only — every widget named here is something that role could already see.",
+                "caption": "Starter dashboard contents for each built-in role.",
+                "role": "Role",
+                "visible": "Shown",
+                "hidden": "Tidied away",
+                "none": "None",
+                "note": "Hiding here is tidying, not access control. Nothing in a starter grants, resurrects or discloses anything, and every widget is still re-filtered for the viewing user.",
+                "optIn": "The seeder is never wired into the database seeder and never runs on an upgrade. Run it explicitly, and re-run it safely — an existing role dashboard is never overwritten."
             }
         }
     },

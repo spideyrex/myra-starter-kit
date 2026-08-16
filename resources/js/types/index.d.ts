@@ -353,3 +353,37 @@ export interface TemplateSchema {
     since: string;
 }
 // <<< MYRA v2.6 [D] END
+// >>> MYRA v2.7 [A] START
+export interface PageSectionRow {
+    id: string;
+    type: string;
+    enabled?: boolean;
+    variant: Record<string, unknown>;
+    data: Record<string, unknown>;
+}
+
+/** The client half of App\Homepage\Sections\SectionField. */
+export interface PageSectionFieldSchema {
+    name: string;
+    type: string;
+    labelKey: string;
+    required: boolean;
+    default: unknown;
+    max: number | null;
+    options?: string[];
+    of?: PageSectionFieldSchema[];
+}
+
+/** The client half of App\Homepage\Sections\SectionType. */
+export interface PageSectionSchema {
+    key: string;
+    labelKey: string;
+    descriptionKey: string;
+    icon: string;
+    group: 'content' | 'proof' | 'conversion' | 'layout';
+    titleField: string | null;
+    maxPerPage: number;
+    variants: Record<string, string[] | 'bool'>;
+    fields: PageSectionFieldSchema[];
+}
+// <<< MYRA v2.7 [A] END

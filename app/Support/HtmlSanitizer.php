@@ -131,24 +131,22 @@ class HtmlSanitizer
         }
     }
 
+    // >>> MYRA v2.7 [A] START
     private static function isSafeUrl(string $url, string $tag): bool
     {
         $trimmed = ltrim($url);
 
         // Allow only data: URIs for image sources, and only image payloads.
+        // This exception stays local to the sanitizer.
         if (stripos($trimmed, 'data:') === 0) {
             return $tag === 'img' && preg_match('#^data:image/(png|jpe?g|gif|webp);base64,#i', $trimmed) === 1;
         }
 
-        // Block scheme-bearing dangerous protocols; allow http/https/mailto/tel and relative URLs.
-        if (preg_match('#^[a-z][a-z0-9+.-]*:#i', $trimmed, $m)) {
-            $scheme = strtolower(rtrim($m[0], ':'));
-
-            return in_array($scheme, ['http', 'https', 'mailto', 'tel'], true);
-        }
-
-        return true; // relative URL / anchor
+        // UrlGuard owns the scheme allowlist. Scheme-less values (relative URLs,
+        // anchors, templating placeholders) stay permitted exactly as before.
+        return UrlGuard::isSafe($trimmed) || ! UrlGuard::hasScheme($trimmed);
     }
+    // <<< MYRA v2.7 [A] END
 
     private static function unwrap(DOMElement $el): void
     {

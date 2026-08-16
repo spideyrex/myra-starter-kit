@@ -579,4 +579,30 @@ return [
     ],
     // <<< MYRA v2.5 [D] END
 
+    // >>> MYRA v2.7 [C] START
+    /*
+    |--------------------------------------------------------------------------
+    | Page builder — the starter section library
+    |--------------------------------------------------------------------------
+    |
+    | Declared in its own top-level key so a package can extend the library
+    | without editing the core adapters' array, then merged into
+    | `myra.pagebuilder.sections` — the array the registry actually reads — by
+    | MyraServiceProvider::register(). Nothing else has to know this key exists.
+    | Every class exposes `public static function define(): SectionType`.
+    |
+    */
+
+    'pagebuilder_extra' => [
+        'extra_sections' => [
+            \App\Homepage\Sections\Types\RichTextSectionType::class,
+            \App\Homepage\Sections\Types\ImageSectionType::class,
+            \App\Homepage\Sections\Types\StatsSectionType::class,
+            \App\Homepage\Sections\Types\FaqSectionType::class,
+            \App\Homepage\Sections\Types\DividerSectionType::class,
+            // myra:sections — package section types are appended above this line.
+        ],
+    ],
+    // <<< MYRA v2.7 [C] END
+
 ];

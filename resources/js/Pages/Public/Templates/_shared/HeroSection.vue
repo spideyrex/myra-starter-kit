@@ -1,21 +1,30 @@
 <script setup lang="ts">
+import { computed } from 'vue';
 import { Link } from '@inertiajs/vue3';
 import { Button } from '@/components/ui/button';
 import { ArrowRight } from 'lucide-vue-next';
+import { safeSrc, safeUrl } from '@/composables/useSafeUrl';
 import type { HomepageData } from '@/types';
 
-withDefaults(
+const props = withDefaults(
     defineProps<{ settings: HomepageData; align?: 'center' | 'split' | 'left'; compact?: boolean }>(),
     { align: 'center', compact: false },
 );
+
+/** Authored by an admin, rendered to anonymous visitors: scheme-gated, always. */
+const ctaUrl = computed(() => safeUrl(props.settings?.hero_cta_url) || '#');
+const backdrop = computed(() => safeSrc(props.settings?.hero_image_url));
+
+/** Quoted, so a URL carrying `)` or `"` cannot break out of the declaration. */
+const backdropStyle = computed(() => ({ backgroundImage: `url(${JSON.stringify(backdrop.value)})` }));
 </script>
 
 <template>
     <section class="relative overflow-hidden">
         <div
-            v-if="settings.hero_image_url"
+            v-if="backdrop"
             class="absolute inset-0 bg-cover bg-center"
-            :style="{ backgroundImage: `url(${settings.hero_image_url})` }"
+            :style="backdropStyle"
         >
             <div class="absolute inset-0 bg-background/80 dark:bg-background/90" />
         </div>
@@ -37,7 +46,7 @@ withDefaults(
                         {{ settings.hero_subtitle }}
                     </p>
                     <div class="animate-fade-in-up mt-8" style="animation-delay: 0.2s">
-                        <Link :href="settings.hero_cta_url">
+                        <Link :href="ctaUrl">
                             <Button size="lg" class="gap-2 text-base">
                                 {{ settings.hero_cta_text }}
                                 <ArrowRight class="size-4" aria-hidden="true" />
@@ -60,7 +69,7 @@ withDefaults(
                     :class="align === 'left' ? 'items-start' : 'items-center justify-center'"
                     style="animation-delay: 0.2s"
                 >
-                    <Link :href="settings.hero_cta_url">
+                    <Link :href="ctaUrl">
                         <Button size="lg" class="gap-2 text-base">
                             {{ settings.hero_cta_text }}
                             <ArrowRight class="size-4" aria-hidden="true" />

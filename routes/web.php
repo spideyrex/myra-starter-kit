@@ -453,3 +453,6 @@ require __DIR__.'/myra/examples.php';
 // >>> MYRA v2.7 [B] START
 require __DIR__.'/myra/pagebuilder.php';
 // <<< MYRA v2.7 [B] END
+// >>> MYRA v2.7 [C] START
+require __DIR__.'/myra/pagebuilder-preview.php';
+// <<< MYRA v2.7 [C] END

@@ -67,6 +67,29 @@ class BrandCacheInvalidationTest extends TestCase
         $this->assertSame('Initech', $this->freshManager()->current()->name);
     }
 
+    /**
+     * queue:work / Horizon / Octane hold ONE BrandManager for the life of the
+     * process and never call forget(). The memo must therefore be keyed on the
+     * resolved version, or mail and PDF render a brand frozen at boot forever.
+     */
+    public function test_one_long_lived_instance_picks_up_a_foreign_write(): void
+    {
+        config()->set('myra.brand.probe_ttl', 60);
+        $this->seedBrand();
+
+        // The SAME instance for the whole test — never forgotten, never replaced.
+        $worker = app(BrandManager::class);
+
+        $this->assertSame('Acme Corp', $worker->current()->name);
+
+        DB::table('settings')->where('group', 'brand')->where('name', 'name')
+            ->update(['payload' => json_encode('Initech')]);
+
+        $this->travel(61)->seconds();
+
+        $this->assertSame('Initech', $worker->current()->name);
+    }
+
     public function test_the_brand_clear_command_forgets_everything(): void
     {
         $this->seedBrand();

@@ -50,7 +50,7 @@ class BrandSurfaceTest extends TestCase
 
     public function test_the_manifest_route_is_brand_derived(): void
     {
-        $payload = $this->get('/manifest.webmanifest')->assertOk()->json();
+        $payload = $this->get(route('brand.manifest'))->assertOk()->json();
 
         $this->assertSame('Acme Corp', $payload['name']);
         $this->assertSame('Acme', $payload['short_name']);

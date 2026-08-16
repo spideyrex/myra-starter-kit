@@ -41,7 +41,7 @@ class BrandDisabledIsNoOpTest extends TestCase
 
     public function test_the_manifest_still_serves_the_static_document(): void
     {
-        $payload = $this->get('/manifest.webmanifest')->assertOk()->json();
+        $payload = $this->get(route('brand.manifest'))->assertOk()->json();
         $static = json_decode((string) file_get_contents(public_path('manifest.webmanifest')), true);
 
         $this->assertSame($static, $payload);

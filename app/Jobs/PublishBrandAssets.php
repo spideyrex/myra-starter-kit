@@ -22,17 +22,14 @@ class PublishBrandAssets implements ShouldQueue
     {
         $raw = $brand->raw()['brand'] ?? [];
 
-        $slots = $this->slots !== [] ? $this->slots : [
+        // A single-slot dispatch still regenerates the whole coherent set: the
+        // icon derivatives are shared between the mark and favicon slots and
+        // must never be rendered from a half-stale source.
+        $pipeline->deriveAll(array_merge([
             'logo' => $raw['logo_path'] ?? null,
-            'favicon' => $raw['favicon_path'] ?? null,
             'mark' => $raw['mark_path'] ?? null,
+            'favicon' => $raw['favicon_path'] ?? null,
             'og_image' => $raw['og_image_path'] ?? null,
-        ];
-
-        foreach ($slots as $slot => $path) {
-            if (in_array($slot, BrandAssetPipeline::SLOTS, true)) {
-                $pipeline->derive($slot, $path);
-            }
-        }
+        ], array_intersect_key($this->slots, array_flip(BrandAssetPipeline::SLOTS))));
     }
 }

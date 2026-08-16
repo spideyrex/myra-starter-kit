@@ -89,6 +89,29 @@ class BrandAssetPipeline
         return $written;
     }
 
+    /**
+     * Renders every derivative exactly ONCE.
+     *
+     * 'favicon' and 'mark' render the same six icon keys to the same
+     * brand/derived/{stamp}/{key}.png paths, so deriving both would simply make
+     * the last writer win — an uploaded mark silently overwritten by a
+     * favicon-shaped 16px source, or vice versa. The icon set therefore has a
+     * single resolved source: the mark when there is one, the favicon otherwise.
+     * The same reasoning applies to 'logo_dark', which shares logo-pdf/logo-email
+     * with 'logo'; PDF and email render on light paper, so 'logo' owns them.
+     *
+     * @param  array<string,string|null>  $paths slot => stored path
+     * @return array<string,string> derivative key => stored path
+     */
+    public function deriveAll(array $paths): array
+    {
+        return array_merge(
+            $this->derive('logo', $paths['logo'] ?? null),
+            $this->derive('mark', $paths['mark'] ?? $paths['favicon'] ?? null),
+            $this->derive('og_image', $paths['og_image'] ?? null),
+        );
+    }
+
     /** Prunes orphaned content-addressed copies; the live path is always kept. */
     public function purge(string $slot): void
     {
@@ -238,8 +261,24 @@ class BrandAssetPipeline
         }
     }
 
+    /**
+     * The derivative cache key is the ASSET IDENTITY, not the brand hash: the
+     * hash digests every settings row in the brand, general, appearance and seo
+     * groups, so editing an SEO description would move the whole derived prefix
+     * and orphan every already-rendered icon until the next brand:publish.
+     */
     private function stamp(): string
     {
-        return app(BrandManager::class)->hash();
+        $brand = app(BrandManager::class)->current();
+
+        return substr(sha1((string) json_encode([
+            $brand->logoUrl,
+            $brand->logoDarkUrl,
+            $brand->markUrl,
+            $brand->faviconUrl,
+            $brand->ogImageUrl,
+            $brand->palette->primaryHex,
+            $brand->initial(),
+        ], JSON_UNESCAPED_SLASHES)), 0, 8);
     }
 }

@@ -93,6 +93,21 @@ async function refreshPreview() {
     }
 }
 
+/** A preset IS its colour: picking one sets the primary, which drives every token. */
+watch(
+    () => form.preset,
+    (key) => {
+        const match = props.options.presets.find((p) => p.key === key);
+
+        if (!match || form.primary.toLowerCase() === match.color.toLowerCase()) {
+            void refreshPreview();
+            return;
+        }
+
+        form.primary = match.color;
+    },
+);
+
 watch(
     () => [form.primary, form.accent, form.sidebar_background, form.sidebar_foreground, form.sidebar_accent, form.name, form.radius, form.font_sans],
     () => { void refreshPreview(); },

@@ -20,16 +20,27 @@ class BrandManager
 
     private ?Brand $memo = null;
 
+    /** The version $memo was built for. */
     private ?int $memoVersion = null;
 
+    /** Only used when the probe is disabled (probe_ttl <= 0). */
+    private ?int $probeMemo = null;
+
+    /**
+     * The memo is keyed on the resolved version, never on null-ness: in a
+     * long-lived process (queue:work, Horizon, Octane) forget() never runs, so a
+     * null-check memo would freeze the brand for the life of the worker and mail
+     * and PDF would render a stale brand forever.
+     */
     public function current(): Brand
     {
-        if ($this->memo !== null) {
-            return $this->memo;
-        }
-
         try {
             $version = $this->version();
+
+            if ($this->memo !== null && $this->memoVersion === $version) {
+                return $this->memo;
+            }
+
             $cached = cache()->get(self::TOKENS_KEY);
 
             if (! is_array($cached) || ($cached['version'] ?? null) !== $version) {
@@ -37,9 +48,13 @@ class BrandManager
                 cache()->put(self::TOKENS_KEY, $cached, (int) config('myra.brand.cache_ttl', self::TOKENS_TTL));
             }
 
+            $this->memoVersion = $version;
+
             return $this->memo = $this->build($cached['raw'], $version);
         } catch (\Throwable) {
-            return $this->memo = Brand::fallback();
+            $this->memoVersion = null;
+
+            return Brand::fallback();
         }
     }
 
@@ -54,7 +69,7 @@ class BrandManager
 
         if ($ttl <= 0) {
             // Probe disabled: the event path is the only invalidation.
-            return $this->memoVersion ??= (int) cache()->rememberForever(self::VERSION_KEY, fn () => $this->probe());
+            return $this->probeMemo ??= (int) cache()->rememberForever(self::VERSION_KEY, fn () => $this->probe());
         }
 
         return (int) cache()->remember(self::VERSION_KEY, $ttl, fn () => $this->probe());
@@ -70,6 +85,7 @@ class BrandManager
     {
         $this->memo = null;
         $this->memoVersion = null;
+        $this->probeMemo = null;
 
         cache()->forget(self::TOKENS_KEY);
         cache()->forget(self::VERSION_KEY);
@@ -380,9 +396,13 @@ class BrandManager
         $name = (string) ($enabled ? ($brand['name'] ?? '') : ($general['site_name'] ?? '')) ?: (string) config('app.name', 'Admin');
         $logoPath = $enabled ? ($brand['logo_path'] ?? null) : ($appearance['logo_path'] ?? null);
         $faviconPath = $enabled ? ($brand['favicon_path'] ?? null) : ($appearance['favicon_path'] ?? null);
+        $preset = (string) ($enabled ? ($brand['preset'] ?? 'zinc') : ($appearance['theme'] ?? 'zinc'));
+
+        // With no explicit primary the PRESET supplies it, so the picker is
+        // load-bearing rather than decorative.
         $primary = Color::normalise(
             (string) ($enabled ? ($brand['primary'] ?? '') : ($appearance['primary_color'] ?? '')),
-            '#18181b',
+            BrandPalette::PRESETS[$preset] ?? '#18181b',
         );
 
         $palette = new BrandPalette(
@@ -391,7 +411,7 @@ class BrandManager
             sidebarBackgroundHex: $this->hexOrNull($enabled ? ($brand['sidebar_background'] ?? null) : ($appearance['sidebar_background'] ?? null)),
             sidebarForegroundHex: $this->hexOrNull($enabled ? ($brand['sidebar_foreground'] ?? null) : ($appearance['sidebar_foreground'] ?? null)),
             sidebarAccentHex: $this->hexOrNull($enabled ? ($brand['sidebar_accent'] ?? null) : ($appearance['sidebar_accent'] ?? null)),
-            preset: (string) ($enabled ? ($brand['preset'] ?? 'zinc') : ($appearance['theme'] ?? 'zinc')),
+            preset: $preset,
         );
 
         $shortName = (string) ($brand['short_name'] ?? '') ?: mb_substr($name, 0, 24);

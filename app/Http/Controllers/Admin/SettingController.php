@@ -161,9 +161,7 @@ class SettingController extends Controller
         $settings->save();
 
         // >>> MYRA v2.6 [C] START
-        // The Appearance tab keeps working unchanged; when the brand manager is
-        // ON it writes through, so there is exactly one source of truth.
-        $this->mirrorAppearanceToBrand($settings);
+        $this->seedBrandFromAppearance($request, $settings);
         // <<< MYRA v2.6 [C] END
 
         cache()->forget('site_settings_shared');
@@ -245,8 +243,15 @@ class SettingController extends Controller
     }
 
     // >>> MYRA v2.6 [C] START
-    /** No-op while the brand manager is off. */
-    private function mirrorAppearanceToBrand(AppearanceSettings $appearance): void
+    /**
+     * ONE-WAY FIRST SEED, never a write-through. The Brand page is authoritative
+     * once the manager is enabled: an Appearance save may FILL a brand slot that
+     * is still empty, and may never overwrite one an operator deliberately set.
+     * Only slots this very request submitted are considered.
+     *
+     * No-op while the brand manager is off.
+     */
+    private function seedBrandFromAppearance(Request $request, AppearanceSettings $appearance): void
     {
         try {
             $brand = app(\App\Settings\BrandSettings::class);
@@ -255,16 +260,40 @@ class SettingController extends Controller
                 return;
             }
 
-            $brand->primary = $appearance->primary_color;
-            $brand->preset = $appearance->theme;
-            $brand->logo_path = $appearance->logo_path;
-            $brand->favicon_path = $appearance->favicon_path;
-            $brand->logo_position = $appearance->logo_position;
-            $brand->sidebar_background = $appearance->sidebar_background;
-            $brand->sidebar_foreground = $appearance->sidebar_foreground;
-            $brand->sidebar_accent = $appearance->sidebar_accent;
-            $brand->version = $brand->version + 1;
-            $brand->save();
+            // request input/file name => [brand property, freshly saved value]
+            $candidates = [
+                'logo' => ['logo_path', $appearance->logo_path],
+                'favicon' => ['favicon_path', $appearance->favicon_path],
+                'sidebar_background' => ['sidebar_background', $appearance->sidebar_background],
+                'sidebar_foreground' => ['sidebar_foreground', $appearance->sidebar_foreground],
+                'sidebar_accent' => ['sidebar_accent', $appearance->sidebar_accent],
+            ];
+
+            $seeded = false;
+
+            foreach ($candidates as $input => [$property, $value]) {
+                if (! $request->hasFile($input) && ! $request->filled($input)) {
+                    continue; // untouched by this save
+                }
+
+                if ($value === null || $value === '') {
+                    continue;
+                }
+
+                $current = $brand->$property;
+
+                if ($current !== null && $current !== '') {
+                    continue; // deliberate brand value — never clobber it
+                }
+
+                $brand->$property = $value;
+                $seeded = true;
+            }
+
+            if ($seeded) {
+                $brand->version = $brand->version + 1;
+                $brand->save();
+            }
         } catch (\Throwable) {
             // A missing brand group must never break the Appearance tab.
         }

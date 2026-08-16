@@ -20,7 +20,9 @@
 
         {{-- >>> MYRA v2.5 [D] START --}}
         @if(config('myra.pwa.enabled') === true)
-            <link rel="manifest" href="/manifest.webmanifest">
+            {{-- >>> MYRA v2.6 [C] — the branded document; the bare URL is shadowed
+                 by public/manifest.webmanifest in every real deployment. --}}
+            <link rel="manifest" href="{{ route('brand.manifest') }}">
             {{-- >>> MYRA v2.6 [C] START --}}
             <meta name="theme-color" media="(prefers-color-scheme: light)" content="{{ $myraBrand->palette->hex('background') }}">
             <meta name="theme-color" media="(prefers-color-scheme: dark)" content="{{ $myraBrand->palette->hex('background-dark') }}">

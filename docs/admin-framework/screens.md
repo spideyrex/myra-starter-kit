@@ -82,31 +82,31 @@ whether it **looks right** — layout, spacing and visual regressions still need
 
 ### Users
 
-`/admin/users`
+`/dashboard/users`
 
 <img src="../../public/docs/screenshots/users.png" alt="Users" width="900">
 
 ### User create
 
-`/admin/users/create`
+`/dashboard/users/create`
 
 <img src="../../public/docs/screenshots/user-create.png" alt="User create" width="900">
 
 ### Roles
 
-`/admin/roles`
+`/dashboard/roles`
 
 <img src="../../public/docs/screenshots/roles.png" alt="Roles" width="900">
 
 ### Role create
 
-`/admin/roles/create`
+`/dashboard/roles/create`
 
 <img src="../../public/docs/screenshots/role-create.png" alt="Role create" width="900">
 
 ### Permissions
 
-`/admin/permissions`
+`/dashboard/permissions`
 
 <img src="../../public/docs/screenshots/permissions.png" alt="Permissions" width="900">
 
@@ -114,43 +114,43 @@ whether it **looks right** — layout, spacing and visual regressions still need
 
 ### Pages
 
-`/admin/pages`
+`/dashboard/pages`
 
 <img src="../../public/docs/screenshots/pages.png" alt="Pages" width="900">
 
 ### Page create
 
-`/admin/pages/create`
+`/dashboard/pages/create`
 
 <img src="../../public/docs/screenshots/page-create.png" alt="Page create" width="900">
 
 ### Articles
 
-`/admin/articles`
+`/dashboard/articles`
 
 <img src="../../public/docs/screenshots/articles.png" alt="Articles" width="900">
 
 ### Article create
 
-`/admin/articles/create`
+`/dashboard/articles/create`
 
 <img src="../../public/docs/screenshots/article-create.png" alt="Article create" width="900">
 
 ### Categories
 
-`/admin/categories`
+`/dashboard/categories`
 
 <img src="../../public/docs/screenshots/categories.png" alt="Categories" width="900">
 
 ### Media
 
-`/admin/media`
+`/dashboard/media`
 
 <img src="../../public/docs/screenshots/media.png" alt="Media" width="900">
 
 ### Landing
 
-`/admin/landing`
+`/dashboard/landing`
 
 <img src="../../public/docs/screenshots/landing.png" alt="Landing" width="900">
 
@@ -158,13 +158,13 @@ whether it **looks right** — layout, spacing and visual regressions still need
 
 ### Brand
 
-`/admin/brand`
+`/dashboard/brand`
 
 <img src="../../public/docs/screenshots/brand.png" alt="Brand" width="900">
 
 ### Settings
 
-`/admin/settings`
+`/dashboard/settings`
 
 <img src="../../public/docs/screenshots/settings.png" alt="Settings" width="900">
 
@@ -172,13 +172,13 @@ whether it **looks right** — layout, spacing and visual regressions still need
 
 ### Reports index
 
-`/admin/reports`
+`/dashboard/reports`
 
 <img src="../../public/docs/screenshots/reports-index.png" alt="Reports index" width="900">
 
 ### Report schedules
 
-`/admin/report-schedules`
+`/dashboard/report-schedules`
 
 <img src="../../public/docs/screenshots/report-schedules.png" alt="Report schedules" width="900">
 
@@ -186,13 +186,13 @@ whether it **looks right** — layout, spacing and visual regressions still need
 
 ### Blocks
 
-`/admin/blocks`
+`/dashboard/blocks`
 
 <img src="../../public/docs/screenshots/blocks.png" alt="Blocks" width="900">
 
 ### Examples
 
-`/admin/examples`
+`/dashboard/examples`
 
 <img src="../../public/docs/screenshots/examples.png" alt="Examples" width="900">
 
@@ -200,31 +200,31 @@ whether it **looks right** — layout, spacing and visual regressions still need
 
 ### Email templates
 
-`/admin/email-templates`
+`/dashboard/email-templates`
 
 <img src="../../public/docs/screenshots/email-templates.png" alt="Email templates" width="900">
 
 ### Email template create
 
-`/admin/email-templates/create`
+`/dashboard/email-templates/create`
 
 <img src="../../public/docs/screenshots/email-template-create.png" alt="Email template create" width="900">
 
 ### Email log
 
-`/admin/email-logs`
+`/dashboard/email-logs`
 
 <img src="../../public/docs/screenshots/email-log.png" alt="Email log" width="900">
 
 ### Email settings
 
-`/admin/email-settings`
+`/dashboard/email-settings`
 
 <img src="../../public/docs/screenshots/email-settings.png" alt="Email settings" width="900">
 
 ### Firebase settings
 
-`/admin/firebase-settings`
+`/dashboard/firebase-settings`
 
 <img src="../../public/docs/screenshots/firebase-settings.png" alt="Firebase settings" width="900">
 
@@ -232,55 +232,55 @@ whether it **looks right** — layout, spacing and visual regressions still need
 
 ### Activity log
 
-`/admin/activity-logs`
+`/dashboard/activity-logs`
 
 <img src="../../public/docs/screenshots/activity-log.png" alt="Activity log" width="900">
 
 ### Api tokens
 
-`/admin/api-tokens`
+`/dashboard/api-tokens`
 
 <img src="../../public/docs/screenshots/api-tokens.png" alt="Api tokens" width="900">
 
 ### Backups
 
-`/admin/backups`
+`/dashboard/backups`
 
 <img src="../../public/docs/screenshots/backups.png" alt="Backups" width="900">
 
 ### System health
 
-`/admin/system-health`
+`/dashboard/system-health`
 
 <img src="../../public/docs/screenshots/system-health.png" alt="System health" width="900">
 
 ### Admin notifications
 
-`/admin/notifications`
+`/dashboard/notifications`
 
 <img src="../../public/docs/screenshots/admin-notifications.png" alt="Admin notifications" width="900">
 
 ### Admin notification create
 
-`/admin/notifications/create`
+`/dashboard/notifications/create`
 
 <img src="../../public/docs/screenshots/admin-notification-create.png" alt="Admin notification create" width="900">
 
 ### Plugin example
 
-`/admin/myra-example`
+`/dashboard/myra-example`
 
 <img src="../../public/docs/screenshots/plugin-example.png" alt="Plugin example" width="900">
 
 ### Learning courses
 
-`/admin/learning/courses`
+`/dashboard/learning/courses`
 
 <img src="../../public/docs/screenshots/learning-courses.png" alt="Learning courses" width="900">
 
 ### Learning site identity
 
-`/admin/learning/site-identity`
+`/dashboard/learning/site-identity`
 
 <img src="../../public/docs/screenshots/learning-site-identity.png" alt="Learning site identity" width="900">
 
@@ -288,241 +288,241 @@ whether it **looks right** — layout, spacing and visual regressions still need
 
 ### Demo
 
-`/admin/demo`
+`/dashboard/demo`
 
 <img src="../../public/docs/screenshots/demo.png" alt="Demo" width="900">
 
 ### Action modals
 
-`/admin/demo/action-modals`
+`/dashboard/demo/action-modals`
 
 <img src="../../public/docs/screenshots/demo-action-modals.png" alt="Action modals" width="900">
 
 ### Advanced filters
 
-`/admin/demo/advanced-filters`
+`/dashboard/demo/advanced-filters`
 
 <img src="../../public/docs/screenshots/demo-advanced-filters.png" alt="Advanced filters" width="900">
 
 ### Ai filter
 
-`/admin/demo/ai-filter`
+`/dashboard/demo/ai-filter`
 
 <img src="../../public/docs/screenshots/demo-ai-filter.png" alt="Ai filter" width="900">
 
 ### Bulk actions
 
-`/admin/demo/bulk-actions`
+`/dashboard/demo/bulk-actions`
 
 <img src="../../public/docs/screenshots/demo-bulk-actions.png" alt="Bulk actions" width="900">
 
 ### Chart primitives
 
-`/admin/demo/chart-primitives`
+`/dashboard/demo/chart-primitives`
 
 <img src="../../public/docs/screenshots/demo-chart-primitives.png" alt="Chart primitives" width="900">
 
 ### Code editor
 
-`/admin/demo/code-editor`
+`/dashboard/demo/code-editor`
 
 <img src="../../public/docs/screenshots/demo-code-editor.png" alt="Code editor" width="900">
 
 ### Conditional fields
 
-`/admin/demo/conditional-fields`
+`/dashboard/demo/conditional-fields`
 
 <img src="../../public/docs/screenshots/demo-conditional-fields.png" alt="Conditional fields" width="900">
 
 ### Conversation
 
-`/admin/demo/conversation`
+`/dashboard/demo/conversation`
 
 <img src="../../public/docs/screenshots/demo-conversation.png" alt="Conversation" width="900">
 
 ### Dashboard editor
 
-`/admin/demo/dashboard-editor`
+`/dashboard/demo/dashboard-editor`
 
 <img src="../../public/docs/screenshots/demo-dashboard-editor.png" alt="Dashboard editor" width="900">
 
 ### Empty and item
 
-`/admin/demo/empty-and-item`
+`/dashboard/demo/empty-and-item`
 
 <img src="../../public/docs/screenshots/demo-empty-and-item.png" alt="Empty and item" width="900">
 
 ### Field types
 
-`/admin/demo/field-types`
+`/dashboard/demo/field-types`
 
 <img src="../../public/docs/screenshots/demo-field-types.png" alt="Field types" width="900">
 
 ### Form builder
 
-`/admin/demo/form-builder`
+`/dashboard/demo/form-builder`
 
 <img src="../../public/docs/screenshots/demo-form-builder.png" alt="Form builder" width="900">
 
 ### Global search
 
-`/admin/demo/global-search`
+`/dashboard/demo/global-search`
 
 <img src="../../public/docs/screenshots/demo-global-search.png" alt="Global search" width="900">
 
 ### Grouping
 
-`/admin/demo/grouping`
+`/dashboard/demo/grouping`
 
 <img src="../../public/docs/screenshots/demo-grouping.png" alt="Grouping" width="900">
 
 ### Import export
 
-`/admin/demo/import-export`
+`/dashboard/demo/import-export`
 
 <img src="../../public/docs/screenshots/demo-import-export.png" alt="Import export" width="900">
 
 ### Infolist
 
-`/admin/demo/infolist`
+`/dashboard/demo/infolist`
 
 <img src="../../public/docs/screenshots/demo-infolist.png" alt="Infolist" width="900">
 
 ### Inline editing
 
-`/admin/demo/inline-editing`
+`/dashboard/demo/inline-editing`
 
 <img src="../../public/docs/screenshots/demo-inline-editing.png" alt="Inline editing" width="900">
 
 ### Landing templates
 
-`/admin/demo/landing-templates`
+`/dashboard/demo/landing-templates`
 
 <img src="../../public/docs/screenshots/demo-landing-templates.png" alt="Landing templates" width="900">
 
 ### Live widgets
 
-`/admin/demo/live-widgets`
+`/dashboard/demo/live-widgets`
 
 <img src="../../public/docs/screenshots/demo-live-widgets.png" alt="Live widgets" width="900">
 
 ### Map
 
-`/admin/demo/map`
+`/dashboard/demo/map`
 
 <img src="../../public/docs/screenshots/demo-map.png" alt="Map" width="900">
 
 ### Map markers
 
-`/admin/demo/map-markers`
+`/dashboard/demo/map-markers`
 
 <img src="../../public/docs/screenshots/demo-map-markers.png" alt="Map markers" width="900">
 
 ### Offline shell
 
-`/admin/demo/offline-shell`
+`/dashboard/demo/offline-shell`
 
 <img src="../../public/docs/screenshots/demo-offline-shell.png" alt="Offline shell" width="900">
 
 ### Otp and combobox
 
-`/admin/demo/otp-and-combobox`
+`/dashboard/demo/otp-and-combobox`
 
 <img src="../../public/docs/screenshots/demo-otp-and-combobox.png" alt="Otp and combobox" width="900">
 
 ### Playground
 
-`/admin/demo/playground`
+`/dashboard/demo/playground`
 
 <img src="../../public/docs/screenshots/demo-playground.png" alt="Playground" width="900">
 
 ### Plugins
 
-`/admin/demo/plugins`
+`/dashboard/demo/plugins`
 
 <img src="../../public/docs/screenshots/demo-plugins.png" alt="Plugins" width="900">
 
 ### Questionnaire
 
-`/admin/demo/questionnaire`
+`/dashboard/demo/questionnaire`
 
 <img src="../../public/docs/screenshots/demo-questionnaire.png" alt="Questionnaire" width="900">
 
 ### Relation manager
 
-`/admin/demo/relation-manager`
+`/dashboard/demo/relation-manager`
 
 <img src="../../public/docs/screenshots/demo-relation-manager.png" alt="Relation manager" width="900">
 
 ### Reordering
 
-`/admin/demo/reordering`
+`/dashboard/demo/reordering`
 
 <img src="../../public/docs/screenshots/demo-reordering.png" alt="Reordering" width="900">
 
 ### Repeater field
 
-`/admin/demo/repeater-field`
+`/dashboard/demo/repeater-field`
 
 <img src="../../public/docs/screenshots/demo-repeater-field.png" alt="Repeater field" width="900">
 
 ### Report delivery
 
-`/admin/demo/report-delivery`
+`/dashboard/demo/report-delivery`
 
 <img src="../../public/docs/screenshots/demo-report-delivery.png" alt="Report delivery" width="900">
 
 ### Reports
 
-`/admin/demo/reports`
+`/dashboard/demo/reports`
 
 <img src="../../public/docs/screenshots/demo-reports.png" alt="Reports" width="900">
 
 ### Rich text editor
 
-`/admin/demo/rich-text-editor`
+`/dashboard/demo/rich-text-editor`
 
 <img src="../../public/docs/screenshots/demo-rich-text-editor.png" alt="Rich text editor" width="900">
 
 ### Saved views
 
-`/admin/demo/saved-views`
+`/dashboard/demo/saved-views`
 
 <img src="../../public/docs/screenshots/demo-saved-views.png" alt="Saved views" width="900">
 
 ### Scale
 
-`/admin/demo/scale`
+`/dashboard/demo/scale`
 
 <img src="../../public/docs/screenshots/demo-scale.png" alt="Scale" width="900">
 
 ### Scale cursor
 
-`/admin/demo/scale-cursor`
+`/dashboard/demo/scale-cursor`
 
 <img src="../../public/docs/screenshots/demo-scale-cursor.png" alt="Scale cursor" width="900">
 
 ### Soft deletes
 
-`/admin/demo/soft-deletes`
+`/dashboard/demo/soft-deletes`
 
 <img src="../../public/docs/screenshots/demo-soft-deletes.png" alt="Soft deletes" width="900">
 
 ### Tenancy
 
-`/admin/demo/tenancy`
+`/dashboard/demo/tenancy`
 
 <img src="../../public/docs/screenshots/demo-tenancy.png" alt="Tenancy" width="900">
 
 ### Widgets
 
-`/admin/demo/widgets`
+`/dashboard/demo/widgets`
 
 <img src="../../public/docs/screenshots/demo-widgets.png" alt="Widgets" width="900">
 
 ### Wizard
 
-`/admin/demo/wizard`
+`/dashboard/demo/wizard`
 
 <img src="../../public/docs/screenshots/demo-wizard.png" alt="Wizard" width="900">
 

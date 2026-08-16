@@ -108,7 +108,7 @@ visitors.
 - **URLs** — every `url` field passes `UrlGuard::safe()`. The allowlist is `http`, `https`,
   `mailto`, `tel`, a leading `/`, a leading `#`, and the empty string. `javascript:`, `data:`,
   `vbscript:` and protocol-relative `//host` are rejected to `''`.
-- **Uploads** — `POST /admin/landing/builder/image` validates magic bytes with `getimagesize()`.
+- **Uploads** — `POST /dashboard/landing/builder/image` validates magic bytes with `getimagesize()`.
   The extension is derived from the `IMAGETYPE_*` constant and **never** from the client filename.
   The stored name is a ULID. Files land on the public disk under `homepage/` because the private
   inline-upload route is permission-gated and therefore unusable for anonymous visitors — the
@@ -207,7 +207,7 @@ The coupling is a session slot, not a shared class:
 - value — `['token' => string, 'blocks' => array, 'expires_at' => int]`
 - TTL — 15 minutes, one slot per session; a new POST overwrites it.
 
-`POST /admin/landing/builder/preview` (behind `settings.edit`) stores the draft and returns a token.
+`POST /dashboard/landing/builder/preview` (behind `settings.edit`) stores the draft and returns a token.
 `PreviewSlot::pull()` returns those blocks only when **all** of the following hold: the request
 carries a non-empty `?preview=` token, the requesting user can `settings.edit`, the token matches
 under `hash_equals()`, and the slot has not expired. Otherwise it returns `null` and the stored
@@ -254,7 +254,7 @@ a confirmation.
 | `resources/js/Pages/Public/Templates/_shared/sections/*.vue` | one component per type; **filename is the key** |
 | `resources/js/Pages/Admin/Landing/Builder.vue` | the editor |
 | `resources/js/composables/useSectionList.ts` | the editor's only mutation surface |
-| `resources/js/Pages/Admin/Demo/PageBuilder.vue` | the read-only gallery page (`/admin/demo/page-builder`) |
+| `resources/js/Pages/Admin/Demo/PageBuilder.vue` | the read-only gallery page (`/dashboard/demo/page-builder`) |
 | `tests/Feature/PageBuilder/EndToEndPageBuilderTest.php` | saves through the real endpoint, reads the real public props |
 | `tests/js/fixtures/page-builder-blocks.json` | that payload, asserted by the PHP test and mounted by `tests/js/pageBuilderPayload.spec.ts` |
 

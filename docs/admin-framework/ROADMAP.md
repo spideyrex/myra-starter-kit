@@ -163,5 +163,11 @@ The "easy to scale up the platform" foundation.
 
 ## Shipped
 
+- [x] Admin URL prefix — moved `/admin` → `/dashboard` and made it configuration
+      (`myra.admin.prefix`, env `MYRA_ADMIN_PREFIX`). Route names stay `admin.*`, so the
+      ~370 `route('admin.…')` call sites were untouched. `Myra::adminPrefix()/adminPath()`
+      and `@/lib/adminPath` are the single source of truth; a GET-only legacy redirect keeps
+      old links alive. 204 routes moved; 78/78 live pages verified clean. See
+      [admin-prefix.md](admin-prefix.md).
 - [x] v2.0.0 — Block Builder, searchable/async Select, 8 generators, Shield RBAC, 2FA,
       per-user data isolation, PHPUnit suite + CI, MapLibre toolkit, i18n (en/ms/zh)

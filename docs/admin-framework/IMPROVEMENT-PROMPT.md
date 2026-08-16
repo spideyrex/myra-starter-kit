@@ -125,6 +125,19 @@ These have each cost a sweep more than once. They are cheap to avoid and expensi
 4. **i18n messages are compiled.** A literal `{` in a message is parsed as a named placeholder;
    `"Reply {unchanged:true}"` is not a compilable vue-i18n message.
 5. **Fan-out must not walk a whole table synchronously in a request.** Queue it.
+6. **The Bash tool silently eats backslashes**, including inside `<<'QUOTED'` heredocs and
+   single-quoted `sed`/`perl` scripts. `App\Support\Myra` arrives as `AppSupportMyra` and
+   `str_replace('\\', '/')` becomes an unterminated string. For anything containing a
+   backslash, write the script to a file with the Write tool and execute the file — do not
+   pipe it through the shell. Same for `--filter="A|B"`: the `|` is eaten by the `.bat`
+   wrapper, so run one filter per invocation.
+7. **Run Pint only on files you touched.** The codebase is not Pint-clean, so a bare
+   `vendor/bin/pint` reformats ~120 unrelated files and buries the real diff. Revert
+   everything outside your own file list before committing.
+8. **A grep for the declaration site is not a complete survey.** Searching `prefix('admin')`
+   found 8 of 9 route groups; `admin.stop-impersonate` was declared with a literal URI
+   outside any group and was caught only by a test that asserted the invariant over the
+   real route table. Assert the property, don't enumerate the call sites.
 
 ---
 

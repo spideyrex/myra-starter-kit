@@ -2231,5 +2231,200 @@
         },
         "title": "AI 筛选",
         "unresolved": "没有生成任何条件。"
+    },
+    "pageBuilder": {
+        "sections": {
+            "groups": {
+                "content": "内容",
+                "proof": "信任背书",
+                "conversion": "转化",
+                "layout": "版式"
+            },
+            "hero": {
+                "label": "主视觉",
+                "description": "一个主标题、一行辅助文案、一个行动号召按钮，以及可选图片。",
+                "fields": {
+                    "title": "主标题",
+                    "subtitle": "辅助文案",
+                    "cta_text": "按钮文字",
+                    "cta_url": "按钮链接",
+                    "image_path": "图片"
+                },
+                "variants": {
+                    "align": "对齐方式",
+                    "compact": "紧凑"
+                },
+                "variantOptions": {
+                    "align": {
+                        "center": "居中",
+                        "split": "左右分栏",
+                        "left": "左对齐"
+                    }
+                }
+            },
+            "features": {
+                "label": "功能网格",
+                "description": "一组简短的卖点卡片，每张配一个图标。",
+                "fields": {
+                    "title": "主标题",
+                    "subtitle": "辅助文案",
+                    "items": "功能"
+                },
+                "itemFields": {
+                    "icon": "图标",
+                    "title": "标题",
+                    "description": "描述"
+                },
+                "variants": {
+                    "columns": "列数",
+                    "bare": "无背景"
+                },
+                "variantOptions": {
+                    "columns": {
+                        "2": "两列",
+                        "3": "三列"
+                    }
+                }
+            },
+            "testimonials": {
+                "label": "客户评价",
+                "description": "来自客户的引述，附姓名与职务。",
+                "fields": {
+                    "title": "主标题",
+                    "subtitle": "辅助文案",
+                    "items": "评价"
+                },
+                "itemFields": {
+                    "name": "姓名",
+                    "role": "职务",
+                    "quote": "引述"
+                },
+                "variants": {
+                    "tinted": "浅色背景"
+                }
+            },
+            "pricing": {
+                "label": "价格表",
+                "description": "包含价格、功能清单与行动号召的套餐。",
+                "fields": {
+                    "title": "主标题",
+                    "subtitle": "辅助文案",
+                    "plans": "套餐"
+                },
+                "planFields": {
+                    "name": "套餐名称",
+                    "price": "价格",
+                    "period": "计费周期",
+                    "features": "功能，以逗号分隔",
+                    "cta_text": "按钮文字",
+                    "cta_url": "按钮链接",
+                    "highlighted": "突出此套餐"
+                },
+                "variants": {
+                    "tinted": "浅色背景"
+                }
+            },
+            "cta": {
+                "label": "行动号召",
+                "description": "页尾条幅，一个标题加一个按钮。",
+                "fields": {
+                    "title": "主标题",
+                    "subtitle": "辅助文案",
+                    "button_text": "按钮文字",
+                    "button_url": "按钮链接"
+                },
+                "variants": {
+                    "muted": "柔和背景"
+                }
+            },
+            "rich_text": {
+                "label": "富文本",
+                "description": "自由排版的正文。标记在存储前与展示前各清理一次。",
+                "fields": {
+                    "heading": "标题",
+                    "body": "正文"
+                },
+                "variants": {
+                    "width": "宽度",
+                    "tinted": "浅色背景"
+                },
+                "variantOptions": {
+                    "width": {
+                        "prose": "阅读宽度",
+                        "wide": "加宽"
+                    }
+                }
+            },
+            "image": {
+                "label": "图片",
+                "description": "单张图片，替代文字为必填，图注可选。",
+                "fields": {
+                    "image_path": "图片",
+                    "alt": "替代文字",
+                    "caption": "图注",
+                    "link_url": "链接"
+                },
+                "variants": {
+                    "width": "宽度",
+                    "rounded": "圆角"
+                },
+                "variantOptions": {
+                    "width": {
+                        "contained": "限宽",
+                        "full": "通栏"
+                    }
+                }
+            },
+            "stats": {
+                "label": "数据",
+                "description": "最多四组关键数字，每组配一句简短说明。",
+                "fields": {
+                    "title": "主标题",
+                    "items": "数据"
+                },
+                "itemFields": {
+                    "value": "数值",
+                    "label": "说明"
+                },
+                "variants": {
+                    "tinted": "浅色背景"
+                }
+            },
+            "faq": {
+                "label": "常见问题",
+                "description": "以键盘可操作的折叠面板呈现的问答。",
+                "fields": {
+                    "title": "主标题",
+                    "subtitle": "辅助文案",
+                    "items": "问题"
+                },
+                "itemFields": {
+                    "question": "问题",
+                    "answer": "答案"
+                },
+                "variants": {
+                    "tinted": "浅色背景"
+                }
+            },
+            "divider": {
+                "label": "分隔",
+                "description": "两个区块之间的分隔线或留白。",
+                "fields": {
+                    "style": "样式",
+                    "size": "尺寸"
+                },
+                "fieldOptions": {
+                    "style": {
+                        "rule": "分隔线",
+                        "space": "留白"
+                    },
+                    "size": {
+                        "sm": "小",
+                        "md": "中",
+                        "lg": "大"
+                    }
+                }
+            }
+        }
     }
 }

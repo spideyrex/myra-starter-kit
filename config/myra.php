@@ -540,4 +540,29 @@ return [
     ],
     // <<< MYRA v2.5 [D] END
 
+    // >>> MYRA v2.7 [C] START
+    /*
+    |--------------------------------------------------------------------------
+    | Page builder — the starter section library
+    |--------------------------------------------------------------------------
+    |
+    | A SEPARATE top-level key from 'pagebuilder', which carries the five core
+    | adapters. SectionRegistry::seed() concatenates both lists, so a package
+    | (or this bundle) can contribute section types without editing the other's
+    | array. Every class exposes `public static function define(): SectionType`.
+    |
+    */
+
+    'pagebuilder_extra' => [
+        'extra_sections' => [
+            \App\Homepage\Sections\Types\RichTextSectionType::class,
+            \App\Homepage\Sections\Types\ImageSectionType::class,
+            \App\Homepage\Sections\Types\StatsSectionType::class,
+            \App\Homepage\Sections\Types\FaqSectionType::class,
+            \App\Homepage\Sections\Types\DividerSectionType::class,
+            // myra:sections — package section types are appended above this line.
+        ],
+    ],
+    // <<< MYRA v2.7 [C] END
+
 ];

@@ -2231,5 +2231,200 @@
         },
         "title": "Penapis AI",
         "unresolved": "Tiada syarat dihasilkan."
+    },
+    "pageBuilder": {
+        "sections": {
+            "groups": {
+                "content": "Kandungan",
+                "proof": "Bukti sosial",
+                "conversion": "Penukaran",
+                "layout": "Susun atur"
+            },
+            "hero": {
+                "label": "Hero",
+                "description": "Satu tajuk utama, satu baris sokongan, satu seruan tindakan dan imej pilihan.",
+                "fields": {
+                    "title": "Tajuk utama",
+                    "subtitle": "Teks sokongan",
+                    "cta_text": "Label butang",
+                    "cta_url": "Pautan butang",
+                    "image_path": "Imej"
+                },
+                "variants": {
+                    "align": "Penjajaran",
+                    "compact": "Padat"
+                },
+                "variantOptions": {
+                    "align": {
+                        "center": "Tengah",
+                        "split": "Belah",
+                        "left": "Kiri"
+                    }
+                }
+            },
+            "features": {
+                "label": "Grid ciri",
+                "description": "Grid kad manfaat ringkas, setiap satu dengan ikon.",
+                "fields": {
+                    "title": "Tajuk utama",
+                    "subtitle": "Teks sokongan",
+                    "items": "Ciri"
+                },
+                "itemFields": {
+                    "icon": "Ikon",
+                    "title": "Tajuk",
+                    "description": "Penerangan"
+                },
+                "variants": {
+                    "columns": "Lajur",
+                    "bare": "Tanpa latar belakang"
+                },
+                "variantOptions": {
+                    "columns": {
+                        "2": "Dua",
+                        "3": "Tiga"
+                    }
+                }
+            },
+            "testimonials": {
+                "label": "Testimoni",
+                "description": "Petikan daripada pelanggan, setiap satu dengan nama dan jawatan.",
+                "fields": {
+                    "title": "Tajuk utama",
+                    "subtitle": "Teks sokongan",
+                    "items": "Testimoni"
+                },
+                "itemFields": {
+                    "name": "Nama",
+                    "role": "Jawatan",
+                    "quote": "Petikan"
+                },
+                "variants": {
+                    "tinted": "Latar belakang berwarna"
+                }
+            },
+            "pricing": {
+                "label": "Jadual harga",
+                "description": "Pelan dengan harga, senarai ciri dan seruan tindakan.",
+                "fields": {
+                    "title": "Tajuk utama",
+                    "subtitle": "Teks sokongan",
+                    "plans": "Pelan"
+                },
+                "planFields": {
+                    "name": "Nama pelan",
+                    "price": "Harga",
+                    "period": "Tempoh bil",
+                    "features": "Ciri, dipisahkan koma",
+                    "cta_text": "Label butang",
+                    "cta_url": "Pautan butang",
+                    "highlighted": "Serlahkan pelan ini"
+                },
+                "variants": {
+                    "tinted": "Latar belakang berwarna"
+                }
+            },
+            "cta": {
+                "label": "Seruan tindakan",
+                "description": "Jalur penutup dengan satu tajuk dan satu butang.",
+                "fields": {
+                    "title": "Tajuk utama",
+                    "subtitle": "Teks sokongan",
+                    "button_text": "Label butang",
+                    "button_url": "Pautan butang"
+                },
+                "variants": {
+                    "muted": "Latar belakang lembut"
+                }
+            },
+            "rich_text": {
+                "label": "Teks kaya",
+                "description": "Prosa bebas. Markup dibersihkan sebelum disimpan dan sekali lagi sebelum dipaparkan.",
+                "fields": {
+                    "heading": "Tajuk",
+                    "body": "Kandungan"
+                },
+                "variants": {
+                    "width": "Lebar",
+                    "tinted": "Latar belakang berwarna"
+                },
+                "variantOptions": {
+                    "width": {
+                        "prose": "Lebar bacaan",
+                        "wide": "Lebar penuh"
+                    }
+                }
+            },
+            "image": {
+                "label": "Imej",
+                "description": "Satu gambar dengan teks alternatif wajib dan kapsyen pilihan.",
+                "fields": {
+                    "image_path": "Imej",
+                    "alt": "Teks alternatif",
+                    "caption": "Kapsyen",
+                    "link_url": "Pautan"
+                },
+                "variants": {
+                    "width": "Lebar",
+                    "rounded": "Bucu bulat"
+                },
+                "variantOptions": {
+                    "width": {
+                        "contained": "Terkandung",
+                        "full": "Penuh"
+                    }
+                }
+            },
+            "stats": {
+                "label": "Statistik",
+                "description": "Sehingga empat nombor utama, setiap satu dengan label ringkas.",
+                "fields": {
+                    "title": "Tajuk utama",
+                    "items": "Statistik"
+                },
+                "itemFields": {
+                    "value": "Nilai",
+                    "label": "Label"
+                },
+                "variants": {
+                    "tinted": "Latar belakang berwarna"
+                }
+            },
+            "faq": {
+                "label": "Soalan dan jawapan",
+                "description": "Soalan dan jawapan dalam akordion yang boleh dicapai papan kekunci.",
+                "fields": {
+                    "title": "Tajuk utama",
+                    "subtitle": "Teks sokongan",
+                    "items": "Soalan"
+                },
+                "itemFields": {
+                    "question": "Soalan",
+                    "answer": "Jawapan"
+                },
+                "variants": {
+                    "tinted": "Latar belakang berwarna"
+                }
+            },
+            "divider": {
+                "label": "Pemisah",
+                "description": "Garis atau ruang kosong antara dua bahagian.",
+                "fields": {
+                    "style": "Gaya",
+                    "size": "Saiz"
+                },
+                "fieldOptions": {
+                    "style": {
+                        "rule": "Garis",
+                        "space": "Ruang"
+                    },
+                    "size": {
+                        "sm": "Kecil",
+                        "md": "Sederhana",
+                        "lg": "Besar"
+                    }
+                }
+            }
+        }
     }
 }

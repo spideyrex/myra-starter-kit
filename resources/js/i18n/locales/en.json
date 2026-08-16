@@ -2231,5 +2231,200 @@
         },
         "title": "AI filters",
         "unresolved": "No conditions were produced."
+    },
+    "pageBuilder": {
+        "sections": {
+            "groups": {
+                "content": "Content",
+                "proof": "Social proof",
+                "conversion": "Conversion",
+                "layout": "Layout"
+            },
+            "hero": {
+                "label": "Hero",
+                "description": "A headline, a supporting line, one call to action and an optional image.",
+                "fields": {
+                    "title": "Headline",
+                    "subtitle": "Supporting text",
+                    "cta_text": "Button label",
+                    "cta_url": "Button link",
+                    "image_path": "Image"
+                },
+                "variants": {
+                    "align": "Alignment",
+                    "compact": "Compact"
+                },
+                "variantOptions": {
+                    "align": {
+                        "center": "Centred",
+                        "split": "Split",
+                        "left": "Left"
+                    }
+                }
+            },
+            "features": {
+                "label": "Feature grid",
+                "description": "A grid of short benefit cards, each with an icon.",
+                "fields": {
+                    "title": "Headline",
+                    "subtitle": "Supporting text",
+                    "items": "Features"
+                },
+                "itemFields": {
+                    "icon": "Icon",
+                    "title": "Title",
+                    "description": "Description"
+                },
+                "variants": {
+                    "columns": "Columns",
+                    "bare": "No background"
+                },
+                "variantOptions": {
+                    "columns": {
+                        "2": "Two",
+                        "3": "Three"
+                    }
+                }
+            },
+            "testimonials": {
+                "label": "Testimonials",
+                "description": "Quotes from customers, each with a name and a role.",
+                "fields": {
+                    "title": "Headline",
+                    "subtitle": "Supporting text",
+                    "items": "Testimonials"
+                },
+                "itemFields": {
+                    "name": "Name",
+                    "role": "Role",
+                    "quote": "Quote"
+                },
+                "variants": {
+                    "tinted": "Tinted background"
+                }
+            },
+            "pricing": {
+                "label": "Pricing table",
+                "description": "Plans with a price, a feature list and a call to action.",
+                "fields": {
+                    "title": "Headline",
+                    "subtitle": "Supporting text",
+                    "plans": "Plans"
+                },
+                "planFields": {
+                    "name": "Plan name",
+                    "price": "Price",
+                    "period": "Billing period",
+                    "features": "Features, comma separated",
+                    "cta_text": "Button label",
+                    "cta_url": "Button link",
+                    "highlighted": "Highlight this plan"
+                },
+                "variants": {
+                    "tinted": "Tinted background"
+                }
+            },
+            "cta": {
+                "label": "Call to action",
+                "description": "A closing band with one headline and one button.",
+                "fields": {
+                    "title": "Headline",
+                    "subtitle": "Supporting text",
+                    "button_text": "Button label",
+                    "button_url": "Button link"
+                },
+                "variants": {
+                    "muted": "Muted background"
+                }
+            },
+            "rich_text": {
+                "label": "Rich text",
+                "description": "Free-form prose. Markup is cleaned before it is stored and again before it is shown.",
+                "fields": {
+                    "heading": "Heading",
+                    "body": "Body"
+                },
+                "variants": {
+                    "width": "Width",
+                    "tinted": "Tinted background"
+                },
+                "variantOptions": {
+                    "width": {
+                        "prose": "Reading width",
+                        "wide": "Wide"
+                    }
+                }
+            },
+            "image": {
+                "label": "Image",
+                "description": "A single picture with required alternative text and an optional caption.",
+                "fields": {
+                    "image_path": "Image",
+                    "alt": "Alternative text",
+                    "caption": "Caption",
+                    "link_url": "Link"
+                },
+                "variants": {
+                    "width": "Width",
+                    "rounded": "Rounded corners"
+                },
+                "variantOptions": {
+                    "width": {
+                        "contained": "Contained",
+                        "full": "Full bleed"
+                    }
+                }
+            },
+            "stats": {
+                "label": "Statistics",
+                "description": "Up to four headline numbers, each with a short label.",
+                "fields": {
+                    "title": "Headline",
+                    "items": "Statistics"
+                },
+                "itemFields": {
+                    "value": "Value",
+                    "label": "Label"
+                },
+                "variants": {
+                    "tinted": "Tinted background"
+                }
+            },
+            "faq": {
+                "label": "Questions and answers",
+                "description": "Questions and answers in a keyboard-accessible accordion.",
+                "fields": {
+                    "title": "Headline",
+                    "subtitle": "Supporting text",
+                    "items": "Questions"
+                },
+                "itemFields": {
+                    "question": "Question",
+                    "answer": "Answer"
+                },
+                "variants": {
+                    "tinted": "Tinted background"
+                }
+            },
+            "divider": {
+                "label": "Divider",
+                "description": "A rule or a run of empty space between two sections.",
+                "fields": {
+                    "style": "Style",
+                    "size": "Size"
+                },
+                "fieldOptions": {
+                    "style": {
+                        "rule": "Rule",
+                        "space": "Space"
+                    },
+                    "size": {
+                        "sm": "Small",
+                        "md": "Medium",
+                        "lg": "Large"
+                    }
+                }
+            }
+        }
     }
 }

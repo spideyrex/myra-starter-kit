@@ -31,6 +31,35 @@
         "demo": "演示",
         "reports": "报表"
     },
+    "plugins": {
+        "title": "插件",
+        "description": "注册页面、权限、报表、导入与导航的扩展包 — 显式声明，绝不自动发现。",
+        "back": "返回演示",
+        "loaded": "已加载的插件",
+        "loadedDescription": "每一行都是启动时真实应用的清单，计数表示该插件贡献的接口面。",
+        "empty": "尚未注册插件",
+        "emptyDescription": "在 config/myra.php 的 myra.extensions.plugins 中添加类，或运行 make:myra-plugin。",
+        "strictOn": "严格模式：插件失败会抛出异常",
+        "strictOff": "隔离模式：插件失败会被隔离",
+        "failedTitle": "加载失败的插件",
+        "failedDescription": "这些类在启动时被隔离，后台面板保持可用。",
+        "columns": {
+            "id": "ID",
+            "class": "类",
+            "permissions": "权限模块",
+            "reports": "报表",
+            "imports": "导入",
+            "routes": "路由组",
+            "nav": "导航项",
+            "migrations": "迁移路径"
+        },
+        "example": {
+            "nav": "示例插件",
+            "title": "一个插件就是一个类",
+            "description": "一个抽象基类，一个返回清单的必需方法。无需服务提供者，无需注册调用。"
+        }
+    },
+    "generated": {},
     "common": {
         "save": "保存",
         "cancel": "取消",
@@ -63,6 +92,41 @@
         "showLess": "收起",
         "linesTruncated": "显示 {total} 行中的 {shown} 行。",
         "copiedToClipboard": "已复制到剪贴板"
+    },
+    "clusters": {
+        "learning": {
+            "label": "学习",
+            "courses": {
+                "label": "课程",
+                "description": "嵌套资源：每个课程拥有自己的课时。",
+                "searchPlaceholder": "搜索课程...",
+                "title": "标题",
+                "lessonCount": "课时",
+                "created": "创建时间",
+                "manage": "管理课时"
+            },
+            "lessons": {
+                "label": "课时",
+                "description": "{course} 的课时。父级来自 URL，而不是表单。",
+                "searchPlaceholder": "搜索课时...",
+                "title": "标题",
+                "position": "顺序",
+                "created": "创建时间",
+                "add": "新增课时",
+                "titlePlaceholder": "课时标题",
+                "positionPlaceholder": "顺序",
+                "delete": "删除",
+                "deleteConfirm": "确定删除此课时？"
+            },
+            "siteIdentity": {
+                "label": "站点标识",
+                "description": "单一资源：一条记录，两个路由，没有新建也没有删除。",
+                "name": "名称",
+                "tagline": "标语",
+                "note": "首次保存会创建记录；之后每次保存都更新同一行。",
+                "save": "保存"
+            }
+        }
     },
     "status": {
         "active": "活跃",
@@ -130,6 +194,37 @@
             "boldSample": "粗体文字",
             "italicSample": "斜体文字"
         }
+    },
+    "tenancy": {
+        "title": "多租户",
+        "subtitle": "需主动启用，默认关闭。关闭时不注册任何内容，也不改变任何查询。",
+        "back": "返回演示",
+        "statusDisabled": "已关闭",
+        "statusEnabled": "已启用",
+        "bannerDisabled": "多租户已关闭。未注册全局作用域，未挂载创建钩子，下方每条查询编译结果与此功能出现之前完全一致。",
+        "bannerEnabled": "多租户已启用。已列出的模型被限定到当前团队，没有租户的行会被隐藏。",
+        "column": "租户列",
+        "nullRows": "空租户行",
+        "nullRowsStrict": "严格 — 没有租户的行会被隐藏",
+        "nullRowsShared": "共享 — 没有租户的行对每个租户可见",
+        "currentTeam": "当前团队",
+        "noTeam": "无",
+        "modelsTitle": "受限定的模型",
+        "modelsDescription": "只有在开关打开且该类列于 myra.tenancy.models 中时，模型才会被限定。",
+        "modelsEmpty": "尚未列出任何需要租户限定的模型。",
+        "colModel": "模型",
+        "colTrait": "使用 trait",
+        "colColumn": "存在列",
+        "colNullRows": "没有租户的行",
+        "colScoped": "已注册作用域",
+        "yes": "是",
+        "no": "否",
+        "honestTitle": "本页并未声称什么",
+        "honestBody": "开关关闭时，每个模型都显示“已注册作用域：否”。这正是重点：关闭路径不注册任何内容，因此编译出的 SQL 保持不变。证据是在任何租户代码存在之前就已提交的基线。",
+        "auditTitle": "启用之前",
+        "auditBody": "先运行审计。只要还有行的租户为空，它就会拒绝通过，因为这些行将对超级管理员以外的所有人消失。",
+        "failClosedTitle": "失败即关闭",
+        "failClosedBody": "当限定生效但无法解析出租户时，谓词变为 1 = 0。没有租户意味着没有任何行，而不是所有行。"
     },
     "reports": {
         "title": "报表",
@@ -327,6 +422,34 @@
         "search": "搜索列",
         "title": "列",
         "visible": "显示"
+    },
+    "scale": {
+        "amount": "金额",
+        "backToDemos": "返回演示",
+        "createdAt": "创建时间",
+        "cursorDescription": "游标分页：没有 OFFSET，也没有 COUNT(*)，因此第 5000 页与第 1 页开销相同。代价是没有总数、也没有末页。",
+        "cursorTitle": "游标分页",
+        "email": "邮箱",
+        "empty": "规模演示表为空。",
+        "lengthAwareDescription": "熟悉的页码分页，配合客户端行虚拟化：DOM 中只保留可视窗口，同时保存的视图、列管理器与行内编辑均照常工作。",
+        "lengthAwareTitle": "页码分页 + 行虚拟化",
+        "mode": "模式",
+        "modeCursor": "游标",
+        "modeLengthAware": "页码",
+        "name": "姓名",
+        "off": "关闭",
+        "on": "开启",
+        "overscan": "预渲染行数",
+        "rowHeight": "行高",
+        "rowsTotal": "myra_scale_rows 中有 {n} 行",
+        "seedHint": "先填充演示表，然后刷新本页：",
+        "showingRows": "显示 {n} 行",
+        "stableSort": "稳定排序",
+        "status": "状态",
+        "title": "规模",
+        "description": "10 万行数据、两种分页策略，以及虚拟化的表格主体。",
+        "viewportHeight": "视口高度",
+        "virtualized": "已虚拟化"
     },
     "charts": {
         "a11y": {

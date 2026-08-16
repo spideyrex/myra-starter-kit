@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Admin\Tenancy\Tenancy;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\MediaResource;
 use App\Models\User;
@@ -23,6 +24,9 @@ class MediaController extends Controller
             ->when(! $this->isSuperAdmin($user), fn ($q) => $q
                 ->where('model_type', User::class)
                 ->where('model_id', $user->id))
+            // Media has no created_by: the tenant column is the only tenant
+            // predicate available here. No-op while tenancy is disabled.
+            ->tap(fn ($q) => Tenancy::apply($q, 'media'))
             ->when($request->search, fn ($q, $s) => Sql::whereLike($q, 'file_name', (string) $s))
             ->when($request->type, fn ($q, $t) => Sql::whereLike($q, 'mime_type', (string) $t, 'starts'))
             ->latest()
@@ -75,6 +79,7 @@ class MediaController extends Controller
             ->when(! $this->isSuperAdmin($user), fn ($q) => $q
                 ->where('model_type', User::class)
                 ->where('model_id', $user->id))
+            ->tap(fn ($q) => Tenancy::apply($q, 'media'))
             ->each(fn (Media $media) => $media->delete());
 
         return back()->with('success', 'Selected files deleted.');
@@ -87,7 +92,18 @@ class MediaController extends Controller
 
     private function ownsMedia(?User $user, Media $media): bool
     {
-        return $this->isSuperAdmin($user)
-            || ($media->model_type === User::class && (int) $media->model_id === (int) $user?->id);
+        if ($this->isSuperAdmin($user)) {
+            return true;
+        }
+
+        if (! ($media->model_type === User::class && (int) $media->model_id === (int) $user?->id)) {
+            return false;
+        }
+
+        // Identical to today while tenancy is disabled: no extra query is run.
+        return ! Tenancy::enabled() || Media::query()
+            ->whereKey($media->getKey())
+            ->tap(fn ($q) => Tenancy::apply($q, 'media'))
+            ->exists();
     }
 }

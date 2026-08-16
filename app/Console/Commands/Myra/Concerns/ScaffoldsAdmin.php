@@ -27,17 +27,33 @@ trait ScaffoldsAdmin
         ];
     }
 
-    /** Render a stub to a destination. Returns false if the file already exists. */
-    protected function writeStub(string $stubRel, string $destRel, array $replacements): bool
+    /** Write a line verbatim — the console formatter must not touch generated markup. */
+    protected function raw(string $text): void
+    {
+        $this->getOutput()->writeln($text, \Symfony\Component\Console\Output\OutputInterface::OUTPUT_RAW);
+    }
+
+    /** Render a stub with its replacements applied. Null when the stub is missing. */
+    protected function renderStub(string $stubRel, array $replacements): ?string
     {
         $stub = base_path($stubRel);
 
         if (! file_exists($stub)) {
             $this->error("Stub not found: {$stubRel}");
-            return false;
+            return null;
         }
 
-        $content = str_replace(array_keys($replacements), array_values($replacements), file_get_contents($stub));
+        return str_replace(array_keys($replacements), array_values($replacements), file_get_contents($stub));
+    }
+
+    /** Render a stub to a destination. Returns false if the file already exists. */
+    protected function writeStub(string $stubRel, string $destRel, array $replacements): bool
+    {
+        $content = $this->renderStub($stubRel, $replacements);
+
+        if ($content === null) {
+            return false;
+        }
 
         return $this->writeRaw($destRel, $content);
     }
@@ -149,14 +165,18 @@ trait ScaffoldsAdmin
         $this->info("Route registered: {$routeName}");
     }
 
-    /** Insert a nav item into AuthenticatedLayout.vue at the myra:nav marker, or print it. */
-    protected function registerNav(string $title, string $routeName, string $icon, ?string $permission, bool $print): void
+    /**
+     * Insert a nav item into AuthenticatedLayout.vue, or print it. `$group` is
+     * the sidebar group label: null (or the default) uses the existing
+     * `myra:nav` marker; anything else gets its own group with its own marker.
+     */
+    protected function registerNav(string $title, string $routeName, string $icon, ?string $permission, bool $print, ?string $group = null): void
     {
         $perm = $permission ? "'{$permission}'" : 'null';
         $item = "{ title: '{$title}', href: route('{$routeName}'), icon: {$icon}, permission: {$perm} },";
 
         if ($print) {
-            $this->line('Add to a nav group in AuthenticatedLayout.vue:');
+            $this->line('Add to a nav group in AuthenticatedLayout.vue'.($group ? " ({$group})" : '').':');
             $this->line('            ' . $item);
             return;
         }
@@ -170,9 +190,170 @@ trait ScaffoldsAdmin
         }
 
         $this->ensureIconImported($content, $icon);
-        $content = str_replace('/* myra:nav */', $item . "\n            /* myra:nav */", $content);
+
+        $marker = $this->navMarkerFor($content, $group);
+        $content = str_replace($marker, $item . "\n            " . $marker, $content);
+
         file_put_contents($file, $content);
-        $this->info("Nav item added: {$title}");
+        $this->info("Nav item added: {$title}" . ($group ? " (group: {$group})" : ''));
+    }
+
+    /**
+     * Resolve the marker a nav item should be inserted at, creating the group
+     * block on first use. Mutates $content by reference.
+     */
+    private function navMarkerFor(string &$content, ?string $group): string
+    {
+        $default = config('myra.nav_group', 'Custom');
+
+        if ($group === null || $group === $default) {
+            return '/* myra:nav */';
+        }
+
+        $slug = Str::kebab($group);
+        $marker = "/* myra:nav:{$slug} */";
+
+        if (str_contains($content, $marker)) {
+            return $marker;
+        }
+
+        // A group block is created immediately before the scaffolded-pages group.
+        $anchor = "    {\n        // Scaffolded pages";
+        $block = "    {\n"
+            . "        label: '" . str_replace("'", "\\'", $group) . "',\n"
+            . "        items: [\n"
+            . "            {$marker}\n"
+            . "        ],\n"
+            . "    },\n";
+
+        if (! str_contains($content, $anchor)) {
+            $this->warn("Could not locate the scaffolded-pages nav group; falling back to the default group.");
+            return '/* myra:nav */';
+        }
+
+        $content = str_replace($anchor, $block . $anchor, $content);
+
+        return $marker;
+    }
+
+    /** Locale files the generators keep in lock-step. */
+    protected const LOCALES = ['en', 'ms', 'zh'];
+
+    /**
+     * Write generated UI strings into en/ms/zh. Accepts a map of dot key =>
+     * English string, or a plain list of dot keys (the last segment is
+     * title-cased). Idempotent: an existing key is never overwritten.
+     *
+     * ms/zh receive the English string as a placeholder — a generator cannot
+     * translate a model name it was handed seconds ago. Translate them before
+     * shipping the resource.
+     */
+    protected function addTranslations(array $dotKeys): void
+    {
+        $entries = [];
+        foreach ($dotKeys as $key => $value) {
+            if (is_int($key)) {
+                $key = $value;
+                $value = Str::headline(Str::afterLast($key, '.'));
+            }
+            $entries[$key] = $value;
+        }
+
+        foreach (self::LOCALES as $locale) {
+            $file = base_path("resources/js/i18n/locales/{$locale}.json");
+
+            if (! file_exists($file)) {
+                $this->warn("Locale file missing, skipping: {$locale}.json");
+                continue;
+            }
+
+            $data = json_decode(file_get_contents($file), true);
+
+            if (! is_array($data)) {
+                $this->error("Locale file is not valid JSON: {$locale}.json");
+                return;
+            }
+
+            foreach ($entries as $key => $value) {
+                if (data_get($data, $key) === null) {
+                    data_set($data, $key, $value);
+                }
+            }
+
+            file_put_contents(
+                $file,
+                json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)."\n",
+            );
+        }
+
+        $this->info('Translations: '.count($entries).' keys written to '.implode('/', self::LOCALES).'.');
+        $this->assertLocaleParity();
+    }
+
+    /** Warn (and return false) when the three locale files disagree in key count. */
+    protected function assertLocaleParity(): bool
+    {
+        $counts = [];
+
+        foreach (self::LOCALES as $locale) {
+            $file = base_path("resources/js/i18n/locales/{$locale}.json");
+            if (! file_exists($file)) {
+                return false;
+            }
+            $counts[$locale] = count($this->flattenLocale(json_decode(file_get_contents($file), true) ?: []));
+        }
+
+        if (count(array_unique($counts)) === 1) {
+            return true;
+        }
+
+        $this->warn('Locale parity broken: '.json_encode($counts).' — fix before shipping.');
+
+        return false;
+    }
+
+    /** @return array<string,mixed> dot key => leaf value */
+    private function flattenLocale(array $data, string $prefix = ''): array
+    {
+        $out = [];
+
+        foreach ($data as $key => $value) {
+            $dot = $prefix === '' ? (string) $key : "{$prefix}.{$key}";
+            if (is_array($value)) {
+                $out += $this->flattenLocale($value, $dot);
+                continue;
+            }
+            $out[$dot] = $value;
+        }
+
+        return $out;
+    }
+
+    /** Add a plugin class to config/myra.php at the myra:plugins marker (idempotent). */
+    protected function registerPluginClass(string $fqcn): void
+    {
+        $file = base_path('config/myra.php');
+        $content = file_get_contents($file);
+        $literal = '\\'.ltrim($fqcn, '\\').'::class';
+
+        if (str_contains($content, $literal)) {
+            $this->warn("Plugin {$fqcn} already registered, skipping.");
+            return;
+        }
+
+        if (! str_contains($content, '// myra:plugins')) {
+            $this->warn("config/myra.php has no // myra:plugins marker. Add {$literal} to myra.extensions.plugins by hand.");
+            return;
+        }
+
+        $content = str_replace(
+            '// myra:plugins',
+            "{$literal},\n            // myra:plugins",
+            $content,
+        );
+
+        file_put_contents($file, $content);
+        $this->info("Plugin registered in config/myra.php: {$fqcn}");
     }
 
     /** Ensure a lucide icon is imported in the layout (mutates $content by reference). */

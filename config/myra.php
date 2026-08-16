@@ -7,7 +7,7 @@ return [
     | Framework version
     |--------------------------------------------------------------------------
     */
-    'version' => '2.3.0',
+    'version' => '2.4.0',
 
     /*
     |--------------------------------------------------------------------------
@@ -22,6 +22,32 @@ return [
 
     'nav_group' => 'Custom',
     'nav_icon' => 'LayoutGrid',
+
+    // >>> MYRA v2.4 [A] START
+    /*
+    |--------------------------------------------------------------------------
+    | Extensions (plugins)
+    |--------------------------------------------------------------------------
+    |
+    | Plugins are listed EXPLICITLY. There is no composer auto-discovery: a
+    | plugin registers routes inside the admin middleware stack and merges
+    | RBAC modules, so installing a package must never be enough on its own.
+    | A failing plugin is ALWAYS quarantined by default, in every environment —
+    | it must never take the admin down. `strict` is opt-in and rethrows
+    | instead; use it in CI when a broken plugin should fail the build.
+    |
+    */
+    'extensions' => [
+        'strict'  => env('MYRA_PLUGINS_STRICT', false),
+        'plugins' => [
+            \App\Plugins\Example\ExamplePlugin::class,
+            // myra:plugins — make:myra-plugin inserts classes above this line.
+        ],
+    ],
+
+    /** Per-install plugin configuration, read via YourPlugin::config('key'). */
+    'plugin_config' => [],
+    // <<< MYRA v2.4 [A] END
 
     /*
     |--------------------------------------------------------------------------
@@ -81,6 +107,29 @@ return [
         'max' => 25,
     ],
 
+    // >>> MYRA v2.4 [B] START
+    /*
+    |--------------------------------------------------------------------------
+    | Clusters and server-contributed navigation
+    |--------------------------------------------------------------------------
+    |
+    | Clusters group resources under one collapsible sidebar entry and, when
+    | $prefixesUrls is true, under one URL segment. With this list empty the
+    | `myraNav` Inertia prop serialises as [] and the sidebar is byte-identical
+    | to v2.3 — merging an empty server list is the identity operation.
+    |
+    | Ships EMPTY on purpose: upgrading to v2.4 must not add an entry to a live
+    | sidebar. The bundled Learning demo is opt-in via MYRA_DEMO_CLUSTERS=true;
+    | its pages stay reachable by URL either way.
+    |
+    */
+
+    'clusters' => [
+        ...(env('MYRA_DEMO_CLUSTERS', false) ? [\App\Admin\Clusters\LearningCluster::class] : []),
+        // myra:clusters — make:myra-cluster inserts clusters above this line.
+    ],
+    // <<< MYRA v2.4 [B] END
+
     /*
     |--------------------------------------------------------------------------
     | Inline uploads
@@ -96,6 +145,51 @@ return [
         'max_kb' => 5120,
         'accept' => ['image/jpeg', 'image/png', 'image/gif', 'image/webp'],
     ],
+
+    // >>> MYRA v2.4 [C] START
+    /*
+    |--------------------------------------------------------------------------
+    | Multi-tenancy — OPT-IN, DEFAULT OFF
+    |--------------------------------------------------------------------------
+    |
+    | With `enabled` false NOTHING is registered: no global scope, no creating
+    | hook, no validation-rule change, no middleware, no Inertia prop. The
+    | disabled path is asserted byte-identical against a committed SQL baseline
+    | in tests/Feature/Tenancy/DisabledPathIsNoOpTest.
+    |
+    | `models` is a second, independent lock: a model may carry BelongsToTenant
+    | and still not be scoped until it is named here.
+    |
+    | `enabled` is compared with ===, so MYRA_TENANCY must be literally `true`.
+    | Anything else — including `1` — leaves tenancy off.
+    |
+    */
+    'tenancy' => [
+        'enabled'            => env('MYRA_TENANCY', false),
+        'model'              => \App\Models\Team::class,
+        'column'             => 'team_id',
+        'null_rows'          => 'strict',   // 'strict' | 'shared'
+        'super_admin_bypass' => true,
+        'models'             => [],
+
+        // Rows that belong to a tenant through the team pivot rather than a
+        // tenant column — `users` is the only such table today.
+        'membership_table'    => 'team_user',
+        'membership_user_key' => 'user_id',
+        'membership_tables'   => ['users'],
+
+        // The public, unauthenticated surface. A guest resolves no tenant and
+        // the predicate fails closed, so scoping the public site would blank it
+        // the day Article/Page/Category are listed above. Opt in only if the
+        // public site really is per-tenant (and a tenant is resolvable there).
+        'scope_public'        => false,
+
+        // Tables an operator has DELIBERATELY declared tenant-shared. Anything
+        // not listed here, not carrying the tenant column and not scoped by
+        // membership returns zero rows rather than every tenant's rows.
+        'shared_tables'       => [],
+    ],
+    // <<< MYRA v2.4 [C] END
 
     /*
     |--------------------------------------------------------------------------
@@ -114,6 +208,30 @@ return [
         'formats' => ['csv', 'xlsx'],
         'client_max_rows' => 5000,
     ],
+
+    // >>> MYRA v2.4 [D] START
+    /*
+    |--------------------------------------------------------------------------
+    | Scale
+    |--------------------------------------------------------------------------
+    |
+    | `stable_sort` adds an id tiebreak to the LENGTH-AWARE path. It is off by
+    | default because turning it on changes the SQL of every existing admin
+    | table (the row set is unchanged; which page a tied row lands on is not).
+    | The cursor path always applies the tiebreak — it is a correctness
+    | requirement there, not a preference.
+    |
+    */
+
+    'performance' => [
+        'stable_sort'          => env('MYRA_STABLE_SORT', false),
+        'virtualize_above'     => 200,
+        'row_height'           => 44,
+        'viewport_height'      => 600,
+        'overscan'             => 8,
+        'assert_indexed_sorts' => env('MYRA_ASSERT_INDEXES', false),
+    ],
+    // <<< MYRA v2.4 [D] END
 
     /*
     |--------------------------------------------------------------------------

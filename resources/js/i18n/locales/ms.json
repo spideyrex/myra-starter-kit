@@ -31,6 +31,35 @@
         "demo": "Demo",
         "reports": "Laporan"
     },
+    "plugins": {
+        "title": "Plugin",
+        "description": "Pakej yang mendaftarkan halaman, kebenaran, laporan, import dan navigasi \u2014 diisytiharkan secara eksplisit, bukan ditemui secara automatik.",
+        "back": "Kembali ke demo",
+        "loaded": "Plugin dimuatkan",
+        "loadedDescription": "Setiap baris ialah manifes sebenar yang digunakan semasa but. Kiraan menunjukkan sumbangan setiap plugin.",
+        "empty": "Tiada plugin didaftarkan",
+        "emptyDescription": "Tambah kelas ke myra.extensions.plugins dalam config/myra.php, atau jalankan make:myra-plugin.",
+        "strictOn": "Ketat: plugin yang gagal akan melontar ralat",
+        "strictOff": "Dikuarantin: plugin yang gagal diasingkan",
+        "failedTitle": "Plugin gagal",
+        "failedDescription": "Kelas ini dikuarantin semasa but. Panel admin kekal berjalan.",
+        "columns": {
+            "id": "Id",
+            "class": "Kelas",
+            "permissions": "Modul kebenaran",
+            "reports": "Laporan",
+            "imports": "Import",
+            "routes": "Kumpulan laluan",
+            "nav": "Item navigasi",
+            "migrations": "Laluan migrasi"
+        },
+        "example": {
+            "nav": "Plugin contoh",
+            "title": "Satu plugin ialah satu kelas",
+            "description": "Satu kelas abstrak, satu kaedah wajib yang memulangkan manifes. Tiada penyedia, tiada panggilan pendaftaran."
+        }
+    },
+    "generated": {},
     "common": {
         "save": "Simpan",
         "cancel": "Batal",
@@ -63,6 +92,41 @@
         "showLess": "Tunjuk kurang",
         "linesTruncated": "Memaparkan {shown} daripada {total} baris.",
         "copiedToClipboard": "Disalin ke papan keratan"
+    },
+    "clusters": {
+        "learning": {
+            "label": "Pembelajaran",
+            "courses": {
+                "label": "Kursus",
+                "description": "Sumber bersarang: setiap kursus memiliki pelajarannya sendiri.",
+                "searchPlaceholder": "Cari kursus...",
+                "title": "Tajuk",
+                "lessonCount": "Pelajaran",
+                "created": "Dicipta",
+                "manage": "Urus pelajaran"
+            },
+            "lessons": {
+                "label": "Pelajaran",
+                "description": "Pelajaran bagi {course}. Induk datang daripada URL, bukan daripada borang.",
+                "searchPlaceholder": "Cari pelajaran...",
+                "title": "Tajuk",
+                "position": "Kedudukan",
+                "created": "Dicipta",
+                "add": "Tambah pelajaran",
+                "titlePlaceholder": "Tajuk pelajaran",
+                "positionPlaceholder": "Kedudukan",
+                "delete": "Padam",
+                "deleteConfirm": "Padam pelajaran ini?"
+            },
+            "siteIdentity": {
+                "label": "Identiti Laman",
+                "description": "Sumber tunggal: satu rekod, dua laluan, tiada cipta dan tiada padam.",
+                "name": "Nama",
+                "tagline": "Slogan",
+                "note": "Simpanan pertama mencipta rekod; setiap simpanan seterusnya mengemas kini baris yang sama.",
+                "save": "Simpan"
+            }
+        }
     },
     "status": {
         "active": "Aktif",
@@ -130,6 +194,37 @@
             "boldSample": "teks tebal",
             "italicSample": "teks condong"
         }
+    },
+    "tenancy": {
+        "title": "Berbilang penyewa",
+        "subtitle": "Pilihan masuk, lalai dimatikan. Apabila dimatikan, tiada apa didaftarkan dan tiada pertanyaan berubah.",
+        "back": "Kembali ke Demo",
+        "statusDisabled": "Dimatikan",
+        "statusEnabled": "Dihidupkan",
+        "bannerDisabled": "Berbilang penyewa dimatikan. Tiada skop global didaftarkan, tiada cangkuk penciptaan dipasang, dan setiap pertanyaan di bawah disusun sama seperti sebelum ciri ini wujud.",
+        "bannerEnabled": "Berbilang penyewa dihidupkan. Model yang disenaraikan diskop kepada pasukan semasa dan baris tanpa penyewa disembunyikan.",
+        "column": "Lajur penyewa",
+        "nullRows": "Baris kosong",
+        "nullRowsStrict": "ketat — baris tanpa penyewa disembunyikan",
+        "nullRowsShared": "dikongsi — baris tanpa penyewa kelihatan kepada setiap penyewa",
+        "currentTeam": "Pasukan semasa",
+        "noTeam": "Tiada",
+        "modelsTitle": "Model berskop",
+        "modelsDescription": "Model hanya diskop apabila bendera dihidupkan DAN kelas disenaraikan dalam myra.tenancy.models.",
+        "modelsEmpty": "Tiada model disenaraikan untuk skop penyewa.",
+        "colModel": "Model",
+        "colTrait": "Guna trait",
+        "colColumn": "Ada lajur",
+        "colNullRows": "Baris tanpa penyewa",
+        "colScoped": "Skop didaftarkan",
+        "yes": "Ya",
+        "no": "Tidak",
+        "honestTitle": "Apa yang halaman ini tidak dakwa",
+        "honestBody": "Semasa bendera dimatikan, setiap model melaporkan \"Skop didaftarkan: Tidak\". Itulah tujuannya: laluan dimatikan tidak mendaftarkan apa-apa, jadi SQL yang disusun tidak berubah. Buktinya ialah garis dasar yang dirakam sebelum sebarang kod penyewa wujud.",
+        "auditTitle": "Sebelum anda hidupkan",
+        "auditBody": "Jalankan audit. Ia menolak kesediaan selagi ada baris dengan penyewa kosong, kerana baris itu akan hilang bagi semua orang kecuali super-admin.",
+        "failClosedTitle": "Gagal tertutup",
+        "failClosedBody": "Apabila skop aktif dan tiada penyewa diselesaikan, predikat menjadi 1 = 0. Tiada penyewa bermakna tiada baris, bukan semua baris."
     },
     "reports": {
         "title": "Laporan",
@@ -327,6 +422,34 @@
         "search": "Cari lajur",
         "title": "Lajur",
         "visible": "Kelihatan"
+    },
+    "scale": {
+        "amount": "Jumlah",
+        "backToDemos": "Kembali ke Demo",
+        "createdAt": "Dicipta",
+        "cursorDescription": "Penomboran kunci: tiada OFFSET dan tiada COUNT(*), jadi halaman 5,000 sama kosnya dengan halaman 1. Tiada jumlah keseluruhan dan tiada halaman akhir — itulah pertukarannya.",
+        "cursorTitle": "Penomboran kursor",
+        "email": "E-mel",
+        "empty": "Jadual skala kosong.",
+        "lengthAwareDescription": "Penomboran bernombor yang biasa, dengan baris divirtualkan pada pelanggan: hanya tetingkap yang kelihatan berada dalam DOM, dan paparan tersimpan, pengurus lajur serta suntingan sebaris terus berfungsi.",
+        "lengthAwareTitle": "Penomboran panjang penuh, baris divirtualkan",
+        "mode": "Mod",
+        "modeCursor": "Kursor",
+        "modeLengthAware": "Panjang penuh",
+        "name": "Nama",
+        "off": "Mati",
+        "on": "Hidup",
+        "overscan": "Imbasan lebih",
+        "rowHeight": "Tinggi baris",
+        "rowsTotal": "{n} baris dalam myra_scale_rows",
+        "seedHint": "Semai jadual demo, kemudian muat semula halaman ini:",
+        "showingRows": "Memaparkan {n} baris",
+        "stableSort": "Isihan stabil",
+        "status": "Status",
+        "title": "Skala",
+        "description": "100,000 baris, dua strategi penomboran, dan badan jadual yang divirtualkan.",
+        "viewportHeight": "Tinggi port pandang",
+        "virtualized": "Divirtualkan"
     },
     "charts": {
         "a11y": {

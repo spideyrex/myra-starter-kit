@@ -2,6 +2,7 @@
 
 namespace App\Admin\Traits;
 
+use App\Admin\Query\SortIndexGuard;
 use App\Support\Sql;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
@@ -31,6 +32,10 @@ trait SearchableQuery
         $sort = in_array($request->sort, $allowedSorts, true) ? $request->sort : null;
         $direction = $request->direction === 'asc' ? 'asc' : 'desc';
 
+        // >>> MYRA v2.4 [D] — dev-only, off by default, never throws in production.
+        SortIndexGuard::assert($query->getModel(), $sort, $sortable);
+        // <<< MYRA v2.4 [D]
+
         // Cap page size to avoid unbounded/expensive queries.
         $requestedPerPage = (int) ($request->per_page ?? $perPage);
         $perPage = max(1, min($requestedPerPage, 100));
@@ -53,6 +58,13 @@ trait SearchableQuery
                 fn ($q) => $q->orderBy($sort, $direction),
                 fn ($q) => $q->orderBy($defaultSort, $defaultDir),
             )
+            // >>> MYRA v2.4 [D] — OFF by default: enabling it changes the SQL of every
+            // existing admin table (same row set, different page for a tied row).
+            ->when(
+                config('myra.performance.stable_sort', false),
+                fn ($q) => $q->orderBy($query->getModel()->getQualifiedKeyName(), $direction),
+            )
+            // <<< MYRA v2.4 [D]
             ->paginate($perPage, ['*'], 'page', $page)
             ->withQueryString();
     }

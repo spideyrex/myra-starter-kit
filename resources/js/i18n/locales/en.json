@@ -31,6 +31,35 @@
         "demo": "Demo",
         "reports": "Reports"
     },
+    "plugins": {
+        "title": "Plugins",
+        "description": "Packages that register pages, permissions, reports, imports and navigation \u2014 declared explicitly, never auto-discovered.",
+        "back": "Back to demos",
+        "loaded": "Loaded plugins",
+        "loadedDescription": "Every row is a real manifest applied at boot. The counts are the surface each plugin contributes.",
+        "empty": "No plugins registered",
+        "emptyDescription": "Add a class to myra.extensions.plugins in config/myra.php, or run make:myra-plugin.",
+        "strictOn": "Strict: a failing plugin throws",
+        "strictOff": "Quarantined: a failing plugin is isolated",
+        "failedTitle": "Failed plugins",
+        "failedDescription": "These classes were quarantined at boot. The admin panel stayed up.",
+        "columns": {
+            "id": "Id",
+            "class": "Class",
+            "permissions": "Permission modules",
+            "reports": "Reports",
+            "imports": "Imports",
+            "routes": "Route groups",
+            "nav": "Nav items",
+            "migrations": "Migration paths"
+        },
+        "example": {
+            "nav": "Example plugin",
+            "title": "A plugin is one class",
+            "description": "One abstract, one required method returning a manifest. No provider, no registration call."
+        }
+    },
+    "generated": {},
     "common": {
         "save": "Save",
         "cancel": "Cancel",
@@ -63,6 +92,41 @@
         "showLess": "Show less",
         "linesTruncated": "Showing {shown} of {total} lines.",
         "copiedToClipboard": "Copied to clipboard"
+    },
+    "clusters": {
+        "learning": {
+            "label": "Learning",
+            "courses": {
+                "label": "Courses",
+                "description": "A nested resource: every course owns its own lessons.",
+                "searchPlaceholder": "Search courses...",
+                "title": "Title",
+                "lessonCount": "Lessons",
+                "created": "Created",
+                "manage": "Manage lessons"
+            },
+            "lessons": {
+                "label": "Lessons",
+                "description": "Lessons of {course}. The parent comes from the URL, never from the form.",
+                "searchPlaceholder": "Search lessons...",
+                "title": "Title",
+                "position": "Position",
+                "created": "Created",
+                "add": "Add lesson",
+                "titlePlaceholder": "Lesson title",
+                "positionPlaceholder": "Position",
+                "delete": "Delete",
+                "deleteConfirm": "Delete this lesson?"
+            },
+            "siteIdentity": {
+                "label": "Site Identity",
+                "description": "A singular resource: one record, two routes, no create and no delete.",
+                "name": "Name",
+                "tagline": "Tagline",
+                "note": "The first save creates the record; every later save updates the same row.",
+                "save": "Save"
+            }
+        }
     },
     "status": {
         "active": "Active",
@@ -130,6 +194,37 @@
             "boldSample": "bold text",
             "italicSample": "italic text"
         }
+    },
+    "tenancy": {
+        "title": "Multi-tenancy",
+        "subtitle": "Opt-in, default off. With the flag off nothing is registered and no query changes.",
+        "back": "Back to Demos",
+        "statusDisabled": "Disabled",
+        "statusEnabled": "Enabled",
+        "bannerDisabled": "Tenancy is off. No global scope is registered, no creating hook is attached, and every query below compiles exactly as it did before this feature existed.",
+        "bannerEnabled": "Tenancy is on. Listed models are scoped to the current team and rows with no tenant are hidden.",
+        "column": "Tenant column",
+        "nullRows": "Null rows",
+        "nullRowsStrict": "strict — rows with no tenant are hidden",
+        "nullRowsShared": "shared — rows with no tenant are visible to every tenant",
+        "currentTeam": "Current team",
+        "noTeam": "None",
+        "modelsTitle": "Scoped models",
+        "modelsDescription": "A model is scoped only when the flag is on AND the class is listed in myra.tenancy.models.",
+        "modelsEmpty": "No models are listed for tenant scoping.",
+        "colModel": "Model",
+        "colTrait": "Uses trait",
+        "colColumn": "Has column",
+        "colNullRows": "Rows without a tenant",
+        "colScoped": "Scope registered",
+        "yes": "Yes",
+        "no": "No",
+        "honestTitle": "What this page is not claiming",
+        "honestBody": "While the flag is off every model reports \"Scope registered: No\". That is the point: the disabled path registers nothing, so the compiled SQL is unchanged. The proof is a committed baseline captured before any tenancy code existed.",
+        "auditTitle": "Before you turn it on",
+        "auditBody": "Run the audit. It refuses readiness while any row still has a null tenant, because those rows would disappear for everyone but a super-admin.",
+        "failClosedTitle": "Fail closed",
+        "failClosedBody": "When scoping is active and no tenant resolves, the predicate becomes 1 = 0. No tenant means no rows, never all rows."
     },
     "reports": {
         "title": "Reports",
@@ -327,6 +422,34 @@
         "search": "Search columns",
         "title": "Columns",
         "visible": "Visible"
+    },
+    "scale": {
+        "amount": "Amount",
+        "backToDemos": "Back to Demos",
+        "createdAt": "Created",
+        "cursorDescription": "Keyset pagination: no OFFSET and no COUNT(*), so page 5,000 costs the same as page 1. There is no total and no last page — that is the trade.",
+        "cursorTitle": "Cursor pagination",
+        "email": "Email",
+        "empty": "The scale table is empty.",
+        "lengthAwareDescription": "The familiar numbered pagination, with rows virtualised on the client: only the visible window is in the DOM, and saved views, the column manager and inline editing keep working.",
+        "lengthAwareTitle": "Length-aware pagination, virtualised rows",
+        "mode": "Mode",
+        "modeCursor": "Cursor",
+        "modeLengthAware": "Length-aware",
+        "name": "Name",
+        "off": "Off",
+        "on": "On",
+        "overscan": "Overscan",
+        "rowHeight": "Row height",
+        "rowsTotal": "{n} rows in myra_scale_rows",
+        "seedHint": "Seed the demo table, then reload this page:",
+        "showingRows": "Showing {n} rows",
+        "stableSort": "Stable sort",
+        "status": "Status",
+        "title": "Scale",
+        "description": "100,000 rows, two pagination strategies, and a virtualised table body.",
+        "viewportHeight": "Viewport height",
+        "virtualized": "Virtualised"
     },
     "charts": {
         "a11y": {

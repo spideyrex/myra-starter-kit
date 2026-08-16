@@ -2,6 +2,148 @@
 
 All notable changes to the Myra Starter Kit are documented here.
 
+## v2.4.0 — 2026-08 — "Extension, structure, tenancy, scale"
+
+Four bundles, each shipped as an isolated, additive change. Every feature that could alter what a
+user can see is opt-in and default off, and each such switch has a test asserting the disabled path
+is unchanged.
+
+### A — plugin system, `make:myra-plugin`, stub design pass
+
+- **A plugin is one class.** `App\Admin\Plugin\MyraPlugin` declares `id()` and `manifest()`; the
+  `Manifest` is the single place a plugin names its permissions, reports, imports, routes, policies,
+  commands, migrations, translations and nav items. No package service provider, no per-panel
+  registration call, no setter/getter pairs.
+- **Registration is explicit.** `config('myra.extensions.plugins')` is a literal list. There is no
+  composer `extra.*` auto-discovery, and that is deliberate: a plugin registers routes *inside* the
+  admin middleware stack and merges entries into `config('shield.modules')`, so `composer update`
+  must never be enough on its own to grant either.
+- **A failing plugin is quarantined, not fatal.** `PluginRegistry::load()` catches per plugin,
+  records the exception in `failed()`, reports it, and carries on — in *every* environment.
+  `load()` runs from `register()`, so a rethrow there aborts the entire bootstrap (every route,
+  every artisan command), not just the admin. `myra.extensions.strict` is therefore opt-in
+  (`MYRA_PLUGINS_STRICT=true`, off by default) and rethrows only when you ask for it, e.g. in CI.
+- `App\Support\Myra` — `Myra::adminRoutes()` registers into the admin group without re-declaring it,
+  `Myra::publicRoutes()` is `web` only, plus `version()`, `plugin()`, `hasPlugin()`,
+  `failedPlugins()`. `Myra::ADMIN_MIDDLEWARE` is a literal copy of the stack in `routes/web.php`, and
+  `tests/Feature/Plugin/AdminMiddlewareParityTest` fails CI the moment the two drift — for both a
+  core route and a plugin route.
+- New `App\Providers\MyraServiceProvider` (the only new provider) applies manifests: a
+  `array_replace_recursive` deep merge for `shield.modules` (a flat `mergeConfigFrom` would drop
+  nested abilities), plain merges for report and import registries, then routes, policies, commands,
+  migrations and translations at boot.
+- New `php artisan make:myra-plugin {Name}` — writes the plugin class, `composer.json`, three locale
+  files, a plain-PHPUnit manifest test and the empty migration/page directories; adds a PSR-4 entry
+  to the root `composer.json` for an in-repo path, runs `composer dump-autoload`, and only then
+  registers the class at the `// myra:plugins` marker in `config/myra.php`. If composer is missing
+  or the dump fails it skips the config edit and tells you what to do, so the generator can never
+  leave a declared-but-unautoloadable plugin class behind.
+- Ships `App\Plugins\Example\ExamplePlugin` (id `myra-example`) — a real, listed plugin with one
+  permission module, one admin route (`GET /admin/myra-example/ping`, an invokable controller so the
+  route survives `route:cache`) and one nav item. The plugins demo page therefore always has a row.
+- **Stub design pass.** `make:myra-resource` now emits, by default, everything that is universally
+  safe: an `OwnedByUser` model whose `$fillable` deliberately excludes `created_by`; a migration with
+  a nullable `created_by` foreign key and a `['created_by','created_at']` index; `Store…Request` /
+  `Update…Request` form requests instead of an inline `validate()` placeholder;
+  `Gate::authorize('{prefix}.{ability}')` as the first line of every controller method;
+  `table-key="{prefix}"` on the generated `DataTable` (without it saved views were silently off); an
+  explicit `sortable:` whitelist in the service; `t('generated.…')` throughout the Vue pages with the
+  keys written into all three locales; and a feature test asserting the permission gates, ownership
+  scoping and the sort whitelist. `--unscoped` and `--soft-deletes` cover the cases that need a
+  decision about the data. `--group=` is finally read: it places the nav item in its own sidebar
+  group instead of being accepted and ignored.
+- `--print` is now a true dry run for `make:myra-resource` and `make:myra-page` — it renders every
+  file and writes nothing, which is what `tests/Feature/Generators/StubDesignPassTest` asserts
+  against. The assertions run on real generator output, never on a copy of a stub.
+- `myra:about` gained a Plugins section (per-plugin surface counts, failures in red), a dynamic
+  generator list, and sections that light up when the other bundles are present.
+- New demo page `/admin/demo/plugins`, driven by `PluginRegistry`. Its props are captured by
+  `PluginDemoPropsTest` into `tests/js/fixtures/plugin-demo.json`, and `tests/js/pluginDemo.spec.ts`
+  mounts the real page against that same file.
+
+### B — clusters, server-contributed navigation, nested and singular resources
+
+- `App\Admin\Navigation\*` — `NavItem`, `NavGroup`, `Cluster` and a static `NavRegistry`. Clusters
+  group resources under one collapsible sidebar entry and, optionally, one URL segment. Cluster
+  membership merges from both directions: a cluster may enumerate its children and a resource may
+  declare its cluster.
+- **The sidebar addition is provably additive.** The nine hardcoded groups in
+  `AuthenticatedLayout.vue` stay byte-identical; a new `myraNav` Inertia prop carries additions and
+  serialises as `[]` when nothing is registered, so `[...core, ...[]]` is the identity operation.
+  `tests/js/navIdentity.spec.ts` asserts that `myraNav: []` renders exactly the same list as the prop
+  being absent entirely.
+- Permission filtering happens on the server (`NavRegistry::forUser`) *and* again on the client, so a
+  server bug can never widen visibility. Icons cross the wire as strings resolved through an explicit
+  allowlist; an unknown name degrades to `LayoutGrid` rather than throwing.
+- `ParentResource` + `ResolvesParentResource` for nested resources. The parent is re-queried through
+  its own global scopes after route binding, so an out-of-scope parent is a 404 and never a readable
+  id; generated nested routes carry `->scopeBindings()` with an indexed two-column lookup.
+- `SingularResource` + `HandlesSingularRecord` for one-row settings pages: exactly two routes
+  (`GET` and `PUT`), no create, no destroy, no `{record}` parameter.
+- New generators `make:myra-cluster`, `make:myra-nested`, `make:myra-singleton`.
+- New demo: a Learning cluster (courses → lessons, plus a site-identity singleton) on three new
+  tables.
+
+### C — multi-tenancy, opt-in, default off
+
+- **Two independent locks.** Scoping requires `config('myra.tenancy.enabled') === true` *and* the
+  model listed in `config('myra.tenancy.models')`. Adding the trait to a model is not sufficient, so
+  a merge that adds a trait can never change production visibility on its own.
+- **The disabled path registers nothing.** `bootBelongsToTenant()` returns before `addGlobalScope`
+  and before `static::creating`. A registered scope that returns early still mutates the builder and
+  still shows up in `getGlobalScopes()`; that is not good enough for a visibility feature.
+  `tests/Feature/Tenancy/DisabledPathIsNoOpTest` asserts `toSql()` and `getBindings()` against a
+  baseline fixture generated *before* the trait existed, as guest, member and super-admin.
+- **Fail closed.** With scoping active and no tenant resolved, the scope applies `1 = 0`. Rows with a
+  NULL tenant column are invisible to non-super-admins under `null_rows: 'strict'`; the `'shared'`
+  mode wraps its `orWhereNull` in a nested closure, because an unwrapped one leaks every row.
+- `App\Admin\Tenancy\Tenancy` is the single predicate: `Tenancy::apply()` for the hand-rolled query
+  sites, `Tenancy::for()` as the only way to change tenant (restoring in a `finally`),
+  `Tenancy::without()` as an audited escape hatch, and `Tenancy::unique()`/`exists()` for validation
+  rules that do not leak across tenants and degrade to the plain rules when disabled.
+- The tenant is resolved lazily from `users.current_team_id` with membership re-validated per
+  request — never from a route or query parameter. No middleware, no route changes.
+- `App\Models\Traits\BelongsToTeam` is **deleted**. Zero models used it; it registered an
+  unconditional global scope with no super-admin bypass and failed *open* on a NULL
+  `current_team_id`, which is every user on a single-team install.
+- New `myra:tenancy-audit` (gates readiness on the column, the trait, a leading composite index and
+  zero NULL rows) and `myra:tenancy-baseline` (writes the SQL baseline the no-op test asserts
+  against). The migration adds nullable `team_id` columns and indexes only — no backfill.
+
+### D — testing helpers, cursor pagination, 100k-row virtualisation
+
+- `App\Admin\Testing\*` — `InteractsWithMyra` plus `TableProbe`, `SchemaProbe` and `ActionProbe`.
+  They read Inertia props (no DOM, no browser) and assert the things that actually go wrong:
+  `assertSortRejected()`, `assertPerPageCapped()`, `assertScopedToActor()`, `assertQueryCount()`,
+  `assertSavedViewsEnabled()` (which catches a missing `table-key`), `assertPaginationMode()`.
+- **Cursor pagination is a sibling, not a replacement.** `applySearchAndPaginate()` keeps its exact
+  signature and behaviour — saved views, deep links and `meta.links` all depend on length-aware.
+  The new `applySearchAndCursorPaginate()` shares the sort whitelist and per-page clamp, and always
+  appends the primary-key tiebreak, without which cursor pagination silently skips or repeats rows on
+  a non-unique sort column. `meta.mode` is stamped only on cursor responses, so every existing
+  controller response is byte-identical.
+- `myra.performance.stable_sort` adds an id tiebreak to the length-aware path. It is **off** by
+  default because turning it on changes the SQL of every existing admin table.
+- `SortIndexGuard` throws a named, actionable error for an unindexed sortable column outside
+  production and behind a flag; production degrades to slow, never to a 500.
+- `useVirtualRows` (zero dependencies, keeps the markup a real `<table>` so `<colgroup>` widths, the
+  sticky header and the column manager keep working) and a `virtualized` prop on `DataTable`. Rows
+  are keyed by `row.id`, never by index — inline editing keys its optimistic state and rollback the
+  same way, and an index-recycling virtualiser would break all of it. Virtualisation refuses (with a
+  dev-only warning, never a broken table) when `groupBy`, `reorderable` or an expanded-row slot is in
+  play.
+- Standing bug fixed: `DataTable`'s `localRows` was filled once at setup and never tracked prop
+  changes.
+- `cursor` joins `page` as a volatile parameter — never emitted, never persisted into a saved view,
+  never compared. A persisted cursor would be replayed against a changed dataset.
+
+### Rollback without a deploy
+
+`MYRA_TENANCY=false`, `MYRA_PLUGINS_STRICT=false`, an empty `myra.extensions.plugins`, an empty
+`myra.clusters`, `MYRA_STABLE_SORT=false`, `MYRA_ASSERT_INDEXES=false`, then
+`php artisan config:clear`. Every migration in this release is a new table, a nullable column or an
+index; none needs a `down()` to restore visibility.
+
 ## v2.3.0 — 2026-08
 
 The reporting cluster: composable report definitions, a server-side aggregation engine, a lazy

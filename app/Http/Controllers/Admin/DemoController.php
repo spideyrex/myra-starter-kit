@@ -4,12 +4,15 @@ namespace App\Http\Controllers\Admin;
 
 use App\Admin\QueryBuilder\FieldSet;
 use App\Admin\QueryBuilder\FieldSpec;
+use App\Admin\Tenancy\Tenancy;
 use App\Admin\Traits\HandlesQueryBuilder;
 use App\Admin\Traits\SearchableQuery;
+use App\Models\Traits\BelongsToTenant;
 use App\Models\User;
 use App\Http\Controllers\Controller;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Schema;
 
 use Inertia\Inertia;
 
@@ -44,10 +47,108 @@ class DemoController extends Controller
         return Inertia::render('Admin/Demo/RepeaterField');
     }
 
+    // >>> MYRA v2.4 [D] START
+    use \App\Admin\Traits\CursorPaginatedQuery;
+
+    /** Length-aware over a real table, virtualised on the client. */
+    public function scale(Request $request)
+    {
+        $rows = $this->applySearchAndPaginate(
+            \App\Models\MyraScaleRow::query(),
+            $request,
+            searchable: ['name', 'email'],
+            defaultSort: 'created_at',
+            defaultDir: 'desc',
+            // 100 is the hard cap applySearchAndPaginate enforces; asking for more
+            // would be silently clamped and the page would lie about its page size.
+            perPage: 100,
+            sortable: ['id', 'name', 'status', 'amount', 'created_at'],
+        );
+
+        return Inertia::render('Admin/Demo/Scale', $this->scaleProps(
+            \Illuminate\Http\Resources\Json\JsonResource::collection($rows),
+            $request,
+        ));
+    }
+
+    /** The SAME dataset, walked by cursor: no OFFSET, no COUNT(*). */
+    public function scaleCursor(Request $request)
+    {
+        $rows = $this->applySearchAndCursorPaginate(
+            \App\Models\MyraScaleRow::query(),
+            $request,
+            searchable: ['name', 'email'],
+            defaultSort: 'created_at',
+            defaultDir: 'desc',
+            perPage: 50,
+            sortable: ['id', 'name', 'status', 'amount', 'created_at'],
+        );
+
+        return Inertia::render('Admin/Demo/Scale', $this->scaleProps(
+            \App\Admin\Http\PaginatorShape::cursor($rows),
+            $request,
+        ));
+    }
+
+    private function scaleProps(mixed $rows, Request $request): array
+    {
+        return [
+            'rows' => $rows,
+            'filters' => (object) $request->only('search', 'sort', 'direction', 'per_page'),
+            'total' => \App\Models\MyraScaleRow::query()->count(),
+            'perf' => [
+                'virtualizeAbove' => (int) config('myra.performance.virtualize_above', 200),
+                'rowHeight' => (int) config('myra.performance.row_height', 44),
+                'viewportHeight' => (int) config('myra.performance.viewport_height', 600),
+                'overscan' => (int) config('myra.performance.overscan', 8),
+                'stableSort' => (bool) config('myra.performance.stable_sort', false),
+            ],
+        ];
+    }
+    // <<< MYRA v2.4 [D] END
+
     public function formBuilder()
     {
         return Inertia::render('Admin/Demo/FormBuilder');
     }
+
+    // >>> MYRA v2.4 [A] START
+    /**
+     * Read-only plugin inventory. Every row is a real loaded manifest — there
+     * is no sample data on this page.
+     */
+    public function plugins()
+    {
+        $rows = [];
+
+        foreach (\App\Admin\Plugin\PluginRegistry::manifests() as $id => $manifest) {
+            $surface = $manifest->toArray();
+            $plugin = \App\Admin\Plugin\PluginRegistry::get($id);
+
+            $rows[] = [
+                'id' => $id,
+                'class' => $plugin ? $plugin::class : '',
+                'permissions' => count($surface['permissions']),
+                'reports' => count($surface['reports']),
+                'imports' => count($surface['imports']),
+                'routes' => $surface['routeGroups'] + $surface['publicRouteGroups'],
+                'nav' => count($surface['nav']),
+                'migrations' => count($surface['migrations']),
+            ];
+        }
+
+        $failed = [];
+        foreach (\App\Admin\Plugin\PluginRegistry::failed() as $class => $exception) {
+            $failed[] = ['class' => $class, 'message' => $exception->getMessage()];
+        }
+
+        return Inertia::render('Admin/Demo/Plugins', [
+            'plugins' => $rows,
+            'failed' => $failed,
+            'strict' => \App\Admin\Plugin\PluginRegistry::strict(),
+        ]);
+    }
+    // <<< MYRA v2.4 [A] END
 
     public function conditionalFields()
     {
@@ -58,6 +159,42 @@ class DemoController extends Controller
     {
         return Inertia::render('Admin/Demo/WizardDemo');
     }
+
+    // >>> MYRA v2.4 [C] START
+    /** Read-only tenancy status. Changes no data and registers no scope. */
+    public function tenancy()
+    {
+        $models = array_values(array_filter(
+            (array) config('myra.tenancy.models', []),
+            fn ($class) => is_string($class) && class_exists($class),
+        ));
+
+        return Inertia::render('Admin/Demo/Tenancy', [
+            'status' => [
+                'enabled' => Tenancy::enabled(),
+                'column' => Tenancy::column(),
+                'nullRows' => (string) config('myra.tenancy.null_rows', 'strict'),
+                'models' => array_map(function (string $class) {
+                    /** @var \Illuminate\Database\Eloquent\Model $instance */
+                    $instance = new $class;
+                    $column = Tenancy::column();
+                    $hasColumn = Schema::hasColumn($instance->getTable(), $column);
+
+                    return [
+                        'class' => $class,
+                        'usesTrait' => in_array(BelongsToTenant::class, class_uses_recursive($class), true),
+                        'hasColumn' => $hasColumn,
+                        'nullRows' => $hasColumn
+                            ? (int) $instance->newQuery()->withoutGlobalScopes()->whereNull($column)->count()
+                            : 0,
+                        'scoped' => array_key_exists('tenant', $instance->getGlobalScopes()),
+                    ];
+                }, $models),
+                'currentTeam' => Tenancy::current()?->only('id', 'name'),
+            ],
+        ]);
+    }
+    // <<< MYRA v2.4 [C] END
 
     public function globalSearch()
     {

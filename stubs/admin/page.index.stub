@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { Head, Link } from '@inertiajs/vue3';
+import { useI18n } from 'vue-i18n';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import DataTable from '@/components/DataTable.vue';
 import PageHeader from '@/components/PageHeader.vue';
@@ -16,28 +17,32 @@ defineProps<{
 }>();
 
 const { can } = usePermissions();
+const { t } = useI18n();
 
 const columns = [
-    TextColumn.make('name').sortable().searchable(),
-    DateColumn.make('created_at').sortable(),
+    TextColumn.make('name').label(t('generated.{{ routePrefix }}.columns.name')).sortable().searchable(),
+    DateColumn.make('created_at').label(t('generated.{{ routePrefix }}.columns.createdAt')).sortable(),
 ];
 
 const actions = [
-    EditAction.make('admin.{{ routePrefix }}.edit').permission('{{ permissionPrefix }}.edit'),
-    DeleteAction.make('admin.{{ routePrefix }}.destroy').permission('{{ permissionPrefix }}.delete'),
+    EditAction.make('admin.{{ routePrefix }}.edit').label(t('common.edit')).permission('{{ permissionPrefix }}.edit'),
+    DeleteAction.make('admin.{{ routePrefix }}.destroy').label(t('common.delete')).permission('{{ permissionPrefix }}.delete'),
 ];
 </script>
 
 <template>
-    <AuthenticatedLayout :breadcrumbs="[{ label: '{{ modelPlural }}' }]">
-        <Head title="{{ modelPlural }}" />
+    <AuthenticatedLayout :breadcrumbs="[{ label: t('generated.{{ routePrefix }}.title') }]">
+        <Head :title="t('generated.{{ routePrefix }}.title')" />
 
-        <PageHeader title="{{ modelPlural }}" description="Manage {{ modelPluralVariable }}.">
+        <PageHeader
+            :title="t('generated.{{ routePrefix }}.title')"
+            :description="t('generated.{{ routePrefix }}.description')"
+        >
             <template #actions>
                 <Button v-if="can('{{ permissionPrefix }}.create')" as-child>
                     <Link :href="route('admin.{{ routePrefix }}.create')">
                         <Plus class="mr-2 size-4" />
-                        Add {{ model }}
+                        {{ t('generated.{{ routePrefix }}.add') }}
                     </Link>
                 </Button>
             </template>
@@ -50,7 +55,8 @@ const actions = [
                 :filters="filters"
                 :actions="actions"
                 route-name="admin.{{ routePrefix }}.index"
-                search-placeholder="Search {{ modelPluralVariable }}..."
+                table-key="{{ routePrefix }}"
+                :search-placeholder="t('generated.{{ routePrefix }}.searchPlaceholder')"
             />
         </div>
     </AuthenticatedLayout>

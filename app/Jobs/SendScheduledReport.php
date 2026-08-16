@@ -8,6 +8,7 @@ use App\Admin\Report\ReportRegistry;
 use App\Admin\Report\ReportResult;
 use App\Admin\Report\ReportRunner;
 use App\Admin\Report\Schedule\RecipientResolver;
+use App\Admin\Tenancy\Concerns\TenantAware;
 use App\Models\ReportSchedule;
 use App\Models\User;
 use App\Notifications\SystemNotification;
@@ -30,7 +31,7 @@ use Throwable;
  */
 final class SendScheduledReport implements ShouldBeUnique, ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, TenantAware;
 
     public int $tries = 3;
 
@@ -48,7 +49,11 @@ final class SendScheduledReport implements ShouldBeUnique, ShouldQueue
     public function __construct(
         public readonly int $scheduleId,
         public readonly ?int $testForUserId = null,
-    ) {}
+    ) {
+        // A worker has no session; without this the report would run with no
+        // tenant resolved and — the scope failing closed — mail an empty table.
+        $this->captureTenant();
+    }
 
     public function uniqueId(): string
     {

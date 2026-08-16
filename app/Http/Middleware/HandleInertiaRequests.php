@@ -70,6 +70,11 @@ class HandleInertiaRequests extends Middleware
                 : null,
             'currentTeam' => fn () => $request->user()?->currentTeam,
             'teams' => fn () => $request->user()?->teams()->select('teams.id', 'teams.name', 'teams.slug')->get() ?? [],
+            // >>> MYRA v2.4 [B] START
+            // Server-contributed navigation. A closure, so Inertia skips it on
+            // partial reloads; with nothing registered it serialises as [].
+            'myraNav' => fn () => \App\Admin\Navigation\NavRegistry::forUser($request->user()),
+            // <<< MYRA v2.4 [B] END
             'siteSettings' => fn () => cache()->remember('site_settings_shared', 3600, function () {
                 $rows = DB::table('settings')->whereIn('group', ['general', 'appearance'])->get();
                 $settings = [];

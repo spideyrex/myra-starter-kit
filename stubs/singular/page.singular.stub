@@ -1,0 +1,65 @@
+<script setup lang="ts">
+import { Head, useForm } from '@inertiajs/vue3';
+import { useI18n } from 'vue-i18n';
+import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+import PageHeader from '@/components/PageHeader.vue';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Card, CardContent } from '@/components/ui/card';
+import { Save } from 'lucide-vue-next';
+
+const props = defineProps<{
+    singularKey: string;
+    record: Record<string, any>;
+    exists: boolean;
+    canEdit: boolean;
+}>();
+
+const { t } = useI18n();
+
+const form = useForm({
+    name: props.record.name ?? '',
+});
+
+function submit() {
+    form.put(route('admin.{{ routePrefix }}.update'), { preserveScroll: true });
+}
+</script>
+
+<template>
+    <AuthenticatedLayout :breadcrumbs="[{ label: t('clusters.{{ routePrefix }}.label') }]">
+        <Head :title="t('clusters.{{ routePrefix }}.label')" />
+
+        <PageHeader
+            :title="t('clusters.{{ routePrefix }}.label')"
+            :description="t('clusters.{{ routePrefix }}.description')"
+        />
+
+        <div class="mt-6 max-w-2xl">
+            <Card>
+                <CardContent class="space-y-4 pt-6">
+                    <p class="text-sm text-muted-foreground">{{ t('clusters.{{ routePrefix }}.note') }}</p>
+
+                    <form class="space-y-4" @submit.prevent="submit">
+                        <div class="space-y-1.5">
+                            <Label for="{{ routePrefix }}-name">{{ t('clusters.{{ routePrefix }}.name') }}</Label>
+                            <Input
+                                id="{{ routePrefix }}-name"
+                                v-model="form.name"
+                                :disabled="!canEdit"
+                                :aria-invalid="!!form.errors.name"
+                            />
+                            <p v-if="form.errors.name" class="text-sm text-destructive">{{ form.errors.name }}</p>
+                        </div>
+
+                        <Button v-if="canEdit" type="submit" :disabled="form.processing">
+                            <Save class="mr-2 size-4" />
+                            {{ t('clusters.{{ routePrefix }}.save') }}
+                        </Button>
+                    </form>
+                </CardContent>
+            </Card>
+        </div>
+    </AuthenticatedLayout>
+</template>

@@ -4,6 +4,7 @@ namespace App\Admin\Report;
 
 use App\Admin\QueryBuilder\RuleCompiler;
 use App\Admin\Report\Contracts\DrillResolver;
+use App\Admin\Tenancy\Tenancy;
 use App\Support\DateBucket;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Builder;
@@ -101,7 +102,9 @@ final class ReportRunner
         $base = $modelClass::query()
             // 1. Ownership scope FIRST, before any client input.
             ->tap(fn (Builder $q) => ($this->definition->scopeFn())($q, $actor))
-            // 2. Validated rule tree (report filters + cross-filters), one outer where().
+            // 2. Tenant predicate, still before any client input. No-op when off.
+            ->tap(fn (Builder $q) => Tenancy::applyForModel($modelClass, $q, $table))
+            // 3. Validated rule tree (report filters + cross-filters), one outer where().
             ->tap(fn (Builder $q) => (new RuleCompiler($this->definition->fieldSet()))->apply($q, $r->filters()));
 
         $dimension = $r->dimension();

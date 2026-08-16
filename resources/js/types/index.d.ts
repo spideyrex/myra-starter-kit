@@ -65,6 +65,31 @@ export interface PaginatedData<T> {
     };
 }
 
+// >>> MYRA v2.4 [D] START
+/**
+ * A cursor page. `meta.mode` is present ONLY here — an absent `mode` means
+ * length-aware, so every existing payload keeps its exact shape.
+ */
+export interface CursorPaginatedData<T> {
+    data: T[];
+    links: {
+        first: null;
+        last: null;
+        prev: string | null;
+        next: string | null;
+    };
+    meta: {
+        mode: 'cursor';
+        path: string;
+        per_page: number;
+        next_cursor: string | null;
+        prev_cursor: string | null;
+    };
+}
+
+export type TableData<T> = PaginatedData<T> | CursorPaginatedData<T>;
+// <<< MYRA v2.4 [D] END
+
 export interface Notification {
     id: string;
     type: string;

@@ -1,0 +1,16 @@
+{
+    "name": "{{ vendor }}/{{ id }}",
+    "description": "A Myra plugin.",
+    "type": "library",
+    "license": "MIT",
+    "require": {
+        "php": "^8.4"
+    },
+    "autoload": {
+        "psr-4": {
+            "{{ namespaceEscaped }}\\": "src/"
+        }
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true
+}

@@ -283,6 +283,9 @@ Route::middleware(['auth', 'verified', 'active', '2fa'])->prefix('admin')->name(
     Route::get('/demo/import-sample', [DemoController::class, 'importSample'])->name('demo.import-sample');
     // <<< MYRA v2.2 [C] END
     Route::get('/demo/global-search', [DemoController::class, 'globalSearch'])->name('demo.global-search');
+    // >>> MYRA v2.4 [C] START
+    Route::get('/demo/tenancy', [DemoController::class, 'tenancy'])->name('demo.tenancy');
+    // <<< MYRA v2.4 [C] END
     // >>> MYRA v2.2 [B] START
     Route::get('/demo/saved-views', [DemoController::class, 'savedViews'])->name('demo.saved-views');
     // <<< MYRA v2.2 [B] END
@@ -296,12 +299,33 @@ Route::middleware(['auth', 'verified', 'active', '2fa'])->prefix('admin')->name(
     Route::get('/demo/conditional-fields', [DemoController::class, 'conditionalFields'])->name('demo.conditional-fields');
     Route::get('/demo/infolist', [DemoController::class, 'infolist'])->name('demo.infolist');
     Route::get('/demo/relation-manager', [DemoController::class, 'relationManager'])->name('demo.relation-manager');
+    // >>> MYRA v2.4 [B] START
+    // Clusters demo: a nested resource (courses → lessons) and a singular
+    // resource (site identity). scopeBindings() turns a child that belongs to a
+    // different parent into a 404 with no controller code at all.
+    Route::get('/learning/courses', [\App\Http\Controllers\Admin\MyraCourseController::class, 'index'])->name('learning.courses.index');
+    Route::get('/learning/courses/{course}/lessons', [\App\Http\Controllers\Admin\MyraLessonController::class, 'index'])
+        ->scopeBindings()->name('learning.courses.lessons.index');
+    Route::post('/learning/courses/{course}/lessons', [\App\Http\Controllers\Admin\MyraLessonController::class, 'store'])
+        ->scopeBindings()->name('learning.courses.lessons.store');
+    Route::delete('/learning/courses/{course}/lessons/{lesson}', [\App\Http\Controllers\Admin\MyraLessonController::class, 'destroy'])
+        ->scopeBindings()->name('learning.courses.lessons.destroy');
+    Route::get('/learning/site-identity', [\App\Http\Controllers\Admin\MyraSiteIdentityController::class, 'show'])->name('learning.site-identity.show');
+    Route::put('/learning/site-identity', [\App\Http\Controllers\Admin\MyraSiteIdentityController::class, 'update'])->name('learning.site-identity.update');
+    // <<< MYRA v2.4 [B] END
     Route::post('/demo/relation-create', [DemoController::class, 'demoRelationCreate'])->name('demo.relation-create');
     Route::get('/demo/grouping', [DemoController::class, 'grouping'])->name('demo.grouping');
+    // >>> MYRA v2.4 [D] START
+    Route::get('/demo/scale', [DemoController::class, 'scale'])->name('demo.scale');
+    Route::get('/demo/scale-cursor', [DemoController::class, 'scaleCursor'])->name('demo.scale-cursor');
+    // <<< MYRA v2.4 [D] END
     Route::get('/demo/reordering', [DemoController::class, 'reordering'])->name('demo.reordering');
     Route::post('/demo/reorder', [DemoController::class, 'demoReorder'])->name('demo.reorder');
     Route::get('/demo/widgets', [DemoController::class, 'widgets'])->name('demo.widgets');
     Route::get('/demo/field-types', [DemoController::class, 'fieldTypes'])->name('demo.field-types');
+    // >>> MYRA v2.4 [A] START
+    Route::get('/demo/plugins', [DemoController::class, 'plugins'])->name('demo.plugins');
+    // <<< MYRA v2.4 [A] END
     Route::get('/demo/code-editor', [DemoController::class, 'codeEditor'])->name('demo.code-editor');
     Route::get('/demo/advanced-filters', [DemoController::class, 'advancedFilters'])->name('demo.advanced-filters');
     Route::get('/demo/wizard', [DemoController::class, 'wizardDemo'])->name('demo.wizard');

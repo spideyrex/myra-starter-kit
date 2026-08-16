@@ -1,0 +1,36 @@
+[
+    {
+        "items": [
+            {
+                "activePrefix": "/admin/learning",
+                "href": null,
+                "icon": "GraduationCap",
+                "items": [
+                    {
+                        "activePrefix": null,
+                        "href": "/admin/learning/courses",
+                        "icon": "BookOpen",
+                        "items": [],
+                        "labelKey": "clusters.learning.courses.label",
+                        "permission": "demo.view",
+                        "sort": 0
+                    },
+                    {
+                        "activePrefix": null,
+                        "href": "/admin/learning/site-identity",
+                        "icon": "Settings",
+                        "items": [],
+                        "labelKey": "clusters.learning.siteIdentity.label",
+                        "permission": "demo.view",
+                        "sort": 10
+                    }
+                ],
+                "labelKey": "clusters.learning.label",
+                "permission": "demo.view",
+                "sort": 0
+            }
+        ],
+        "labelKey": "navGroups.demo",
+        "sort": 0
+    }
+]

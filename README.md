@@ -2,7 +2,7 @@
 
 A production-ready **Laravel 12 + Inertia.js + Vue 3** admin dashboard starter kit with a Filament-style code generator, role-based access control, per-user data isolation, a built-in CMS, an AI writing assistant, and 55+ UI components — so you can ship admin panels with very little hand-written code.
 
-![Version](https://img.shields.io/badge/version-2.0.0-6366f1)
+![Version](https://img.shields.io/badge/version-2.5.1-6366f1)
 [![Tests](https://github.com/spideyrex/myra-starter-kit/actions/workflows/tests.yml/badge.svg)](https://github.com/spideyrex/myra-starter-kit/actions/workflows/tests.yml)
 ![Laravel](https://img.shields.io/badge/Laravel-12-FF2D20?logo=laravel&logoColor=white)
 ![Vue](https://img.shields.io/badge/Vue-3.5-4FC08D?logo=vuedotjs&logoColor=white)
@@ -16,8 +16,102 @@ A production-ready **Laravel 12 + Inertia.js + Vue 3** admin dashboard starter k
 
 ---
 
+## What's New
+
+Everything below shipped after v2.0.0. Every subsystem marked **opt-in** is **off by default** —
+deploying the code changes nothing until you set its flag.
+
+### v2.5.1 — latest
+Runtime dependency fix: `fakerphp/faker` moved from `require-dev` to `require`. App code calls
+`fake()` in 24 places, and production deploys with `--no-dev`, so two demo pages had been returning
+500 since v2.2.0. A guard test now fails CI if runtime code calls into a dev-only package.
+Also: `ESCAPE` handling under MySQL `NO_BACKSLASH_ESCAPES`, and inline-upload URLs no longer
+double the `inline` path segment.
+
+### v2.5.0 — Dashboards, realtime, gallery, AI
+| | |
+|---|---|
+| **Dashboard editor** | Drag-and-drop tiles, per-user saved layouts, widget catalogue, keyboard reordering |
+| **Realtime widgets** *(opt-in)* | Live refresh over Echo on a shared bus — one subscription, not one per widget |
+| **Component gallery** | Searchable catalogue with a live props playground and copy-paste snippets |
+| **Command palette** | Mounted globally across every admin surface |
+| **AI ask bar** *(opt-in)* | Plain-language filters compiled to a **validated rule tree** — never to SQL |
+| **PWA shell** *(opt-in)* | Installable offline shell; caches static assets only, never your data |
+| **Loading states** | Skeleton/streaming states as the default for data surfaces |
+
+<p align="center">
+  <img src="public/docs/screenshots/demo-dashboard-editor.png" alt="Drag-and-drop dashboard editor" width="900">
+  <br><em>Dashboard editor — drag tiles, save a personal layout, add widgets from the catalogue</em>
+</p>
+
+<p align="center">
+  <img src="public/docs/screenshots/demo-playground.png" alt="Component playground" width="900">
+  <br><em>Component gallery with a live props playground</em>
+</p>
+
+### v2.4.0 — Extension, structure, tenancy, scale
+- **Plugin system** — packages that register pages, resources, widgets, permissions and nav.
+  A plugin that fails to load is quarantined, never fatal.
+- **Clusters** + nested and singular resources, with server-contributed navigation.
+- **Multi-tenancy** *(opt-in, `MYRA_TENANCY`)* — full tenant scoping on the teams tables.
+- **Testing helpers** — `InteractsWithMyra`, `TableProbe`, `SchemaProbe`, `ActionProbe`.
+- **100k+ rows** — virtualised rendering, cursor pagination, sort-index guard.
+- Generators: 8 → **13**.
+
+<p align="center">
+  <img src="public/docs/screenshots/demo-scale.png" alt="Virtualised table at scale" width="900">
+  <br><em>Virtualised rows and cursor pagination</em>
+</p>
+
+### v2.3.0 — Reporting, graphs & charts
+- **Report builder** — composable definitions (source, dimensions, measures, filters) with **all
+  aggregation in SQL**, never in PHP or the browser.
+- **15 chart types** — bar/stacked/horizontal, line, area, pie, doughnut, radar, scatter, polar,
+  plus heatmap, funnel, gauge and sparkline as inline SVG.
+- **Drill-down** from a chart segment into the filtered table, and **cross-filtering** between widgets.
+- **Scheduled reports** (cron → render → email) and **PDF export** — no new composer dependency.
+- **Comparison periods** on stat and chart widgets.
+
+<p align="center">
+  <img src="public/docs/screenshots/demo-reports.png" alt="Report builder" width="900">
+  <br><em>Report builder with drill-down and comparison periods</em>
+</p>
+
+### v2.2.0 / v2.2.1 — Table power features
+- **Saved views** — named filter + column + sort presets, per user, shareable.
+- **Column manager** with presets and persistence.
+- **Streaming export** that never buffers the full result set; **resumable import** with column
+  auto-mapping, validation preview and a partial-failure report.
+- **Nested AND/OR query builder** with server-side column and operator whitelisting.
+- **Ranked global search**, scoped per resource.
+- **Security (v2.2.1)** — six unescaped `LIKE` call sites migrated to `Sql::whereLike()`; a `%` in a
+  search box no longer matches every row. Relation sort columns are whitelisted.
+
+<p align="center">
+  <img src="public/docs/screenshots/demo-saved-views.png" alt="Saved views and column manager" width="900">
+  <br><em>Saved views and the column manager</em>
+</p>
+
+### v2.1.0 — Filament v5 parity
+- Form fields: **code** (lazy CodeMirror 6), **markdown**, toggle-buttons, and `hint()` / `hintAction()`
+  across every field type.
+- Table columns: **color**, **checkbox** (inline edit), and summaries extended with min/max/median/range.
+- Infolist: **color** and **code** entries.
+- Actions: **replicate**, **restore**, **force-delete**, and **action grouping** with nested submenus.
+
+### Quality across the line
+| | v2.0.0 | v2.5.1 |
+|---|---|---|
+| PHP tests | 150 | **688** |
+| JS tests (vitest) | none | **541** |
+| Generators | 8 | **13** |
+| RBAC modules | 17 | **19** |
+
+---
+
 ## Table of Contents
 
+- [What's New](#whats-new)
 - [Highlights](#highlights)
 - [Screenshots](#screenshots)
 - [Scaffolding CLI](#scaffolding-cli)

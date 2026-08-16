@@ -14,6 +14,10 @@ An admin framework built on Laravel + Inertia.js + Vue 3 (TypeScript) with shadc
 | [Scaffold Commands](scaffold-commands.md) | Artisan commands for generating resources and pages |
 | [PHP Backend](php-backend.md) | Controllers, services, and the SearchableQuery trait |
 | [Type Definitions](type-definitions.md) | TypeScript interfaces and types |
+| [Reporting](reporting.md) | Report builder, 15 chart types, drill-down, scheduled delivery, PDF |
+| [Dashboard & Realtime](dashboard.md) | Dashboard editor, live widgets, AI ask bar, PWA shell, gallery |
+| [Tenancy](tenancy.md) | Multi-tenant scoping (opt-in, off by default) |
+| [SQL Safety](sql-safety.md) | `Sql::whereLike()` — the only sanctioned way to build a LIKE predicate |
 
 ## Architecture Overview
 

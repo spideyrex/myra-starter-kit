@@ -2231,5 +2231,114 @@
         },
         "title": "AI filters",
         "unresolved": "No conditions were produced."
+    },
+    "pageBuilder": {
+        "editor": {
+            "title": "Page builder",
+            "description": "Compose the public homepage from ordered sections. The template still owns the navbar, the footer and each section’s presentation.",
+            "save": "Save",
+            "saving": "Saving…",
+            "savedToast": "Page sections saved.",
+            "discard": "Discard changes",
+            "undo": "Undo",
+            "redo": "Redo",
+            "dirty": "Unsaved changes",
+            "saved": "All changes saved",
+            "openPreview": "Open the public page in a new tab",
+            "addSection": "Add section",
+            "limit": "{count} of {max} sections",
+            "convertFailed": "The current homepage could not be converted.",
+            "convertEmpty": "There is nothing to convert.",
+            "convertLoaded": "Loaded {count} sections for review. Nothing is saved until you press Save.",
+            "tabs": {
+                "sections": "Sections",
+                "preview": "Preview"
+            },
+            "preview": {
+                "label": "Preview",
+                "savedOnly": "This preview shows the saved page. Save to see the sections you are editing."
+            },
+            "empty": {
+                "title": "Your page has no sections yet",
+                "description": "Add a section, or convert the settings the homepage renders today into an editable list.",
+                "convert": "Convert my current homepage",
+                "revert": "Revert to classic settings"
+            },
+            "catalogue": {
+                "title": "Add a section",
+                "description": "Search the registered section types and pick one to insert.",
+                "placeholder": "Search section types…",
+                "empty": "No section type matches that search.",
+                "unavailable": "No section types are registered, so nothing can be added yet.",
+                "maxReached": "At most {max} per page.",
+                "blocked": "This page is already at its section limit.",
+                "groups": {
+                    "content": "Content",
+                    "proof": "Social proof",
+                    "conversion": "Conversion",
+                    "layout": "Layout"
+                }
+            },
+            "card": {
+                "hidden": "Hidden",
+                "hasErrors": "Needs attention",
+                "show": "Show {label}",
+                "hide": "Hide {label}",
+                "duplicate": "Duplicate {label}",
+                "delete": "Delete {label}",
+                "presentation": "Presentation",
+                "variantDefault": "Template default",
+                "variantOn": "On",
+                "variantOff": "Off",
+                "unknown": {
+                    "title": "This section type is unavailable",
+                    "description": "Nothing on this site provides the type {type}. Its content is kept exactly as it is and survives the next save."
+                }
+            },
+            "list": {
+                "addRow": "Add item",
+                "removeRow": "Remove item {index}",
+                "moveUp": "Move item {index} up",
+                "moveDown": "Move item {index} down",
+                "rowLabel": "Item {index}",
+                "full": "At most {max} items."
+            },
+            "image": {
+                "upload": "Upload an image",
+                "replace": "Replace image",
+                "remove": "Remove",
+                "uploading": "Uploading…",
+                "failed": "That image could not be uploaded.",
+                "none": "No image selected"
+            },
+            "confirm": {
+                "delete": {
+                    "title": "Delete this section?",
+                    "description": "{label} is removed from the page. Nothing is saved until you press Save.",
+                    "confirm": "Delete"
+                },
+                "discard": {
+                    "title": "Discard your changes?",
+                    "description": "The page returns to the last saved version.",
+                    "confirm": "Discard"
+                },
+                "revert": {
+                    "title": "Revert to the classic settings?",
+                    "description": "The section list is cleared and the homepage falls back to the settings it used before the builder. Nothing is saved until you press Save.",
+                    "confirm": "Revert"
+                }
+            },
+            "errors": {
+                "title": "Some sections need attention."
+            },
+            "a11y": {
+                "list": "Page sections",
+                "roledescription": "Sortable page section",
+                "instructions": "Press Space to pick up a section, then use the arrow keys to move it. Press Space again to drop it, Home or End to move it to the start or the end, or Escape to cancel.",
+                "grabHandle": "Reorder {label}",
+                "moved": "{label} moved to position {index} of {total}.",
+                "position": "Section {index} of {total}"
+            }
+        }
     }
 }

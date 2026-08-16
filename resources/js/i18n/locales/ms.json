@@ -2231,5 +2231,114 @@
         },
         "title": "Penapis AI",
         "unresolved": "Tiada syarat dihasilkan."
+    },
+    "pageBuilder": {
+        "editor": {
+            "title": "Pembina halaman",
+            "description": "Bina halaman utama awam daripada bahagian yang tersusun. Templat masih memiliki bar navigasi, pengaki dan persembahan setiap bahagian.",
+            "save": "Simpan",
+            "saving": "Menyimpan…",
+            "savedToast": "Bahagian halaman disimpan.",
+            "discard": "Buang perubahan",
+            "undo": "Buat asal",
+            "redo": "Buat semula",
+            "dirty": "Perubahan belum disimpan",
+            "saved": "Semua perubahan disimpan",
+            "openPreview": "Buka halaman awam dalam tab baharu",
+            "addSection": "Tambah bahagian",
+            "limit": "{count} daripada {max} bahagian",
+            "convertFailed": "Halaman utama semasa tidak dapat ditukar.",
+            "convertEmpty": "Tiada apa-apa untuk ditukar.",
+            "convertLoaded": "{count} bahagian dimuatkan untuk semakan. Tiada apa-apa disimpan sehingga anda menekan Simpan.",
+            "tabs": {
+                "sections": "Bahagian",
+                "preview": "Pratonton"
+            },
+            "preview": {
+                "label": "Pratonton",
+                "savedOnly": "Pratonton ini menunjukkan halaman yang disimpan. Simpan untuk melihat bahagian yang sedang anda sunting."
+            },
+            "empty": {
+                "title": "Halaman anda belum mempunyai bahagian",
+                "description": "Tambah satu bahagian, atau tukar tetapan yang dipaparkan halaman utama hari ini kepada senarai yang boleh disunting.",
+                "convert": "Tukar halaman utama semasa saya",
+                "revert": "Kembali kepada tetapan klasik"
+            },
+            "catalogue": {
+                "title": "Tambah bahagian",
+                "description": "Cari jenis bahagian yang berdaftar dan pilih satu untuk dimasukkan.",
+                "placeholder": "Cari jenis bahagian…",
+                "empty": "Tiada jenis bahagian sepadan dengan carian itu.",
+                "unavailable": "Tiada jenis bahagian didaftarkan, jadi belum ada apa-apa yang boleh ditambah.",
+                "maxReached": "Paling banyak {max} setiap halaman.",
+                "blocked": "Halaman ini sudah mencapai had bahagiannya.",
+                "groups": {
+                    "content": "Kandungan",
+                    "proof": "Bukti sosial",
+                    "conversion": "Penukaran",
+                    "layout": "Susun atur"
+                }
+            },
+            "card": {
+                "hidden": "Tersembunyi",
+                "hasErrors": "Perlu perhatian",
+                "show": "Tunjukkan {label}",
+                "hide": "Sembunyikan {label}",
+                "duplicate": "Gandakan {label}",
+                "delete": "Padam {label}",
+                "presentation": "Persembahan",
+                "variantDefault": "Lalai templat",
+                "variantOn": "Hidup",
+                "variantOff": "Mati",
+                "unknown": {
+                    "title": "Jenis bahagian ini tidak tersedia",
+                    "description": "Tiada apa-apa di laman ini menyediakan jenis {type}. Kandungannya dikekalkan seperti sedia ada dan kekal selepas simpanan berikutnya."
+                }
+            },
+            "list": {
+                "addRow": "Tambah item",
+                "removeRow": "Buang item {index}",
+                "moveUp": "Alihkan item {index} ke atas",
+                "moveDown": "Alihkan item {index} ke bawah",
+                "rowLabel": "Item {index}",
+                "full": "Paling banyak {max} item."
+            },
+            "image": {
+                "upload": "Muat naik imej",
+                "replace": "Ganti imej",
+                "remove": "Buang",
+                "uploading": "Memuat naik…",
+                "failed": "Imej itu tidak dapat dimuat naik.",
+                "none": "Tiada imej dipilih"
+            },
+            "confirm": {
+                "delete": {
+                    "title": "Padam bahagian ini?",
+                    "description": "{label} akan dibuang daripada halaman. Tiada apa-apa disimpan sehingga anda menekan Simpan.",
+                    "confirm": "Padam"
+                },
+                "discard": {
+                    "title": "Buang perubahan anda?",
+                    "description": "Halaman kembali kepada versi terakhir yang disimpan.",
+                    "confirm": "Buang"
+                },
+                "revert": {
+                    "title": "Kembali kepada tetapan klasik?",
+                    "description": "Senarai bahagian dikosongkan dan halaman utama kembali kepada tetapan yang digunakannya sebelum pembina ini. Tiada apa-apa disimpan sehingga anda menekan Simpan.",
+                    "confirm": "Kembali"
+                }
+            },
+            "errors": {
+                "title": "Beberapa bahagian memerlukan perhatian."
+            },
+            "a11y": {
+                "list": "Bahagian halaman",
+                "roledescription": "Bahagian halaman boleh susun",
+                "instructions": "Tekan Space untuk mengangkat bahagian, kemudian guna kekunci anak panah untuk mengalihkannya. Tekan Space sekali lagi untuk melepaskannya, Home atau End untuk ke permulaan atau penghujung, atau Escape untuk membatalkan.",
+                "grabHandle": "Susun semula {label}",
+                "moved": "{label} dialihkan ke kedudukan {index} daripada {total}.",
+                "position": "Bahagian {index} daripada {total}"
+            }
+        }
     }
 }

@@ -2231,5 +2231,114 @@
         },
         "title": "AI 筛选",
         "unresolved": "没有生成任何条件。"
+    },
+    "pageBuilder": {
+        "editor": {
+            "title": "页面构建器",
+            "description": "用有序的区块组合公开首页。模板仍然负责导航栏、页脚以及每个区块的呈现方式。",
+            "save": "保存",
+            "saving": "保存中…",
+            "savedToast": "页面区块已保存。",
+            "discard": "放弃更改",
+            "undo": "撤销",
+            "redo": "重做",
+            "dirty": "有未保存的更改",
+            "saved": "所有更改已保存",
+            "openPreview": "在新标签页中打开公开页面",
+            "addSection": "添加区块",
+            "limit": "{max} 个区块中的 {count} 个",
+            "convertFailed": "无法转换当前首页。",
+            "convertEmpty": "没有可转换的内容。",
+            "convertLoaded": "已载入 {count} 个区块供查看。在你按下保存之前不会写入任何内容。",
+            "tabs": {
+                "sections": "区块",
+                "preview": "预览"
+            },
+            "preview": {
+                "label": "预览",
+                "savedOnly": "此预览显示的是已保存的页面。保存后即可看到正在编辑的区块。"
+            },
+            "empty": {
+                "title": "此页面还没有任何区块",
+                "description": "添加一个区块，或把首页当前使用的设置转换成可编辑的区块列表。",
+                "convert": "转换我当前的首页",
+                "revert": "恢复为经典设置"
+            },
+            "catalogue": {
+                "title": "添加区块",
+                "description": "搜索已注册的区块类型并选择一个插入。",
+                "placeholder": "搜索区块类型…",
+                "empty": "没有匹配该搜索的区块类型。",
+                "unavailable": "尚未注册任何区块类型，因此暂时无法添加。",
+                "maxReached": "每页最多 {max} 个。",
+                "blocked": "此页面已达到区块上限。",
+                "groups": {
+                    "content": "内容",
+                    "proof": "口碑",
+                    "conversion": "转化",
+                    "layout": "布局"
+                }
+            },
+            "card": {
+                "hidden": "已隐藏",
+                "hasErrors": "需要处理",
+                "show": "显示 {label}",
+                "hide": "隐藏 {label}",
+                "duplicate": "复制 {label}",
+                "delete": "删除 {label}",
+                "presentation": "呈现方式",
+                "variantDefault": "模板默认",
+                "variantOn": "开",
+                "variantOff": "关",
+                "unknown": {
+                    "title": "此区块类型不可用",
+                    "description": "本站没有提供类型 {type}。其内容将原样保留，并在下次保存后依然存在。"
+                }
+            },
+            "list": {
+                "addRow": "添加条目",
+                "removeRow": "删除条目 {index}",
+                "moveUp": "把条目 {index} 上移",
+                "moveDown": "把条目 {index} 下移",
+                "rowLabel": "条目 {index}",
+                "full": "最多 {max} 个条目。"
+            },
+            "image": {
+                "upload": "上传图片",
+                "replace": "替换图片",
+                "remove": "移除",
+                "uploading": "上传中…",
+                "failed": "该图片上传失败。",
+                "none": "未选择图片"
+            },
+            "confirm": {
+                "delete": {
+                    "title": "删除此区块？",
+                    "description": "{label} 将从页面中移除。在你按下保存之前不会写入任何内容。",
+                    "confirm": "删除"
+                },
+                "discard": {
+                    "title": "放弃你的更改？",
+                    "description": "页面将回到上一次保存的版本。",
+                    "confirm": "放弃"
+                },
+                "revert": {
+                    "title": "恢复为经典设置？",
+                    "description": "区块列表将被清空，首页回到使用构建器之前的设置。在你按下保存之前不会写入任何内容。",
+                    "confirm": "恢复"
+                }
+            },
+            "errors": {
+                "title": "部分区块需要处理。"
+            },
+            "a11y": {
+                "list": "页面区块",
+                "roledescription": "可排序的页面区块",
+                "instructions": "按空格键拾起一个区块，然后用方向键移动它。再次按空格键放下，按 Home 或 End 移到开头或结尾，按 Esc 取消。",
+                "grabHandle": "重新排序 {label}",
+                "moved": "{label} 已移动到第 {index} 个位置，共 {total} 个。",
+                "position": "第 {index} 个区块，共 {total} 个"
+            }
+        }
     }
 }

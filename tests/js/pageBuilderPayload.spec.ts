@@ -19,8 +19,10 @@ import Home from '@/Pages/Home.vue';
  *
  * tests/Feature/PageBuilder/EndToEndPageBuilderTest saves a block list through
  * the real admin endpoint, reads the props the real public homepage shipped,
- * and writes them here. The committed copy is only a bootstrap so this spec can
- * always resolve its import; the PHP run overwrites it on every suite.
+ * and ASSERTS this committed file against them: every value here is a value the
+ * server emitted for that path (row ids excepted — those are ULIDs, restated as
+ * row-N so the file is reproducible). The PHP suite fails if the two diverge.
+ * Regenerate the full payload with MYRA_WRITE_FIXTURES=1.
  *
  * Every expectation below is DERIVED from the file — nothing is hardcoded — so
  * the spec keeps holding when the payload changes.

@@ -16,8 +16,6 @@ use Tests\TestCase;
  */
 class SanitisationTest extends TestCase
 {
-    use SyncsPageBuilderFixtures;
-
     protected function setUp(): void
     {
         parent::setUp();

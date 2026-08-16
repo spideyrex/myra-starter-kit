@@ -5,6 +5,7 @@ namespace Tests\Feature\PageBuilder;
 use App\Homepage\Sections\SectionRegistry;
 use App\Homepage\TemplateRegistry;
 use App\Settings\HomepageSettings;
+use Illuminate\Support\Facades\Auth;
 use Tests\TestCase;
 
 /**
@@ -14,6 +15,10 @@ use Tests\TestCase;
  * rows are assembled the way the editor assembles them, from the defaults the
  * server declares in SectionRegistry::toClientSchema(), and the assertions read
  * the props the public homepage actually shipped.
+ *
+ * The same payload is then held against tests/js/fixtures/page-builder-blocks.json
+ * (see syncFixture), which is what the vitest spec mounts — so the client-side
+ * proof is anchored to this run rather than to a literal someone typed.
  */
 class EndToEndPageBuilderTest extends TestCase
 {
@@ -97,6 +102,24 @@ class EndToEndPageBuilderTest extends TestCase
         return app(HomepageSettings::class)->blocks ?? [];
     }
 
+    /**
+     * Server-assigned ids are ULIDs: fresh on every save, so a payload carrying
+     * them can never be compared against a committed file. Replace them with
+     * their position — the ids themselves are asserted in PHP (non-empty,
+     * unique per row, and moved rather than reissued by a reorder).
+     *
+     * @param  array<int,array<string,mixed>>  $rows
+     * @return array<int,array<string,mixed>>
+     */
+    private function withStableIds(array $rows): array
+    {
+        foreach ($rows as $i => $row) {
+            $rows[$i]['id'] = "row-{$i}";
+        }
+
+        return $rows;
+    }
+
     public function test_a_block_list_saved_through_the_admin_endpoint_renders_on_the_public_page(): void
     {
         $this->actingAsSuperAdmin();
@@ -137,7 +160,16 @@ class EndToEndPageBuilderTest extends TestCase
             $this->assertNotSame('', $row['id'], 'Every saved row gets a server-assigned id.');
         }
 
-        $props = $this->get('/')->assertOk()->viewData('page')['props'];
+        $response = $this->get('/')->assertOk();
+
+        // The authored strings must be in the bytes that leave the server, not
+        // merely in an array the controller built.
+        $response->assertSee('Ship faster')
+            ->assertSee('Compose the page out of sections.')
+            ->assertSee('Renders in one pass.')
+            ->assertSee('Open builder');
+
+        $props = $response->viewData('page')['props'];
         $published = $props['blocks'];
 
         $this->assertSame(['hero', 'features', 'cta'], array_column($published, 'type'));
@@ -150,16 +182,40 @@ class EndToEndPageBuilderTest extends TestCase
         $this->assertSame('Composable', $published[1]['data']['items'][2]['title']);
         $this->assertSame('Open builder', $published[2]['data']['button_text']);
 
-        // Hand the SAVED payload to the JS side. tests/js/pageBuilderPayload.spec.ts
-        // mounts Home.vue against exactly this, so the client is proven against
-        // the server's own output rather than a literal.
-        $this->publishFixture('tests/js/fixtures/page-builder-blocks.json', [
+        // Bind the SAVED payload to the JS side. tests/js/pageBuilderPayload.spec.ts
+        // mounts Home.vue against the committed copy of this file, and syncFixture
+        // asserts that every value in that copy is what the server just shipped —
+        // so the client is proven against the server's own output. The two CI jobs
+        // run on separate runners, so this assertion is the only thing standing
+        // between them; it must never silently rewrite the file.
+        $this->syncFixture('tests/js/fixtures/page-builder-blocks.json', [
             'settings' => $props['settings'],
             'template' => $props['template'],
-            'templateOptions' => (array) $props['templateOptions'],
+            'templateOptions' => $props['templateOptions'],
             'sectionOrder' => $props['sectionOrder'],
-            'blocks' => $published,
+            'blocks' => $this->withStableIds($published),
         ]);
+    }
+
+    /**
+     * Every other case here fetches `/` with the admin session still attached.
+     * The page is served to the public, so prove it there too.
+     */
+    public function test_a_saved_block_reaches_an_anonymous_visitor(): void
+    {
+        $this->actingAsSuperAdmin();
+
+        $this->saveBlocks([$this->newRow('hero', ['title' => 'Anonymous eyes'])])
+            ->assertSessionHasNoErrors()
+            ->assertRedirect();
+
+        Auth::logout();
+        $this->flushSession();
+
+        $props = $this->get('/')->assertOk()->assertSee('Anonymous eyes')->viewData('page')['props'];
+
+        $this->assertFalse($props['authenticated']);
+        $this->assertSame('Anonymous eyes', $props['blocks'][0]['data']['title']);
     }
 
     public function test_two_heroes_and_a_reordered_list_survive_the_round_trip(): void

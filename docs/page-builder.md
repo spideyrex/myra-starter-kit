@@ -255,6 +255,14 @@ a confirmation.
 | `resources/js/Pages/Admin/Landing/Builder.vue` | the editor |
 | `resources/js/composables/useSectionList.ts` | the editor's only mutation surface |
 | `resources/js/Pages/Admin/Demo/PageBuilder.vue` | the read-only gallery page (`/admin/demo/page-builder`) |
+| `tests/Feature/PageBuilder/EndToEndPageBuilderTest.php` | saves through the real endpoint, reads the real public props |
+| `tests/js/fixtures/page-builder-blocks.json` | that payload, asserted by the PHP test and mounted by `tests/js/pageBuilderPayload.spec.ts` |
+
+The fixture is the only link between the PHP job and the vitest job, which run on separate
+checkouts. `SyncsPageBuilderFixtures::syncFixture()` asserts every value in the committed file
+against the payload the server just shipped — keys the server adds are tolerated, a changed or
+missing one fails — and rewrites it only under `MYRA_WRITE_FIXTURES=1`. Row ids are restated as
+`row-N` because the real ones are ULIDs, reissued per save; the ids themselves are asserted in PHP.
 
 Naming note: the tree already has an `App\Admin\Blocks\BlockRegistry` (the vendored shadcn
 catalogue) and a `Block` field in `useFormSchema.ts` (the form-field block). The page builder is
@@ -279,6 +287,9 @@ Deliberately out of scope for v2.7, recorded here so they are not rediscovered:
    `cta_button_url`, `navbar_cta_url` and the link arrays are stored as submitted. The builder's own
    write path uses `UrlGuard`; retro-fitting it onto the legacy settings form is a separate, narrower
    change and is a v2.8 item.
-3. **`Settings/Index.vue`'s homepage tab stays live alongside the builder for one release.** Both
-   write the same settings group, and the branch on `blocks` decides which one the public page
-   honours. The tab is scheduled for removal once the builder has shipped a full release.
+3. **One editor, never two.** The legacy homepage form and the builder write the same settings
+   group, and the branch on `blocks` decides which one the public page honours — so a legacy save
+   that the public page ignores would be a silent no-op. Whatever the shipped resolution is
+   (legacy authoritative while `blocks` is empty and said so in the UI, legacy migrated onto
+   blocks, or legacy redirected to the builder), it is not acceptable to leave both live with one
+   of them doing nothing. See `SettingController::updateHomepage`.

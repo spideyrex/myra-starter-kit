@@ -4,12 +4,10 @@
             "data": {
                 "cta_text": "Start now",
                 "cta_url": "/register",
-                "image_path": "",
-                "image_url": null,
                 "subtitle": "Compose the page out of sections.",
                 "title": "Ship faster"
             },
-            "id": "auto-bootstrap-hero",
+            "id": "row-0",
             "type": "hero",
             "variant": {}
         },
@@ -35,7 +33,7 @@
                 "subtitle": "Three reasons.",
                 "title": "Everything included"
             },
-            "id": "auto-bootstrap-features",
+            "id": "row-1",
             "type": "features",
             "variant": {}
         },
@@ -46,7 +44,7 @@
                 "subtitle": "Open the builder.",
                 "title": "Ready when you are"
             },
-            "id": "auto-bootstrap-cta",
+            "id": "row-2",
             "type": "cta",
             "variant": {}
         }

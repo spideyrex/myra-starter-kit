@@ -529,6 +529,20 @@
                 "platform"
             ],
             "titleKey": "gallery.demos.pageBuilder.title"
+        },
+        {
+            "badgeKey": "appearanceDemo.badge",
+            "descriptionKey": "appearanceDemo.description",
+            "icon": "Layout",
+            "key": "authLayouts",
+            "playground": null,
+            "route": "admin.demo.auth-layouts",
+            "since": "2.8.0",
+            "tags": [
+                "layout",
+                "platform"
+            ],
+            "titleKey": "appearanceDemo.title"
         }
     ]
 }

@@ -105,13 +105,24 @@ final class DemoRegistry
                 ->permission($spec['permission'] ?? null)
                 ->playground($spec['playground'] ?? null);
 
+            // >>> MYRA v2.8 [D] START
+            // An entry may name its own i18n keys when its copy belongs to a
+            // feature namespace rather than to gallery.demos.*.
+            foreach (['titleKey', 'descriptionKey', 'badgeKey'] as $override) {
+                if (isset($spec[$override]) && is_string($spec[$override])) {
+                    $entry->{$override}($spec[$override]);
+                }
+            }
+            // <<< MYRA v2.8 [D] END
+
             self::add($entry, 'core');
         }
     }
 
     /**
      * @return array<string,array{route:string,icon:string,tags:array<int,string>,
-     *                            since:string,permission?:string,playground?:string}>
+     *                            since:string,permission?:string,playground?:string,
+     *                            titleKey?:string,descriptionKey?:string,badgeKey?:string}>
      */
     private static function declarations(): array
     {
@@ -160,6 +171,12 @@ final class DemoRegistry
             'roleDashboards' => ['route' => 'admin.demo.role-dashboards', 'icon' => 'LayoutDashboard', 'tags' => ['dashboard', 'platform'], 'since' => '2.7.0', 'permission' => 'dashboard.manage-roles'],
             'pageBuilder' => ['route' => 'admin.demo.page-builder', 'icon' => 'LayoutTemplate', 'tags' => ['platform'], 'since' => '2.7.0'],
             // <<< MYRA v2.7 [D] END
+            // >>> MYRA v2.8 [D] START
+            'authLayouts' => [
+                'route' => 'admin.demo.auth-layouts', 'icon' => 'Layout', 'tags' => ['layout', 'platform'], 'since' => '2.8.0',
+                'titleKey' => 'appearanceDemo.title', 'descriptionKey' => 'appearanceDemo.description', 'badgeKey' => 'appearanceDemo.badge',
+            ],
+            // <<< MYRA v2.8 [D] END
         ];
     }
 }

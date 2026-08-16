@@ -2823,5 +2823,71 @@
             "description": "The stored block shape, the degradation guarantees, how a package contributes a section type, the preview contract and the rollback procedure.",
             "link": "Read the page builder guide"
         }
+    },
+    "appearanceDemo": {
+        "title": "Guest layouts",
+        "description": "The four shells the sign-in screen can wear, at reduced scale, in light and dark.",
+        "badge": "New",
+        "layouts": {
+            "split": {
+                "title": "Split",
+                "description": "Today's default: a full-height brand panel beside the form, hidden below large screens."
+            },
+            "centered": {
+                "title": "Centered",
+                "description": "One column, no media panel. Nothing here can 404, so it is the safest second choice."
+            },
+            "cover": {
+                "title": "Cover",
+                "description": "A full-bleed background across the viewport with the form card floating over the scrim."
+            },
+            "card": {
+                "title": "Card",
+                "description": "The split lives inside the card; the media half hides below the medium breakpoint."
+            }
+        },
+        "surfaces": {
+            "brand": "Brand",
+            "solid": "Solid colour",
+            "none": "None",
+            "gradient-brand-fade": "Brand fade",
+            "gradient-brand-mesh": "Brand mesh",
+            "gradient-dusk": "Dusk",
+            "gradient-dawn": "Dawn",
+            "gradient-ink": "Ink",
+            "gradient-aurora": "Aurora",
+            "pattern-dots": "Dots",
+            "pattern-grid": "Grid",
+            "pattern-diagonal": "Diagonal",
+            "pattern-noise": "Noise",
+            "image-missing": "Deleted image"
+        },
+        "controls": {
+            "title": "Preview controls",
+            "description": "Nothing here is saved. Each background is the payload the server really resolves for it.",
+            "surface": "Background",
+            "flip": "Flip the panel",
+            "tagline": "Show the tagline",
+            "dark": "Dark mode"
+        },
+        "badges": {
+            "flippable": "Flippable",
+            "media": "Supports media"
+        },
+        "form": {
+            "title": "Welcome back",
+            "subtitle": "Sign in to continue",
+            "email": "Email",
+            "password": "Password",
+            "submit": "Sign in"
+        },
+        "degraded": {
+            "title": "Appearance engine not installed",
+            "description": "This build has no appearance engine, so every preview falls back to the default brand surface."
+        },
+        "missing": {
+            "title": "Shells missing from this build",
+            "description": "These layouts are registered on the server but their component is absent, so the sign-in page falls back to the split shell."
+        }
     }
 }

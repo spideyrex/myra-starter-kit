@@ -264,6 +264,35 @@ class DemoController extends Controller
         return Inertia::render('Admin/Demo/WizardDemo');
     }
 
+    // >>> MYRA v2.7 [D] START
+    /**
+     * Static explainer. The starter table is the seeder's own declaration, so
+     * the page cannot drift from what `myra:role-dashboards:seed` would write.
+     */
+    public function roleDashboards()
+    {
+        $starters = [];
+
+        foreach (\Database\Seeders\RoleDashboardSeeder::starters() as $role => $entries) {
+            $starters[] = [
+                'role' => $role,
+                'visible' => array_values(array_map(
+                    fn (array $entry) => $entry['key'],
+                    array_filter($entries, fn (array $entry) => ! ($entry['hidden'] ?? false)),
+                )),
+                'hidden' => array_values(array_map(
+                    fn (array $entry) => $entry['key'],
+                    array_filter($entries, fn (array $entry) => (bool) ($entry['hidden'] ?? false)),
+                )),
+            ];
+        }
+
+        return Inertia::render('Admin/Demo/RoleDashboards', [
+            'starters' => $starters,
+        ]);
+    }
+    // <<< MYRA v2.7 [D] END
+
     // >>> MYRA v2.4 [C] START
     /** Read-only tenancy status. Changes no data and registers no scope. */
     public function tenancy()

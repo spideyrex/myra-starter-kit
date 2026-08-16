@@ -14,6 +14,7 @@ vi.mock('@inertiajs/vue3', () => ({
 vi.mock('@/composables/useThemeColors', () => ({ useThemeColors: () => ({}) }));
 
 import { testI18n } from './helpers/i18n';
+import { isExternalUrl, safeSrc, safeUrl } from '@/composables/useSafeUrl';
 import fixture from './fixtures/homepage-settings.json';
 
 const SECTION_DIR = resolve(__dirname, '../../resources/js/Pages/Public/Templates/_shared/sections');
@@ -221,6 +222,143 @@ describe('image — a missing file never renders a broken image', () => {
         expect(linked.get('a').attributes('rel')).toBe('noopener noreferrer');
         plain.unmount();
         linked.unmount();
+    });
+
+    it('resolves the declared image_path when the server emitted no image_url at all', () => {
+        const wrapper = mountSection('image', { image_path: 'homepage/x.webp', alt: 'A dashboard' });
+
+        expect(wrapper.get('img').attributes('src')).toBe('/storage/homepage/x.webp');
+        wrapper.unmount();
+    });
+
+    it('does not second-guess a normaliser that resolved image_url to null', () => {
+        const wrapper = mountSection('image', { image_path: 'homepage/gone.webp', image_url: null, caption: 'Kept' });
+
+        expect(wrapper.findAll('img')).toHaveLength(0);
+        expect(wrapper.text()).toContain('Kept');
+        wrapper.unmount();
+    });
+});
+
+describe('every public section refuses a dangerous URL scheme', () => {
+    const HOSTILE = [
+        'javascript:alert(document.domain)',
+        'JaVaScRiPt:alert(1)',
+        '  javascript:alert(1)',
+        'java\tscript:alert(1)',
+        'java\nscript:alert(1)',
+        '\u0000javascript:alert(1)',
+        'data:text/html;base64,PHNjcmlwdD5hbGVydCgxKTwvc2NyaXB0Pg==',
+        'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjwvc3ZnPg==',
+        'vbscript:msgbox(1)',
+        'file:///etc/passwd',
+        'blob:https://evil.test/x',
+    ];
+
+    /** Every key any section type binds into href/src, plus the list rows. */
+    function hostileBlock(value: string): Record<string, unknown> {
+        const row = {
+            url: value,
+            href: value,
+            link: value,
+            link_url: value,
+            image_url: value,
+            image_path: value,
+            cta_url: value,
+            cta_link: value,
+            secondary_cta_url: value,
+            button_url: value,
+            avatar_url: value,
+            logo_url: value,
+        };
+
+        return {
+            ...row,
+            alt: 'a',
+            caption: 'c',
+            title: 't',
+            heading: 'h',
+            items: [{ ...row, label: 'l', value: 'v', question: 'q', answer: 'a' }],
+            plans: [{ ...row, name: 'n' }],
+            buttons: [{ ...row, label: 'l' }],
+        };
+    }
+
+    const DANGEROUS = /^\s*(?:javascript|vbscript|data|file|blob)\s*:/i;
+
+    it('never lets one reach the DOM as an href or a src', () => {
+        for (const type of Object.keys(registry)) {
+            for (const hostile of HOSTILE) {
+                const wrapper = mountSection(type, hostileBlock(hostile));
+
+                for (const el of Array.from(wrapper.element.querySelectorAll('[href], [src]'))) {
+                    for (const attr of ['href', 'src']) {
+                        const bound = (el.getAttribute(attr) ?? '').replace(/[\u0000-\u001f]/g, '');
+
+                        expect(bound, `${type} bound ${hostile} into ${attr}`).not.toMatch(DANGEROUS);
+                    }
+                }
+
+                wrapper.unmount();
+            }
+        }
+    });
+
+    it('drops the anchor entirely rather than rendering an inert one', () => {
+        const wrapper = mountSection('image', {
+            image_url: '/storage/a.webp',
+            alt: 'a',
+            link_url: 'javascript:alert(document.domain)',
+        });
+
+        expect(wrapper.findAll('a')).toHaveLength(0);
+        expect(wrapper.findAll('img')).toHaveLength(1);
+        expect(wrapper.html()).not.toContain('javascript:');
+        wrapper.unmount();
+    });
+});
+
+describe('safeUrl — the scheme allowlist itself', () => {
+    it('keeps the shapes an author legitimately writes', () => {
+        for (const ok of ['https://myra.test/x', 'http://myra.test', '/pricing', '#faq', '?page=2', './a', '../b', 'mailto:hi@myra.test', 'tel:+60123']) {
+            expect(safeUrl(ok), ok).toBe(ok);
+        }
+    });
+
+    it('rejects everything else, including protocol-relative and non-strings', () => {
+        for (const bad of ['javascript:alert(1)', 'data:text/html,x', 'vbscript:x', '//evil.test', 'about:blank', 42, null, undefined, {}, []]) {
+            expect(safeUrl(bad), String(bad)).toBe('');
+        }
+    });
+
+    it('allows an inline image data URI for src only', () => {
+        const png = 'data:image/png;base64,iVBORw0KGgo=';
+
+        expect(safeSrc(png)).toBe(png);
+        expect(safeUrl(png)).toBe('');
+        expect(safeSrc('data:image/svg+xml;base64,PHN2Zz48L3N2Zz4=')).toBe('');
+    });
+
+    it('marks only absolute http(s) targets external', () => {
+        expect(isExternalUrl('https://myra.test')).toBe(true);
+        expect(isExternalUrl('/pricing')).toBe(false);
+        expect(isExternalUrl('mailto:hi@myra.test')).toBe(false);
+    });
+});
+
+describe('section library — a null prop is not an undefined prop', () => {
+    it('mounts every type with block and variant explicitly null', () => {
+        for (const type of OWNED) {
+            for (const value of [null, 'not an object', 7, []]) {
+                const wrapper = mount(registry[type], {
+                    props: { block: value, settings, variant: value } as never,
+                    global: { plugins: [testI18n()] },
+                });
+
+                expect(wrapper.html(), `${type} must survive ${String(value)}`).toContain('<section');
+                wrapper.unmount();
+            }
+        }
     });
 });
 

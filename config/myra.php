@@ -546,10 +546,11 @@ return [
     | Page builder — the starter section library
     |--------------------------------------------------------------------------
     |
-    | A SEPARATE top-level key from 'pagebuilder', which carries the five core
-    | adapters. SectionRegistry::seed() concatenates both lists, so a package
-    | (or this bundle) can contribute section types without editing the other's
-    | array. Every class exposes `public static function define(): SectionType`.
+    | Declared in its own top-level key so a package can extend the library
+    | without editing the core adapters' array, then merged into
+    | `myra.pagebuilder.sections` — the array the registry actually reads — by
+    | MyraServiceProvider::register(). Nothing else has to know this key exists.
+    | Every class exposes `public static function define(): SectionType`.
     |
     */
 

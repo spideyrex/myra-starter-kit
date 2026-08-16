@@ -13,17 +13,24 @@ const props = withDefaults(
 
 const text = (v: unknown): string => (typeof v === 'string' ? v : '');
 
-const title = computed(() => text(props.block.title));
+/** withDefaults substitutes only `undefined`, so an explicit null still lands here. */
+const obj = (v: unknown): Record<string, unknown> =>
+    v !== null && typeof v === 'object' && !Array.isArray(v) ? (v as Record<string, unknown>) : {};
+
+const block = computed(() => obj(props.block));
+const variant = computed(() => obj(props.variant));
+
+const title = computed(() => text(block.value.title));
 
 const items = computed(() =>
-    (Array.isArray(props.block.items) ? props.block.items : [])
+    (Array.isArray(block.value.items) ? block.value.items : [])
         .filter((row): row is Record<string, unknown> => typeof row === 'object' && row !== null)
         .map(row => ({ value: text(row.value), label: text(row.label) }))
         .filter(row => row.value !== '' || row.label !== '')
         .slice(0, 4),
 );
 
-const tinted = computed(() => props.variant.tinted === true);
+const tinted = computed(() => variant.value.tinted === true);
 
 const columns = computed(() => {
     if (items.value.length >= 4) return 'sm:grid-cols-2 lg:grid-cols-4';

@@ -11,6 +11,12 @@ const props = withDefaults(
     { block: () => ({}), variant: () => ({}) },
 );
 
+/** withDefaults substitutes only `undefined`, so an explicit null still lands here. */
+const obj = (v: unknown): Record<string, unknown> =>
+    v !== null && typeof v === 'object' && !Array.isArray(v) ? (v as Record<string, unknown>) : {};
+
+const block = computed(() => obj(props.block));
+
 const SIZES: Record<string, string> = {
     sm: 'py-6',
     md: 'py-12',
@@ -18,8 +24,8 @@ const SIZES: Record<string, string> = {
 };
 
 /** Selects always carry a declared option; an unknown one still lands on a size. */
-const spacing = computed(() => SIZES[String(props.block.size ?? '')] ?? SIZES.md);
-const rule = computed(() => String(props.block.style ?? 'rule') !== 'space');
+const spacing = computed(() => SIZES[String(block.value.size ?? '')] ?? SIZES.md);
+const rule = computed(() => String(block.value.style ?? 'rule') !== 'space');
 </script>
 
 <template>

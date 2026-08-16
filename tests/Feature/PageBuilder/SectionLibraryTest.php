@@ -56,13 +56,25 @@ class SectionLibraryTest extends TestCase
         }
     }
 
-    public function test_the_extra_config_key_is_separate_from_the_core_list(): void
+    /**
+     * The library is DECLARED in its own key and MERGED into the one the
+     * registry reads. Declaring it somewhere nobody reads is not registration.
+     */
+    public function test_the_extra_key_is_merged_into_the_array_the_registry_reads(): void
     {
-        $core = (array) config('myra.pagebuilder.sections', []);
+        $read = (array) config('myra.pagebuilder.sections', []);
+
+        $this->assertNotEmpty($read, 'The registry\'s own config key must carry the starter library.');
 
         foreach ($this->declaredClasses() as $class) {
-            $this->assertNotContains($class, $core, 'A bundle must not appear in the other bundle\'s array.');
+            $this->assertContains($class, $read, "{$class} is declared but never reaches the registry.");
         }
+
+        $this->assertSame(
+            count($read),
+            count(array_unique($read)),
+            'The merge must be idempotent — a class must not be seeded twice.',
+        );
     }
 
     public function test_the_registry_carries_every_starter_type(): void
@@ -78,6 +90,58 @@ class SectionLibraryTest extends TestCase
             $this->assertFileExists(
                 resource_path("js/Pages/Public/Templates/_shared/sections/{$key}.vue"),
                 "The stored `type` must map straight to a component file for {$key}.",
+            );
+        }
+    }
+
+    private function renderer(string $key): string
+    {
+        $path = resource_path("js/Pages/Public/Templates/_shared/sections/{$key}.vue");
+
+        $this->assertFileExists($path);
+
+        return (string) file_get_contents($path);
+    }
+
+    /**
+     * A renderer reading a key the declaration does not have (image_url for a
+     * declared image_path) is invisible to a suite that hand-authors payloads.
+     */
+    public function test_every_declared_field_name_is_read_by_its_renderer(): void
+    {
+        foreach (self::TYPES as $key) {
+            $source = $this->renderer($key);
+
+            foreach (SectionRegistry::get($key)?->toClientSchema()['fields'] ?? [] as $field) {
+                $name = (string) ($field['name'] ?? '');
+
+                if ($name === '') {
+                    continue;
+                }
+
+                $this->assertStringContainsString(
+                    $name,
+                    $source,
+                    "{$key}.vue never reads the declared field `{$name}`.",
+                );
+            }
+        }
+    }
+
+    /** Vue does not sanitise attributes: an authored URL is untrusted input. */
+    public function test_a_renderer_that_binds_a_url_routes_it_through_the_scheme_allowlist(): void
+    {
+        foreach (self::TYPES as $key) {
+            $source = $this->renderer($key);
+
+            if (! str_contains($source, ':href') && ! str_contains($source, ':src')) {
+                continue;
+            }
+
+            $this->assertStringContainsString(
+                'useSafeUrl',
+                $source,
+                "{$key}.vue binds a URL attribute without the scheme allowlist.",
             );
         }
     }

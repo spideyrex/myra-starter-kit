@@ -19,17 +19,24 @@ const props = withDefaults(
 
 const text = (v: unknown): string => (typeof v === 'string' ? v : '');
 
-const heading = computed(() => text(props.block.heading));
+/** withDefaults substitutes only `undefined`, so an explicit null still lands here. */
+const obj = (v: unknown): Record<string, unknown> =>
+    v !== null && typeof v === 'object' && !Array.isArray(v) ? (v as Record<string, unknown>) : {};
+
+const block = computed(() => obj(props.block));
+const variant = computed(() => obj(props.variant));
+
+const heading = computed(() => text(block.value.heading));
 
 /** Sanitised server-side on write and again here on render. Belt and braces. */
 const body = computed(() => {
-    const raw = text(props.block.body);
+    const raw = text(block.value.body);
 
     return raw === '' ? '' : sanitizeHtml(raw);
 });
 
-const wide = computed(() => props.variant.width === 'wide');
-const tinted = computed(() => props.variant.tinted === true);
+const wide = computed(() => variant.value.width === 'wide');
+const tinted = computed(() => variant.value.tinted === true);
 </script>
 
 <template>

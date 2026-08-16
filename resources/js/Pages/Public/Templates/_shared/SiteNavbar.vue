@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 import { Link } from '@inertiajs/vue3';
 import { useI18n } from 'vue-i18n';
 import { Button } from '@/components/ui/button';
 import { Menu, X } from 'lucide-vue-next';
+import { safeSrc, safeUrl } from '@/composables/useSafeUrl';
 import type { HomepageData } from '@/types';
 import { useSiteBrand } from './useSiteBrand';
 
@@ -18,14 +19,25 @@ const { name, initial, logoUrl } = useSiteBrand();
 const mobileMenuOpen = ref(false);
 
 function isAnchorLink(url: string): boolean {
-    return url.startsWith('#');
+    return typeof url === 'string' && url.startsWith('#');
 }
+
+/** Authored by an admin, rendered to anonymous visitors: scheme-gated, always. */
+const navUrl = (url: unknown): string => safeUrl(url) || '#';
+
+const ctaUrl = computed(() => safeUrl(props.settings?.navbar_cta_url) || '#');
+const brandLogo = computed(() => safeSrc(logoUrl.value));
 
 function smoothScroll(url: string) {
     if (!isAnchorLink(url)) return;
 
     mobileMenuOpen.value = false;
-    document.querySelector(url)?.scrollIntoView({ behavior: 'smooth' });
+
+    try {
+        document.querySelector(url)?.scrollIntoView({ behavior: 'smooth' });
+    } catch {
+        // An authored anchor is not guaranteed to be a valid selector.
+    }
 }
 </script>
 
@@ -45,7 +57,7 @@ function smoothScroll(url: string) {
     >
         <div class="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
             <Link href="/" class="flex items-center gap-2.5">
-                <img v-if="logoUrl" :src="logoUrl" :alt="name" class="h-8 w-auto" />
+                <img v-if="brandLogo" :src="brandLogo" :alt="name" class="h-8 w-auto" />
                 <div
                     v-else
                     aria-hidden="true"
@@ -68,7 +80,7 @@ function smoothScroll(url: string) {
                     </a>
                     <Link
                         v-else
-                        :href="link.url"
+                        :href="navUrl(link.url)"
                         class="rounded-md px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
                     >
                         {{ link.label }}
@@ -86,7 +98,7 @@ function smoothScroll(url: string) {
                     <Link href="/login">
                         <Button variant="ghost">{{ t('landing.nav.login') }}</Button>
                     </Link>
-                    <Link :href="settings.navbar_cta_url">
+                    <Link :href="ctaUrl">
                         <Button>{{ settings.navbar_cta_text }}</Button>
                     </Link>
                 </template>
@@ -118,7 +130,7 @@ function smoothScroll(url: string) {
                     </a>
                     <Link
                         v-else
-                        :href="link.url"
+                        :href="navUrl(link.url)"
                         class="block rounded-md px-3 py-2 text-sm font-medium text-muted-foreground hover:text-foreground"
                     >
                         {{ link.label }}
@@ -134,7 +146,7 @@ function smoothScroll(url: string) {
                         <Link href="/login" class="block">
                             <Button variant="outline" class="w-full">{{ t('landing.nav.login') }}</Button>
                         </Link>
-                        <Link :href="settings.navbar_cta_url" class="block">
+                        <Link :href="ctaUrl" class="block">
                             <Button class="w-full">{{ settings.navbar_cta_text }}</Button>
                         </Link>
                     </template>

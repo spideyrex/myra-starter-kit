@@ -5,11 +5,15 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Check } from 'lucide-vue-next';
+import { safeUrl } from '@/composables/useSafeUrl';
 import type { HomepageData } from '@/types';
 
 withDefaults(defineProps<{ settings: HomepageData; tinted?: boolean }>(), { tinted: true });
 
 const { t } = useI18n();
+
+/** Authored by an admin, rendered to anonymous visitors: scheme-gated, always. */
+const planUrl = (url: unknown): string => safeUrl(url) || '#';
 </script>
 
 <template>
@@ -48,7 +52,7 @@ const { t } = useI18n();
                                 <span>{{ feature.trim() }}</span>
                             </li>
                         </ul>
-                        <Link :href="plan.cta_url" class="mt-8 block">
+                        <Link :href="planUrl(plan.cta_url)" class="mt-8 block">
                             <Button class="w-full" :variant="plan.highlighted ? 'default' : 'outline'">
                                 {{ plan.cta_text }}
                             </Button>

@@ -14,18 +14,25 @@ const props = withDefaults(
 
 const text = (v: unknown): string => (typeof v === 'string' ? v : '');
 
-const title = computed(() => text(props.block.title));
-const subtitle = computed(() => text(props.block.subtitle));
+/** withDefaults substitutes only `undefined`, so an explicit null still lands here. */
+const obj = (v: unknown): Record<string, unknown> =>
+    v !== null && typeof v === 'object' && !Array.isArray(v) ? (v as Record<string, unknown>) : {};
+
+const block = computed(() => obj(props.block));
+const variant = computed(() => obj(props.variant));
+
+const title = computed(() => text(block.value.title));
+const subtitle = computed(() => text(block.value.subtitle));
 
 const items = computed(() =>
-    (Array.isArray(props.block.items) ? props.block.items : [])
+    (Array.isArray(block.value.items) ? block.value.items : [])
         .filter((row): row is Record<string, unknown> => typeof row === 'object' && row !== null)
         .map((row, i) => ({ value: `q-${i}`, question: text(row.question), answer: text(row.answer) }))
         .filter(row => row.question !== '')
         .slice(0, 20),
 );
 
-const tinted = computed(() => props.variant.tinted === true);
+const tinted = computed(() => variant.value.tinted === true);
 </script>
 
 <template>

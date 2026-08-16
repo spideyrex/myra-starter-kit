@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue';
+import { isExternalUrl, safeSrc, safeUrl } from '@/composables/useSafeUrl';
 import type { HomepageData } from '@/types';
 
 const props = withDefaults(
@@ -13,19 +14,39 @@ const props = withDefaults(
 
 const text = (v: unknown): string => (typeof v === 'string' ? v : '');
 
-/**
- * The normaliser only emits `image_url` when the file is actually on disk, so a
- * missing upload renders the caption alone rather than a broken image icon on
- * the public page.
- */
-const url = computed(() => text(props.block.image_url));
-const alt = computed(() => text(props.block.alt));
-const caption = computed(() => text(props.block.caption));
-const link = computed(() => text(props.block.link_url));
+/** withDefaults substitutes only `undefined`, so an explicit null still lands here. */
+const obj = (v: unknown): Record<string, unknown> =>
+    v !== null && typeof v === 'object' && !Array.isArray(v) ? (v as Record<string, unknown>) : {};
 
-const full = computed(() => props.variant.width === 'full');
-const rounded = computed(() => props.variant.rounded === true);
-const external = computed(() => /^https?:/i.test(link.value));
+const block = computed(() => obj(props.block));
+const variant = computed(() => obj(props.variant));
+
+/**
+ * `image_url` is the resolved URL and wins whenever the key is present: a
+ * normaliser that emits null there is saying the file is gone, and the caption
+ * renders alone rather than a broken image. When the key is absent altogether
+ * the stored `image_path` is resolved against the public disk convention, so a
+ * server that never learned about `image_url` still paints the figure.
+ */
+const url = computed(() => {
+    if ('image_url' in block.value) return safeSrc(block.value.image_url);
+
+    const path = text(block.value.image_path);
+
+    if (path === '') return '';
+
+    return safeSrc(/^(?:https?:|\/)/i.test(path) ? path : `/storage/${path}`);
+});
+
+const alt = computed(() => text(block.value.alt));
+const caption = computed(() => text(block.value.caption));
+
+/** Scheme-gated, not truthiness-gated: `javascript:` must never reach href. */
+const link = computed(() => safeUrl(block.value.link_url));
+
+const full = computed(() => variant.value.width === 'full');
+const rounded = computed(() => variant.value.rounded === true);
+const external = computed(() => isExternalUrl(link.value));
 </script>
 
 <template>

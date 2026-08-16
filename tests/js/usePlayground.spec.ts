@@ -146,7 +146,9 @@ describe('playground rendering', () => {
         const dir = resolve(__dirname, '../../resources/js/components/admin/playground');
 
         for (const file of ['PlaygroundSnippet.vue', 'PlaygroundControls.vue', 'PlaygroundStage.vue', 'PlaygroundPanel.vue']) {
-            expect(readFileSync(resolve(dir, file), 'utf8')).not.toContain('v-html');
+            // The directive form only: the ban is on rendering raw HTML, not on
+            // naming the directive in the comment that explains why it is banned.
+            expect(readFileSync(resolve(dir, file), 'utf8')).not.toMatch(/\bv-html\s*=/);
         }
     });
 

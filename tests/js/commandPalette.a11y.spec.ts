@@ -47,8 +47,10 @@ describe('layout palette wiring (regression guard)', () => {
     });
 
     it('never mounts the standalone CommandPalette inside the layout', () => {
-        // Two dialogs bound to the same shortcut is the failure this guards.
-        expect(source).not.toContain('CommandPalette');
+        // Two dialogs bound to the same shortcut is the failure this guards, so
+        // match the import and the tag. Naming the component in prose is not it.
+        expect(source).not.toMatch(/from\s*['"][^'"]*\/CommandPalette\.vue['"]/);
+        expect(source).not.toMatch(/<\/?CommandPalette[\s/>]/);
     });
 
     it('renders the registered commands through the EXISTING CommandDialog', () => {

@@ -74,7 +74,7 @@ The "view, filter, search, export, import" stability mandate.
 
 - [x] Saved views — named filter+column+sort presets, per user, shareable — v2.2.0
 - [x] Column visibility manager with presets and persistence — v2.2.0
-- [ ] 100k+ row performance: virtualised rows, cursor pagination, indexed sort paths
+- [x] 100k+ row performance: virtualised rows, cursor pagination, indexed sort paths — v2.4.0
 - [x] Streaming export for large datasets (never buffer the whole set in memory) — v2.2.0
 - [x] Import: column auto-mapping, validation preview, partial-failure report, resumable — v2.2.0
 - [x] Advanced query builder parity (nested AND/OR groups — `QueryBuilderGroup.vue` is the base) — v2.2.0
@@ -101,7 +101,7 @@ The "view, filter, search, export, import" stability mandate.
 - [x] `InlineUploadController::show()` null-guards `$request->user()` and answers 404, not a fatal.
 - [ ] The inline-upload public URL contains a doubled segment (`/uploads/inline/inline/{id}/`),
       now enshrined by an assertion. Cosmetic, but worth a clean route.
-- [ ] 100k+ row performance (virtualised rows, cursor pagination) — deliberately deferred from
+- [x] 100k+ row performance (virtualised rows, cursor pagination) — deliberately deferred from — v2.4.0
       the v2.2.0 sweep, not attempted.
 
 ---
@@ -125,12 +125,12 @@ Beyond Filament — this is a differentiator, not a parity item.
 
 The "easy to scale up the platform" foundation.
 
-- [ ] Plugin system: discoverable packages that register pages, resources, widgets, permissions
-- [ ] Clusters — grouped resources with shared navigation/sub-navigation
-- [ ] Multi-tenancy — full tenant scoping (teams tables + `TeamSwitcher.vue` are the starting point)
-- [ ] Nested resources (parent/child routing) and singular resources
-- [ ] Testing helpers — assert on schemas, tables, actions the way Filament's test suite does
-- [ ] Generator coverage for all of the above (`make:myra-plugin`, `make:myra-cluster`, …)
+- [x] Plugin system: discoverable packages that register pages, resources, widgets, permissions — v2.4.0
+- [x] Clusters — grouped resources with shared navigation/sub-navigation — v2.4.0
+- [x] Multi-tenancy — full tenant scoping — v2.4.0 **(shipped OPT-IN, MYRA_TENANCY=false; enabling it is a deliberate, separate step)**
+- [x] Nested resources (parent/child routing) and singular resources — v2.4.0
+- [x] Testing helpers — assert on schemas, tables, actions the way Filament's test suite does — v2.4.0
+- [x] Generator coverage for all of the above (`make:myra-plugin`, `make:myra-cluster`, …) — v2.4.0
 
 ---
 

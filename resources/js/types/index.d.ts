@@ -265,6 +265,22 @@ export interface BlockSchema {
     descriptionKey: string;
     category: string;
     entryFile: string;
+    available: boolean;
+    unavailableReason: string | null;
+    registryDependencies: string[];
+    npmDependencies: string[];
+    tags: string[];
+    since: string;
+    viewport: string;
+}
+
+export interface BlockSourceFile {
+    path: string;
+    language: string;
+    content: string;
+}
+// <<< MYRA v2.6 [A] END
+
 // >>> MYRA v2.6 [B] START
 export interface ExampleEntry {
     key: string;
@@ -277,12 +293,6 @@ export interface ExampleEntry {
     unavailableReason: string | null;
     registryDependencies: string[];
     npmDependencies: string[];
-    tags: string[];
-    since: string;
-    viewport: string;
-}
-
-export interface BlockSourceFile {
     dataFiles: string[];
     surfaces: string[];
     tags: string[];
@@ -295,7 +305,6 @@ export interface ExampleSourceFile {
     language: string;
     content: string;
 }
-// <<< MYRA v2.6 [A] END
 // <<< MYRA v2.6 [B] END
 // >>> MYRA v2.6 [C] START
 export interface BrandPaletteTokens {

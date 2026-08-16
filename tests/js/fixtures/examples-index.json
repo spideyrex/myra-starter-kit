@@ -1,0 +1,347 @@
+{
+    "examples": [
+        {
+            "available": true,
+            "dataFiles": [],
+            "descriptionKey": "examples.entries.authentication.description",
+            "fileCount": 3,
+            "key": "authentication",
+            "npmDependencies": [
+                "lucide-vue-next",
+                "vue",
+                "vue-i18n"
+            ],
+            "origin": "fetched",
+            "registryDependencies": [
+                "button",
+                "field",
+                "input",
+                "spinner"
+            ],
+            "shell": "authentication/Page.vue",
+            "since": "2.6.0",
+            "sourceRef": "81ededbf6c4c230272ed613649bd525cd9de7ed2",
+            "surfaces": [
+                "form",
+                "split"
+            ],
+            "tags": [
+                "forms",
+                "layout"
+            ],
+            "titleKey": "examples.entries.authentication.title",
+            "unavailableReason": null
+        },
+        {
+            "available": false,
+            "dataFiles": [],
+            "descriptionKey": "examples.entries.cards.description",
+            "fileCount": 16,
+            "key": "cards",
+            "npmDependencies": [
+                "@hugeicons/core-free-icons",
+                "@hugeicons/vue",
+                "vue"
+            ],
+            "origin": "fetched",
+            "registryDependencies": [
+                "alert-dialog",
+                "badge",
+                "breadcrumb",
+                "button",
+                "button-group",
+                "card",
+                "checkbox",
+                "dropdown-menu",
+                "empty",
+                "field",
+                "input",
+                "input-group",
+                "item",
+                "progress",
+                "radio-group",
+                "select",
+                "separator",
+                "sidebar",
+                "switch",
+                "textarea"
+            ],
+            "shell": "cards/Page.vue",
+            "since": "2.6.0",
+            "sourceRef": "81ededbf6c4c230272ed613649bd525cd9de7ed2",
+            "surfaces": [
+                "grid",
+                "detail"
+            ],
+            "tags": [
+                "layout",
+                "dashboard"
+            ],
+            "titleKey": "examples.entries.cards.title",
+            "unavailableReason": "requires @/components/demo/MessageScrollerDemo.vue, @/components/examples/cards/AccountAccess.vue, @/components/examples/cards/AnalyticsCard.vue, @/components/examples/cards/ClaimableBalance.vue, @/components/examples/cards/ContributionHistory.vue, @/components/examples/cards/DividendIncome.vue, @/components/examples/cards/EmptyDistributeTrack.vue, @/components/examples/cards/NewMilestone.vue, @/components/examples/cards/NotificationSettings.vue, @/components/examples/cards/Payments.vue, @/components/examples/cards/PayoutThreshold.vue, @/components/examples/cards/PowerUsage.vue, @/components/examples/cards/QrConnect.vue, @/components/examples/cards/SavingsTargets.vue, @/components/examples/cards/SidebarNav.vue, @/components/examples/cards/UiElements.vue, @/components/ui/empty, @/components/ui/item, @hugeicons/core-free-icons, @hugeicons/vue"
+        },
+        {
+            "available": false,
+            "dataFiles": [],
+            "descriptionKey": "examples.entries.dashboard.description",
+            "fileCount": 13,
+            "key": "dashboard",
+            "npmDependencies": [
+                "@dnd-kit/abstract",
+                "@tabler/icons-vue",
+                "@tanstack/vue-table",
+                "@unovis/vue",
+                "dnd-kit-vue",
+                "vue",
+                "vue-sonner",
+                "zod"
+            ],
+            "origin": "fetched",
+            "registryDependencies": [
+                "avatar",
+                "badge",
+                "button",
+                "card",
+                "chart",
+                "checkbox",
+                "dropdown-menu",
+                "input",
+                "label",
+                "select",
+                "sidebar",
+                "table",
+                "tabs",
+                "toggle-group"
+            ],
+            "shell": "dashboard/Page.vue",
+            "since": "2.6.0",
+            "sourceRef": "81ededbf6c4c230272ed613649bd525cd9de7ed2",
+            "surfaces": [
+                "list",
+                "detail",
+                "chart"
+            ],
+            "tags": [
+                "dashboard",
+                "tables"
+            ],
+            "titleKey": "examples.entries.dashboard.title",
+            "unavailableReason": "requires @/components/ui/chart, @dnd-kit/abstract, @tabler/icons-vue, @tanstack/vue-table@^9 (v9-only API against the pinned ^8.21.3), @unovis/vue, dnd-kit-vue"
+        },
+        {
+            "available": true,
+            "dataFiles": [
+                "data/models.ts",
+                "data/presets.ts"
+            ],
+            "descriptionKey": "examples.entries.playground.description",
+            "fileCount": 12,
+            "key": "playground",
+            "npmDependencies": [
+                "lucide-vue-next",
+                "reka-ui",
+                "vue",
+                "vue-i18n"
+            ],
+            "origin": "fetched",
+            "registryDependencies": [
+                "alert-dialog",
+                "button",
+                "dialog",
+                "dropdown-menu",
+                "hover-card",
+                "input",
+                "label",
+                "native-select",
+                "popover",
+                "separator",
+                "slider",
+                "switch",
+                "tabs",
+                "textarea",
+                "use-toast"
+            ],
+            "shell": "playground/Page.vue",
+            "since": "2.6.0",
+            "sourceRef": "81ededbf6c4c230272ed613649bd525cd9de7ed2",
+            "surfaces": [
+                "compose",
+                "detail"
+            ],
+            "tags": [
+                "forms",
+                "ai"
+            ],
+            "titleKey": "examples.entries.playground.title",
+            "unavailableReason": null
+        },
+        {
+            "available": false,
+            "dataFiles": [
+                "data/data.ts.txt",
+                "data/schema.ts.txt",
+                "data/tasks.json.txt"
+            ],
+            "descriptionKey": "examples.entries.tasks.description",
+            "fileCount": 13,
+            "key": "tasks",
+            "npmDependencies": [
+                "@tanstack/vue-table",
+                "lucide-vue-next",
+                "vue",
+                "zod"
+            ],
+            "origin": "fetched",
+            "registryDependencies": [
+                "avatar",
+                "badge",
+                "button",
+                "checkbox",
+                "command",
+                "dropdown-menu",
+                "input",
+                "popover",
+                "select",
+                "separator",
+                "table"
+            ],
+            "shell": "tasks/Page.vue",
+            "since": "2.6.0",
+            "sourceRef": "81ededbf6c4c230272ed613649bd525cd9de7ed2",
+            "surfaces": [
+                "list",
+                "detail"
+            ],
+            "tags": [
+                "tables",
+                "data"
+            ],
+            "titleKey": "examples.entries.tasks.title",
+            "unavailableReason": "requires @tanstack/vue-table@^9 (v9-only API against the pinned ^8.21.3)"
+        },
+        {
+            "available": true,
+            "dataFiles": [
+                "data/accounts.json",
+                "data/mails.json",
+                "data/types.ts"
+            ],
+            "descriptionKey": "examples.entries.mail.description",
+            "fileCount": 8,
+            "key": "mail",
+            "npmDependencies": [
+                "lucide-vue-next",
+                "vue",
+                "vue-i18n"
+            ],
+            "origin": "authored",
+            "registryDependencies": [
+                "avatar",
+                "badge",
+                "button",
+                "input",
+                "label",
+                "native-select",
+                "resizable",
+                "scroll-area",
+                "separator",
+                "tabs",
+                "textarea",
+                "tooltip"
+            ],
+            "shell": "mail/Page.vue",
+            "since": "2.6.0",
+            "sourceRef": null,
+            "surfaces": [
+                "list",
+                "detail",
+                "compose"
+            ],
+            "tags": [
+                "layout",
+                "content"
+            ],
+            "titleKey": "examples.entries.mail.title",
+            "unavailableReason": null
+        },
+        {
+            "available": true,
+            "dataFiles": [
+                "data/albums.json"
+            ],
+            "descriptionKey": "examples.entries.music.description",
+            "fileCount": 5,
+            "key": "music",
+            "npmDependencies": [
+                "lucide-vue-next",
+                "vue",
+                "vue-i18n"
+            ],
+            "origin": "authored",
+            "registryDependencies": [
+                "aspect-ratio",
+                "button",
+                "carousel",
+                "context-menu",
+                "scroll-area",
+                "separator",
+                "tabs"
+            ],
+            "shell": "music/Page.vue",
+            "since": "2.6.0",
+            "sourceRef": null,
+            "surfaces": [
+                "grid",
+                "detail"
+            ],
+            "tags": [
+                "layout",
+                "content"
+            ],
+            "titleKey": "examples.entries.music.title",
+            "unavailableReason": null
+        },
+        {
+            "available": true,
+            "dataFiles": [
+                "data/options.ts"
+            ],
+            "descriptionKey": "examples.entries.forms.description",
+            "fileCount": 9,
+            "key": "forms",
+            "npmDependencies": [
+                "@vee-validate/zod",
+                "vee-validate",
+                "vue",
+                "vue-i18n",
+                "vue-sonner",
+                "zod"
+            ],
+            "origin": "authored",
+            "registryDependencies": [
+                "button",
+                "checkbox",
+                "form",
+                "input",
+                "label",
+                "native-select",
+                "radio-group",
+                "separator",
+                "switch",
+                "textarea"
+            ],
+            "shell": "forms/Page.vue",
+            "since": "2.6.0",
+            "sourceRef": null,
+            "surfaces": [
+                "form",
+                "detail"
+            ],
+            "tags": [
+                "forms"
+            ],
+            "titleKey": "examples.entries.forms.title",
+            "unavailableReason": null
+        }
+    ]
+}

@@ -412,3 +412,7 @@ Route::middleware(['auth', 'verified', 'active', '2fa'])->prefix('admin')->name(
 });
 
 require __DIR__.'/auth.php';
+
+// >>> MYRA v2.6 [B] START
+require __DIR__.'/myra/examples.php';
+// <<< MYRA v2.6 [B] END

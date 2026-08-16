@@ -128,6 +128,322 @@
             }
         }
     },
+    "examples": {
+        "title": "shadcn examples",
+        "description": "The shadcn example applications, vendored as reference pages: full source, live preview and the exact dependency list each one needs.",
+        "search": "Search examples",
+        "allTags": "All",
+        "noResults": "No example matches that search.",
+        "resultCount": "{n} examples",
+        "view": "Open example",
+        "back": "Back to examples",
+        "entries": {
+            "authentication": {
+                "title": "Authentication",
+                "description": "A split-screen sign-in page: testimonial panel on the left, email and provider sign-in on the right."
+            },
+            "cards": {
+                "title": "Cards",
+                "description": "The card gallery — a dense grid of every card composition shadcn ships, from analytics to payments."
+            },
+            "dashboard": {
+                "title": "Dashboard",
+                "description": "The dashboard-01 application: collapsible sidebar, section cards, an interactive area chart and a drag-to-reorder data table."
+            },
+            "playground": {
+                "title": "Playground",
+                "description": "A model playground: preset picker, prompt composer and the temperature, top-P and length controls beside it."
+            },
+            "tasks": {
+                "title": "Tasks",
+                "description": "A task tracker built on the headless table: faceted filters, column visibility, row selection and pagination."
+            },
+            "mail": {
+                "title": "Mail",
+                "description": "A three-pane mail client with resizable panes, a searchable message list and a reply composer."
+            },
+            "music": {
+                "title": "Music",
+                "description": "A music library: browsable album carousel, context menus on every cover and an empty state for podcasts."
+            },
+            "forms": {
+                "title": "Forms",
+                "description": "Five settings panes wired through the form primitive, so every label, hint and error is associated for you."
+            }
+        },
+        "origin": {
+            "fetched": "Vendored",
+            "authored": "Authored"
+        },
+        "surfaces": {
+            "form": "Form",
+            "split": "Split screen",
+            "grid": "Grid",
+            "detail": "Detail",
+            "list": "List",
+            "compose": "Compose",
+            "chart": "Chart"
+        },
+        "preview": {
+            "tab": "Preview",
+            "frameTitle": "Live preview of the {name} example",
+            "openInNewTab": "Open preview in a new tab"
+        },
+        "source": {
+            "tab": "Code",
+            "copy": "Copy file",
+            "copied": "Copied",
+            "file": "Files in this example",
+            "empty": "This example ships no source files."
+        },
+        "dependencies": {
+            "tab": "Dependencies",
+            "registry": "Registry components",
+            "npm": "npm packages",
+            "pinned": "Vendored from upstream commit {sha}."
+        },
+        "unavailable": {
+            "title": "Preview unavailable",
+            "body": "This example is kept for reference only — its source is complete and unmodified, but it cannot be mounted here because it needs {deps}, which this install does not ship."
+        },
+        "gaps": {
+            "note": "Upstream ships no page shells for these examples, so each shell is authored here; anything the upstream source needs that this install does not ship is preserved verbatim and marked unavailable rather than edited to fit."
+        },
+        "shells": {
+            "authentication": {
+                "login": "Login",
+                "brand": "Acme Inc",
+                "quote": "This library has saved me countless hours of work and helped me ship beautiful products to my customers faster than ever before.",
+                "quoteAuthor": "Sofia Davis",
+                "title": "Create an account",
+                "subtitle": "Enter your email below to create your account",
+                "terms": "By clicking continue, you agree to our Terms of Service and Privacy Policy."
+            },
+            "playground": {
+                "title": "Playground",
+                "preset": "Load a preset",
+                "mode": "Mode",
+                "modes": {
+                    "complete": "Complete",
+                    "insert": "Insert",
+                    "edit": "Edit"
+                },
+                "model": "Model",
+                "promptLabel": "Prompt",
+                "promptPlaceholder": "Write a tagline for an ice cream shop",
+                "submit": "Submit",
+                "history": "History",
+                "modeHint": "Switch back to Complete to compose a prompt."
+            }
+        },
+        "mail": {
+            "account": "Account",
+            "unread": "Unread",
+            "search": "Search mail",
+            "resultCount": "{n} messages",
+            "send": "Send",
+            "noMessage": "No message selected.",
+            "replyLabel": "Reply",
+            "replyPlaceholder": "Reply to {name}...",
+            "panes": {
+                "folders": "Mail folders",
+                "list": "Message list",
+                "message": "Message"
+            },
+            "folders": {
+                "inbox": "Inbox",
+                "drafts": "Drafts",
+                "sent": "Sent",
+                "junk": "Junk",
+                "trash": "Trash",
+                "archive": "Archive",
+                "social": "Social",
+                "updates": "Updates",
+                "forums": "Forums",
+                "shopping": "Shopping"
+            },
+            "scope": {
+                "all": "All mail",
+                "unread": "Unread"
+            },
+            "actions": {
+                "archive": "Archive",
+                "trash": "Move to trash",
+                "forward": "Forward"
+            }
+        },
+        "music": {
+            "sidebarLabel": "Music library",
+            "addMusic": "Add music",
+            "artworkAlt": "Cover art for {title} by {artist}",
+            "openMenu": "Actions for {title}",
+            "groups": {
+                "discover": "Discover",
+                "library": "Library",
+                "playlists": "Playlists"
+            },
+            "nav": {
+                "listenNow": "Listen Now",
+                "browse": "Browse",
+                "radio": "Radio",
+                "playlists": "Playlists",
+                "songs": "Songs",
+                "madeForYou": "Made for You",
+                "artists": "Artists"
+            },
+            "playlists": {
+                "recently-added": "Recently Added",
+                "recently-played": "Recently Played",
+                "top-songs": "Top Songs",
+                "top-albums": "Top Albums",
+                "top-artists": "Top Artists",
+                "logic-discography": "Logic Discography",
+                "bedtime-beats": "Bedtime Beats",
+                "feeling-happy": "Feeling Happy",
+                "im-sad": "Feeling Blue"
+            },
+            "menu": {
+                "addToLibrary": "Add to Library",
+                "addToPlaylist": "Add to Playlist",
+                "play": "Play Next",
+                "like": "Like",
+                "share": "Share"
+            },
+            "tabs": {
+                "music": "Music",
+                "podcasts": "Podcasts",
+                "live": "Live"
+            },
+            "listenNow": {
+                "title": "Listen Now",
+                "description": "Top picks for you. Updated daily."
+            },
+            "madeForYou": {
+                "title": "Made for You",
+                "description": "Your personal playlists. Updated daily."
+            },
+            "podcasts": {
+                "title": "New Episodes",
+                "description": "Your favorite podcasts. Updated daily."
+            },
+            "empty": {
+                "title": "No episodes added",
+                "body": "You have not added any podcasts. Add one below.",
+                "action": "Add podcast"
+            },
+            "carousel": {
+                "previous": "Previous albums",
+                "next": "Next albums"
+            }
+        },
+        "forms": {
+            "title": "Settings",
+            "description": "Manage your account settings and set e-mail preferences.",
+            "navLabel": "Settings sections",
+            "saved": "Your preferences were saved.",
+            "panes": {
+                "profile": {
+                    "title": "Profile",
+                    "description": "This is how others will see you on the site."
+                },
+                "account": {
+                    "title": "Account",
+                    "description": "Update your account settings. Set your preferred language and date of birth."
+                },
+                "appearance": {
+                    "title": "Appearance",
+                    "description": "Customise the appearance of the app. Switch between day and night themes."
+                },
+                "notifications": {
+                    "title": "Notifications",
+                    "description": "Configure how you receive notifications."
+                },
+                "display": {
+                    "title": "Display",
+                    "description": "Turn items on or off to control what is displayed in the app."
+                }
+            },
+            "profile": {
+                "username": "Username",
+                "usernameHelp": "This is your public display name. It can only be changed once every 30 days.",
+                "email": "Email",
+                "emailHelp": "Verified addresses can be used to sign in and receive notifications.",
+                "bio": "Bio",
+                "bioHelp": "You can mention other users and organisations to link to them.",
+                "language": "Language",
+                "languageHelp": "This is the language that will be used in the dashboard.",
+                "submit": "Update profile"
+            },
+            "account": {
+                "name": "Name",
+                "nameHelp": "This is the name that will appear on your receipts and invoices.",
+                "dob": "Date of birth",
+                "dobHelp": "Your date of birth is used to calculate your age.",
+                "language": "Language",
+                "languageHelp": "This is the language that will be used in the dashboard.",
+                "submit": "Update account"
+            },
+            "appearance": {
+                "font": "Font",
+                "fontHelp": "Set the font you want to use in the dashboard.",
+                "theme": "Theme",
+                "themeHelp": "Select the theme for the dashboard.",
+                "submit": "Update preferences"
+            },
+            "notifications": {
+                "mode": "Notify me about",
+                "emailLegend": "Email notifications",
+                "communication": {
+                    "label": "Communication emails",
+                    "help": "Receive emails about your account activity."
+                },
+                "marketing": {
+                    "label": "Marketing emails",
+                    "help": "Receive emails about new products, features and more."
+                },
+                "security": {
+                    "label": "Security emails",
+                    "help": "Receive emails about your account security."
+                },
+                "submit": "Update notifications"
+            },
+            "display": {
+                "sidebar": "Sidebar",
+                "sidebarHelp": "Select the items you want to display in the sidebar.",
+                "submit": "Update display"
+            },
+            "languages": {
+                "en": "English",
+                "ms": "Bahasa Melayu",
+                "zh": "Chinese",
+                "fr": "French",
+                "de": "German",
+                "es": "Spanish"
+            },
+            "fonts": {
+                "inter": "Inter",
+                "manrope": "Manrope",
+                "system": "System"
+            },
+            "themes": {
+                "light": "Light",
+                "dark": "Dark"
+            },
+            "notifyModes": {
+                "all": "All new messages",
+                "mentions": "Direct messages and mentions",
+                "none": "Nothing"
+            },
+            "displayItems": {
+                "recents": "Recents",
+                "home": "Home",
+                "applications": "Applications",
+                "desktop": "Desktop",
+                "downloads": "Downloads",
+                "documents": "Documents"
+            }
+        }
+    },
     "status": {
         "active": "Active",
         "inactive": "Inactive",

@@ -128,6 +128,322 @@
             }
         }
     },
+    "examples": {
+        "title": "shadcn 示例",
+        "description": "shadcn 官方示例应用，作为参考页面内置于此：完整源码、实时预览，以及每个示例所需的确切依赖清单。",
+        "search": "搜索示例",
+        "allTags": "全部",
+        "noResults": "没有符合该搜索条件的示例。",
+        "resultCount": "{n} 个示例",
+        "view": "打开示例",
+        "back": "返回示例列表",
+        "entries": {
+            "authentication": {
+                "title": "身份验证",
+                "description": "左右分屏的登录页：左侧为推荐语面板，右侧为邮箱与第三方登录。"
+            },
+            "cards": {
+                "title": "卡片",
+                "description": "卡片画廊——shadcn 提供的每种卡片组合的密集网格，从分析到支付。"
+            },
+            "dashboard": {
+                "title": "仪表板",
+                "description": "dashboard-01 应用：可折叠侧边栏、分区卡片、交互式面积图与可拖拽排序的数据表。"
+            },
+            "playground": {
+                "title": "调试台",
+                "description": "模型调试台：预设选择器、提示词编辑区，以及旁边的温度、top-P 与长度控件。"
+            },
+            "tasks": {
+                "title": "任务",
+                "description": "基于无头表格的任务追踪器：分面筛选、列显隐、行选择与分页。"
+            },
+            "mail": {
+                "title": "邮件",
+                "description": "三栏邮件客户端，栏宽可调，消息列表可搜索，并带有回复编辑区。"
+            },
+            "music": {
+                "title": "音乐",
+                "description": "音乐库：可浏览的专辑轮播、每张封面上的右键菜单，以及播客的空状态。"
+            },
+            "forms": {
+                "title": "表单",
+                "description": "五个设置面板全部通过表单原语接线，标签、提示与错误信息自动关联。"
+            }
+        },
+        "origin": {
+            "fetched": "官方内置",
+            "authored": "本地编写"
+        },
+        "surfaces": {
+            "form": "表单",
+            "split": "分屏",
+            "grid": "网格",
+            "detail": "详情",
+            "list": "列表",
+            "compose": "撰写",
+            "chart": "图表"
+        },
+        "preview": {
+            "tab": "预览",
+            "frameTitle": "{name} 示例的实时预览",
+            "openInNewTab": "在新标签页中打开预览"
+        },
+        "source": {
+            "tab": "代码",
+            "copy": "复制文件",
+            "copied": "已复制",
+            "file": "本示例包含的文件",
+            "empty": "该示例没有源文件。"
+        },
+        "dependencies": {
+            "tab": "依赖",
+            "registry": "注册表组件",
+            "npm": "npm 包",
+            "pinned": "内置自上游提交 {sha}。"
+        },
+        "unavailable": {
+            "title": "预览不可用",
+            "body": "该示例仅作参考保留——源码完整且未经修改，但无法在此挂载，因为它需要 {deps}，而本安装并未提供。"
+        },
+        "gaps": {
+            "note": "上游并未提供这些示例的页面外壳，因此每个外壳都在此处编写；上游源码所需而本安装未提供的部分一律原样保留并标记为不可用，绝不为迁就而改写。"
+        },
+        "shells": {
+            "authentication": {
+                "login": "登录",
+                "brand": "Acme Inc",
+                "quote": "这个组件库为我节省了无数工时，让我比以往任何时候都更快地向客户交付精美的产品。",
+                "quoteAuthor": "Sofia Davis",
+                "title": "创建账户",
+                "subtitle": "在下方输入您的邮箱以创建账户",
+                "terms": "点击继续即表示您同意我们的服务条款与隐私政策。"
+            },
+            "playground": {
+                "title": "调试台",
+                "preset": "加载预设",
+                "mode": "模式",
+                "modes": {
+                    "complete": "补全",
+                    "insert": "插入",
+                    "edit": "编辑"
+                },
+                "model": "模型",
+                "promptLabel": "提示词",
+                "promptPlaceholder": "为一家冰淇淋店写一句标语",
+                "submit": "提交",
+                "history": "历史记录",
+                "modeHint": "切回补全模式即可撰写提示词。"
+            }
+        },
+        "mail": {
+            "account": "账户",
+            "unread": "未读",
+            "search": "搜索邮件",
+            "resultCount": "{n} 封邮件",
+            "send": "发送",
+            "noMessage": "未选择邮件。",
+            "replyLabel": "回复",
+            "replyPlaceholder": "回复 {name}……",
+            "panes": {
+                "folders": "邮件文件夹",
+                "list": "邮件列表",
+                "message": "邮件正文"
+            },
+            "folders": {
+                "inbox": "收件箱",
+                "drafts": "草稿",
+                "sent": "已发送",
+                "junk": "垃圾邮件",
+                "trash": "回收站",
+                "archive": "归档",
+                "social": "社交",
+                "updates": "更新",
+                "forums": "论坛",
+                "shopping": "购物"
+            },
+            "scope": {
+                "all": "全部邮件",
+                "unread": "未读"
+            },
+            "actions": {
+                "archive": "归档",
+                "trash": "移至回收站",
+                "forward": "转发"
+            }
+        },
+        "music": {
+            "sidebarLabel": "音乐库",
+            "addMusic": "添加音乐",
+            "artworkAlt": "{artist} 的专辑《{title}》封面",
+            "openMenu": "《{title}》的操作",
+            "groups": {
+                "discover": "发现",
+                "library": "音乐库",
+                "playlists": "播放列表"
+            },
+            "nav": {
+                "listenNow": "立即收听",
+                "browse": "浏览",
+                "radio": "电台",
+                "playlists": "播放列表",
+                "songs": "歌曲",
+                "madeForYou": "为你打造",
+                "artists": "艺人"
+            },
+            "playlists": {
+                "recently-added": "最近添加",
+                "recently-played": "最近播放",
+                "top-songs": "热门歌曲",
+                "top-albums": "热门专辑",
+                "top-artists": "热门艺人",
+                "logic-discography": "Logic 全碟",
+                "bedtime-beats": "睡前节拍",
+                "feeling-happy": "心情愉快",
+                "im-sad": "低落时刻"
+            },
+            "menu": {
+                "addToLibrary": "添加到音乐库",
+                "addToPlaylist": "添加到播放列表",
+                "play": "下一首播放",
+                "like": "喜欢",
+                "share": "分享"
+            },
+            "tabs": {
+                "music": "音乐",
+                "podcasts": "播客",
+                "live": "直播"
+            },
+            "listenNow": {
+                "title": "立即收听",
+                "description": "为你精选，每日更新。"
+            },
+            "madeForYou": {
+                "title": "为你打造",
+                "description": "你的专属播放列表，每日更新。"
+            },
+            "podcasts": {
+                "title": "最新单集",
+                "description": "你喜爱的播客，每日更新。"
+            },
+            "empty": {
+                "title": "尚未添加单集",
+                "body": "你还没有添加任何播客，请在下方添加。",
+                "action": "添加播客"
+            },
+            "carousel": {
+                "previous": "上一批专辑",
+                "next": "下一批专辑"
+            }
+        },
+        "forms": {
+            "title": "设置",
+            "description": "管理你的账户设置并设定邮件偏好。",
+            "navLabel": "设置分区",
+            "saved": "偏好设置已保存。",
+            "panes": {
+                "profile": {
+                    "title": "个人资料",
+                    "description": "这是其他人在站点上看到你的方式。"
+                },
+                "account": {
+                    "title": "账户",
+                    "description": "更新账户设置。设定首选语言与出生日期。"
+                },
+                "appearance": {
+                    "title": "外观",
+                    "description": "自定义应用外观，在日间与夜间主题之间切换。"
+                },
+                "notifications": {
+                    "title": "通知",
+                    "description": "配置接收通知的方式。"
+                },
+                "display": {
+                    "title": "显示",
+                    "description": "开启或关闭条目，控制应用中显示的内容。"
+                }
+            },
+            "profile": {
+                "username": "用户名",
+                "usernameHelp": "这是你的公开显示名称，每 30 天只能修改一次。",
+                "email": "邮箱",
+                "emailHelp": "已验证的地址可用于登录并接收通知。",
+                "bio": "简介",
+                "bioHelp": "你可以提及其他用户和组织，以建立到他们的链接。",
+                "language": "语言",
+                "languageHelp": "这是仪表板将使用的语言。",
+                "submit": "更新资料"
+            },
+            "account": {
+                "name": "姓名",
+                "nameHelp": "这是将出现在你的收据与发票上的姓名。",
+                "dob": "出生日期",
+                "dobHelp": "你的出生日期用于计算年龄。",
+                "language": "语言",
+                "languageHelp": "这是仪表板将使用的语言。",
+                "submit": "更新账户"
+            },
+            "appearance": {
+                "font": "字体",
+                "fontHelp": "设定你希望在仪表板中使用的字体。",
+                "theme": "主题",
+                "themeHelp": "选择仪表板的主题。",
+                "submit": "更新偏好"
+            },
+            "notifications": {
+                "mode": "通知我关于",
+                "emailLegend": "邮件通知",
+                "communication": {
+                    "label": "沟通邮件",
+                    "help": "接收关于账户活动的邮件。"
+                },
+                "marketing": {
+                    "label": "营销邮件",
+                    "help": "接收关于新产品、新功能等的邮件。"
+                },
+                "security": {
+                    "label": "安全邮件",
+                    "help": "接收关于账户安全的邮件。"
+                },
+                "submit": "更新通知"
+            },
+            "display": {
+                "sidebar": "侧边栏",
+                "sidebarHelp": "选择你希望在侧边栏中显示的条目。",
+                "submit": "更新显示"
+            },
+            "languages": {
+                "en": "英语",
+                "ms": "马来语",
+                "zh": "中文",
+                "fr": "法语",
+                "de": "德语",
+                "es": "西班牙语"
+            },
+            "fonts": {
+                "inter": "Inter",
+                "manrope": "Manrope",
+                "system": "系统字体"
+            },
+            "themes": {
+                "light": "浅色",
+                "dark": "深色"
+            },
+            "notifyModes": {
+                "all": "所有新消息",
+                "mentions": "私信与提及",
+                "none": "不通知"
+            },
+            "displayItems": {
+                "recents": "最近",
+                "home": "主页",
+                "applications": "应用程序",
+                "desktop": "桌面",
+                "downloads": "下载",
+                "documents": "文档"
+            }
+        }
+    },
     "status": {
         "active": "活跃",
         "inactive": "不活跃",

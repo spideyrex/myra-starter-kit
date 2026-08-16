@@ -257,3 +257,29 @@ export interface NavItem {
     permission?: string;
     children?: NavItem[];
 }
+
+// >>> MYRA v2.6 [B] START
+export interface ExampleEntry {
+    key: string;
+    titleKey: string;
+    descriptionKey: string;
+    shell: string;
+    origin: 'fetched' | 'authored';
+    sourceRef: string | null;
+    available: boolean;
+    unavailableReason: string | null;
+    registryDependencies: string[];
+    npmDependencies: string[];
+    dataFiles: string[];
+    surfaces: string[];
+    tags: string[];
+    since: string;
+    fileCount: number;
+}
+
+export interface ExampleSourceFile {
+    path: string;
+    language: string;
+    content: string;
+}
+// <<< MYRA v2.6 [B] END

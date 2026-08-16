@@ -1,0 +1,15 @@
+{
+    "repo": "unovue/shadcn-vue",
+    "branch": "dev",
+    "sha": "81ededbf6c4c230272ed613649bd525cd9de7ed2",
+    "raw": "https://raw.githubusercontent.com/unovue/shadcn-vue",
+    "api": "https://api.github.com/repos/unovue/shadcn-vue",
+    "examplesPath": "apps/v4/components/examples",
+    "fetched": ["authentication", "cards", "dashboard", "playground", "tasks"],
+    "authored": ["mail", "music", "forms"],
+    "extraFiles": {
+        "authentication": [
+            { "source": "apps/v4/components/Icons.ts", "target": "components/Icons.ts" }
+        ]
+    }
+}

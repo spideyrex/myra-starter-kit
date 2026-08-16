@@ -466,55 +466,55 @@
         }
     },
     "live": {
-        "connected": "\u5b9e\u65f6",
-        "polling": "\u8f6e\u8be2\u4e2d",
-        "paused": "\u5df2\u6682\u505c",
-        "retry": "\u91cd\u8bd5",
-        "updatedAgo": "\u66f4\u65b0\u4e8e{ago}",
-        "justNow": "\u521a\u521a",
-        "secondsAgo": "{count}\u79d2\u524d",
-        "minutesAgo": "{count}\u5206\u949f\u524d",
-        "hoursAgo": "{count}\u5c0f\u65f6\u524d",
-        "requests": "\u8bf7\u6c42",
+        "connected": "实时",
+        "polling": "轮询中",
+        "paused": "已暂停",
+        "retry": "重试",
+        "updatedAgo": "更新于{ago}",
+        "justNow": "刚刚",
+        "secondsAgo": "{count}秒前",
+        "minutesAgo": "{count}分钟前",
+        "hoursAgo": "{count}小时前",
+        "requests": "请求",
         "tooltip": {
-            "connected": "\u5df2\u8fde\u63a5 \u2014 \u53d8\u66f4\u5373\u65f6\u9001\u8fbe\u3002",
-            "polling": "\u672a\u8fde\u63a5 \u2014 \u6309\u5b9a\u65f6\u5668\u5237\u65b0\u3002"
+            "connected": "已连接 — 变更即时送达。",
+            "polling": "未连接 — 按定时器刷新。"
         },
         "a11y": {
-            "loading": "\u6b63\u5728\u52a0\u8f7d{label}\u3002",
-            "ready": "{label}\u5df2\u66f4\u65b0\u3002",
-            "empty": "{label}\u6ca1\u6709\u6570\u636e\u3002",
-            "error": "{label}\u52a0\u8f7d\u5931\u8d25\u3002",
-            "offline": "\u79bb\u7ebf\u65f6\u65e0\u6cd5\u4f7f\u7528{label}\u3002",
-            "streaming": "{label}\u4ecd\u5728\u4f20\u8f93\u3002"
+            "loading": "正在加载{label}。",
+            "ready": "{label}已更新。",
+            "empty": "{label}没有数据。",
+            "error": "{label}加载失败。",
+            "offline": "离线时无法使用{label}。",
+            "streaming": "{label}仍在传输。"
         },
         "errors": {
-            "batch": "\u4eea\u8868\u76d8\u5237\u65b0\u5931\u8d25\u3002",
-            "slot": "\u8be5\u5c0f\u7ec4\u4ef6\u5237\u65b0\u5931\u8d25\u3002",
-            "tooManyReports": "\u4e00\u6b21\u8bf7\u6c42\u7684\u5c0f\u7ec4\u4ef6\u8fc7\u591a\u3002"
+            "batch": "仪表盘刷新失败。",
+            "slot": "该小组件刷新失败。",
+            "tooManyReports": "一次请求的小组件过多。"
         },
         "demo": {
-            "title": "\u5b9e\u65f6\u5c0f\u7ec4\u4ef6\u4e0e\u52a0\u8f7d\u72b6\u6001",
-            "subtitle": "\u65e0\u8bba\u591a\u5c11\u5c0f\u7ec4\u4ef6\uff0c\u53ea\u6709\u4e00\u4e2a\u5957\u63a5\u5b57\u3001\u4e00\u4e2a\u5408\u5e76\u6279\u6b21\u3001\u4e00\u4e2a\u5b9a\u65f6\u5668\u3002",
-            "busTitle": "\u4eea\u8868\u76d8\u603b\u7ebf",
-            "busDescription": "\u4e0b\u65b9\u6bcf\u4e2a\u5c0f\u7ec4\u4ef6\u90fd\u7531\u540c\u4e00\u6761\u603b\u7ebf\u8ddf\u8e2a\u3002\u8bf7\u770b\u8bf7\u6c42\u8ba1\u6570\u5668\u3002",
-            "mountSix": "\u6302\u8f7d\u516d\u4e2a\u5c0f\u7ec4\u4ef6",
-            "burst": "\u7a81\u53d1 30 \u4e2a\u4fe1\u53f7",
-            "hide": "\u6a21\u62df\u9690\u85cf\u6807\u7b7e\u9875",
-            "show": "\u6a21\u62df\u53ef\u89c1\u6807\u7b7e\u9875",
-            "unchanged": "\u8fd4\u56de {'{'}unchanged: true{'}'}",
-            "failOne": "\u8ba9\u4e00\u4e2a\u69fd\u4f4d\u5931\u8d25",
-            "reset": "\u91cd\u7f6e",
-            "requestCount": "\u5df2\u53d1\u51fa\u7684 POST \u8bf7\u6c42",
-            "signalCount": "\u5df2\u6536\u5230\u7684\u4fe1\u53f7",
-            "statesTitle": "\u6570\u636e\u9762\u72b6\u6001",
-            "statesDescription": "\u6570\u636e\u9762\u7684\u6bcf\u4e00\u79cd\u72b6\u6001\uff0c\u4ee5\u53ca\u5b83\u53d1\u51fa\u7684\u64ad\u62a5\u3002",
-            "announcer": "\u64ad\u62a5\u5668\u8f93\u51fa",
-            "clsTitle": "\u96f6\u5e03\u5c40\u504f\u79fb",
-            "clsDescription": "\u9aa8\u67b6\u5c4f\u7cbe\u786e\u9884\u7559\u52a0\u8f7d\u540e\u7684\u5c3a\u5bf8\uff0c\u56e0\u6b64\u4e0d\u4f1a\u8df3\u52a8\u3002",
-            "skeleton": "\u9aa8\u67b6\u5c4f",
-            "loaded": "\u5df2\u52a0\u8f7d",
-            "heights": "\u4e24\u4e2a\u6846\u7684\u9ad8\u5ea6\u5747\u4e3a {height} \u50cf\u7d20\u3002"
+            "title": "实时小组件与加载状态",
+            "subtitle": "无论多少小组件，只有一个套接字、一个合并批次、一个定时器。",
+            "busTitle": "仪表盘总线",
+            "busDescription": "下方每个小组件都由同一条总线跟踪。请看请求计数器。",
+            "mountSix": "挂载六个小组件",
+            "burst": "突发 30 个信号",
+            "hide": "模拟隐藏标签页",
+            "show": "模拟可见标签页",
+            "unchanged": "返回 {'{'}unchanged: true{'}'}",
+            "failOne": "让一个槽位失败",
+            "reset": "重置",
+            "requestCount": "已发出的 POST 请求",
+            "signalCount": "已收到的信号",
+            "statesTitle": "数据面状态",
+            "statesDescription": "数据面的每一种状态，以及它发出的播报。",
+            "announcer": "播报器输出",
+            "clsTitle": "零布局偏移",
+            "clsDescription": "骨架屏精确预留加载后的尺寸，因此不会跳动。",
+            "skeleton": "骨架屏",
+            "loaded": "已加载",
+            "heights": "两个框的高度均为 {height} 像素。"
         }
     },
     "views": {
@@ -820,6 +820,26 @@
                 "title": "组件试验场",
                 "description": "在真实基础组件上实时编辑属性，并生成 Vue、TypeScript 与 PHP 可复制片段。",
                 "badge": "新"
+            },
+            "dashboardEditor": {
+                "title": "仪表板编辑器",
+                "description": "拖动磁贴并保存个人布局，或从目录中添加小部件，无需编写代码。",
+                "badge": "新增"
+            },
+            "liveWidgets": {
+                "title": "实时小部件",
+                "description": "数据变化时通过 websocket 自动刷新的小部件，加载时显示骨架状态。",
+                "badge": "实时"
+            },
+            "aiFilter": {
+                "title": "提问栏",
+                "description": "用自然语言描述筛选条件；它会编译为经过校验的规则树，而非 SQL。",
+                "badge": "AI"
+            },
+            "offlineShell": {
+                "title": "离线外壳",
+                "description": "应用外壳在无网络时仍可使用。仅缓存静态资源，绝不缓存您的数据。",
+                "badge": "PWA"
             }
         }
     },

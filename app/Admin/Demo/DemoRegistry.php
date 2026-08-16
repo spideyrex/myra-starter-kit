@@ -143,6 +143,10 @@ final class DemoRegistry
             'plugins' => ['route' => 'admin.demo.plugins', 'icon' => 'Puzzle', 'tags' => ['platform'], 'since' => '2.4.0'],
             'scale' => ['route' => 'admin.demo.scale', 'icon' => 'Gauge', 'tags' => ['tables', 'platform'], 'since' => '2.4.0'],
             'playground' => ['route' => 'admin.demo.playground', 'icon' => 'SlidersHorizontal', 'tags' => ['gallery'], 'since' => '2.5.0', 'playground' => 'statCard'],
+            'dashboardEditor' => ['route' => 'admin.demo.dashboard-editor', 'icon' => 'LayoutDashboard', 'tags' => ['dashboard'], 'since' => '2.5.0'],
+            'liveWidgets' => ['route' => 'admin.demo.live-widgets', 'icon' => 'Radio', 'tags' => ['dashboard', 'realtime'], 'since' => '2.5.0'],
+            'aiFilter' => ['route' => 'admin.demo.ai-filter', 'icon' => 'Sparkles', 'tags' => ['tables', 'ai'], 'since' => '2.5.0'],
+            'offlineShell' => ['route' => 'admin.demo.offline-shell', 'icon' => 'WifiOff', 'tags' => ['platform'], 'since' => '2.5.0'],
         ];
     }
 }

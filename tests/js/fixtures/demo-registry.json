@@ -356,6 +356,60 @@
                 "gallery"
             ],
             "titleKey": "gallery.demos.playground.title"
+        },
+        {
+            "badgeKey": "gallery.demos.dashboardEditor.badge",
+            "descriptionKey": "gallery.demos.dashboardEditor.description",
+            "icon": "LayoutDashboard",
+            "key": "dashboardEditor",
+            "playground": null,
+            "route": "admin.demo.dashboard-editor",
+            "since": "2.5.0",
+            "tags": [
+                "dashboard"
+            ],
+            "titleKey": "gallery.demos.dashboardEditor.title"
+        },
+        {
+            "badgeKey": "gallery.demos.liveWidgets.badge",
+            "descriptionKey": "gallery.demos.liveWidgets.description",
+            "icon": "Radio",
+            "key": "liveWidgets",
+            "playground": null,
+            "route": "admin.demo.live-widgets",
+            "since": "2.5.0",
+            "tags": [
+                "dashboard",
+                "realtime"
+            ],
+            "titleKey": "gallery.demos.liveWidgets.title"
+        },
+        {
+            "badgeKey": "gallery.demos.aiFilter.badge",
+            "descriptionKey": "gallery.demos.aiFilter.description",
+            "icon": "Sparkles",
+            "key": "aiFilter",
+            "playground": null,
+            "route": "admin.demo.ai-filter",
+            "since": "2.5.0",
+            "tags": [
+                "tables",
+                "ai"
+            ],
+            "titleKey": "gallery.demos.aiFilter.title"
+        },
+        {
+            "badgeKey": "gallery.demos.offlineShell.badge",
+            "descriptionKey": "gallery.demos.offlineShell.description",
+            "icon": "WifiOff",
+            "key": "offlineShell",
+            "playground": null,
+            "route": "admin.demo.offline-shell",
+            "since": "2.5.0",
+            "tags": [
+                "platform"
+            ],
+            "titleKey": "gallery.demos.offlineShell.title"
         }
     ]
 }

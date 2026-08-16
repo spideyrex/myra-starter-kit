@@ -33,7 +33,7 @@
     },
     "plugins": {
         "title": "Plugins",
-        "description": "Packages that register pages, permissions, reports, imports and navigation \u2014 declared explicitly, never auto-discovered.",
+        "description": "Packages that register pages, permissions, reports, imports and navigation — declared explicitly, never auto-discovered.",
         "back": "Back to demos",
         "loaded": "Loaded plugins",
         "loadedDescription": "Every row is a real manifest applied at boot. The counts are the surface each plugin contributes.",
@@ -820,6 +820,26 @@
                 "title": "Component playground",
                 "description": "Live prop editing over the real primitives, with copy-paste snippets in Vue, TypeScript and PHP.",
                 "badge": "New"
+            },
+            "dashboardEditor": {
+                "title": "Dashboard editor",
+                "description": "Drag tiles into place and save a personal layout, or add widgets from the catalogue without writing code.",
+                "badge": "New"
+            },
+            "liveWidgets": {
+                "title": "Live widgets",
+                "description": "Widgets that refresh over websockets as the underlying data changes, with skeleton states while they load.",
+                "badge": "Realtime"
+            },
+            "aiFilter": {
+                "title": "Ask bar",
+                "description": "Describe a filter in plain language; it compiles to a validated rule tree, never to SQL.",
+                "badge": "AI"
+            },
+            "offlineShell": {
+                "title": "Offline shell",
+                "description": "The installable app shell keeps working without a connection. Only static assets are cached, never your data.",
+                "badge": "PWA"
             }
         }
     },

@@ -33,7 +33,7 @@
     },
     "plugins": {
         "title": "Plugin",
-        "description": "Pakej yang mendaftarkan halaman, kebenaran, laporan, import dan navigasi \u2014 diisytiharkan secara eksplisit, bukan ditemui secara automatik.",
+        "description": "Pakej yang mendaftarkan halaman, kebenaran, laporan, import dan navigasi — diisytiharkan secara eksplisit, bukan ditemui secara automatik.",
         "back": "Kembali ke demo",
         "loaded": "Plugin dimuatkan",
         "loadedDescription": "Setiap baris ialah manifes sebenar yang digunakan semasa but. Kiraan menunjukkan sumbangan setiap plugin.",
@@ -820,6 +820,26 @@
                 "title": "Taman komponen",
                 "description": "Suntingan prop langsung ke atas primitif sebenar, dengan cebisan salin-tampal dalam Vue, TypeScript dan PHP.",
                 "badge": "Baharu"
+            },
+            "dashboardEditor": {
+                "title": "Penyunting papan pemuka",
+                "description": "Seret jubin ke tempatnya dan simpan susun atur peribadi, atau tambah widget dari katalog tanpa menulis kod.",
+                "badge": "Baharu"
+            },
+            "liveWidgets": {
+                "title": "Widget langsung",
+                "description": "Widget yang menyegar melalui websocket apabila data berubah, dengan keadaan rangka semasa dimuatkan.",
+                "badge": "Masa nyata"
+            },
+            "aiFilter": {
+                "title": "Bar tanya",
+                "description": "Terangkan penapis dalam bahasa biasa; ia disusun menjadi pepohon peraturan yang disahkan, bukan SQL.",
+                "badge": "AI"
+            },
+            "offlineShell": {
+                "title": "Cengkerang luar talian",
+                "description": "Cengkerang aplikasi terus berfungsi tanpa sambungan. Hanya aset statik dicache, bukan data anda.",
+                "badge": "PWA"
             }
         }
     },

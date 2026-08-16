@@ -19,14 +19,17 @@ import {
     PanelTop,
     Pencil,
     Puzzle,
+    Radio,
     Repeat,
     Search,
+    Sparkles,
     Send,
     SlidersHorizontal,
     Trash2,
     Type,
     Upload,
     Wand2,
+    WifiOff,
 } from 'lucide-vue-next';
 
 /**
@@ -74,14 +77,17 @@ export const DEMO_ICONS: Record<string, Component> = {
     PanelTop,
     Pencil,
     Puzzle,
+    Radio,
     Repeat,
     Search,
+    Sparkles,
     Send,
     SlidersHorizontal,
     Trash2,
     Type,
     Upload,
     Wand2,
+    WifiOff,
 };
 
 export function resolveDemoIcon(name: string): Component {

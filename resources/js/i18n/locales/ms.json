@@ -2303,6 +2303,10 @@
                 "rowLabel": "Item {index}",
                 "full": "Paling banyak {max} item."
             },
+            "icon": {
+                "none": "Tiada ikon",
+                "unavailable": "{name} bukan salah satu ikon yang tersedia. Menyimpan seksyen ini akan mengosongkannya."
+            },
             "image": {
                 "upload": "Muat naik imej",
                 "replace": "Ganti imej",

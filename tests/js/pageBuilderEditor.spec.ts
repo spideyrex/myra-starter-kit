@@ -1,3 +1,5 @@
+import { readFileSync } from 'node:fs';
+import { resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import {
     defaultForField, defaultsForListRow, ulid, useSectionList, VARIANT_DEFAULT,
@@ -45,7 +47,8 @@ const SCHEMAS: SectionSchema[] = [
                 default: [],
                 max: 12,
                 of: [
-                    { name: 'icon', type: 'icon', labelKey: 'pageBuilder.sections.features.fields.icon', required: false, default: '', max: null, options: ['Zap', 'Shield'] },
+                    // No `options`: toClientSchema() attaches them for `select` only.
+                    { name: 'icon', type: 'icon', labelKey: 'pageBuilder.sections.features.fields.icon', required: false, default: '', max: null },
                     { name: 'title', type: 'text', labelKey: 'pageBuilder.sections.features.fields.itemTitle', required: false, default: '', max: 80 },
                     { name: 'highlighted', type: 'bool', labelKey: 'pageBuilder.sections.features.fields.highlighted', required: false, default: false, max: null },
                 ],
@@ -126,8 +129,9 @@ describe('defaultsFor', () => {
     it('builds a list row from the sub-declaration', () => {
         const items = SCHEMAS[1].fields[1];
 
-        // `icon` defaults to '' by the coercion table; FormField maps that to its
-        // own sentinel, so reka-ui never sees an empty SelectItem value.
+        // `icon` defaults to '' exactly as SectionField::defaultValue() does;
+        // SectionFieldControl maps that to its own sentinel, so reka-ui never
+        // sees an empty SelectItem value.
         expect(defaultsForListRow(items)).toEqual({ icon: '', title: '', highlighted: false });
     });
 
@@ -438,5 +442,29 @@ describe('titleOf', () => {
         const list = build([{ id: 'X', type: 'hero', data: { title: { nested: true } } }]);
 
         expect(list.titleOf(list.rows.value[0])).toBe('pageBuilder.sections.hero.label');
+    });
+});
+
+/**
+ * Source-level guards, in the shape commandPalette.a11y.spec.ts already uses for
+ * the layout: both defects here are about what the page must NOT do, and about a
+ * link existing at all — neither survives a mount-based assertion.
+ */
+describe('builder shortcut and entry point (regression guard)', () => {
+    const builder = readFileSync(resolve(__dirname, '../../resources/js/Pages/Admin/Landing/Builder.vue'), 'utf8');
+    const layout = readFileSync(resolve(__dirname, '../../resources/js/Layouts/AuthenticatedLayout.vue'), 'utf8');
+
+    it('leaves Cmd/Ctrl+K to the layout palette', () => {
+        expect(builder).not.toMatch(/=== 'k'/);
+        expect(builder.match(/addEventListener\('keydown'/g) ?? []).toHaveLength(1);
+    });
+
+    it('reaches the catalogue through the shared command registry instead', () => {
+        expect(builder).toContain('useCommandScope');
+        expect(builder).toContain('pagebuilder.addSection');
+    });
+
+    it('is reachable: the sidebar links at the builder route', () => {
+        expect(layout).toContain('admin.landing.builder.index');
     });
 });

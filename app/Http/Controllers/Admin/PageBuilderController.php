@@ -61,7 +61,11 @@ class PageBuilderController extends Controller
             : array_values((array) $raw);
         $settings->save();
 
-        return back()->with('success', __('Page sections saved.'));
+        // Explicitly back to the builder, not back(): the editor reconciles its
+        // in-memory rows against the `blocks` prop of the response, so a redirect
+        // that landed anywhere else would leave it showing un-coerced content
+        // while reporting the page as saved.
+        return to_route('admin.landing.builder.index')->with('success', __('Page sections saved.'));
     }
 
     /**

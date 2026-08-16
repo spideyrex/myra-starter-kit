@@ -2303,6 +2303,10 @@
                 "rowLabel": "条目 {index}",
                 "full": "最多 {max} 个条目。"
             },
+            "icon": {
+                "none": "无图标",
+                "unavailable": "{name} 不在可用图标列表中，保存该区块时会被清除。"
+            },
             "image": {
                 "upload": "上传图片",
                 "replace": "替换图片",

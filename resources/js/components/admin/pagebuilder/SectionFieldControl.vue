@@ -5,14 +5,16 @@ import { toast } from 'vue-sonner';
 import FormField from '@/components/admin/FormField.vue';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { Select, SelectContent, SelectItem, SelectTrigger } from '@/components/ui/select';
 import { ChevronDown, ChevronUp, ImageOff, Plus, Trash2, Upload } from 'lucide-vue-next';
+import { fieldIcon, ICON_FIELD_NAMES } from './sectionIcons';
 import { defaultsForListRow, type SectionFieldSchema } from '@/composables/useSectionList';
 import type { FieldType } from '@/composables/useFormSchema';
 
 /**
  * One declared section field, rendered through the existing FormField for every
- * type the form layer already knows. `image` and `list` are the two the form
- * layer has no primitive for, so they get a local control each.
+ * type the form layer already knows. `list`, `image` and `icon` are the three
+ * the form layer has no primitive for, so they get a local control each.
  */
 const props = withDefaults(defineProps<{
     field: SectionFieldSchema;
@@ -40,14 +42,17 @@ const FORM_TYPE: Record<string, FieldType> = {
     bool: 'switch',
     number: 'number-field',
     select: 'select',
-    icon: 'select',
 };
 
 const label = computed(() => (te(props.field.labelKey) ? t(props.field.labelKey) : props.field.name));
 
+/** A select whose declaration carries no option accepts nothing the server keeps. */
+const optionless = computed(() =>
+    props.field.type === 'select' && (props.field.options ?? []).length === 0);
+
 const formType = computed<FieldType>(() => {
     const mapped = FORM_TYPE[props.field.type];
-    if (mapped === 'select' && (props.field.options ?? []).length === 0) return 'text';
+    if (mapped === 'select' && optionless.value) return 'text';
 
     return mapped ?? 'text';
 });
@@ -55,6 +60,38 @@ const formType = computed<FieldType>(() => {
 const selectOptions = computed(() => (props.field.options ?? []).map(value => ({ label: value, value })));
 
 const error = computed(() => props.errors[props.path]);
+
+// --- icon ---
+// The server never sends `options` for an icon field and coerces anything
+// outside its allowlist to ''. A free-text input would therefore accept a name
+// and drop it on save, so the picker offers exactly the allowlisted names.
+const ICON_NONE = '__none';
+
+const iconChoices = computed<string[]>(() => {
+    const declared = (props.field.options ?? []).filter(name => typeof name === 'string' && name !== '');
+
+    return declared.length > 0 ? declared : ICON_FIELD_NAMES;
+});
+
+const iconValue = computed(() => (typeof props.modelValue === 'string' ? props.modelValue : ''));
+
+/** True while the stored name is one this build cannot render — kept, but flagged. */
+const iconUnavailable = computed(() => iconValue.value !== '' && !iconChoices.value.includes(iconValue.value));
+
+// The unknown name stays in the list so what the trigger shows is what the
+// payload holds; the hint below says what saving will do to it.
+const iconItems = computed<string[]>(() =>
+    (iconUnavailable.value ? [...iconChoices.value, iconValue.value] : iconChoices.value));
+
+const iconSelection = computed(() => (iconValue.value === '' ? ICON_NONE : iconValue.value));
+
+const iconPreview = computed(() => fieldIcon(iconValue.value));
+
+function onIconChange(raw: unknown): void {
+    const value = String(raw ?? ICON_NONE);
+
+    emit('update:modelValue', value === ICON_NONE ? '' : value);
+}
 
 const rows = computed<Record<string, unknown>[]>(() =>
     (Array.isArray(props.modelValue) ? props.modelValue : []).filter(
@@ -246,6 +283,43 @@ function clearImage(): void {
         <p v-if="error" class="text-sm text-destructive">{{ error }}</p>
     </div>
 
+    <!-- Icon: an allowlist picker, never free text -->
+    <div v-else-if="field.type === 'icon'" class="space-y-1.5">
+        <label :for="`${idPrefix}-${path}-icon`" class="block text-sm font-medium">
+            {{ label }}
+            <span v-if="field.required" class="text-destructive">*</span>
+        </label>
+
+        <Select
+            :model-value="iconSelection"
+            :disabled="disabled"
+            @update:model-value="onIconChange"
+        >
+            <SelectTrigger :id="`${idPrefix}-${path}-icon`" class="w-full">
+                <span class="flex items-center gap-2 truncate">
+                    <component :is="iconPreview" v-if="iconPreview" class="size-4 shrink-0" aria-hidden="true" />
+                    <span class="truncate">
+                        {{ iconValue === '' ? t('pageBuilder.editor.icon.none') : iconValue }}
+                    </span>
+                </span>
+            </SelectTrigger>
+            <SelectContent>
+                <SelectItem :value="ICON_NONE">{{ t('pageBuilder.editor.icon.none') }}</SelectItem>
+                <SelectItem v-for="name in iconItems" :key="name" :value="name">
+                    <span class="flex items-center gap-2">
+                        <component :is="fieldIcon(name)" v-if="fieldIcon(name)" class="size-4" aria-hidden="true" />
+                        <span>{{ name }}</span>
+                    </span>
+                </SelectItem>
+            </SelectContent>
+        </Select>
+
+        <p v-if="iconUnavailable" class="text-xs text-muted-foreground">
+            {{ t('pageBuilder.editor.icon.unavailable', { name: iconValue }) }}
+        </p>
+        <p v-if="error" class="text-sm text-destructive">{{ error }}</p>
+    </div>
+
     <!-- Storage-path image with an inline upload -->
     <div v-else-if="field.type === 'image'" class="space-y-2">
         <span class="block text-sm font-medium">
@@ -316,7 +390,7 @@ function clearImage(): void {
         :error="error"
         :options="formType === 'select' ? selectOptions : undefined"
         :rows="field.type === 'textarea' ? 3 : undefined"
-        :disabled="disabled"
+        :disabled="disabled || optionless"
         :class="field.type === 'html' || field.type === 'textarea' ? 'sm:col-span-2' : ''"
         :model-value="modelValue"
         @update:model-value="emit('update:modelValue', $event)"

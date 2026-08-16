@@ -2303,6 +2303,10 @@
                 "rowLabel": "Item {index}",
                 "full": "At most {max} items."
             },
+            "icon": {
+                "none": "No icon",
+                "unavailable": "{name} is not one of the available icons. Saving this section clears it."
+            },
             "image": {
                 "upload": "Upload an image",
                 "replace": "Replace image",

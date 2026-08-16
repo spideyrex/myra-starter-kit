@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onBeforeUnmount, onMounted, ref, type Component } from 'vue';
+import { computed, nextTick, onBeforeUnmount, onMounted, ref, type Component } from 'vue';
 import { Head, useForm } from '@inertiajs/vue3';
 import { useI18n } from 'vue-i18n';
 import { toast } from 'vue-sonner';
@@ -13,6 +13,7 @@ import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/componen
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ExternalLink, Plus, Redo2, Save, Undo2 } from 'lucide-vue-next';
 import { useConfirm } from '@/composables/useConfirm';
+import { useCommandScope, type Command } from '@/composables/useCommandRegistry';
 import { useSectionList, type SectionSchema } from '@/composables/useSectionList';
 
 const props = withDefaults(defineProps<{
@@ -89,21 +90,14 @@ function onBeforeUnload(event: BeforeUnloadEvent): void {
     event.returnValue = '';
 }
 
+// Cmd/Ctrl+K belongs to the layout's global palette. The catalogue is reached
+// through the 'Add section' buttons and through that palette instead.
 function onKeydown(event: KeyboardEvent): void {
     if (!(event.metaKey || event.ctrlKey)) return;
 
-    const key = event.key.toLowerCase();
-
-    if (key === 's') {
+    if (event.key.toLowerCase() === 's') {
         event.preventDefault();
         save();
-
-        return;
-    }
-
-    if (key === 'k') {
-        event.preventDefault();
-        openCatalogue(undefined);
     }
 }
 
@@ -133,6 +127,24 @@ function addSection(type: string): void {
     list.add(type, insertAt.value);
     insertAt.value = undefined;
 }
+
+// 'Add section' lives in the one palette the app already has, rather than in a
+// second listener fighting the layout for Cmd/Ctrl+K.
+useCommandScope(computed<Command[]>(() => [{
+    id: 'pagebuilder.addSection',
+    titleKey: 'pageBuilder.editor.addSection',
+    groupKey: 'gallery.commands.group.action',
+    icon: Plus,
+    keywords: ['section', 'block', 'page builder', 'landing'],
+    when: () => props.schemas.length > 0 && !list.atLimit.value,
+    // One tick, so the palette has released its focus trap before the
+    // catalogue dialog claims one.
+    run: async ({ close }) => {
+        close();
+        await nextTick();
+        openCatalogue(undefined);
+    },
+}]));
 
 function save(): void {
     if (form.processing) return;

@@ -5,6 +5,11 @@ namespace App\Admin\Dashboard;
 /** Closed set. A dashboard key is never taken from a request value. */
 final class DashboardKey
 {
+    // >>> MYRA v2.7 [A] START
+    /** The one key the admin dashboard reads. Never taken from a request. */
+    public const MAIN = 'admin.dashboard';
+    // <<< MYRA v2.7 [A] END
+
     /** @return array<int,string> */
     public static function all(): array
     {

@@ -3,6 +3,7 @@ import { computed } from 'vue';
 import OrderedSections from './OrderedSections.vue';
 import PageSections from './PageSections.vue';
 import { hasSectionComponent } from './sectionRegistry';
+import { ALL_SECTIONS_SUPPORTED, isSupportedSection } from './sectionSupport';
 import type { HomepageData, PageSectionRow } from '@/types';
 
 const props = withDefaults(
@@ -11,6 +12,7 @@ const props = withDefaults(
         blocks?: PageSectionRow[];
         settings: HomepageData;
         order?: string[];
+        /** Applies to BOTH branches: the legacy order and the legacy five block types. */
         supports?: string[];
         variants?: Record<string, Record<string, unknown>>;
         overrides?: Record<string, Record<string, unknown>>;
@@ -18,7 +20,7 @@ const props = withDefaults(
     {
         blocks: () => [],
         order: () => [],
-        supports: () => ['hero', 'features', 'testimonials', 'pricing', 'cta'],
+        supports: () => [...ALL_SECTIONS_SUPPORTED],
         variants: () => ({}),
         overrides: () => ({}),
     },
@@ -27,12 +29,20 @@ const props = withDefaults(
 /**
  * The single branch point. A block list that this client cannot render a
  * single section of falls back to the legacy path rather than leaving <main>
- * empty — the public homepage must never come back blank.
+ * empty — the public homepage must never come back blank. The template
+ * restriction is applied here too, so the branch decision is made on the rows
+ * that will actually mount.
  */
 const renderable = computed(() =>
-    (Array.isArray(props.blocks) ? props.blocks : []).filter(
-        row => row !== null && typeof row === 'object' && hasSectionComponent((row as PageSectionRow).type),
-    ),
+    (Array.isArray(props.blocks) ? props.blocks : []).filter(row => {
+        if (row === null || typeof row !== 'object') {
+            return false;
+        }
+
+        const type = (row as PageSectionRow).type;
+
+        return hasSectionComponent(type) && isSupportedSection(type, props.supports);
+    }),
 );
 </script>
 
@@ -41,6 +51,7 @@ const renderable = computed(() =>
         v-if="renderable.length > 0"
         :blocks="renderable"
         :settings="settings"
+        :supports="supports"
         :variants="variants"
         :overrides="overrides"
     />

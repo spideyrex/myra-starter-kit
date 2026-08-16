@@ -1,34 +1,39 @@
 <?php
 
-use App\Homepage\Sections\LegacyHomepageBlocks;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Support\Facades\DB;
 
 /**
  * Strictly additive: one new homepage setting, no column touched, no row dropped.
  *
- * Reads RAW rows rather than app(HomepageSettings::class) — hydration would
- * fail on the very property this migration is adding.
+ * It seeds an EMPTY list on purpose. An empty list means the flat singleton
+ * settings still drive the page, so the upgrade is a no-op for the public page
+ * AND the existing homepage editor stays the authoritative one. Adopting the
+ * block model is an explicit act in the page builder (which offers the same
+ * LegacyHomepageBlocks conversion for review), never something an upgrade does
+ * behind the author's back and leaves them with an editor that changes nothing.
  */
 return new class extends Migration
 {
     public function up(): void
     {
-        $rows = DB::table('settings')
+        $exists = DB::table('settings')
             ->where('group', 'homepage')
-            ->pluck('payload', 'name')
-            ->map(fn ($payload) => json_decode((string) $payload, true))
-            ->all();
+            ->where('name', 'blocks')
+            ->exists();
 
-        DB::table('settings')->updateOrInsert(
-            ['group' => 'homepage', 'name' => 'blocks'],
-            [
-                'payload' => json_encode(LegacyHomepageBlocks::fromRows($rows)),
-                'locked' => false,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-        );
+        if ($exists) {
+            return; // never clobber an authored page on a re-run
+        }
+
+        DB::table('settings')->insert([
+            'group' => 'homepage',
+            'name' => 'blocks',
+            'payload' => json_encode([]),
+            'locked' => false,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
     }
 
     public function down(): void

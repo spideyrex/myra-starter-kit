@@ -46,11 +46,34 @@ class HomepageController extends Controller
             'templateOptions' => (object) ($settings->template_options[$template->key()] ?? []),
             'sectionOrder' => $this->sectionOrder($settings, $template),
             // >>> MYRA v2.7 [A] START
-            'blocks' => SectionNormalizer::normalize($raw),
+            'blocks' => $this->visibleBlocks($raw, $template),
             // <<< MYRA v2.7 [A] END
         ]);
         // <<< MYRA v2.6 [D] END
     }
+
+    // >>> MYRA v2.7 [A] START
+    /**
+     * The normalised list, restricted to what this template renders.
+     *
+     * The restriction applies to the five LEGACY keys only — exactly the ones
+     * sectionOrder() filters — so switching to a template that never showed
+     * pricing does not start showing it, while a package-contributed type is
+     * never silently hidden by a template declared before it existed.
+     *
+     * Filtering everything out is safe: an empty list takes the legacy path.
+     *
+     * @return array<int,array<string,mixed>>
+     */
+    private function visibleBlocks(mixed $raw, HomepageTemplate $template): array
+    {
+        return array_values(array_filter(
+            SectionNormalizer::normalize($raw),
+            fn (array $row) => ! in_array($row['type'], HomepageTemplate::SECTIONS, true)
+                || $template->supportsSection($row['type']),
+        ));
+    }
+    // <<< MYRA v2.7 [A] END
 
     /**
      * Stored order, filtered to what this template renders, with any section

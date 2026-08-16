@@ -12,6 +12,7 @@ use App\Settings\SeoSettings;
 use App\Settings\SocialSettings;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -32,9 +33,18 @@ class SettingController extends Controller
             ]),
             'social' => app(SocialSettings::class)->toArray(),
             'maintenance' => app(MaintenanceSettings::class)->toArray(),
-            'homepage' => array_merge($homepage->toArray(), [
-                'hero_image_url' => $homepage->hero_image_path ? Storage::disk('public')->url($homepage->hero_image_path) : null,
-            ]),
+            // >>> MYRA v2.7 [A] START
+            // The raw block list never ships here; the one bit this form needs
+            // is whether the builder — not this form — currently drives the
+            // public page's section content.
+            'homepage' => array_merge(
+                Arr::except($homepage->toArray(), ['blocks']),
+                [
+                    'hero_image_url' => $homepage->hero_image_path ? Storage::disk('public')->url($homepage->hero_image_path) : null,
+                    'page_builder_active' => $this->pageBuilderOwnsSections($homepage),
+                ],
+            ),
+            // <<< MYRA v2.7 [A] END
             'ai' => array_merge(app(AiSettings::class)->toArray(), [
                 'api_key' => app(AiSettings::class)->api_key ? str_repeat('*', 8) : null,
             ]),
@@ -239,8 +249,38 @@ class SettingController extends Controller
         app(\App\Brand\BrandManager::class)->forget();
         // <<< MYRA v2.6 [C] END
 
+        // >>> MYRA v2.7 [A] START
+        // Two editors, one page. While `blocks` is empty this form IS the page,
+        // and saying "updated successfully" is true. Once the author has adopted
+        // the page builder it owns the hero/features/testimonials/pricing/cta
+        // content, and this save must say so rather than report a success the
+        // public page will not show.
+        if ($this->pageBuilderOwnsSections($settings)) {
+            return back()->with(
+                'warning',
+                'Saved. The page builder now owns the hero, features, testimonials, pricing and CTA '
+                .'content of your public homepage — edit those there. The fields on this tab still '
+                .'drive the navbar, the footer and the on/off switch, and remain the rollback copy: '
+                .'clearing the page builder hands the homepage back to them.',
+            );
+        }
+        // <<< MYRA v2.7 [A] END
+
         return back()->with('success', 'Homepage settings updated successfully.');
     }
+
+    // >>> MYRA v2.7 [A] START
+    /**
+     * True once the author has adopted the block model, i.e. the public page
+     * reads `blocks` and no longer the flat section singletons.
+     */
+    private function pageBuilderOwnsSections(HomepageSettings $settings): bool
+    {
+        $blocks = $settings->blocks ?? [];
+
+        return is_array($blocks) && $blocks !== [];
+    }
+    // <<< MYRA v2.7 [A] END
 
     // >>> MYRA v2.6 [C] START
     /**

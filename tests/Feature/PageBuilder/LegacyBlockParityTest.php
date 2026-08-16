@@ -185,7 +185,17 @@ class LegacyBlockParityTest extends TestCase
         $this->assertContains('hero', array_column($props['blocks'], 'type'));
     }
 
-    public function test_the_seeder_and_the_migration_produce_the_same_block_list(): void
+    /**
+     * The seeder and the migration both ship an EMPTY list.
+     *
+     * This expectation was inverted while bundle A was written: both used to
+     * ship the converted list. Converting on upgrade silently transfers the
+     * homepage to an editor the operator has not opened yet and turns the one
+     * they DO use into a no-op, so adoption is now an explicit act in the page
+     * builder. What still has to hold — and is asserted here — is that the
+     * conversion those two ship is the same conversion the builder offers.
+     */
+    public function test_the_seeder_and_the_migration_leave_the_legacy_page_authoritative(): void
     {
         $rows = DB::table('settings')
             ->where('group', 'homepage')
@@ -193,11 +203,13 @@ class LegacyBlockParityTest extends TestCase
             ->map(fn ($payload) => json_decode((string) $payload, true))
             ->all();
 
-        $seeded = $rows['blocks'];
-        $converted = LegacyHomepageBlocks::fromRows($rows);
+        $this->assertArrayHasKey('blocks', $rows, 'The homepage group must carry the new property.');
+        $this->assertSame([], $rows['blocks'], 'A fresh install keeps the flat settings authoritative.');
 
-        $this->assertNotEmpty($seeded, 'The seeder must ship a converted block list.');
-        $this->assertSame($this->withoutIds($converted), $this->withoutIds($seeded));
+        $this->assertNotEmpty(
+            LegacyHomepageBlocks::fromRows($rows),
+            'The conversion the builder offers must still produce the seeded page.',
+        );
     }
 
     public function test_conversion_is_idempotent(): void

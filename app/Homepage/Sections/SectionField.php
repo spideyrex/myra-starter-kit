@@ -290,6 +290,12 @@ final class SectionField
             $schema['options'] = $this->options;
         }
 
+        // An icon field IS a closed choice; shipping the allowlist means an
+        // editor never has to hard-code it (and never renders a free-text box).
+        if ($this->type === 'icon') {
+            $schema['options'] = self::ICON_ALLOWLIST;
+        }
+
         if ($this->type === 'list') {
             $prefix = $labelPrefix === '' ? $this->name : $labelPrefix.'.'.$this->name;
             $schema['of'] = array_map(fn (SectionField $f) => $f->toClientSchema($prefix), $this->of);

@@ -274,4 +274,43 @@ describe('page sections — the block render path', () => {
 
         expect(w.text()).toContain(settings.hero_title);
     });
+
+    // Minimal declares supports('hero', 'features', 'cta').
+    it('does not render a legacy section the active template does not support', async () => {
+        const blocks = blocksFromFixture();
+        const w = mountHome({ template: 'minimal', blocks });
+        await settle(w);
+
+        expect(w.text()).toContain(settings.hero_title);
+        expect(w.text()).toContain(settings.features_title);
+        expect(w.text()).not.toContain(settings.pricing_title);
+        expect(w.text()).not.toContain(settings.testimonials_title);
+    });
+
+    it('never hides a package-contributed type behind a template that predates it', async () => {
+        const [hero] = blocksFromFixture();
+        const w = mountHome({
+            template: 'minimal',
+            blocks: [hero, { id: 'boom', type: 'boom', variant: {}, data: {} }],
+        });
+        await settle(w);
+
+        // `boom` is not one of the legacy five, so `supports` must not filter it;
+        // SectionBoundary is what keeps it from taking the page down.
+        expect(w.text()).toContain(settings.hero_title);
+        expect(w.text()).toContain('Acme Corp');
+    });
+
+    it('falls back to the legacy renderer when the template supports none of the blocks', async () => {
+        const blocks = blocksFromFixture();
+        const w = mountHome({
+            template: 'minimal',
+            sectionOrder: fixture.sectionOrder,
+            blocks: [blocks[2], blocks[3]],
+        });
+        await settle(w);
+
+        expect(w.text()).not.toBe('');
+        expect(w.text()).toContain(settings.hero_title);
+    });
 });

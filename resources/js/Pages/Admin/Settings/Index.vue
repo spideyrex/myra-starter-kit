@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 import { Head, useForm, router } from '@inertiajs/vue3';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import PageHeader from '@/components/PageHeader.vue';
@@ -156,6 +156,10 @@ function clearFavicon() {
 }
 
 // Homepage state (managed manually for hero image upload)
+// >>> MYRA v2.7 [A] START
+const pageBuilderActive = computed(() => props.homepage.page_builder_active === true);
+// <<< MYRA v2.7 [A] END
+
 const homepageProcessing = ref(false);
 const homepageErrors = ref<Record<string, string>>({});
 const heroImageFile = ref<File | null>(null);
@@ -804,6 +808,22 @@ async function saveHomepage() {
 
             <TabsContent value="homepage">
                 <form @submit.prevent="saveHomepage" class="space-y-6">
+                    <!-- >>> MYRA v2.7 [A] START — never two editors where one silently does nothing -->
+                    <div
+                        v-if="pageBuilderActive"
+                        role="status"
+                        class="rounded-md border border-amber-500/40 bg-amber-500/10 p-4 text-sm text-amber-900 dark:text-amber-200"
+                    >
+                        <p class="font-medium">The page builder is driving your public homepage.</p>
+                        <p class="mt-1">
+                            The Hero, Features, Testimonials, Pricing and CTA fields below no longer appear on
+                            the public page — edit those sections in the page builder. Everything else on this
+                            tab (the on/off switch, the navbar and the footer) still applies, and these fields
+                            stay as the rollback copy: empty the page builder and they drive the page again.
+                        </p>
+                    </div>
+                    <!-- <<< MYRA v2.7 [A] END -->
+
                     <!-- General -->
                     <Card>
                         <CardHeader>

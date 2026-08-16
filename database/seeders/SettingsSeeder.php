@@ -2,7 +2,6 @@
 
 namespace Database\Seeders;
 
-use App\Homepage\Sections\LegacyHomepageBlocks;
 use App\Settings\AppearanceSettings;
 use App\Settings\GeneralSettings;
 use App\Settings\HomepageSettings;
@@ -131,20 +130,13 @@ class SettingsSeeder extends Seeder
         ];
 
         // >>> MYRA v2.7 [A] START
-        // One conversion function for both the seeder and the migration, so a
-        // fresh install and an upgrade can never produce a different page.
-        $homepageDefaults = [];
-
-        foreach ($settings as $setting) {
-            if ($setting['group'] === 'homepage') {
-                $homepageDefaults[$setting['name']] = json_decode((string) $setting['payload'], true);
-            }
-        }
-
+        // Empty on purpose, exactly like the migration: an empty list keeps the
+        // flat settings above authoritative, so the shipped homepage editor is
+        // the one that drives the page until the author adopts the builder.
         $settings[] = [
             'group' => 'homepage',
             'name' => 'blocks',
-            'payload' => json_encode(LegacyHomepageBlocks::fromRows($homepageDefaults)),
+            'payload' => json_encode([]),
         ];
         // <<< MYRA v2.7 [A] END
 

@@ -54,6 +54,9 @@ return [
         // >>> MYRA v2.6 [A] START
         'blocks' => ['view'],
         // <<< MYRA v2.6 [A] END
+        // >>> MYRA v2.6 [B] START
+        'examples' => ['view'],
+        // <<< MYRA v2.6 [B] END
         /* myra:modules */
     ],
 

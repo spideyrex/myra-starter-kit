@@ -386,6 +386,24 @@ return [
     ],
     // <<< MYRA v2.5 [B] END
 
+    // >>> MYRA v2.6 [B] START
+    /*
+    |--------------------------------------------------------------------------
+    | shadcn examples
+    |--------------------------------------------------------------------------
+    |
+    | The example catalogue is a reference surface behind `examples.view`. With
+    | this false every route 404s and the catalogue is unreachable; the vendored
+    | source stays on disk either way, because it is never imported by anything
+    | outside resources/js/Pages/Admin/Examples/Preview.vue.
+    |
+    */
+
+    'examples' => [
+        'enabled' => env('MYRA_EXAMPLES', true),
+    ],
+    // <<< MYRA v2.6 [B] END
+
     // >>> MYRA v2.3 [C] START
     /*
     |--------------------------------------------------------------------------

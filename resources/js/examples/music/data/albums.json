@@ -1,0 +1,29 @@
+{
+    "listenNow": [
+        { "id": "react-rendezvous", "title": "React Rendezvous", "artist": "Ethan Byte" },
+        { "id": "async-awakenings", "title": "Async Awakenings", "artist": "Nina Netcode" },
+        { "id": "the-art-of-reusability", "title": "The Art of Reusability", "artist": "Lena Logic" },
+        { "id": "stateful-symphony", "title": "Stateful Symphony", "artist": "Beth Binary" },
+        { "id": "hooks-and-harmony", "title": "Hooks and Harmony", "artist": "Ruby Roundtrip" },
+        { "id": "the-fetch-sessions", "title": "The Fetch Sessions", "artist": "Otto Overflow" }
+    ],
+    "madeForYou": [
+        { "id": "thinking-components", "title": "Thinking Components", "artist": "Lena Logic" },
+        { "id": "functional-fury", "title": "Functional Fury", "artist": "Beth Binary" },
+        { "id": "the-type-system", "title": "The Type System", "artist": "Nina Netcode" },
+        { "id": "declarative-dreams", "title": "Declarative Dreams", "artist": "Ethan Byte" },
+        { "id": "component-chaos", "title": "Component Chaos", "artist": "Ruby Roundtrip" },
+        { "id": "props-and-cons", "title": "Props and Cons", "artist": "Otto Overflow" }
+    ],
+    "playlists": [
+        "recently-added",
+        "recently-played",
+        "top-songs",
+        "top-albums",
+        "top-artists",
+        "logic-discography",
+        "bedtime-beats",
+        "feeling-happy",
+        "im-sad"
+    ]
+}

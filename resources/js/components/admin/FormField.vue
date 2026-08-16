@@ -160,6 +160,15 @@ const model = defineModel<any>();
 
 const fieldId = computed(() => `field-${props.name}`);
 
+/**
+ * reka-ui throws on <SelectItem value="">, but a schema may legitimately declare
+ * an empty option ({ label: 'None', value: '' }). Map empty to a sentinel for the
+ * widget and back again on change, so any schema stays safe.
+ */
+const EMPTY_SELECT = '__empty';
+const toSelectValue = (v: unknown) => (v === '' || v === null || v === undefined ? EMPTY_SELECT : String(v));
+const fromSelectValue = (v: unknown) => (v === EMPTY_SELECT || v == null ? '' : v);
+
 const describedBy = computed(() => [
     props.hint ? `${fieldId.value}-hint` : null,
     props.error ? `${fieldId.value}-error` : null,
@@ -438,8 +447,9 @@ function toggleAriaLabel(opt: ToggleOption): string | undefined {
                 />
                 <Select
                     v-else-if="type === 'select'"
-                    v-model="model"
+                    :model-value="toSelectValue(model)"
                     :disabled="disabled"
+                    @update:model-value="(v: any) => (model = fromSelectValue(v))"
                 >
                     <SelectTrigger :id="fieldId" :aria-describedby="describedBy" :aria-invalid="!!error">
                         <SelectValue :placeholder="placeholder" />
@@ -447,8 +457,8 @@ function toggleAriaLabel(opt: ToggleOption): string | undefined {
                     <SelectContent>
                         <SelectItem
                             v-for="opt in options"
-                            :key="opt.value"
-                            :value="opt.value"
+                            :key="String(opt.value)"
+                            :value="toSelectValue(opt.value)"
                         >
                             {{ opt.label }}
                         </SelectItem>

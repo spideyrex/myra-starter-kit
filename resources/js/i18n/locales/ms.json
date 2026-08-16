@@ -93,6 +93,41 @@
         "linesTruncated": "Memaparkan {shown} daripada {total} baris.",
         "copiedToClipboard": "Disalin ke papan keratan"
     },
+    "clusters": {
+        "learning": {
+            "label": "Pembelajaran",
+            "courses": {
+                "label": "Kursus",
+                "description": "Sumber bersarang: setiap kursus memiliki pelajarannya sendiri.",
+                "searchPlaceholder": "Cari kursus...",
+                "title": "Tajuk",
+                "lessonCount": "Pelajaran",
+                "created": "Dicipta",
+                "manage": "Urus pelajaran"
+            },
+            "lessons": {
+                "label": "Pelajaran",
+                "description": "Pelajaran bagi {course}. Induk datang daripada URL, bukan daripada borang.",
+                "searchPlaceholder": "Cari pelajaran...",
+                "title": "Tajuk",
+                "position": "Kedudukan",
+                "created": "Dicipta",
+                "add": "Tambah pelajaran",
+                "titlePlaceholder": "Tajuk pelajaran",
+                "positionPlaceholder": "Kedudukan",
+                "delete": "Padam",
+                "deleteConfirm": "Padam pelajaran ini?"
+            },
+            "siteIdentity": {
+                "label": "Identiti Laman",
+                "description": "Sumber tunggal: satu rekod, dua laluan, tiada cipta dan tiada padam.",
+                "name": "Nama",
+                "tagline": "Slogan",
+                "note": "Simpanan pertama mencipta rekod; setiap simpanan seterusnya mengemas kini baris yang sama.",
+                "save": "Simpan"
+            }
+        }
+    },
     "status": {
         "active": "Aktif",
         "inactive": "Tidak Aktif",

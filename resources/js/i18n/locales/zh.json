@@ -93,6 +93,41 @@
         "linesTruncated": "显示 {total} 行中的 {shown} 行。",
         "copiedToClipboard": "已复制到剪贴板"
     },
+    "clusters": {
+        "learning": {
+            "label": "学习",
+            "courses": {
+                "label": "课程",
+                "description": "嵌套资源：每个课程拥有自己的课时。",
+                "searchPlaceholder": "搜索课程...",
+                "title": "标题",
+                "lessonCount": "课时",
+                "created": "创建时间",
+                "manage": "管理课时"
+            },
+            "lessons": {
+                "label": "课时",
+                "description": "{course} 的课时。父级来自 URL，而不是表单。",
+                "searchPlaceholder": "搜索课时...",
+                "title": "标题",
+                "position": "顺序",
+                "created": "创建时间",
+                "add": "新增课时",
+                "titlePlaceholder": "课时标题",
+                "positionPlaceholder": "顺序",
+                "delete": "删除",
+                "deleteConfirm": "确定删除此课时？"
+            },
+            "siteIdentity": {
+                "label": "站点标识",
+                "description": "单一资源：一条记录，两个路由，没有新建也没有删除。",
+                "name": "名称",
+                "tagline": "标语",
+                "note": "首次保存会创建记录；之后每次保存都更新同一行。",
+                "save": "保存"
+            }
+        }
+    },
     "status": {
         "active": "活跃",
         "inactive": "不活跃",

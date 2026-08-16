@@ -1,0 +1,29 @@
+<?php
+
+namespace App\Http\Controllers\Admin;
+
+use App\Admin\Resource\SingularResource;
+use App\Admin\Traits\HandlesSingularRecord;
+use App\Http\Controllers\Controller;
+use App\Models\{{ model }};
+
+/**
+ * One record, two routes: GET /admin/{{ routePrefix }} and PUT /admin/{{ routePrefix }}.
+ * There is no create and no destroy, by design.
+ */
+class {{ model }}Controller extends Controller
+{
+    use HandlesSingularRecord;
+
+    protected function singular(): SingularResource
+    {
+        return SingularResource::make('{{ routePrefix }}')
+            ->model({{ model }}::class)
+            ->permission('{{ permissionPrefix }}')
+            ->page('Admin/{{ model }}/Edit')
+            ->rules([
+                // TODO: the real rules. An obvious placeholder beats a wrong guess.
+                'name' => ['nullable', 'string', 'max:255'],
+            ]);
+    }
+}

@@ -1,0 +1,95 @@
+<script setup lang="ts">
+import { computed } from 'vue';
+import { Head, useForm } from '@inertiajs/vue3';
+import { useI18n } from 'vue-i18n';
+import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+import DataTable from '@/components/DataTable.vue';
+import PageHeader from '@/components/PageHeader.vue';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Card, CardContent } from '@/components/ui/card';
+import { TextColumn, DateColumn } from '@/composables/useTableSchema';
+import { DeleteAction } from '@/composables/useTableActions';
+import { hydrateCrumbs } from '@/nav/breadcrumbs';
+import type { PaginatedData } from '@/types';
+import type { ServerCrumb } from '@/types/nav';
+import { Plus } from 'lucide-vue-next';
+
+const props = defineProps<{
+    parent: { id: number; title: string };
+    crumbs: ServerCrumb[];
+    storeUrl: string;
+    {{ modelPluralVariable }}: PaginatedData<any>;
+    filters: Record<string, string>;
+}>();
+
+const { t } = useI18n();
+
+const breadcrumbs = computed(() => hydrateCrumbs(props.crumbs, t));
+
+const columns = computed(() => [
+    TextColumn.make('name').label(t('clusters.{{ routePrefix }}.name')).sortable().searchable().grow(),
+    DateColumn.make('created_at').label(t('clusters.{{ routePrefix }}.created')).sortable(),
+]);
+
+const actions = computed(() => [
+    DeleteAction.make('admin.{{ parentRoutePrefix }}.{{ relationship }}.destroy')
+        .label(t('clusters.{{ routePrefix }}.delete'))
+        .confirmTitle(t('clusters.{{ routePrefix }}.delete'))
+        .confirmDescription(t('clusters.{{ routePrefix }}.deleteConfirm'))
+        .permission('{{ permissionPrefix }}.delete')
+        .routeParams((row: any) => ({ {{ inverse }}: props.parent.id, {{ modelVariable }}: row.id })),
+]);
+
+const form = useForm({ name: '' });
+
+function submit() {
+    form.post(props.storeUrl, { preserveScroll: true, onSuccess: () => form.reset() });
+}
+</script>
+
+<template>
+    <AuthenticatedLayout :breadcrumbs="breadcrumbs">
+        <Head :title="t('clusters.{{ routePrefix }}.label')" />
+
+        <PageHeader
+            :title="t('clusters.{{ routePrefix }}.label')"
+            :description="t('clusters.{{ routePrefix }}.description', { parent: parent.title })"
+        />
+
+        <div class="mt-6 space-y-4">
+            <Card>
+                <CardContent class="pt-6">
+                    <form class="flex flex-col gap-3 sm:flex-row sm:items-end" @submit.prevent="submit">
+                        <div class="flex-1 space-y-1.5">
+                            <Label for="{{ routePrefix }}-name">{{ t('clusters.{{ routePrefix }}.name') }}</Label>
+                            <Input
+                                id="{{ routePrefix }}-name"
+                                v-model="form.name"
+                                :placeholder="t('clusters.{{ routePrefix }}.namePlaceholder')"
+                                :aria-invalid="!!form.errors.name"
+                            />
+                            <p v-if="form.errors.name" class="text-sm text-destructive">{{ form.errors.name }}</p>
+                        </div>
+                        <Button type="submit" :disabled="form.processing">
+                            <Plus class="mr-2 size-4" />
+                            {{ t('clusters.{{ routePrefix }}.add') }}
+                        </Button>
+                    </form>
+                </CardContent>
+            </Card>
+
+            <DataTable
+                :columns="columns"
+                :data="{{ modelPluralVariable }}"
+                :filters="filters"
+                :actions="actions"
+                route-name="admin.{{ parentRoutePrefix }}.{{ relationship }}.index"
+                :route-params="{ {{ inverse }}: parent.id }"
+                table-key="{{ routePrefix }}"
+                :search-placeholder="t('clusters.{{ routePrefix }}.searchPlaceholder')"
+            />
+        </div>
+    </AuthenticatedLayout>
+</template>

@@ -93,6 +93,41 @@
         "linesTruncated": "Showing {shown} of {total} lines.",
         "copiedToClipboard": "Copied to clipboard"
     },
+    "clusters": {
+        "learning": {
+            "label": "Learning",
+            "courses": {
+                "label": "Courses",
+                "description": "A nested resource: every course owns its own lessons.",
+                "searchPlaceholder": "Search courses...",
+                "title": "Title",
+                "lessonCount": "Lessons",
+                "created": "Created",
+                "manage": "Manage lessons"
+            },
+            "lessons": {
+                "label": "Lessons",
+                "description": "Lessons of {course}. The parent comes from the URL, never from the form.",
+                "searchPlaceholder": "Search lessons...",
+                "title": "Title",
+                "position": "Position",
+                "created": "Created",
+                "add": "Add lesson",
+                "titlePlaceholder": "Lesson title",
+                "positionPlaceholder": "Position",
+                "delete": "Delete",
+                "deleteConfirm": "Delete this lesson?"
+            },
+            "siteIdentity": {
+                "label": "Site Identity",
+                "description": "A singular resource: one record, two routes, no create and no delete.",
+                "name": "Name",
+                "tagline": "Tagline",
+                "note": "The first save creates the record; every later save updates the same row.",
+                "save": "Save"
+            }
+        }
+    },
     "status": {
         "active": "Active",
         "inactive": "Inactive",

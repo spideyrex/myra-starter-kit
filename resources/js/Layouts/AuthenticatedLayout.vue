@@ -2,6 +2,13 @@
 import { ref, computed, onMounted, onUnmounted } from 'vue';
 import { usePage, Link, router } from '@inertiajs/vue3';
 import type { PageProps, BreadcrumbItem } from '@/types';
+import type { MyraNavGroupPayload } from '@/types/nav';
+import {
+    filterNavGroups,
+    isNavItemActive,
+    mergeServerNav,
+    paletteNavGroups,
+} from '@/nav/model';
 import { usePermissions } from '@/composables/usePermissions';
 import {
     SidebarProvider,
@@ -140,7 +147,7 @@ function initials(name: string) {
 
 const { t } = useI18n();
 
-const navGroups = computed(() => [
+const coreNavGroups = computed(() => [
     {
         label: t('navGroups.main'),
         items: [
@@ -213,18 +220,23 @@ const navGroups = computed(() => [
     },
 ]);
 
-const filteredNavGroups = computed(() =>
-    navGroups.value
-        .map(group => ({
-            ...group,
-            items: group.items.filter(item => !item.permission || can(item.permission)),
-        }))
-        .filter(group => group.items.length > 0)
-);
+// >>> MYRA v2.4 [B] START
+// Server-contributed navigation. `[]` when nothing is registered, and
+// mergeServerNav([]) is the identity operation on the groups above.
+const serverNav = computed<MyraNavGroupPayload[]>(() => (page.props as any).myraNav ?? []);
 
-function isActive(href: string) {
-    return page.url.startsWith(new URL(href).pathname);
+const translate = (key: string) => t(key);
+const navGroups = computed(() => mergeServerNav(coreNavGroups.value as any, serverNav.value, translate));
+
+const filteredNavGroups = computed(() => filterNavGroups(navGroups.value, can));
+
+function isActive(item: any) {
+    return isNavItemActive(item, page.url, window.location.origin);
 }
+
+/** Cluster children stay reachable from the ⌘K palette. */
+const paletteGroups = computed(() => paletteNavGroups(filteredNavGroups.value));
+// <<< MYRA v2.4 [B] END
 
 // Command palette
 const commandOpen = ref(false);
@@ -281,12 +293,53 @@ function handleCommandInput(value: string) {
                     <SidebarGroupContent>
                         <SidebarMenu>
                             <SidebarMenuItem v-for="item in group.items" :key="item.title">
-                                <SidebarMenuButton as-child :is-active="isActive(item.href)">
+                                <!-- >>> MYRA v2.4 [B] START — cluster (one level of children) -->
+                                <template v-if="item.items?.length">
+                                    <Collapsible
+                                        :default-open="isActive(item)"
+                                        class="group/collapsible group-data-[collapsible=icon]:hidden"
+                                    >
+                                        <CollapsibleTrigger as-child>
+                                            <SidebarMenuButton>
+                                                <component :is="item.icon" class="size-4" />
+                                                <span>{{ item.title }}</span>
+                                                <ChevronRight class="ml-auto size-4 transition-transform group-data-[state=open]/collapsible:rotate-90" />
+                                            </SidebarMenuButton>
+                                        </CollapsibleTrigger>
+                                        <CollapsibleContent>
+                                            <SidebarMenuSub>
+                                                <SidebarMenuSubItem v-for="child in item.items" :key="child.title">
+                                                    <SidebarMenuSubButton as-child :is-active="isActive(child)">
+                                                        <Link :href="child.href!">{{ child.title }}</Link>
+                                                    </SidebarMenuSubButton>
+                                                </SidebarMenuSubItem>
+                                            </SidebarMenuSub>
+                                        </CollapsibleContent>
+                                    </Collapsible>
+                                    <!-- Icon mode: the same children, reachable from a menu. -->
+                                    <div class="hidden group-data-[collapsible=icon]:block">
+                                        <DropdownMenu>
+                                            <DropdownMenuTrigger as-child>
+                                                <SidebarMenuButton :is-active="isActive(item)" :aria-label="item.title">
+                                                    <component :is="item.icon" class="size-4" />
+                                                    <span>{{ item.title }}</span>
+                                                </SidebarMenuButton>
+                                            </DropdownMenuTrigger>
+                                            <DropdownMenuContent side="right" align="start" class="min-w-48">
+                                                <DropdownMenuItem v-for="child in item.items" :key="child.title" as-child>
+                                                    <Link :href="child.href!">{{ child.title }}</Link>
+                                                </DropdownMenuItem>
+                                            </DropdownMenuContent>
+                                        </DropdownMenu>
+                                    </div>
+                                </template>
+                                <SidebarMenuButton v-else as-child :is-active="isActive(item)">
                                     <Link :href="item.href">
                                         <component :is="item.icon" class="size-4" />
                                         <span>{{ item.title }}</span>
                                     </Link>
                                 </SidebarMenuButton>
+                                <!-- <<< MYRA v2.4 [B] END -->
                             </SidebarMenuItem>
                         </SidebarMenu>
                     </SidebarGroupContent>
@@ -423,12 +476,12 @@ function handleCommandInput(value: string) {
             </template>
 
             <!-- Navigation (shown when empty query or alongside results) -->
-            <CommandGroup v-for="group in filteredNavGroups" :key="group.label" :heading="group.label">
+            <CommandGroup v-for="group in paletteGroups" :key="group.label" :heading="group.label">
                 <CommandItem
                     v-for="item in group.items"
                     :key="item.title"
                     :value="item.title"
-                    @select="runCommand(() => router.visit(item.href))"
+                    @select="runCommand(() => router.visit(item.href!))"
                 >
                     <component :is="item.icon" class="mr-2 size-4" />
                     {{ item.title }}

@@ -1,7 +1,11 @@
 <script setup lang="ts">
-import { defineAsyncComponent, ref } from 'vue';
+import { computed, defineAsyncComponent, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { LayoutGrid, Plus, RotateCcw, Save, Undo2, X } from 'lucide-vue-next';
+// >>> MYRA v2.7 [C] START
+import DashboardSourceBadge from './DashboardSourceBadge.vue';
+import type { DashboardLayoutSource } from '@/composables/useDashboardLayout';
+// <<< MYRA v2.7 [C] END
 import { Button } from '@/components/ui/button';
 import {
     AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
@@ -22,7 +26,12 @@ const props = withDefaults(defineProps<{
     used?: string[];
     atLimit?: boolean;
     hidden?: WidgetSchema[];
-}>(), { catalogue: () => [], used: () => [], atLimit: false, hidden: () => [] });
+    // >>> MYRA v2.7 [C] START
+    source?: DashboardLayoutSource | null;
+    /** Role name behind the default. Null when there is none: the label stays generic. */
+    roleDefault?: string | null;
+    // <<< MYRA v2.7 [C] END
+}>(), { catalogue: () => [], used: () => [], atLimit: false, hidden: () => [], source: null, roleDefault: null });
 
 const emit = defineEmits<{
     (e: 'update:editing', value: boolean): void;
@@ -35,6 +44,16 @@ const emit = defineEmits<{
 }>();
 
 const { t } = useI18n();
+
+// >>> MYRA v2.7 [C] START
+const resetLabel = computed(() => (props.roleDefault
+    ? t('roleDashboard.resetToRole', { role: props.roleDefault })
+    : t('dashboardLayout.reset')));
+
+const resetConfirm = computed(() => (props.roleDefault
+    ? t('roleDashboard.resetToRoleConfirm', { role: props.roleDefault })
+    : t('dashboardLayout.resetConfirm')));
+// <<< MYRA v2.7 [C] END
 
 // The sheet is dead weight until someone opens the editor.
 const WidgetCatalogueSheet = defineAsyncComponent(() => import('./WidgetCatalogueSheet.vue'));
@@ -51,6 +70,10 @@ function prefetch(): void {
 
 <template>
     <div class="flex flex-wrap items-center justify-end gap-2">
+        <!-- >>> MYRA v2.7 [C] START -->
+        <DashboardSourceBadge :source="source" class="mr-auto" />
+        <!-- <<< MYRA v2.7 [C] END -->
+
         <template v-if="!props.editing">
             <Button
                 variant="outline"
@@ -62,6 +85,28 @@ function prefetch(): void {
                 <LayoutGrid class="mr-1.5 size-3.5" aria-hidden="true" />
                 {{ t('dashboardLayout.edit') }}
             </Button>
+
+            <!-- >>> MYRA v2.7 [C] START -->
+            <!-- Resting state: resetting is not an edit, it discards the whole arrangement. -->
+            <AlertDialog v-if="customised">
+                <AlertDialogTrigger as-child>
+                    <Button variant="ghost" size="sm">
+                        <RotateCcw class="mr-1.5 size-3.5" aria-hidden="true" />
+                        {{ resetLabel }}
+                    </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                    <AlertDialogHeader>
+                        <AlertDialogTitle>{{ resetLabel }}</AlertDialogTitle>
+                        <AlertDialogDescription>{{ resetConfirm }}</AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                        <AlertDialogCancel>{{ t('dashboardLayout.cancel') }}</AlertDialogCancel>
+                        <AlertDialogAction @click="emit('reset')">{{ resetLabel }}</AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
+            <!-- <<< MYRA v2.7 [C] END -->
         </template>
 
         <template v-else>
@@ -74,25 +119,6 @@ function prefetch(): void {
                 <Undo2 class="mr-1.5 size-3.5" aria-hidden="true" />
                 {{ t('dashboardLayout.undo') }}
             </Button>
-
-            <AlertDialog v-if="customised">
-                <AlertDialogTrigger as-child>
-                    <Button variant="ghost" size="sm">
-                        <RotateCcw class="mr-1.5 size-3.5" aria-hidden="true" />
-                        {{ t('dashboardLayout.reset') }}
-                    </Button>
-                </AlertDialogTrigger>
-                <AlertDialogContent>
-                    <AlertDialogHeader>
-                        <AlertDialogTitle>{{ t('dashboardLayout.reset') }}</AlertDialogTitle>
-                        <AlertDialogDescription>{{ t('dashboardLayout.resetConfirm') }}</AlertDialogDescription>
-                    </AlertDialogHeader>
-                    <AlertDialogFooter>
-                        <AlertDialogCancel>{{ t('dashboardLayout.cancel') }}</AlertDialogCancel>
-                        <AlertDialogAction @click="emit('reset')">{{ t('dashboardLayout.reset') }}</AlertDialogAction>
-                    </AlertDialogFooter>
-                </AlertDialogContent>
-            </AlertDialog>
 
             <Button variant="ghost" size="sm" @click="emit('cancel')">
                 <X class="mr-1.5 size-3.5" aria-hidden="true" />

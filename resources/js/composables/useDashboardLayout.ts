@@ -19,6 +19,15 @@ export interface InstanceRequest {
     order?: number;
 }
 
+// >>> MYRA v2.7 [C] START
+/** The `dashboardLayoutSource` Inertia prop. Always an object once the server emits it. */
+export interface DashboardLayoutSource {
+    source: 'personal' | 'role' | 'none';
+    role: string | null;
+    hasRoleDefault: boolean;
+}
+// <<< MYRA v2.7 [C] END
+
 export interface UseDashboardLayoutOptions {
     dashboard: string;
     declared: MaybeRefOrGetter<WidgetInput[]>;
@@ -26,6 +35,12 @@ export interface UseDashboardLayoutOptions {
     saved?: MaybeRefOrGetter<DashboardLayoutPayload | null | undefined>;
     catalogue?: MaybeRefOrGetter<CatalogueEntry[]>;
     editable?: MaybeRefOrGetter<boolean>;
+    // >>> MYRA v2.7 [C] START
+    /** Whose layout is on screen. Absent (null) means the server never said — today's behaviour. */
+    source?: MaybeRefOrGetter<DashboardLayoutSource | null | undefined>;
+    /** Set only while an admin authors a role's dashboard: switches save/reset to the role endpoints. */
+    authoringRole?: MaybeRefOrGetter<{ id: number; name: string } | null | undefined>;
+    // <<< MYRA v2.7 [C] END
     /** Already-bound translator. The composable never emits English of its own. */
     t?: (key: string, params?: Record<string, unknown>) => string;
     /** Injected for tests; defaults to Ziggy's global `route()`. */
@@ -42,6 +57,10 @@ export interface UseDashboardLayout {
     dirty: ComputedRef<boolean>;
     saving: Ref<boolean>;
     customised: ComputedRef<boolean>;
+    // >>> MYRA v2.7 [C] START
+    /** The role name whose default applies, or would apply after a reset. Null when there is none. */
+    roleDefault: ComputedRef<string | null>;
+    // <<< MYRA v2.7 [C] END
     usedCatalogueKeys: ComputedRef<string[]>;
     move(key: string, delta: -1 | 1): string;
     moveTo(key: string, index: number): void;
@@ -95,6 +114,10 @@ export function useDashboardLayout(options: UseDashboardLayoutOptions): UseDashb
     const history = ref<EditState[]>([]);
 
     const saved = computed<DashboardLayoutPayload | null>(() => toValue(options.saved ?? null) ?? null);
+    // >>> MYRA v2.7 [C] START
+    const source = computed<DashboardLayoutSource | null>(() => toValue(options.source ?? null) ?? null);
+    const authoringRole = computed(() => toValue(options.authoringRole ?? null) ?? null);
+    // <<< MYRA v2.7 [C] END
     const catalogue = computed<CatalogueEntry[]>(() => toValue(options.catalogue ?? []) ?? []);
     const declaredSchemas = computed<WidgetSchema[]>(() => (toValue(options.declared) ?? []).map(toWidgetSchema));
 
@@ -229,7 +252,23 @@ export function useDashboardLayout(options: UseDashboardLayoutOptions): UseDashb
     const instances = computed<WidgetSchema[]>(() => merged.value.filter(s => instanceKeySet.value.has(s.key)));
     const hidden = computed<WidgetSchema[]>(() => hiddenByLayout(merged.value, layout.value));
 
-    const customised = computed(() => saved.value !== null);
+    // >>> MYRA v2.7 [C] START
+    /**
+     * A layout on screen is the user's OWN only when the server says `personal`.
+     * Reading `saved !== null` would offer "Reset" on a role default nobody has
+     * touched. With no source prop at all the old reading stands, so a page that
+     * never emits one behaves exactly as it does today.
+     */
+    const customised = computed(() => (
+        source.value === null ? saved.value !== null : source.value.source === 'personal'
+    ));
+
+    /** Independent of who won: it only decides the reset LABEL. */
+    const roleDefault = computed<string | null>(() => (
+        source.value?.hasRoleDefault === true ? source.value.role : null
+    ));
+    // <<< MYRA v2.7 [C] END
+
     const usedCatalogueKeys = computed(() => state.value.instances.map(i => i.catalogue));
 
     function push(): void {
@@ -401,19 +440,40 @@ export function useDashboardLayout(options: UseDashboardLayoutOptions): UseDashb
         };
     }
 
+    // >>> MYRA v2.7 [C] START
+    /** The role endpoints are the SAME write contract, aimed at a role instead of a user. */
+    const RELOAD_PROPS = ['dashboardLayout', 'dashboardLayoutSource', 'flash', 'errors'];
+
+    function updateUrl(): string {
+        const role = authoringRole.value;
+
+        return role
+            ? resolveRoute('admin.role-dashboards.update', role.id)
+            : resolveRoute('admin.dashboard-layouts.update', options.dashboard);
+    }
+
+    function destroyUrl(): string {
+        const role = authoringRole.value;
+
+        return role
+            ? resolveRoute('admin.role-dashboards.destroy', role.id)
+            : resolveRoute('admin.dashboard-layouts.destroy', options.dashboard);
+    }
+    // <<< MYRA v2.7 [C] END
+
     function save(): Promise<void> {
         return new Promise(resolve => {
             saving.value = true;
 
             router.put(
-                resolveRoute('admin.dashboard-layouts.update', options.dashboard),
+                updateUrl(),
                 { dashboard_key: options.dashboard, payload: payload() } as any,
                 {
                     preserveScroll: true,
                     preserveState: true,
                     // The rendered instances always come back through
                     // WidgetInstance::resolveAll(), never from local state.
-                    only: ['dashboardLayout', 'flash', 'errors'],
+                    only: RELOAD_PROPS,
                     onFinish: () => {
                         saving.value = false;
                         baseline.value = JSON.stringify(state.value);
@@ -430,13 +490,18 @@ export function useDashboardLayout(options: UseDashboardLayoutOptions): UseDashb
         return new Promise(resolve => {
             saving.value = true;
 
-            router.delete(resolveRoute('admin.dashboard-layouts.destroy', options.dashboard), {
+            router.delete(destroyUrl(), {
                 preserveScroll: true,
                 preserveState: true,
-                only: ['dashboardLayout', 'flash', 'errors'],
+                only: RELOAD_PROPS,
                 onFinish: () => {
                     saving.value = false;
-                    state.value = { order: [], overrides: {}, instances: [] };
+                    // >>> MYRA v2.7 [C] START
+                    // Re-derive from whatever the partial reload just returned —
+                    // the role default, or nothing. Blanking state here fought the
+                    // `watch(saved)` rehydration and left the layout instantly dirty.
+                    state.value = fromSaved();
+                    // <<< MYRA v2.7 [C] END
                     baseline.value = JSON.stringify(state.value);
                     history.value = [];
                     editing.value = false;
@@ -465,7 +530,7 @@ export function useDashboardLayout(options: UseDashboardLayoutOptions): UseDashb
     });
 
     return {
-        widgets, instances, hidden, layout, editing, dirty, saving, customised, usedCatalogueKeys,
+        widgets, instances, hidden, layout, editing, dirty, saving, customised, roleDefault, usedCatalogueKeys,
         move, moveTo, reorderWithin, resize, toggleHidden, rename, addInstance, removeInstance,
         payload, save, reset, undo, cancel, announcement,
     };

@@ -60,6 +60,13 @@ return [
         // >>> MYRA v2.6 [C] START
         'brand' => ['view', 'update'],
         // <<< MYRA v2.6 [C] END
+        // >>> MYRA v2.7 [A] START
+        // `customise` is the broadly-granted PERSONAL-preference ability;
+        // `manage-roles` authors a document rendered for OTHER people and is a
+        // separate escalation surface. Declaring the module here also repairs
+        // live drift: dashboard.customise existed only in the seeder.
+        'dashboard' => ['customise', 'manage-roles'],
+        // <<< MYRA v2.7 [A] END
         /* myra:modules */
     ],
 

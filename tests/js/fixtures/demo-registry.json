@@ -502,6 +502,20 @@
                 "platform"
             ],
             "titleKey": "gallery.demos.landingTemplates.title"
+        },
+        {
+            "badgeKey": "gallery.demos.roleDashboards.badge",
+            "descriptionKey": "gallery.demos.roleDashboards.description",
+            "icon": "LayoutDashboard",
+            "key": "roleDashboards",
+            "playground": null,
+            "route": "admin.demo.role-dashboards",
+            "since": "2.7.0",
+            "tags": [
+                "dashboard",
+                "platform"
+            ],
+            "titleKey": "gallery.demos.roleDashboards.title"
         }
     ]
 }

@@ -74,6 +74,55 @@ final class LayoutShape
         ];
     }
 
+    // >>> MYRA v2.7 [A] START
+    /**
+     * Non-throwing READ-time sibling of assert(). Drops malformed elements
+     * instead of raising: throwing on read would blank a dashboard, and the
+     * payload may have been authored by somebody other than the viewer.
+     *
+     * @return array{version:int,entries:array<int,array>,instances:array<int,array>}
+     */
+    public static function filter(mixed $payload): array
+    {
+        $out = ['version' => 1, 'entries' => [], 'instances' => []];
+
+        if (! is_array($payload)) {
+            return $out;
+        }
+
+        $entries = $payload['entries'] ?? [];
+        $instances = $payload['instances'] ?? [];
+
+        if (is_array($entries) && array_is_list($entries)) {
+            foreach ($entries as $entry) {
+                if (count($out['entries']) >= self::MAX_ENTRIES) {
+                    break;
+                }
+                try {
+                    $out['entries'][] = self::assertEntry($entry, 'payload');
+                } catch (\Throwable) {
+                    // drop
+                }
+            }
+        }
+
+        if (is_array($instances) && array_is_list($instances)) {
+            foreach ($instances as $instance) {
+                if (count($out['instances']) >= self::MAX_INSTANCES) {
+                    break;
+                }
+                try {
+                    $out['instances'][] = self::assertInstance($instance, 'payload');
+                } catch (\Throwable) {
+                    // drop
+                }
+            }
+        }
+
+        return $out;
+    }
+    // <<< MYRA v2.7 [A] END
+
     private static function assertEntry(mixed $entry, string $attribute): array
     {
         if (! is_array($entry) || array_is_list($entry)) {

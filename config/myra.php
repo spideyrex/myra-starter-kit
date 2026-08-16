@@ -7,7 +7,7 @@ return [
     | Framework version
     |--------------------------------------------------------------------------
     */
-    'version' => '2.6.2',
+    'version' => '2.7.0',
 
     /*
     |--------------------------------------------------------------------------
@@ -89,6 +89,21 @@ return [
         'max_entries'   => 48,
         'max_instances' => 12,
         'catalogue'     => [],
+
+        // >>> MYRA v2.7 [A] START
+        // The page's own tiles, key => ability|null. All null ships today's
+        // behaviour bit-identically; declare an ability and the entry filter in
+        // LayoutResolver::fromPayload stops that tile's KEY from reaching an
+        // unprivileged browser. Keys must match Dashboard.vue's *Widget.make().
+        'static_widgets' => [
+            'total_users'           => null,
+            'active_users'          => null,
+            'new_users'             => null,
+            'pending_verifications' => null,
+            'user_growth'           => null,
+            'users_by_status'       => null,
+        ],
+        // <<< MYRA v2.7 [A] END
     ],
     // <<< MYRA v2.5 [A] END
 

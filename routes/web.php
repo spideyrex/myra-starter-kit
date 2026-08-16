@@ -142,6 +142,9 @@ Route::middleware(['auth', 'verified', 'active', '2fa'])->prefix('admin')->name(
     Route::post('/roles/{role}/toggle-active', [RoleController::class, 'toggleActive'])->middleware('permission:roles.edit')->name('roles.toggle-active');
     Route::post('/roles/{role}/toggle-visible', [RoleController::class, 'toggleVisible'])->middleware('permission:roles.edit')->name('roles.toggle-visible');
     Route::delete('/roles/{role}', [RoleController::class, 'destroy'])->middleware('permission:roles.delete')->name('roles.destroy');
+    // >>> MYRA v2.7 [C] START
+    Route::post('/roles/reorder', [RoleController::class, 'reorder'])->middleware('permission:roles.edit')->name('roles.reorder');
+    // <<< MYRA v2.7 [C] END
 
     // Permissions
     Route::get('/permissions', [PermissionController::class, 'index'])->middleware('permission:permissions.view')->name('permissions.index');
@@ -277,6 +280,21 @@ Route::middleware(['auth', 'verified', 'active', '2fa'])->prefix('admin')->name(
         ->name('dashboard-layouts.destroy');
     // <<< MYRA v2.5 [A] END
 
+    // >>> MYRA v2.7 [B] START
+    // Per-role default dashboards. Authoring a document rendered for other
+    // people is an escalation surface, so it carries its own ability.
+    Route::get('/role-dashboards', [\App\Http\Controllers\Admin\RoleDashboardController::class, 'index'])
+        ->middleware('permission:dashboard.manage-roles')->name('role-dashboards.index');
+    Route::get('/role-dashboards/{role}/edit', [\App\Http\Controllers\Admin\DashboardController::class, 'editForRole'])
+        ->middleware('permission:dashboard.manage-roles')->name('role-dashboards.edit');
+    Route::put('/role-dashboards/{role}', [\App\Http\Controllers\Admin\RoleDashboardController::class, 'update'])
+        ->middleware(['permission:dashboard.manage-roles', 'throttle:30,1'])
+        ->name('role-dashboards.update');
+    Route::delete('/role-dashboards/{role}', [\App\Http\Controllers\Admin\RoleDashboardController::class, 'destroy'])
+        ->middleware(['permission:dashboard.manage-roles', 'throttle:30,1'])
+        ->name('role-dashboards.destroy');
+    // <<< MYRA v2.7 [B] END
+
     // Global Search
     // >>> MYRA v2.2 [D] START
     Route::get('/search', [SearchController::class, 'index'])
@@ -370,6 +388,9 @@ Route::middleware(['auth', 'verified', 'active', '2fa'])->prefix('admin')->name(
     Route::get('/demo/advanced-filters', [DemoController::class, 'advancedFilters'])->name('demo.advanced-filters');
     Route::get('/demo/wizard', [DemoController::class, 'wizardDemo'])->name('demo.wizard');
     Route::get('/demo/map', [DemoController::class, 'map'])->name('demo.map');
+    // >>> MYRA v2.7 [D] START
+    Route::get('/demo/role-dashboards', [DemoController::class, 'roleDashboards'])->name('demo.role-dashboards');
+    // <<< MYRA v2.7 [D] END
     }); // end demo group
 
     // >>> MYRA v2.3 [B] START

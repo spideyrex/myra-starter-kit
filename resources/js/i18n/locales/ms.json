@@ -756,6 +756,32 @@
         "failClosedTitle": "Gagal tertutup",
         "failClosedBody": "Apabila skop aktif dan tiada penyewa diselesaikan, predikat menjadi 1 = 0. Tiada penyewa bermakna tiada baris, bukan semua baris."
     },
+    "roleDashboard": {
+        "source": {
+            "role": "Lalai peranan · {role}",
+            "personal": "Susun atur anda"
+        },
+        "resetToRole": "Set semula kepada lalai {role}",
+        "resetToRoleConfirm": "Ini membuang susunan anda sendiri dan memulihkan lalai {role}. Widget yang anda tambah akan dibuang.",
+        "configure": "Papan pemuka",
+        "configureRole": "Konfigur papan pemuka {role}",
+        "configured": "Dikonfigur",
+        "notConfigured": "Belum dikonfigur",
+        "priority": {
+            "column": "Keutamaan",
+            "title": "Keutamaan peranan",
+            "description": "Pengguna yang memegang beberapa peranan mendapat papan pemuka peranan berkeutamaan tertinggi. Seret peranan untuk menyusun semula — tertinggi dahulu.",
+            "save": "Simpan susunan",
+            "saving": "Menyimpan…",
+            "reset": "Buang perubahan"
+        },
+        "a11y": {
+            "roledescription": "Peranan boleh susun",
+            "instructions": "Tekan Space untuk mengangkat peranan, kemudian gunakan kekunci anak panah untuk menggerakkannya. Tekan Space sekali lagi untuk melepaskannya, Home atau End untuk memindahkannya ke permulaan atau penghujung, atau Escape untuk membatalkan.",
+            "position": "{label}, keutamaan {index} daripada {total}.",
+            "grabHandle": "Susun semula {label}"
+        }
+    },
     "dashboardLayout": {
         "saved": "Susun atur papan pemuka disimpan.",
         "reset": "Set semula",
@@ -834,6 +860,43 @@
             "tamperResolved": "Tika yang diselesaikan pelayan: {count}",
             "payloadTitle": "Apa yang Simpan akan hantar",
             "payloadDescription": "Tika bergerak sebagai kunci katalog serta pengikatan. Pelayan menerbitkan semula skema dan menolak apa-apa yang tidak dapat diselesaikan."
+        }
+    },
+    "roleDashboardAdmin": {
+        "title": "Papan pemuka peranan",
+        "subtitle": "Beri setiap peranan papan pemuka lalai. Pengguna peranan itu menerimanya secara automatik dan masih boleh memperibadikan papan pemuka sendiri.",
+        "breadcrumb": "Papan pemuka peranan",
+        "nav": "Papan pemuka peranan",
+        "caption": "Peranan dan papan pemuka lalai yang diberikan kepada penggunanya",
+        "columns": {
+            "role": "Peranan",
+            "priority": "Keutamaan",
+            "status": "Papan pemuka",
+            "widgets": "Widget",
+            "updated": "Kali terakhir disunting",
+            "actions": "Tindakan"
+        },
+        "configured": "Dikonfigurasikan",
+        "notConfigured": "Belum dikonfigurasikan",
+        "inactive": "Peranan dilumpuhkan",
+        "locked": "Hanya super-admin boleh mengarang papan pemuka peranan ini.",
+        "configure": "Konfigurasikan",
+        "configureRole": "Konfigurasikan papan pemuka {role}",
+        "clear": "Kosongkan",
+        "clearRole": "Kosongkan papan pemuka {role}",
+        "clearTitle": "Kosongkan papan pemuka {role}?",
+        "clearDescription": "Pengguna {role} akan kembali kepada peranan berkeutamaan tertinggi berikutnya yang mempunyai papan pemuka, atau kepada papan pemuka lalai. Susun atur peribadi tidak disentuh.",
+        "clearConfirm": "Kosongkan papan pemuka",
+        "cancel": "Batal",
+        "emptyTitle": "Belum ada peranan yang mempunyai papan pemuka",
+        "empty": "Konfigurasikan satu dan setiap pengguna peranan itu menerimanya sebagai lalai. Sehingga itu, tiada apa-apa berubah.",
+        "widgetCount": "{count} dipaparkan",
+        "never": "Tidak pernah",
+        "priorityHint": "Pengguna yang memegang beberapa peranan menerima papan pemuka peranan berkeutamaan tertinggi yang mempunyai satu.",
+        "banner": {
+            "title": "Menyunting papan pemuka {role}",
+            "description": "Anda melihat tepat apa yang dilihat oleh {role}. Widget yang tidak boleh dilihat peranan itu tidak ditawarkan dan tidak disimpan.",
+            "back": "Kembali ke papan pemuka peranan"
         }
     },
     "reports": {
@@ -1406,6 +1469,11 @@
                 "title": "Templat halaman utama",
                 "description": "Setiap templat halaman utama awam yang berdaftar, dengan bahagian yang dipaparkan dan pautan pratonton langsung.",
                 "badge": "Baharu"
+            },
+            "roleDashboards": {
+                "title": "Papan pemuka peranan",
+                "description": "Papan pemuka lalai bagi setiap peranan, boleh diperibadikan oleh setiap pengguna dan boleh ditetapkan semula kepada lalai peranan bila-bila masa.",
+                "badge": "Baharu"
             }
         },
         "references": {
@@ -1522,6 +1590,80 @@
                 "separator": "Pilihan",
                 "selected": "Dipilih {name}.",
                 "none": "Belum ada lokasi dipilih."
+            }
+        }
+    },
+    "demos": {
+        "roleDashboards": {
+            "title": "Papan pemuka peranan",
+            "description": "Setiap peranan boleh membawa papan pemuka lalai. Pengguna peranan itu menerimanya secara automatik, boleh menyusunnya semula, dan boleh menetapkan semula kepada lalai bila-bila masa.",
+            "ladder": {
+                "title": "Keutamaan",
+                "description": "Tiga anak tangga, dinilai dari atas ke bawah. Yang pertama sepadan akan menang — tiada yang digabungkan.",
+                "personal": {
+                    "label": "Susun atur anda",
+                    "body": "Susun atur peribadi menang tanpa syarat, termasuk yang menyembunyikan setiap widget. Menyembunyikan semuanya ialah pilihan yang disengajakan, bukan keadaan kosong."
+                },
+                "role": {
+                    "label": "Lalai peranan",
+                    "body": "Tanpa susun atur peribadi, lalai yang dikarang untuk peranan berkeutamaan tertinggi yang dipegang pengguna akan dipaparkan. Tiada apa untuk ditetapkan semula, jadi kawalan tetapan semula tidak muncul."
+                },
+                "none": {
+                    "label": "Tiada tetapan",
+                    "body": "Tanpa susun atur peribadi dan tanpa lalai peranan, papan pemuka dipaparkan tepat seperti sebelum ciri ini wujud. Tiada lencana, tiada tetapan semula, tiada bendera."
+                }
+            },
+            "chain": {
+                "title": "Rantaian penyelesaian",
+                "description": "Satu titik masuk, dinilai pada setiap permintaan. Tiada apa-apa dicache, jadi kehilangan atau penyahaktifan peranan diperbetulkan pada muatan halaman berikutnya.",
+                "caption": "Langkah penyelesaian susun atur papan pemuka dan hasil setiap satu.",
+                "step": "Langkah",
+                "result": "Hasil",
+                "steps": {
+                    "key": {
+                        "label": "Pintu kunci",
+                        "result": "Kunci papan pemuka ialah set tertutup dan tidak pernah diambil daripada permintaan. Kunci tidak dikenali menghasilkan tiada apa-apa."
+                    },
+                    "guest": {
+                        "label": "Tiada pengguna",
+                        "result": "Tiada apa untuk dinilai, jadi tiada apa dikembalikan."
+                    },
+                    "personal": {
+                        "label": "Baris peribadi",
+                        "result": "Dijumpai, jadi ia menang. Sumber dilaporkan sebagai peribadi dan kawalan tetapan semula muncul."
+                    },
+                    "role": {
+                        "label": "Lalai peranan",
+                        "result": "Satu pertanyaan berindeks mencantum tugasan peranan, disusun mengikut keutamaan peranan. Baris pertama yang dijumpai menang."
+                    },
+                    "none": {
+                        "label": "Tiada",
+                        "result": "Susun atur ialah null dan papan pemuka kembali kepada susunan asalnya."
+                    }
+                }
+            },
+            "priority": {
+                "title": "Memegang beberapa peranan",
+                "description": "Peranan membawa keutamaan yang boleh disusun oleh pentadbir. Pengguna yang memegang beberapa peranan mendapat papan pemuka peranan berkeutamaan tertinggi yang mempunyainya. Boleh dijangka, tidak pernah digabungkan.",
+                "fallThrough": "Peranan tanpa papan pemuka tidak kelihatan kepada susunan itu, jadi peranan seterusnya membekalkannya. Pengguna tidak pernah dikosongkan oleh kesenyapan peranan teratas mereka.",
+                "tie": "Dua peranan yang berkongsi keutamaan dipisahkan mengikut id peranan menaik — deterministik pada setiap pangkalan data, tidak pernah bergantung pada susunan tugasan.",
+                "revocation": "Menyahaktifkan peranan, memadamkannya, atau menarik balik tugasannya berkuat kuasa pada permintaan berikutnya. Susun atur peribadi kekal dalam ketiga-tiga kes, kerana ia tidak membawa asal-usul peranan."
+            },
+            "security": {
+                "title": "Dua fakta yang berkuat kuasa semasa pemaparan",
+                "instances": "Papan pemuka peranan dikarang oleh seorang dan dipaparkan untuk orang lain, jadi muatan tersimpan ialah input tidak dipercayai. Setiap contoh widget diterbitkan semula terhadap keupayaan pengguna YANG MELIHAT pada setiap pemaparan — pentadbir yang meletakkan widget hasil ke dalam papan pemuka pelihat menghasilkan tepat sifar contoh untuk pelihat.",
+                "entries": "Entri ditapis dengan cara yang sama. Kunci widget yang tidak boleh dilihat oleh pelihat tidak pernah sampai ke pelayar mereka, jadi muatan itu tidak boleh menjadi orakel penghitungan bagi jubin yang mereka tidak berhak."
+            },
+            "starters": {
+                "title": "Papan pemuka permulaan",
+                "description": "Susunan pembuka yang munasabah untuk lima peranan terbina dalam. Susunan sahaja — setiap widget di sini ialah sesuatu yang peranan itu sudah boleh lihat.",
+                "caption": "Kandungan papan pemuka permulaan bagi setiap peranan terbina dalam.",
+                "role": "Peranan",
+                "visible": "Dipaparkan",
+                "hidden": "Dikemaskan",
+                "none": "Tiada",
+                "note": "Menyembunyikan di sini ialah kemasan, bukan kawalan capaian. Tiada apa dalam permulaan yang memberi, menghidupkan semula atau mendedahkan apa-apa, dan setiap widget masih ditapis semula untuk pengguna yang melihat.",
+                "optIn": "Penyemai ini tidak pernah disambungkan ke penyemai pangkalan data dan tidak pernah berjalan semasa naik taraf. Jalankannya secara eksplisit, dan jalankan semula dengan selamat — papan pemuka peranan sedia ada tidak pernah ditulis ganti."
             }
         }
     },

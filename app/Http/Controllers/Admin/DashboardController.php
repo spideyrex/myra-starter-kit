@@ -2,13 +2,20 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Admin\Dashboard\DashboardKey;
 use App\Admin\Dashboard\LayoutResolver;
+use App\Admin\Dashboard\LayoutSource;
+use App\Admin\Dashboard\ResolvedLayout;
+use App\Admin\Dashboard\RolePrincipal;
 use App\Admin\Dashboard\WidgetCatalogue;
 use App\Http\Controllers\Controller;
 use App\Models\DashboardLayout;
+use App\Models\Role;
+use App\Models\RoleDashboard;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
 use Inertia\Response;
 use Spatie\Activitylog\Models\Activity;
@@ -17,6 +24,31 @@ class DashboardController extends Controller
 {
     public function index(Request $request): Response
     {
+        // >>> MYRA v2.7 [B] START
+        return $this->render($request);
+    }
+
+    /** Authoring: the SAME page, resolved through the target role's eyes. */
+    public function editForRole(Request $request, Role $role): Response
+    {
+        Gate::authorize('manage', RoleDashboard::class);
+
+        abort_if(
+            $role->isLocked() && ! $request->user()?->hasRole(config('shield.super_admin_role', 'super-admin')),
+            403,
+        );
+
+        return $this->render($request, $role);
+    }
+
+    /**
+     * ONE code path for the real dashboard and for role authoring: the business
+     * props are computed once, and $authoringFor switches only whose eyes the
+     * layout and the catalogue resolve through.
+     */
+    private function render(Request $request, ?Role $authoringFor = null): Response
+    {
+        // <<< MYRA v2.7 [B] END
         $totalUsers = User::count();
         $activeUsers = User::where('status', 'active')->count();
         $newUsersThisMonth = User::whereMonth('created_at', now()->month)
@@ -82,7 +114,9 @@ class DashboardController extends Controller
             ->orderBy('month')
             ->get();
 
-        return Inertia::render('Dashboard', [
+        // >>> MYRA v2.7 [B] START
+        $props = [
+            // <<< MYRA v2.7 [B] END
             'stats' => [
                 'totalUsers' => $totalUsers,
                 'activeUsers' => $activeUsers,
@@ -101,12 +135,18 @@ class DashboardController extends Controller
             // Lazy and fail-soft. With no saved row, an empty catalogue and the
             // editable flag off, these are null / [] / false and the grid renders
             // byte-identically to v2.4.0.
-            'dashboardLayout' => fn () => $this->safely(fn () => LayoutResolver::forInertia(
-                DashboardLayout::forUser($request->user())
-                    ->where('dashboard_key', 'admin.dashboard')
-                    ->first(),
-                $request->user(),
-            )),
+            // >>> MYRA v2.7 [A] START
+            // The ONE seam: the row chooser becomes the resolution chain
+            // (personal → highest-priority role default → nothing). With
+            // role_dashboards empty this returns exactly what v2.6 returned.
+            'dashboardLayout' => fn () => $this->safely(
+                fn () => LayoutResolver::fromPayload($this->resolvedLayout($request)->payload, $request->user()),
+            ),
+            'dashboardLayoutSource' => fn () => $this->safely(
+                fn () => $this->resolvedLayout($request)->toInertia(),
+                ['source' => 'none', 'role' => null, 'hasRoleDefault' => false],
+            ),
+            // <<< MYRA v2.7 [A] END
             'dashboardCatalogue' => fn () => $this->safely(
                 fn () => WidgetCatalogue::forUser($request->user()),
                 [],
@@ -116,8 +156,51 @@ class DashboardController extends Controller
                 && $request->user()?->can('dashboard.customise')
             ),
             // <<< MYRA v2.5 [A] END
-        ]);
+        ];
+
+        // >>> MYRA v2.7 [B] START
+        if ($authoringFor !== null) {
+            $props = array_merge($props, $this->authoringProps($authoringFor));
+        }
+
+        return Inertia::render('Dashboard', $props);
     }
+
+    // >>> MYRA v2.7 [A] START
+    /** Memoised per request so the two lazy props share one execution. */
+    private function resolvedLayout(Request $request): ResolvedLayout
+    {
+        return once(fn () => LayoutSource::resolve($request->user(), DashboardKey::MAIN));
+    }
+    // <<< MYRA v2.7 [A] END
+    /**
+     * The preview is honest even for a super-admin author: the catalogue and the
+     * stored payload both resolve through a principal that answers from the
+     * ROLE's permission set alone and never touches the Gate.
+     */
+    private function authoringProps(Role $role): array
+    {
+        $principal = new RolePrincipal($role);
+
+        $row = RoleDashboard::query()
+            ->where('role_id', $role->id)
+            ->where('dashboard_key', DashboardKey::MAIN)
+            ->first();
+
+        return [
+            'dashboardLayout' => fn () => $this->safely(
+                fn () => LayoutResolver::fromPayload($row?->payload, $principal),
+            ),
+            'dashboardCatalogue' => fn () => $this->safely(
+                fn () => WidgetCatalogue::forUser($principal),
+                [],
+            ),
+            'canCustomiseDashboard' => true,
+            'dashboardAuthoringRole' => ['id' => $role->id, 'name' => $role->name],
+            'dashboardLayoutSource' => ['source' => 'role', 'role' => $role->name, 'hasRoleDefault' => true],
+        ];
+    }
+    // <<< MYRA v2.7 [B] END
 
     // >>> MYRA v2.5 [A] START
     /** A missing table or a corrupt row must never white-screen the dashboard. */

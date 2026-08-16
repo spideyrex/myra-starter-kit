@@ -6,6 +6,7 @@ by default** — deploying the code changes nothing until you set its flag.
 | Subsystem | Flag | Default |
 |---|---|---|
 | Dashboard editor | — | on |
+| Role dashboards | — | inert until an admin configures one |
 | Realtime widgets | `MYRA_REALTIME` | **off** |
 | AI filter / schema / summarise | `MYRA_AI_FILTER`, `MYRA_AI_SCHEMA`, `MYRA_AI_SUMMARISE` | **off** |
 | PWA shell | `MYRA_PWA` | **off** |
@@ -25,6 +26,73 @@ positional index — a grid-local index is ambiguous once a dashboard has more t
 ```ts
 const { layout, reorderWithin, save } = useDashboardLayout('main');
 ```
+
+## Role dashboards
+
+Added in **v2.7.0**. Every role can carry a default dashboard. A user of that role gets it
+automatically, may personalise it, and can reset back to the role default at any time.
+
+**Inert by default.** With no rows in `role_dashboards` the resolution chain returns nothing and the
+dashboard renders exactly as it did before. There is no feature flag because there is nothing to
+flag off.
+
+### Precedence
+
+| Rung | When it applies | Reset control |
+|---|---|---|
+| Personal layout | The user has a row in `dashboard_layouts` | Shown — "Reset to {role} default" |
+| Role default | No personal row, and a role they hold has one | Hidden — there is nothing to reset |
+| Nothing | Neither exists | Hidden — today's dashboard, byte for byte |
+
+A personal layout wins unconditionally, **including one where every widget is hidden**. "I want an
+empty dashboard" is a deliberate personalisation, not an unset value.
+
+Resetting is not a new endpoint. Deleting the personal row is what makes the role default apply
+again on the very next request.
+
+### Several roles
+
+Roles carry an admin-orderable `priority` (higher wins, ties broken by `roles.id` ascending). A user
+holding several roles gets the dashboard of their **highest-priority role that has one** — a role
+without a dashboard is invisible to the ordering, so a user is never blanked by their top role's
+silence. Nothing is merged.
+
+Deactivating a role, deleting it, or unassigning it takes effect on the next request; nothing in the
+chain is cached. A personal layout survives all three, because it carries no role provenance.
+
+### The security rule
+
+A role dashboard is authored by one person and rendered for another, so **the stored payload is
+untrusted input at render time**.
+
+- Every widget instance is re-derived against the **viewing** user's abilities on every render. An
+  admin who drops a revenue widget into the `viewer` dashboard produces exactly zero instances for a
+  viewer.
+- Entries are filtered the same way, so a widget key the viewer may not see never reaches their
+  browser.
+
+Authoring is gated by its own ability, `dashboard.manage-roles` — deliberately **not**
+`dashboard.customise`, which is the broadly-granted personal-preference ability.
+
+### Starter dashboards
+
+Sensible opening arrangements ship for the five built-in roles, but are **never seeded
+automatically** — an upgrade must not rearrange a live deployment's dashboards.
+
+```bash
+php artisan myra:role-dashboards:seed
+```
+
+Idempotent: an existing role dashboard is never overwritten, so re-running never stomps an admin's
+authoring. Every starter is shape-checked and resolved against that role's own permission set before
+it is written; a starter naming something the role cannot see fails loudly.
+
+Starters are **entries-only** — order, column span and `hidden` over the six widgets the dashboard
+page already declares. `config('myra.dashboard.catalogue')` ships empty, so an instance-based starter
+would resolve to nothing on a stock install, and an entries-only payload cannot leak anything.
+
+**Hiding in a starter is tidying, not access control.** Every hidden widget is something that role
+could already see; nothing in a starter resurrects or grants anything.
 
 ## Realtime widgets
 

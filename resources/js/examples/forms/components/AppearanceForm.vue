@@ -4,10 +4,10 @@ import { toTypedSchema } from '@vee-validate/zod';
 import * as z from 'zod';
 import { toast } from 'vue-sonner';
 import { Button } from '@/components/ui/button';
-import { NativeSelect } from '@/components/ui/native-select';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import FormNativeSelect from './FormNativeSelect.vue';
 import { useFocusFirstError } from '../composables/useFocusFirstError';
 import { FONTS, THEMES } from '../data/options';
 
@@ -33,15 +33,19 @@ function onSubmit() {
             @submit="onSubmit"
             @invalid-submit="focusFirstError"
         >
-            <FormField v-slot="{ componentField }" name="font">
+            <FormField v-slot="{ value, handleChange }" name="font">
                 <FormItem>
                     <FormLabel>{{ t('examples.forms.appearance.font') }}</FormLabel>
                     <FormControl>
-                        <NativeSelect class="w-full max-sm:w-full sm:w-[200px]" v-bind="componentField">
+                        <FormNativeSelect
+                            class="w-full max-sm:w-full sm:w-[200px]"
+                            :model-value="value"
+                            @update:model-value="handleChange"
+                        >
                             <option v-for="font in FONTS" :key="font" :value="font">
                                 {{ t(`examples.forms.fonts.${font}`) }}
                             </option>
-                        </NativeSelect>
+                        </FormNativeSelect>
                     </FormControl>
                     <FormDescription>{{ t('examples.forms.appearance.fontHelp') }}</FormDescription>
                     <FormMessage />

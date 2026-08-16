@@ -39,17 +39,14 @@ final class ExampleRegistry
         ];
     }
 
+    /** Seed-free, like DemoRegistry: a lookup must observe a forget(), not undo it. */
     public static function has(string $key): bool
     {
-        self::seed();
-
         return isset(self::$entries[$key]);
     }
 
     public static function get(string $key): ?ExampleEntry
     {
-        self::seed();
-
         return self::$entries[$key]['entry'] ?? null;
     }
 
@@ -82,6 +79,7 @@ final class ExampleRegistry
         return $out;
     }
 
+    /** Clears the seeded flag too, so a later seed() can rebuild what was dropped. */
     public static function forget(string $source): void
     {
         self::$entries = array_filter(self::$entries, fn (array $row) => $row['source'] !== $source);

@@ -197,18 +197,19 @@ class ExampleRegistryTest extends TestCase
         foreach ($available as $entry) {
             $response = $this->get(route('admin.examples.preview', $entry['key']))->assertOk();
 
-            foreach ($response->headers->getCookies() as $cookie) {
-                if ($cookie->getName() !== 'sidebar_state') {
-                    continue;
-                }
+            $names = array_map(
+                fn ($cookie) => $cookie->getName(),
+                $response->headers->getCookies(),
+            );
 
-                // withoutCookie() emits an expiry, never a value: a preview may
-                // clear the live sidebar's state but must never overwrite it.
-                $this->assertNull(
-                    $cookie->getValue(),
-                    "Preview for [{$entry['key']}] set sidebar_state, which would clobber the live sidebar.",
-                );
-            }
+            // The preview mounts no SidebarProvider, so it must leave the live
+            // sidebar's persisted state alone — neither set nor cleared, since
+            // a queued deletion cookie is still a Set-Cookie with a value.
+            $this->assertNotContains(
+                'sidebar_state',
+                $names,
+                "Preview for [{$entry['key']}] emitted a sidebar_state cookie, which would clobber the live sidebar.",
+            );
         }
     }
 

@@ -526,15 +526,19 @@
                 },
                 {
                     "path": "components/AccountForm.vue",
-                    "sha256": "1a0b7e4f23c3466d0678a484bd94e0890cfd3173c83c3fba56a194652fbfe7ae"
+                    "sha256": "f5a0f0f9b7d94b35ae9d7470b4f456eb824a42363d8060fa0d9fc1d0da6de8f6"
                 },
                 {
                     "path": "components/AppearanceForm.vue",
-                    "sha256": "163bb97cfe031cecf2c1a6746d44d06019ee75a88ab208dcba0fdfb043cc7d5d"
+                    "sha256": "8d9de006f725ec28f882fd010ee0c335f7b5f15f6e44b883f075c47c9b34e437"
                 },
                 {
                     "path": "components/DisplayForm.vue",
                     "sha256": "39e7ebde8b13ad22f4a2324644e7906b61d261e1e254d37331e7bc1b30ae957b"
+                },
+                {
+                    "path": "components/FormNativeSelect.vue",
+                    "sha256": "5018a631b46ae4b250594d335b48bf4d3140c01ed503b0ced330016df2a81b36"
                 },
                 {
                     "path": "components/FormsSidebarNav.vue",
@@ -546,7 +550,7 @@
                 },
                 {
                     "path": "components/ProfileForm.vue",
-                    "sha256": "23228d1c23d9b45b5fa740506d6b5aaac3dec560bf3350ba9ace220770acd21b"
+                    "sha256": "f1f634e85be4ab73e23b3608ee11d176e18b7f2b3b4df428626d5bb291472c91"
                 },
                 {
                     "path": "composables/useFocusFirstError.ts",

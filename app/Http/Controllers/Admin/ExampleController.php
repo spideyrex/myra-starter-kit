@@ -38,8 +38,10 @@ class ExampleController extends Controller
 
     /**
      * BARE page inside a same-origin iframe. The shell mounts its own layout
-     * chrome, so it must never nest inside the admin's — and it must never be
-     * allowed to overwrite the live sidebar's persisted collapsed state.
+     * chrome, so it must never nest inside the admin's. It mounts no
+     * SidebarProvider either, so it never touches the live sidebar_state cookie
+     * — and the response must not touch it back: withoutCookie() would queue a
+     * deletion cookie that EncryptCookies still emits with a value.
      */
     public function preview(Request $request, string $example): SymfonyResponse
     {
@@ -53,7 +55,7 @@ class ExampleController extends Controller
             'example' => $entry->toClientSchema(),
             'dark' => $request->boolean('dark'),
             'reduced' => $request->boolean('reduced'),
-        ])->toResponse($request)->withoutCookie('sidebar_state');
+        ])->toResponse($request);
     }
 
     public function source(Request $request, string $example): JsonResponse
@@ -73,6 +75,8 @@ class ExampleController extends Controller
     private function entry(string $example): ExampleEntry
     {
         abort_unless(config('myra.examples.enabled', true), 404);
+
+        ExampleRegistry::seed();
 
         $entry = ExampleRegistry::get($example);
 

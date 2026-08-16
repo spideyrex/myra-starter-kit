@@ -6,8 +6,8 @@ import { toast } from 'vue-sonner';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { NativeSelect } from '@/components/ui/native-select';
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import FormNativeSelect from './FormNativeSelect.vue';
 import { useFocusFirstError } from '../composables/useFocusFirstError';
 import { LANGUAGES } from '../data/options';
 
@@ -68,15 +68,15 @@ function onSubmit() {
                 </FormItem>
             </FormField>
 
-            <FormField v-slot="{ componentField }" name="language">
+            <FormField v-slot="{ value, handleChange }" name="language">
                 <FormItem>
                     <FormLabel>{{ t('examples.forms.profile.language') }}</FormLabel>
                     <FormControl>
-                        <NativeSelect class="w-full" v-bind="componentField">
+                        <FormNativeSelect class="w-full" :model-value="value" @update:model-value="handleChange">
                             <option v-for="code in LANGUAGES" :key="code" :value="code">
                                 {{ t(`examples.forms.languages.${code}`) }}
                             </option>
-                        </NativeSelect>
+                        </FormNativeSelect>
                     </FormControl>
                     <FormDescription>{{ t('examples.forms.profile.languageHelp') }}</FormDescription>
                     <FormMessage />

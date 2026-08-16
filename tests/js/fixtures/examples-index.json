@@ -307,7 +307,7 @@
                 "data/options.ts"
             ],
             "descriptionKey": "examples.entries.forms.description",
-            "fileCount": 9,
+            "fileCount": 10,
             "key": "forms",
             "npmDependencies": [
                 "@vee-validate/zod",

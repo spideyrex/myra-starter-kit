@@ -20,6 +20,9 @@ function shellFor(id: string): DefineComponent {
     return shells[key].default ?? (shells[key] as unknown as DefineComponent);
 }
 
+/** jsdom exposes no global CSS object, so ids are escaped for an attribute selector here. */
+const attr = (value: string) => value.replace(/(["\\])/g, '\\$1');
+
 /** Text content, aria-label, aria-labelledby, or an associated <label for>. */
 function accessibleName(el: Element, root: ParentNode): string {
     const label = el.getAttribute('aria-label')?.trim();
@@ -29,7 +32,7 @@ function accessibleName(el: Element, root: ParentNode): string {
     if (labelledBy) {
         const named = labelledBy
             .split(/\s+/)
-            .map(id => root.querySelector(`#${CSS.escape(id)}`)?.textContent?.trim() ?? '')
+            .map(id => root.querySelector(`[id="${attr(id)}"]`)?.textContent?.trim() ?? '')
             .join(' ')
             .trim();
         if (named) return named;
@@ -37,7 +40,7 @@ function accessibleName(el: Element, root: ParentNode): string {
 
     const id = el.getAttribute('id');
     if (id) {
-        const associated = root.querySelector(`label[for="${CSS.escape(id)}"]`)?.textContent?.trim();
+        const associated = root.querySelector(`label[for="${attr(id)}"]`)?.textContent?.trim();
         if (associated) return associated;
     }
 

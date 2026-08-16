@@ -37,13 +37,9 @@ class MyraServiceProvider extends ServiceProvider
         }
 
         // >>> MYRA v2.7 [C] START
-        // The starter section library owns its registration: its own config
-        // array is folded into the one SectionRegistry seeds from, so it does
-        // not depend on the core list being edited or on a key nobody reads.
-        config(['myra.pagebuilder.sections' => array_values(array_unique(array_merge(
-            (array) config('myra.pagebuilder.sections', []),
-            (array) config('myra.pagebuilder_extra.extra_sections', []),
-        )))]);
+        // No merge here on purpose. SectionRegistry::seed() already spreads
+        // myra.pagebuilder_extra.extra_sections alongside the core list, so
+        // folding it into myra.pagebuilder.sections counted every extra twice.
         // <<< MYRA v2.7 [C] END
     }
 

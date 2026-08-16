@@ -450,14 +450,12 @@ require __DIR__.'/auth.php';
 require __DIR__.'/myra/examples.php';
 // <<< MYRA v2.6 [B] END
 
-<<<<<<< HEAD
 // >>> MYRA v2.7 [B] START
 require __DIR__.'/myra/pagebuilder.php';
 // <<< MYRA v2.7 [B] END
 // >>> MYRA v2.7 [C] START
 require __DIR__.'/myra/pagebuilder-preview.php';
 // <<< MYRA v2.7 [C] END
-=======
 // >>> MYRA v2.7 [D] START
 // Replicates the demo group's middleware rather than editing that block, so
 // this shared file only ever grows at the end.
@@ -467,4 +465,3 @@ Route::middleware(['auth', 'verified', 'active', '2fa', 'permission:demo.view'])
             ->name('demo.page-builder');
     });
 // <<< MYRA v2.7 [D] END
->>>>>>> fix/pb-e2e

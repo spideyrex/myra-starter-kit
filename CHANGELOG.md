@@ -2,6 +2,305 @@
 
 All notable changes to the Myra Starter Kit are documented here.
 
+## v2.7.1 — 2026-08 — "Landing page builder"
+
+page = template (chrome) + an ordered list of section blocks (content).
+
+**Your existing homepage is untouched.** `blocks` ships EMPTY on both a fresh install and an
+upgrade, so the legacy Settings > Homepage editor stays authoritative and the public page is
+byte-identical after upgrading. Adopting the builder is an explicit act, not something an upgrade
+does behind your back. Once `blocks` is non-empty the legacy surfaces say so with a banner naming
+exactly which fields no longer reach the public page — they never silently do nothing. Emptying the
+block list hands the page straight back.
+
+### The block model
+
+#### Added
+
+- `App\Homepage\Sections\*` — the section model: `SectionField`, `SectionType`, `SectionRegistry`,
+  `SectionNormalizer`, `SectionWriter`, `LegacyHomepageBlocks`, `PreviewSlot`, and the five core
+  types (`hero`, `features`, `testimonials`, `pricing`, `cta`).
+- `App\Support\UrlGuard` — one allowlist for authored link targets: `http`, `https`, `mailto`,
+  `tel`, a leading `/`, a leading `#`, and the empty string. `HtmlSanitizer::isSafeUrl()` now
+  delegates its scheme decision to it; its `<img>`-only `data:image/*` exception stays local and its
+  observable behaviour is unchanged.
+- `HomepageSettings::$blocks` — one new property. Every flat property is untouched and stays the
+  rollback path: writing `blocks = []` reverts the page exactly.
+- `database/migrations/2026_08_17_000001_add_blocks_to_homepage_settings.php` — strictly additive,
+  and it seeds an EMPTY list, exactly like `SettingsSeeder`. See "One editor at a time" below.
+- Public render path: `_shared/TemplateBody.vue` (the single branch point), `PageSections.vue`,
+  `SectionBoundary.vue`, `sectionRegistry.ts` and five adapters under `_shared/sections/`. The six
+  templates swap `OrderedSections` for `TemplateBody` and gain a `blocks` prop; nothing else changes.
+
+#### One editor at a time
+
+`blocks` starts empty on a fresh install AND on an upgrade, so the shipped homepage editor
+(Settings → Homepage, plus the Landing order form) keeps driving the public page byte for byte.
+Adopting the block model is an explicit act in the page builder, which offers the same
+`LegacyHomepageBlocks` conversion for review — an upgrade never quietly moves the homepage to an
+editor nobody has opened and turns the one they DO use into a no-op.
+
+Once `blocks` is non-empty the builder owns the section content, and the legacy surfaces say so:
+
+- `SettingController::index()` ships `homepage.page_builder_active`, and the Homepage tab renders a
+  banner naming exactly which fields no longer reach the public page.
+- `SettingController::updateHomepage()` flashes that warning instead of "updated successfully". It
+  still saves — those fields drive the navbar, the footer and the on/off switch, and remain the
+  rollback copy — but it never reports a success the public page will not show.
+- `LandingController::update()` does the same for the section order, which a block list carries
+  itself. The template choice always applies.
+
+Emptying the block list hands the page straight back to the legacy editor.
+
+#### Degradation guarantees
+
+- `SectionNormalizer::normalize()` is total — it never throws for any input. Not-a-list, unknown
+  types, malformed rows, hostile URLs, NAN/INF, 20-level nesting and 500 rows all degrade.
+- Every `image` field ships a sibling `<name>_url` that is a string only when the file is actually
+  on the public disk, so a missing image never becomes a broken `<img>`.
+- `SectionBoundary` contains a throwing section: it removes only itself.
+- `TemplateBody` falls back to the legacy `OrderedSections` render when the client cannot mount a
+  single one of the authored blocks, so `<main>` can never come back empty.
+- Template `supports` restricts BOTH paths, for the five LEGACY keys only. `HomepageController`
+  filters server-side with the same rule `sectionOrder()` uses, and `TemplateBody`/`PageSections`
+  repeat it client-side, so switching to the block model cannot make Minimal start rendering the
+  pricing wall it never showed. A package-contributed type is never filtered — it has no template
+  to have been declared in — and filtering everything out is safe because an empty list is the
+  legacy path, not a blank page.
+
+#### Seams for the other bundles
+
+- **Section labels.** Type declarations point at `pageBuilder.sections.{key}.label` /
+  `.description`, and field labels at `pageBuilder.sections.{key}.fields.{field}` (list sub-fields
+  at `…fields.{list}.{sub}`). Bundle C provides those strings; bundle A only ships
+  `pageBuilder.render.*`. `SectionRegistryTest` asserts them and skips while that namespace is absent.
+- **Preview.** `PreviewSlot::pull()` reads the session contract described in the spec, and
+  `PreviewSlot::store()` writes the identical shape if the preview endpoint wants it.
+- **Write path.** `SectionWriter::prepare()` is what the editor's update endpoint should call. An
+  unknown type is quarantined verbatim, never rejected; `maxPerPage` is editor-advisory and is not
+  enforced on write, so two heroes survive a round trip.
+
+#### Known follow-ups (v2.8)
+
+- `SettingController::updateHomepage` still writes its URL fields without `UrlGuard`. Retro-fitting
+  it is a separate, narrower change; widening this one into the legacy settings form is exactly how
+  "ensure it works" fails.
+- The legacy homepage form is not a write-through onto `blocks`. Once the builder owns the page the
+  two are edited separately (with the banner above saying which is live) rather than one silently
+  overwriting the other's work from a form showing stale values.
+- `tests/js/fixtures/homepage-settings.json` deliberately does NOT capture `blocks`: the list
+  carries server-assigned ULIDs, so a byte-exact fixture would drift on every run. The payload is
+  covered by `LegacyBlockParityTest` and by the end-to-end fixture the wiring bundle generates.
+
+### The builder editor
+
+`/admin/landing/builder` composes the public homepage from an ordered list of section blocks.
+`/admin/landing` (the template chooser) keeps working unchanged beside it; both are gated by the
+existing `settings.edit` permission, so v2.7 adds no new permission.
+
+**Added**
+- `PageBuilderController` — `index`, `update`, `convert`, `image`. The editor is rendered from the
+  server-declared section schema (`SectionRegistry::toClientSchema()`), so a package-registered
+  section type appears in the catalogue and gets a working form with **zero frontend change**.
+- `UpdatePageBlocksRequest` — envelope validation only (`present`, `array`, `max:100`, a non-empty
+  `type` per row). Field coercion, sanitisation and the per-field error keys are `SectionWriter`'s
+  job, so an unknown section type is **quarantined, not rejected**: a temporarily disabled package
+  can never make a save destroy content.
+- `useSectionList` — the single mutation surface. Every operation is keyed by a client-assigned
+  ULID, never by an index, so collapse state and Vue keys survive add / duplicate / remove / move
+  and a save round trip. 50-entry undo/redo ring over the whole array; `defaultsFor()` is
+  type-aware (`false` for bool, `[]` for list, the first option for select — never `''`).
+- `SectionList` / `SectionCard` / `SectionCatalogue` / `SectionFieldControl`.
+  - Reordering is **both** pointer and keyboard: one `useReorderable` instance drives the grip
+    (Space to grab, arrows to move, Home/End, Escape to cancel, a polite live region) and
+    `vue-draggable-plus` calls the identical `onMove`.
+  - The catalogue is a `ui/command` dialog, grouped Content / Social proof / Conversion / Layout,
+    with a visible reason on a type already at `maxPerPage`. It opens from the "Add section"
+    buttons and from the app's own `Cmd/Ctrl+K` palette, where the builder contributes an
+    "Add section" command through `useCommandScope` — the page registers **no** competing
+    `Cmd/Ctrl+K` listener of its own.
+  - An `icon` field is an allowlist picker, never a free-text box. `SectionField::toClientSchema()`
+    attaches `options` for `select` only, and the server coerces any name outside
+    `SectionField::ICON_ALLOWLIST` to `''`, so a text input would take an edit and silently drop it
+    on save. A stored name this build cannot render stays selected and says what saving will do to
+    it. A `select` that declares no option is rendered disabled for the same reason.
+  - A card shows the type's real lucide icon and a content-derived title truncated to 48 chars, a
+    `Hidden` badge at 60% opacity when disabled, and — for an unregistered type — a quarantine
+    card with a read-only JSON peek that round-trips through save intact.
+  - A card that failed validation auto-expands and scrolls itself into view; errors are addressed
+    from Laravel's `blocks.{i}.data.{field}` bag.
+- Section images: `POST /admin/landing/builder/image`. Magic-byte validated with `getimagesize()`;
+  the extension comes from `IMAGETYPE_*` and **never** from the client filename. ULID name, public
+  disk under `homepage/` (anonymous visitors have to read it), throttled 30/min.
+- `Cmd/Ctrl+S` saves, a `beforeunload` guard while dirty, Discard behind `useConfirm`, and
+  "Convert my current homepage" which loads the legacy conversion into the editor **unsaved** for
+  review.
+- A sidebar entry under **System**, beside the template chooser, guarded by
+  `route().has('admin.landing.builder.index')` so the item disappears with the routes. Without it
+  nothing in the application linked at the builder.
+- `update` redirects to `admin.landing.builder.index` explicitly rather than `back()`: the editor
+  reconciles its in-memory rows against the `blocks` prop of the response, so a redirect that
+  landed elsewhere would leave it showing un-coerced content while reporting the page as saved.
+
+**i18n** — `pageBuilder.editor.*` in en, ms and zh, full parity.
+
+**Tests** — `tests/Feature/PageBuilder/PageBuilderControllerTest.php` (authorisation on all four
+endpoints, the 100-block cap, `blocks.3.data.{field}` addressing, unknown-type quarantine, convert
+without saving, and an upload whose stored extension follows its bytes rather than its name);
+`tests/js/pageBuilderEditor.spec.ts` (31, plus source-level guards for the shortcut and the
+sidebar entry), `tests/js/pageBuilderEditor.a11y.spec.ts` (11) and
+`tests/js/pageBuilderIconField.spec.ts` (the icon picker, mounted).
+
+**Known follow-up** — `components/admin/BuilderField.vue` is deliberately untouched; its
+index-keyed rows and `''` defaults are a v2.8 item recorded in `docs/page-builder.md`.
+
+### Section library
+
+### Live preview
+- **One renderer for preview and production.** `SectionPreview.vue` frames the REAL public `/`
+  with `?preview=<token>&template=<key>`. There is no postMessage bridge and no bespoke preview
+  renderer, so the author cannot be shown a page that differs from what visitors get.
+- **`POST /admin/landing/builder/preview`** (`admin.landing.builder.preview`, `settings.edit`,
+  throttled) writes the draft into the session slot `myra.pagebuilder.preview` as
+  `['token', 'blocks', 'expires_at']` with a 15-minute TTL. One slot per session; a new POST
+  overwrites it. Nothing is persisted — the stored `blocks` are untouched by a preview.
+- A draft is never rejected. It is capped at 100 rows, shape-checked, and — when
+  `SectionWriter::prepare()` is present — hardened through the same path the save uses. A
+  half-typed row falls back to the raw list rather than blanking the pane mid-keystroke; the slot
+  is session-scoped, `PreviewSlot` re-checks `settings.edit`, and `rich_text` is sanitised again
+  client-side on render.
+- The pane reuses `blocks/BlockViewportBar.vue` (full / 1024 / 768 / 375 + a dark toggle), carries
+  the shell's theme into the frame document, debounces at 700 ms, coalesces bursts into one
+  request, keeps the last good frame when a publish fails, and exposes `refresh()` so the editor
+  can republish after a save. It reuses the existing `landing.preview.*` and `blocks.preview.*`
+  message keys, so it adds no strings of its own.
+
+### The starter section library
+Five new section types, declared in PHP and rendered by five small Vue files whose FILENAME is the
+stored `type`:
+
+| type | group | renders |
+| --- | --- | --- |
+| `rich_text` | content | authored prose, `width` prose/wide, `tinted` |
+| `image` | content | one figure, required `alt`, optional caption and link |
+| `stats` | proof | up to four headline numbers |
+| `faq` | content | a keyboard-accessible accordion |
+| `divider` | layout | a rule or a run of space |
+
+- Declared in a SEPARATE config key, `myra.pagebuilder_extra.extra_sections`, so this bundle never
+  edits the core list, and merged into `myra.pagebuilder.sections` — the array the registry
+  actually seeds from — by `MyraServiceProvider::register()`. Declaring a type somewhere nothing
+  reads is not registration; the merge is de-duplicated and order-preserving, and a package
+  contributes a section the same way.
+- Every renderer degrades instead of throwing: a non-string is read as `''`, a non-list as `[]`,
+  a non-object list row is dropped, an unknown select value falls back to a declared one, and an
+  `image` whose file is missing renders its caption rather than a broken image.
+- Theme-aware by construction — tokens only, no literal colours, no `bg-white`.
+- `rich_text` is the only type that reaches the DOM through `v-html`. It is sanitised on write and
+  again on render with `sanitizeHtml`.
+- `image` prefers the resolved `image_url` and falls back to the declared `image_path` only when
+  the server never emitted the key at all, so the figure paints whichever payload arrives while a
+  normaliser that resolved `image_url` to `null` still means "the file is gone, show the caption".
+
+### Authored URLs are untrusted at render
+`resources/js/composables/useSafeUrl.ts` is the client-side twin of `UrlGuard::safe()`: a scheme
+allowlist of `http`, `https`, `mailto`, `tel` and site-relative (`/path` but never `//host`, `#`,
+`?`, `./`, `../`), with control characters stripped first so `java\tscript:` cannot slip through,
+plus `safeSrc()` which additionally accepts a base64 bitmap `data:` URI and refuses `svg+xml`.
+
+Vue does not sanitise `:href` or `:src`, so **every** authored URL on a publicly rendered section
+now passes through it: `image`'s `link_url` and `image_url`, and the shared chrome the block
+adapters project onto — `HeroSection` (CTA + background image), `CtaBand`, `PricingTable` (per-plan
+CTA), `SiteNavbar` and `SiteFooter` (links, CTA, brand logo). A rejected URL drops the anchor in
+`image` and degrades to `#` in the chrome, so the page keeps its shape. The hero backdrop is
+quoted into `url("…")` so a URL carrying `)` or `"` cannot break out of the declaration.
+
+### i18n
+`pageBuilder.sections.*` in en, ms and zh — full parity, 99 keys: label, description, field labels,
+list sub-field labels (`itemFields` / `planFields`), variant labels, variant option labels, select
+option labels, and the four catalogue group names. Covers all TEN types, including the five core
+adapters, because the labels belong with the schema and not with the renderer.
+
+### Tests
+- `tests/Feature/PageBuilder/LandingPreviewTest.php` — the gate, the slot, and the four ways the
+  draft must NOT leak: a guest, a user without `settings.edit`, a wrong token, an expired slot.
+  Drafts are built from `SectionRegistry` defaults and the assertions run against the slot the
+  server actually wrote, never a hand-authored literal.
+- `tests/js/sectionLibrary.spec.ts` — every type in the glob mounts from an empty block in light
+  and dark and still renders a `<section>`; garbage data of the wrong shape everywhere; an
+  explicitly `null` `block`/`variant`; script, event-handler, iframe and `javascript:` payloads in
+  `rich_text`; and a sweep that feeds eleven hostile URLs (cased, whitespace- and control-character
+  obfuscated `javascript:`, `vbscript:`, `data:text/html`, `file:`, `blob:`) into every URL-bearing
+  key of every registered type and asserts none reaches the DOM as an `href` or `src`.
+- `tests/js/publicUrlGuard.spec.ts` — the same assertion for the shared homepage chrome, plus a
+  legitimate `/register` CTA surviving byte-for-byte.
+- `SectionLibraryTest` additionally asserts the declared classes reach `myra.pagebuilder.sections`,
+  that every declared field name is actually read by its renderer (the guard that would have caught
+  `image_url` vs `image_path`), and that any renderer binding a URL imports the allowlist.
+- `tests/js/pageBuilderPreview.spec.ts` — the pane publishes on mount, debounces, republishes on a
+  template change, and survives a failing endpoint without losing the frame.
+
+### Seams for the merge
+- The five type classes call `App\Homepage\Sections\{SectionType,SectionField}` (bundle A). The
+  controller resolves `SectionWriter` by name at runtime and works without it.
+- List sub-field labels live at `pageBuilder.sections.<type>.itemFields.<name>` and
+  `pageBuilder.sections.pricing.planFields.<name>`. Bundle A's list fields should point there.
+- Spec §5 puts the below-lg Sheet inside `SectionPreview`; §8 gives the editor Sections/Preview
+  tabs below 1280px. The pane is layout-agnostic and fills its container so the editor owns that
+  choice — one iframe, never two.
+
+### Wiring and end-to-end proof
+
+### Added
+
+- **Feature gallery entry** `pageBuilder` (`/admin/demo/page-builder`, `demo.view`), plus the
+  read-only gallery page `resources/js/Pages/Admin/Demo/PageBuilder.vue`. It renders the real
+  `SectionRegistry::toClientSchema()` catalogue — icon, label, description, group, field list,
+  presentation variants, max-per-page — grouped into Content / Social proof / Conversion / Layout,
+  and one live example of every registered type rendered through the public `PageSections` renderer
+  inside a `BlockViewportBar` (full / 1024 / 768 / 375 + dark).
+- **"Page builder" card on `/admin/landing`**, linking to the builder.
+- **`docs/page-builder.md`** — the model, the stored shape, the degradation guarantees, the security
+  posture, how a package contributes a section type, the preview session contract, the rollback
+  procedure, and a "Known follow-ups" section. Linked from `docs/admin-framework/README.md`.
+- **i18n** `pageBuilder.demo.*` and `pageBuilder.docs.*`, plus `gallery.demos.pageBuilder.*` and
+  `landing.builder.*`, in en, ms and zh at full parity.
+- **`LayoutTemplate`** added to `DEMO_ICONS`.
+
+### Tests
+
+- `tests/Feature/PageBuilder/EndToEndPageBuilderTest.php` — the "ensure it works" contract. Rows are
+  assembled the way the editor assembles them, from the defaults `SectionRegistry::toClientSchema()`
+  declares; they are saved through the real `PUT admin.landing.builder.update`; the assertions read
+  the props the real public homepage shipped. Covers ordering, two heroes, a hidden section, a
+  quarantined unknown type, a garbage stored list, and one fetch of `/` as an anonymous visitor.
+- `tests/Feature/PageBuilder/SanitisationTest.php` — script tags, `onerror`, a whole `<iframe>`
+  subtree, `javascript:` / `data:` URLs and undeclared `data` keys, all through the real endpoint and
+  asserted on the real public payload. Relative, anchor and `mailto:` URLs are proven to survive.
+- `tests/js/pageBuilderPayload.spec.ts` — mounts `Home.vue` against
+  `tests/js/fixtures/page-builder-blocks.json`, which the PHP end-to-end test asserts against the
+  payload the real public homepage shipped. Every expectation is derived from the file, never
+  hardcoded.
+- `tests/js/pageBuilderDemo.spec.ts` — the gallery entry resolves in en/ms/zh against the real
+  registry payload; the page mounts in all three locales, ships no hardcoded English, groups the
+  catalogue, degrades to the type key for a section with no copy, and shows an empty state rather
+  than a blank card.
+- `tests/Feature/PageBuilder/SyncsPageBuilderFixtures.php` — bundle D's own copy of the fixture
+  bridge, as the tree already does per bundle.
+
+### Notes
+
+- No new permission. The builder reuses `settings.edit`; the gallery reuses `demo.view`.
+- `tests/js/fixtures/page-builder-blocks.json` is a **guarded artefact**, not a free-floating
+  literal. The PHP end-to-end test asserts every value in it against the payload the real public
+  homepage shipped for that path — the two CI jobs run on separate checkouts, so this assertion is
+  the only thing binding them. Keys the server adds on top are tolerated; a changed or vanished
+  value fails the PHP suite. `MYRA_WRITE_FIXTURES=1 php artisan test --filter=EndToEndPageBuilder`
+  rewrites it with the full payload. Row ids are restated as `row-N`: the real ones are ULIDs,
+  reissued per save, and are asserted (non-empty, unique, moved-not-reissued) in PHP instead.
+- The link to the builder resolves its Ziggy route name if it exists and falls back to
+  `/admin/landing/builder` otherwise, so the card is never dead in a partially deployed tree.
+
 ## v2.7.0 — 2026-08 — "Per-role dashboards"
 
 Every role can carry a default dashboard. Users of that role get it automatically, may personalise

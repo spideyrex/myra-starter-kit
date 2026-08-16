@@ -60,20 +60,29 @@ class SectionLibraryTest extends TestCase
      * The library is DECLARED in its own key and MERGED into the one the
      * registry reads. Declaring it somewhere nobody reads is not registration.
      */
-    public function test_the_extra_key_is_merged_into_the_array_the_registry_reads(): void
+    public function test_every_declared_class_actually_reaches_the_registry(): void
     {
-        $read = (array) config('myra.pagebuilder.sections', []);
+        // Asserts the OUTCOME, not the mechanism. This previously required the
+        // starter key to be merged into myra.pagebuilder.sections by a service
+        // provider; SectionRegistry::seed() already spreads both keys, so that
+        // merge counted every extra twice. What matters is that a declared
+        // class is registered — not which array carried it there.
+        $ids = SectionRegistry::ids();
 
-        $this->assertNotEmpty($read, 'The registry\'s own config key must carry the starter library.');
+        $this->assertNotEmpty($ids, 'The registry must carry the starter library.');
 
         foreach ($this->declaredClasses() as $class) {
-            $this->assertContains($class, $read, "{$class} is declared but never reaches the registry.");
+            $this->assertContains(
+                $class::define()->key(),
+                $ids,
+                "{$class} is declared but never reaches the registry.",
+            );
         }
 
         $this->assertSame(
-            count($read),
-            count(array_unique($read)),
-            'The merge must be idempotent — a class must not be seeded twice.',
+            count($ids),
+            count(array_unique($ids)),
+            'Seeding must be idempotent — a section must not be registered twice.',
         );
     }
 

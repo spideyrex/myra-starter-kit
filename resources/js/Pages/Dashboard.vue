@@ -20,6 +20,7 @@ import { StatWidget, ChartWidget, type ColSpan } from '@/composables/useDashboar
 import type { ReportResultPayload, ReportState } from '@/components/admin/charts/types';
 // >>> MYRA v2.5 [A] START
 import { useDashboardLayout } from '@/composables/useDashboardLayout';
+import { useInstanceResults } from '@/composables/useInstanceResults';
 // <<< MYRA v2.5 [A] END
 
 const page = usePage<PageProps>();
@@ -138,9 +139,15 @@ const dashboard = useDashboardLayout({
 const editorLayout = computed(() => dashboard.layout.value);
 const editing = computed(() => canCustomise.value && dashboard.editing.value);
 
-function onReorder(key: string, toIndex: number): void {
-    dashboard.moveTo(key, toIndex);
+// A grid emits its OWN key sequence: the three grids share one global order, so
+// an index into any one of them would land on the wrong tile.
+function onReorder(key: string, orderedKeys: string[]): void {
+    dashboard.reorderWithin(orderedKeys, key);
 }
+
+// Catalogue-added tiles are report-bound but nothing on this page computes their
+// data. Inert while `instances` is empty, which is the default.
+const instanceResults = useInstanceResults({ widgets: () => dashboard.instances.value });
 // <<< MYRA v2.5 [A] END
 
 // --- Local adapter: page props -> frozen report wire shape --------------------
@@ -340,6 +347,8 @@ const quickActions = computed(() => [
                 v-if="dashboard.instances.value.length > 0"
                 :widgets="dashboard.instances.value"
                 :page-props="props"
+                :results="instanceResults.results.value"
+                :loading="instanceResults.loading.value"
                 :layout="editorLayout"
                 :editing="editing"
                 @reorder="onReorder"

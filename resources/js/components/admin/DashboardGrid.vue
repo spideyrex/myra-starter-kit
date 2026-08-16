@@ -36,7 +36,12 @@ const props = withDefaults(defineProps<{
 
 // >>> MYRA v2.5 [A]
 const emit = defineEmits<{
-    reorder: [key: string, toIndex: number];
+    /**
+     * This grid's OWN key sequence after the move — never a positional index.
+     * A page renders several grids over ONE global order, so an index into this
+     * grid means nothing to the page; a key sequence is unambiguous.
+     */
+    reorder: [key: string, orderedKeys: string[]];
     resize: [key: string, colSpan: ColSpan, rowSpan?: number];
     remove: [key: string];
     rename: [key: string, title: string | null];
@@ -81,10 +86,23 @@ const resolved = computed<WidgetSchema[]>(() =>
     applyLayout(resolveWidgets(props.widgets, props.pageProps, props.can ?? can), props.layout),
 );
 
+function orderAfterMove(key: string, toIndex: number): string[] {
+    const keys = resolved.value.map(widget => widget.key);
+    const from = keys.indexOf(key);
+
+    if (from === -1) return keys;
+
+    const next = [...keys];
+    next.splice(from, 1);
+    next.splice(Math.max(0, Math.min(toIndex, next.length)), 0, key);
+
+    return next;
+}
+
 const reorder = useReorderable<WidgetSchema>({
     items: resolved,
     keyOf: widget => widget.key,
-    onMove: (key, toIndex) => emit('reorder', key, toIndex),
+    onMove: (key, toIndex) => emit('reorder', key, orderAfterMove(key, toIndex)),
     announce: () => '',
     enabled: () => props.editing === true,
     roleDescription: () => t('dashboardLayout.a11y.roledescription'),

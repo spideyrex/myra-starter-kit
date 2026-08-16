@@ -59,6 +59,45 @@ class DashboardLayoutControllerTest extends TestCase
         return json_decode(json_encode($props[$key] ?? null), true);
     }
 
+    public function test_the_persisted_row_carries_the_acting_users_id(): void
+    {
+        $user = $this->editor();
+        $this->actingAs($user);
+
+        $this->putLayout(['version' => 1, 'entries' => [], 'instances' => []])->assertRedirect();
+
+        $this->assertDatabaseHas('dashboard_layouts', [
+            'user_id' => $user->id,
+            'dashboard_key' => 'admin.dashboard',
+        ]);
+
+        $row = DashboardLayout::sole();
+
+        $this->assertNotNull($row->user_id, 'The layout was created unowned.');
+        $this->assertSame((int) $user->id, (int) $row->user_id);
+        $this->assertTrue($row->isOwnedBy($user));
+
+        // A second PUT updates that same owned row rather than minting another.
+        $this->putLayout([
+            'version' => 1,
+            'entries' => [['key' => 'total_users', 'order' => 0]],
+            'instances' => [],
+        ])->assertRedirect();
+
+        $this->assertDatabaseCount('dashboard_layouts', 1);
+        $this->assertSame((int) $user->id, (int) DashboardLayout::sole()->user_id);
+
+        // $fillable must carry the ownership column too: a create() that drops
+        // user_id would leave the row unowned rather than fail loudly.
+        $direct = DashboardLayout::create([
+            'user_id' => $user->id,
+            'dashboard_key' => 'admin.dashboard.probe',
+            'payload' => ['version' => 1, 'entries' => [], 'instances' => []],
+        ]);
+
+        $this->assertSame((int) $user->id, (int) $direct->fresh()->user_id);
+    }
+
     public function test_an_entry_for_an_undeclared_widget_persists_but_creates_nothing(): void
     {
         $user = $this->editor();

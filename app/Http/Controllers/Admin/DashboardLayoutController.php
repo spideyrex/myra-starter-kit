@@ -34,10 +34,20 @@ class DashboardLayoutController extends Controller
             fn (array $i) => WidgetInstance::resolve($i, $user) !== null,
         ));
 
-        DB::transaction(fn () => DashboardLayout::updateOrCreate(
-            ['user_id' => $user->id, 'dashboard_key' => $data['dashboard_key']],
-            ['payload' => $payload, 'team_id' => $user->current_team_id],
-        ));
+        // Ownership is assigned outside mass assignment: the row can never be
+        // created unowned, whatever $fillable says.
+        DB::transaction(function () use ($user, $data, $payload) {
+            $layout = DashboardLayout::firstOrNew([
+                'user_id' => $user->id,
+                'dashboard_key' => $data['dashboard_key'],
+            ]);
+
+            $layout->user_id = $user->id;
+            $layout->dashboard_key = $data['dashboard_key'];
+            $layout->payload = $payload;
+            $layout->team_id = $user->current_team_id;
+            $layout->save();
+        });
 
         return back()->with('success', __('dashboardLayout.saved'));
     }

@@ -173,7 +173,7 @@ watch(tiles, syncDragList, { deep: true });
                 :page-props="{}"
                 :layout="renderLayout"
                 :editing="dashboard.editing.value"
-                @reorder="(key: string, index: number) => dashboard.moveTo(key, index)"
+                @reorder="(key: string, keys: string[]) => dashboard.reorderWithin(keys, key)"
                 @resize="(key: string, colSpan: ColSpan) => dashboard.resize(key, colSpan)"
                 @rename="(key: string, title: string | null) => dashboard.rename(key, title)"
                 @hide="dashboard.toggleHidden($event)"

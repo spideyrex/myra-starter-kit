@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class DashboardLayout extends Model
 {
-    protected $fillable = ['dashboard_key', 'payload', 'team_id'];
+    protected $fillable = ['user_id', 'dashboard_key', 'payload', 'team_id'];
 
     protected $casts = ['payload' => 'array'];
 

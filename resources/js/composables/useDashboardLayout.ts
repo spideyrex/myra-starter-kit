@@ -45,6 +45,7 @@ export interface UseDashboardLayout {
     usedCatalogueKeys: ComputedRef<string[]>;
     move(key: string, delta: -1 | 1): string;
     moveTo(key: string, index: number): void;
+    reorderWithin(keys: string[], movedKey?: string): void;
     resize(key: string, colSpan: ColSpan, rowSpan?: number): void;
     toggleHidden(key: string): void;
     rename(key: string, title: string | null): void;
@@ -277,6 +278,34 @@ export function useDashboardLayout(options: UseDashboardLayoutOptions): UseDashb
         announce(key);
     }
 
+    /**
+     * Reorder from a grid that renders only PART of the dashboard.
+     *
+     * `keys` is that grid's own key sequence after the move. The global slots
+     * those keys occupy are refilled in that sequence, so a positional index is
+     * never carried across the component boundary and tiles owned by the other
+     * grids (and hidden tiles) keep their place.
+     */
+    function reorderWithin(keys: string[], movedKey?: string): void {
+        const order = currentOrder();
+        const slots: number[] = [];
+
+        order.forEach((key, index) => {
+            if (keys.includes(key)) slots.push(index);
+        });
+
+        if (slots.length === 0 || slots.length !== keys.length) return;
+
+        const next = [...order];
+        slots.forEach((slot, i) => { next[slot] = keys[i]; });
+
+        if (next.every((key, i) => key === order[i])) return;
+
+        push();
+        state.value.order = next;
+        if (movedKey !== undefined) announce(movedKey);
+    }
+
     function move(key: string, delta: -1 | 1): string {
         const from = indexOf(key);
         if (from === -1) return announcement.value;
@@ -437,7 +466,7 @@ export function useDashboardLayout(options: UseDashboardLayoutOptions): UseDashb
 
     return {
         widgets, instances, hidden, layout, editing, dirty, saving, customised, usedCatalogueKeys,
-        move, moveTo, resize, toggleHidden, rename, addInstance, removeInstance,
+        move, moveTo, reorderWithin, resize, toggleHidden, rename, addInstance, removeInstance,
         payload, save, reset, undo, cancel, announcement,
     };
 }

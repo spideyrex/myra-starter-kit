@@ -57,7 +57,7 @@ class WidgetInstanceTest extends TestCase
         return $user->fresh();
     }
 
-    private function instance(array $overrides = []): array
+    private function rawInstance(array $overrides = []): array
     {
         return array_merge([
             'key' => 'trend#aa11bb',
@@ -68,7 +68,7 @@ class WidgetInstanceTest extends TestCase
 
     public function test_a_valid_instance_resolves_with_only_declared_binding_keys(): void
     {
-        $resolved = WidgetInstance::resolve($this->instance(), $this->reader());
+        $resolved = WidgetInstance::resolve($this->rawInstance(), $this->reader());
 
         $this->assertNotNull($resolved);
         $this->assertSame('chart', $resolved['type']);
@@ -82,7 +82,7 @@ class WidgetInstanceTest extends TestCase
 
     public function test_an_undeclared_binding_key_is_dropped(): void
     {
-        $resolved = WidgetInstance::resolve($this->instance([
+        $resolved = WidgetInstance::resolve($this->rawInstance([
             'binding' => ['dimension' => 'status', 'measures' => ['signups'], 'table' => 'users', 'raw' => '1=1'],
         ]), $this->reader());
 
@@ -93,7 +93,7 @@ class WidgetInstanceTest extends TestCase
 
     public function test_an_unknown_catalogue_key_resolves_to_null(): void
     {
-        $this->assertNull(WidgetInstance::resolve($this->instance(['catalogue' => 'nope']), $this->reader()));
+        $this->assertNull(WidgetInstance::resolve($this->rawInstance(['catalogue' => 'nope']), $this->reader()));
     }
 
     public function test_an_entry_whose_permission_the_actor_lacks_resolves_to_null(): void
@@ -115,26 +115,26 @@ class WidgetInstanceTest extends TestCase
 
     public function test_a_report_ability_the_actor_lacks_resolves_to_null(): void
     {
-        $this->assertNull(WidgetInstance::resolve($this->instance(), $this->makeUser()));
+        $this->assertNull(WidgetInstance::resolve($this->rawInstance(), $this->makeUser()));
     }
 
     public function test_a_dimension_outside_the_vocabulary_resolves_to_null(): void
     {
-        $this->assertNull(WidgetInstance::resolve($this->instance([
+        $this->assertNull(WidgetInstance::resolve($this->rawInstance([
             'binding' => ['dimension' => 'password', 'measures' => ['signups']],
         ]), $this->reader()));
     }
 
     public function test_a_measure_outside_the_vocabulary_resolves_to_null(): void
     {
-        $this->assertNull(WidgetInstance::resolve($this->instance([
+        $this->assertNull(WidgetInstance::resolve($this->rawInstance([
             'binding' => ['dimension' => 'status', 'measures' => ['password']],
         ]), $this->reader()));
     }
 
     public function test_a_chart_type_outside_the_declared_set_resolves_to_null(): void
     {
-        $this->assertNull(WidgetInstance::resolve($this->instance(['chartType' => 'raw']), $this->reader()));
+        $this->assertNull(WidgetInstance::resolve($this->rawInstance(['chartType' => 'raw']), $this->reader()));
     }
 
     public function test_chart_types_narrow_and_never_widen(): void
@@ -148,7 +148,7 @@ class WidgetInstanceTest extends TestCase
     {
         config(['myra.reports.max_groups' => 50]);
 
-        $resolved = WidgetInstance::resolve($this->instance([
+        $resolved = WidgetInstance::resolve($this->rawInstance([
             'binding' => ['dimension' => 'status', 'measures' => ['signups'], 'limit' => 10000],
         ]), $this->reader());
 
@@ -160,9 +160,9 @@ class WidgetInstanceTest extends TestCase
         $user = $this->reader();
 
         $resolved = WidgetInstance::resolveAll([
-            $this->instance(['key' => 'trend#1']),
-            $this->instance(['key' => 'trend#2']),
-            $this->instance(['key' => 'trend#3']),
+            $this->rawInstance(['key' => 'trend#1']),
+            $this->rawInstance(['key' => 'trend#2']),
+            $this->rawInstance(['key' => 'trend#3']),
         ], $user);
 
         $this->assertCount(2, $resolved);
@@ -173,8 +173,8 @@ class WidgetInstanceTest extends TestCase
         config(['myra.dashboard.max_instances' => 1]);
 
         $resolved = WidgetInstance::resolveAll([
-            $this->instance(['key' => 'trend#1']),
-            $this->instance(['key' => 'trend#2']),
+            $this->rawInstance(['key' => 'trend#1']),
+            $this->rawInstance(['key' => 'trend#2']),
         ], $this->reader());
 
         $this->assertCount(1, $resolved);

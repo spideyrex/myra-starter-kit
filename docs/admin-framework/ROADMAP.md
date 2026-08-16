@@ -37,28 +37,40 @@ Concrete, verified gaps in the schema engines.
 
 Known-and-logged, not silently dropped.
 
-- [ ] **Scaffolding stubs are stale — TWO separate systems, do not conflate them** (corrected
+- [~] **Scaffolding stubs — (a) DONE v2.4.0, verified 2026-08-16; (b) open, needs a decision — TWO separate systems, do not conflate them** (corrected
       2026-08-16 after inspection; the earlier note here was wrong):
 
-      **(a) `stubs/admin/*.stub` — 8 files, TRACKED IN THE MAIN REPO, agent-reachable.**
+      **(a) `stubs/admin/*.stub` — DONE in v2.4.0, empirically verified 2026-08-16.** The generator now emits model + migration + form requests + a feature test, and the index page passes `table-key` so saved views and the column manager work in generated resources. Verified by running `make:myra-resource Widget --model` end to end: all emitted PHP lints clean and the generated Vue pages pass `vue-tsc` with zero errors. (It stops at permission registration without a database — that is environmental, not a defect.)
       Consumed by the `make:myra-*` generators via `base_path()` (see
-      `app/Console/Commands/Myra/Concerns/ScaffoldsAdmin.php::writeStub`). This is the
-      higher-value target: it is what `make:myra-resource` emits every time you scaffold.
-      Today `page.index.stub` imports only `TextColumn`/`DateColumn` + `EditAction`/`DeleteAction`,
-      and `controller.resource.stub` has no `bulkAction()` at all.
-      **This is real design work, not a copy.** Adding `HandlesInlineUpdates` needs a matching
-      route + `inlineEditableFields()`, and adding `ColorColumn`/`CheckboxColumn` blind would
-      reference columns the generated model may not have — a careless port makes the generator
-      emit scaffolds that 404 or fatal. Needs a proper design pass deciding what is universally
-      safe to emit vs. what belongs behind a generator flag.
+      `app/Console/Commands/Myra/Concerns/ScaffoldsAdmin.php::writeStub`).
+      Deliberately NOT emitted, and this remains the right call: `HandlesInlineUpdates` needs a
+      matching route + `inlineEditableFields()`, and `ColorColumn`/`CheckboxColumn` would
+      reference columns the generated model may not have. Those belong behind a generator flag,
+      not in the default scaffold.
 
-      **(b) `packages/myra/framework/stubs/` — 384 files, SEPARATE PRIVATE REPO, NOT
-      agent-reachable from a worktree.** Consumed by `myra:install` (`InstallCommand` copies the
-      whole tree) to bootstrap a brand-new project. It is a **v1.0-era snapshot, two releases
-      stale**: verified absent are `ColorSwatch.vue`, `CodeBlock.vue`, `useCodeMirror.ts`,
-      `useTableViews.ts`, `useSummaries.ts` — i.e. a freshly installed project gets none of
-      v2.1.0 or v2.2.0. Lower urgency (only affects new installs, not this platform) but it is
-      a full-tree sync and must be done outside a worktree, in the `myra-framework` repo.
+      **(b) `packages/myra/framework/stubs/` — SEPARATE PRIVATE REPO, still open. NEEDS A HUMAN
+      DECISION FIRST — do not bulk-copy.** Consumed by `myra:install` (`InstallCommand` copies the
+      whole tree) to bootstrap a brand-new project. Measured 2026-08-16 against v2.5.1:
+
+      | | app | stubs |
+      |---|---|---|
+      | `resources/js` (.vue/.ts) | 610 | 293 |
+      | `app` (.php) | 272 | 58 |
+
+      This is a rebuild of the installer payload, not a sync. Two reasons it was deliberately
+      NOT executed:
+      1. **Parts of the stub tree are intentionally leaner** — e.g. its `AuthenticatedLayout.vue`
+         omits the command palette, team switcher and i18n. A blind copy destroys those choices
+         and drags the whole demo catalogue, tenancy, AI, PWA and plugin surface into every new
+         install.
+      2. **It cannot be verified here.** Testing `myra:install` requires a fresh Laravel project
+         to install into. Copying ~600 files and pushing them unverified is exactly the kind of
+         change the release gate exists to prevent.
+
+      **What it needs before anyone starts:** (a) a product decision on what a new install should
+      contain — everything, or a core subset with the rest opt-in via plugins; (b) a scratch
+      Laravel app to run `myra:install` against end to end. With those two, it is a
+      straightforward, mostly mechanical job in the `myra-framework` repo.
 - [x] Markdown field image upload endpoint (private disk, magic-byte validation) — v2.2.0
 - [x] `ReplicateAction.schema()` now carries the modal's edits to the replicate endpoint — v2.2.0
 - [x] `ActionGroup.permission()` is dead for a root-level group (copied everywhere except `permission`). — v2.2.0

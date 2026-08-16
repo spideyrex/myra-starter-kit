@@ -2823,5 +2823,47 @@
             "description": "Bentuk blok yang disimpan, jaminan penurunan taraf, cara pakej menyumbang jenis bahagian, kontrak pratonton dan prosedur pengembalian.",
             "link": "Baca panduan pembina halaman"
         }
+    },
+    "appearancePage": {
+        "background": {
+            "title": "Latar belakang halaman",
+            "description": "Apa yang berada di belakang bar navigasi, bahagian kandungan dan pengaki pada halaman awam.",
+            "type": "Latar belakang",
+            "typeHelp": "Tiada mengekalkan latar belakang tema semasa dan tidak mengubah apa-apa.",
+            "types": {
+                "none": "Tiada",
+                "brand": "Warna jenama",
+                "solid": "Warna pejal",
+                "gradient": "Kecerunan",
+                "pattern": "Corak",
+                "image": "Imej"
+            },
+            "recipe": "Gaya",
+            "recipes": {
+                "brand-fade": "Pudar jenama",
+                "brand-mesh": "Jaring jenama",
+                "dusk": "Senja",
+                "dawn": "Subuh",
+                "ink": "Dakwat",
+                "aurora": "Aurora",
+                "dots": "Bintik",
+                "grid": "Grid",
+                "diagonal": "Garisan pepenjuru",
+                "noise": "Bunyi"
+            },
+            "color": "Warna asas",
+            "colorHelp": "Warna teks diukur terhadap warna ini dan dipilih untuk anda. Ia juga yang dipaparkan jika kecerunan, corak atau imej gagal dimuatkan.",
+            "scrim": "Peredupan imej",
+            "scrimHelp": "Sejauh mana imej digelapkan supaya teks di atasnya kekal boleh dibaca. Imej sentiasa diredupkan sedikit.",
+            "scrims": {
+                "none": "Tiada",
+                "light": "Ringan",
+                "medium": "Sederhana",
+                "strong": "Kuat"
+            },
+            "navbar": "Tunjukkan latar belakang menerusi bar navigasi",
+            "navbarHelp": "Bar melepaskan panelnya sendiri supaya latar belakang naik ke bahagian atas halaman.",
+            "imageNote": "Imej latar belakang dimuat naik dalam editor penampilan. Sehingga satu dimuat naik, ini kembali kepada warna asas."
+        }
     }
 }

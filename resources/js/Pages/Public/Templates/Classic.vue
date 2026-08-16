@@ -3,6 +3,7 @@ import { Head } from '@inertiajs/vue3';
 import { useThemeColors } from '@/composables/useThemeColors';
 import SiteNavbar from './_shared/SiteNavbar.vue';
 import SiteFooter from './_shared/SiteFooter.vue';
+import SiteSurface from './_shared/SiteSurface.vue';
 import TemplateBody from './_shared/TemplateBody.vue';
 import { useSiteBrand } from './_shared/useSiteBrand';
 import type { HomepageData, PageSectionRow } from '@/types';
@@ -27,8 +28,8 @@ const { name } = useSiteBrand();
 <template>
     <Head :title="name" />
 
-    <div class="min-h-screen bg-background text-foreground">
-        <SiteNavbar :settings="settings" :authenticated="authenticated" />
+    <SiteSurface v-slot="{ translucent }">
+        <SiteNavbar :settings="settings" :authenticated="authenticated" :translucent="translucent" />
 
         <main id="content">
             <TemplateBody
@@ -41,5 +42,5 @@ const { name } = useSiteBrand();
         </main>
 
         <SiteFooter :settings="settings" />
-    </div>
+    </SiteSurface>
 </template>

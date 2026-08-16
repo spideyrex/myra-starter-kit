@@ -7,6 +7,9 @@ use App\Homepage\HomepageTemplate;
 use App\Homepage\Sections\PreviewSlot;
 use App\Homepage\Sections\SectionNormalizer;
 // <<< MYRA v2.7 [A] END
+// >>> MYRA v2.8 [C] START
+use App\Homepage\PageSurfaceFallback;
+// <<< MYRA v2.8 [C] END
 use App\Homepage\TemplateRegistry;
 use App\Settings\HomepageSettings;
 use Illuminate\Http\Request;
@@ -48,9 +51,50 @@ class HomepageController extends Controller
             // >>> MYRA v2.7 [A] START
             'blocks' => $this->visibleBlocks($raw, $template),
             // <<< MYRA v2.7 [A] END
+            // >>> MYRA v2.8 [C] START
+            'surface' => $this->pageSurface(),
+            'navbarTranslucent' => $this->navbarTranslucent(),
+            // <<< MYRA v2.8 [C] END
         ]);
         // <<< MYRA v2.6 [D] END
     }
+
+    // >>> MYRA v2.8 [C] START
+    /**
+     * The page surface sits on the template ROOT, above the legacy/block
+     * branch inside TemplateBody — so both paths get the identical payload.
+     *
+     * The engine is bundle A's and is resolved optionally: absent, disabled or
+     * throwing all land on the inert `none` surface, which paints nothing.
+     *
+     * @return array<string,mixed>
+     */
+    private function pageSurface(): array
+    {
+        try {
+            if (! class_exists(\App\Appearance\AppearanceManager::class)) {
+                return PageSurfaceFallback::inert();
+            }
+
+            return app(\App\Appearance\AppearanceManager::class)->page()->toArray();
+        } catch (\Throwable) {
+            return PageSurfaceFallback::inert();
+        }
+    }
+
+    private function navbarTranslucent(): bool
+    {
+        try {
+            if (! class_exists(\App\Appearance\AppearanceManager::class)) {
+                return PageSurfaceFallback::navbarTranslucent();
+            }
+
+            return app(\App\Appearance\AppearanceManager::class)->navbarTranslucent();
+        } catch (\Throwable) {
+            return PageSurfaceFallback::navbarTranslucent();
+        }
+    }
+    // <<< MYRA v2.8 [C] END
 
     // >>> MYRA v2.7 [A] START
     /**

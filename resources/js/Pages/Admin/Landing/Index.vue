@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue';
+import { computed, ref, watch } from 'vue';
 import { Head, Link, useForm } from '@inertiajs/vue3';
 import { useI18n } from 'vue-i18n';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
@@ -8,9 +8,29 @@ import TemplatePicker from '@/components/admin/TemplatePicker.vue';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { ArrowDown, ArrowUp, ExternalLink, LayoutTemplate } from 'lucide-vue-next';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Switch } from '@/components/ui/switch';
+import { ArrowDown, ArrowUp, ExternalLink, LayoutTemplate, Paintbrush } from 'lucide-vue-next';
 import { routeExists } from '@/lib/routeExists';
 import type { TemplateSchema } from '@/types';
+
+// >>> MYRA v2.8 [C] START
+interface PageSurfaceForm {
+    page_bg_type: string;
+    page_bg_color: string | null;
+    page_bg_recipe: string | null;
+    page_bg_scrim: string;
+    page_navbar_translucent: boolean;
+}
+
+interface SurfaceOptions {
+    types: string[];
+    gradients: string[];
+    patterns: string[];
+    scrims: string[];
+}
+// <<< MYRA v2.8 [C] END
 
 const props = defineProps<{
     templates: TemplateSchema[];
@@ -18,6 +38,10 @@ const props = defineProps<{
     sectionOrder: string[];
     sections: string[];
     sectionsEnabled: Record<string, boolean>;
+    // >>> MYRA v2.8 [C] START
+    surface: PageSurfaceForm;
+    surfaceOptions: SurfaceOptions;
+    // <<< MYRA v2.8 [C] END
 }>();
 
 const { t } = useI18n();
@@ -25,7 +49,45 @@ const { t } = useI18n();
 const form = useForm({
     template: props.current,
     section_order: [...props.sectionOrder],
+    // >>> MYRA v2.8 [C] START
+    page_bg_type: props.surface.page_bg_type,
+    page_bg_color: props.surface.page_bg_color ?? '#111827',
+    page_bg_recipe: props.surface.page_bg_recipe ?? '',
+    page_bg_scrim: props.surface.page_bg_scrim,
+    page_navbar_translucent: props.surface.page_navbar_translucent,
+    // <<< MYRA v2.8 [C] END
 });
+
+// >>> MYRA v2.8 [C] START
+const recipeOptions = computed<string[]>(() => {
+    if (form.page_bg_type === 'gradient') return props.surfaceOptions.gradients;
+    if (form.page_bg_type === 'pattern') return props.surfaceOptions.patterns;
+
+    return [];
+});
+
+/** A recipe belongs to exactly one family, so a type change re-picks one. */
+watch(
+    () => form.page_bg_type,
+    () => {
+        const options = recipeOptions.value;
+
+        if (options.length === 0) {
+            form.page_bg_recipe = '';
+
+            return;
+        }
+
+        if (!options.includes(form.page_bg_recipe)) {
+            form.page_bg_recipe = options[0];
+        }
+    },
+);
+
+const usesColor = computed(() => ['solid', 'gradient', 'pattern', 'image'].includes(form.page_bg_type));
+const usesImage = computed(() => form.page_bg_type === 'image');
+const hasSurface = computed(() => form.page_bg_type !== 'none');
+// <<< MYRA v2.8 [C] END
 
 /** Announced after a move; read by the aria-live region below. */
 const announcement = ref('');
@@ -68,7 +130,17 @@ const builderHref = computed(() =>
 // <<< MYRA v2.7 [D] END
 
 function submit() {
-    form.put(route('admin.landing.update'), { preserveScroll: true });
+    // >>> MYRA v2.8 [C] START
+    // '' is not a valid stored recipe, and a base colour is only meaningful for
+    // the types that paint one. Both go over the wire as null instead.
+    form
+        .transform(data => ({
+            ...data,
+            page_bg_recipe: data.page_bg_recipe === '' ? null : data.page_bg_recipe,
+            page_bg_color: usesColor.value ? data.page_bg_color : null,
+        }))
+        .put(route('admin.landing.update'), { preserveScroll: true });
+    // <<< MYRA v2.8 [C] END
 }
 </script>
 
@@ -120,6 +192,99 @@ function submit() {
                     <TemplatePicker v-model="form.template" :templates="templates" />
                 </CardContent>
             </Card>
+
+            <!-- >>> MYRA v2.8 [C] START -->
+            <Card>
+                <CardHeader>
+                    <CardTitle class="flex items-center gap-2">
+                        <Paintbrush class="size-4 text-muted-foreground" aria-hidden="true" />
+                        {{ t('appearancePage.background.title') }}
+                    </CardTitle>
+                    <CardDescription>{{ t('appearancePage.background.description') }}</CardDescription>
+                </CardHeader>
+                <CardContent class="space-y-4">
+                    <div class="grid gap-4 sm:grid-cols-2">
+                        <div class="space-y-2">
+                            <Label for="page-bg-type">{{ t('appearancePage.background.type') }}</Label>
+                            <select
+                                id="page-bg-type"
+                                v-model="form.page_bg_type"
+                                class="h-9 w-full rounded-md border bg-background px-3 text-sm"
+                                :aria-describedby="'page-bg-type-help'"
+                            >
+                                <option v-for="type in surfaceOptions.types" :key="type" :value="type">
+                                    {{ t(`appearancePage.background.types.${type}`) }}
+                                </option>
+                            </select>
+                            <p id="page-bg-type-help" class="text-xs text-muted-foreground">
+                                {{ t('appearancePage.background.typeHelp') }}
+                            </p>
+                        </div>
+
+                        <div v-if="recipeOptions.length" class="space-y-2">
+                            <Label for="page-bg-recipe">{{ t('appearancePage.background.recipe') }}</Label>
+                            <select
+                                id="page-bg-recipe"
+                                v-model="form.page_bg_recipe"
+                                class="h-9 w-full rounded-md border bg-background px-3 text-sm"
+                            >
+                                <option v-for="recipe in recipeOptions" :key="recipe" :value="recipe">
+                                    {{ t(`appearancePage.background.recipes.${recipe}`) }}
+                                </option>
+                            </select>
+                        </div>
+
+                        <div v-if="usesColor" class="space-y-2">
+                            <Label for="page-bg-color">{{ t('appearancePage.background.color') }}</Label>
+                            <div class="flex items-center gap-2">
+                                <input
+                                    id="page-bg-color"
+                                    v-model="form.page_bg_color"
+                                    type="color"
+                                    class="h-9 w-12 shrink-0 cursor-pointer rounded-md border bg-background"
+                                    :aria-describedby="'page-bg-color-help'"
+                                />
+                                <Input v-model="form.page_bg_color" class="font-mono" spellcheck="false" />
+                            </div>
+                            <p id="page-bg-color-help" class="text-xs text-muted-foreground">
+                                {{ t('appearancePage.background.colorHelp') }}
+                            </p>
+                        </div>
+
+                        <div v-if="usesImage" class="space-y-2">
+                            <Label for="page-bg-scrim">{{ t('appearancePage.background.scrim') }}</Label>
+                            <select
+                                id="page-bg-scrim"
+                                v-model="form.page_bg_scrim"
+                                class="h-9 w-full rounded-md border bg-background px-3 text-sm"
+                                :aria-describedby="'page-bg-scrim-help'"
+                            >
+                                <option v-for="scrim in surfaceOptions.scrims" :key="scrim" :value="scrim">
+                                    {{ t(`appearancePage.background.scrims.${scrim}`) }}
+                                </option>
+                            </select>
+                            <p id="page-bg-scrim-help" class="text-xs text-muted-foreground">
+                                {{ t('appearancePage.background.scrimHelp') }}
+                            </p>
+                        </div>
+                    </div>
+
+                    <p v-if="usesImage" class="text-xs text-muted-foreground">
+                        {{ t('appearancePage.background.imageNote') }}
+                    </p>
+
+                    <div v-if="hasSurface" class="flex items-start justify-between gap-4 rounded-md border p-3">
+                        <div class="min-w-0">
+                            <Label for="page-navbar-translucent">{{ t('appearancePage.background.navbar') }}</Label>
+                            <p class="mt-1 text-xs text-muted-foreground">
+                                {{ t('appearancePage.background.navbarHelp') }}
+                            </p>
+                        </div>
+                        <Switch id="page-navbar-translucent" v-model="form.page_navbar_translucent" />
+                    </div>
+                </CardContent>
+            </Card>
+            <!-- <<< MYRA v2.8 [C] END -->
 
             <Card>
                 <CardHeader>

@@ -2823,5 +2823,47 @@
             "description": "存储的版块结构、降级保证、插件如何贡献版块类型、预览契约以及回滚步骤。",
             "link": "阅读页面构建器指南"
         }
+    },
+    "appearancePage": {
+        "background": {
+            "title": "页面背景",
+            "description": "公开页面中导航栏、内容版块与页脚背后的内容。",
+            "type": "背景",
+            "typeHelp": "选择“无”将保留当前主题背景，不做任何改变。",
+            "types": {
+                "none": "无",
+                "brand": "品牌色",
+                "solid": "纯色",
+                "gradient": "渐变",
+                "pattern": "图案",
+                "image": "图片"
+            },
+            "recipe": "样式",
+            "recipes": {
+                "brand-fade": "品牌渐隐",
+                "brand-mesh": "品牌网格",
+                "dusk": "黄昏",
+                "dawn": "黎明",
+                "ink": "墨色",
+                "aurora": "极光",
+                "dots": "圆点",
+                "grid": "网格",
+                "diagonal": "斜线",
+                "noise": "噪点"
+            },
+            "color": "基础颜色",
+            "colorHelp": "文字颜色以此为基准测量并自动选择。渐变、图案或图片无法加载时也会显示此颜色。",
+            "scrim": "图片压暗",
+            "scrimHelp": "图片被压暗的程度，以保证其上的文字清晰可读。图片始终会被略微压暗。",
+            "scrims": {
+                "none": "无",
+                "light": "轻",
+                "medium": "中",
+                "strong": "强"
+            },
+            "navbar": "让背景透过导航栏显示",
+            "navbarHelp": "导航栏取消自身底色，使背景一直延伸到页面顶端。",
+            "imageNote": "背景图片在外观编辑器中上传。在上传之前，此项会回退为基础颜色。"
+        }
     }
 }

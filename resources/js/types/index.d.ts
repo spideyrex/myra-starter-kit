@@ -257,3 +257,16 @@ export interface NavItem {
     permission?: string;
     children?: NavItem[];
 }
+
+// >>> MYRA v2.6 [D] START
+/** The client half of App\Homepage\HomepageTemplate. Strings are i18n keys. */
+export interface TemplateSchema {
+    key: string;
+    component: string;
+    titleKey: string;
+    descriptionKey: string;
+    thumbnail: string | null;
+    supports: string[];
+    since: string;
+}
+// <<< MYRA v2.6 [D] END

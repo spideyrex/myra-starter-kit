@@ -147,6 +147,15 @@ final class DemoRegistry
             'liveWidgets' => ['route' => 'admin.demo.live-widgets', 'icon' => 'Radio', 'tags' => ['dashboard', 'realtime'], 'since' => '2.5.0'],
             'aiFilter' => ['route' => 'admin.demo.ai-filter', 'icon' => 'Sparkles', 'tags' => ['tables', 'ai'], 'since' => '2.5.0'],
             'offlineShell' => ['route' => 'admin.demo.offline-shell', 'icon' => 'WifiOff', 'tags' => ['platform'], 'since' => '2.5.0'],
+            // >>> MYRA v2.6 [D] START
+            'emptyAndItem' => ['route' => 'admin.demo.empty-and-item', 'icon' => 'PackageOpen', 'tags' => ['layout'], 'since' => '2.6.0'],
+            'chartPrimitives' => ['route' => 'admin.demo.chart-primitives', 'icon' => 'ChartArea', 'tags' => ['dashboard', 'charts'], 'since' => '2.6.0'],
+            'otpAndCombobox' => ['route' => 'admin.demo.otp-and-combobox', 'icon' => 'KeyRound', 'tags' => ['forms'], 'since' => '2.6.0'],
+            'conversation' => ['route' => 'admin.demo.conversation', 'icon' => 'MessagesSquare', 'tags' => ['content'], 'since' => '2.6.0'],
+            'questionnaire' => ['route' => 'admin.demo.questionnaire', 'icon' => 'ClipboardList', 'tags' => ['forms'], 'since' => '2.6.0'],
+            'mapMarkers' => ['route' => 'admin.demo.map-markers', 'icon' => 'MapPin', 'tags' => ['data'], 'since' => '2.6.0'],
+            'landingTemplates' => ['route' => 'admin.demo.landing-templates', 'icon' => 'Layout', 'tags' => ['platform'], 'since' => '2.6.0'],
+            // <<< MYRA v2.6 [D] END
         ];
     }
 }

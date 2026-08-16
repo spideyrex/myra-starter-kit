@@ -195,6 +195,102 @@
             "italicSample": "teks condong"
         }
     },
+    "landing": {
+        "title": "Halaman utama",
+        "description": "Pilih templat untuk halaman utama awam, dan susunan bahagiannya.",
+        "nav": {
+            "label": "Utama",
+            "skipToContent": "Langkau ke kandungan",
+            "dashboard": "Papan pemuka",
+            "login": "Log masuk",
+            "openMenu": "Buka menu",
+            "closeMenu": "Tutup menu"
+        },
+        "footer": {
+            "rights": "© {year} {name}. Hak cipta terpelihara."
+        },
+        "pricing": {
+            "popular": "Paling popular"
+        },
+        "docs": {
+            "onThisPage": "Di halaman ini"
+        },
+        "faq": {
+            "title": "Soalan lazim",
+            "items": {
+                "billing": {
+                    "question": "Bagaimana pengebilan berfungsi?",
+                    "answer": "Pelan dibilkan setiap bulan dan anda boleh menukar peringkat bila-bila masa; invois berikutnya dikira secara berkadar."
+                },
+                "trial": {
+                    "question": "Adakah terdapat percubaan percuma?",
+                    "answer": "Setiap pelan bermula dengan tempoh percubaan. Kad tidak diperlukan sehingga percubaan tamat."
+                },
+                "support": {
+                    "question": "Sokongan apakah yang disertakan?",
+                    "answer": "Sokongan e-mel disertakan dalam setiap pelan. Peringkat lebih tinggi menambah saluran kongsi dan sasaran masa tindak balas."
+                },
+                "cancel": {
+                    "question": "Bolehkah saya batal bila-bila masa?",
+                    "answer": "Boleh. Pembatalan menghentikan pembaharuan seterusnya dan data anda kekal boleh dieksport sehingga tempoh tamat."
+                }
+            }
+        },
+        "templates": {
+            "classic": {
+                "title": "Klasik",
+                "description": "Susun atur asal: hero di tengah, ciri tiga lajur, testimoni, harga dan seruan tindakan penutup."
+            },
+            "spotlight": {
+                "title": "Sorotan",
+                "description": "Hero di tengah atas kecerunan jenama, tanpa jadual harga dan hanya satu seruan tindakan."
+            },
+            "editorial": {
+                "title": "Editorial",
+                "description": "Hero terbelah dan rentak dua lajur berasaskan artikel untuk pelancaran yang padat kandungan."
+            },
+            "saas": {
+                "title": "SaaS",
+                "description": "Harga dahulu, kemudian ciri dan testimoni, ditutup dengan akordion soalan lazim."
+            },
+            "minimal": {
+                "title": "Minimum",
+                "description": "Satu lajur sempit, tanpa imej, tanpa jadual harga. Halaman terpantas untuk dibaca dan dimuatkan."
+            },
+            "docs": {
+                "title": "Dokumentasi",
+                "description": "Rel bahagian melekat di sebelah kandungan, untuk produk yang halaman utamanya turut menjadi dokumentasi."
+            }
+        },
+        "sections": {
+            "label": "Bahagian",
+            "hero": "Hero",
+            "features": "Ciri",
+            "testimonials": "Testimoni",
+            "pricing": "Harga",
+            "cta": "Seruan tindakan"
+        },
+        "sectionOrder": {
+            "label": "Susunan bahagian",
+            "help": "Bahagian dipaparkan dari atas ke bawah mengikut susunan ini. Templat hanya memaparkan bahagian yang disokongnya.",
+            "moveUp": "Alihkan {section} ke atas",
+            "moveDown": "Alihkan {section} ke bawah",
+            "reordered": "{section} dialihkan ke kedudukan {position} daripada {total}."
+        },
+        "unsupported": {
+            "label": "Tidak dipaparkan oleh templat ini",
+            "help": "Templat yang dipilih tidak memaparkan bahagian ini, jadi kedudukannya tiada kesan.",
+            "disabled": "Bahagian ini dimatikan dalam tetapan halaman utama."
+        },
+        "preview": {
+            "label": "Pratonton",
+            "openInNewTab": "Pratonton dalam tab baharu"
+        },
+        "picker": {
+            "label": "Templat",
+            "help": "Susun atur dan hiasan sahaja — setiap templat memaparkan kandungan halaman utama yang sama."
+        }
+    },
     "tenancy": {
         "title": "Berbilang penyewa",
         "subtitle": "Pilihan masuk, lalai dimatikan. Apabila dimatikan, tiada apa didaftarkan dan tiada pertanyaan berubah.",
@@ -602,7 +698,8 @@
             "layout": "Susun atur",
             "platform": "Platform",
             "content": "Kandungan",
-            "gallery": "Galeri"
+            "gallery": "Galeri",
+            "charts": "Carta"
         },
         "playground": {
             "title": "Taman komponen",
@@ -840,6 +937,157 @@
                 "title": "Cengkerang luar talian",
                 "description": "Cengkerang aplikasi terus berfungsi tanpa sambungan. Hanya aset statik dicache, bukan data anda.",
                 "badge": "PWA"
+            },
+            "emptyAndItem": {
+                "title": "Empty dan Item",
+                "description": "Primitif senarai Item dengan media, tindakan dan pemisah, beralih ke keadaan Empty apabila senarai kehabisan.",
+                "badge": "Baharu"
+            },
+            "chartPrimitives": {
+                "title": "Primitif carta",
+                "description": "ChartContainer di atas Unovis dengan token siri bertema, dan jadual data pembaca skrin di sisi setiap carta.",
+                "badge": "Baharu"
+            },
+            "otpAndCombobox": {
+                "title": "OTP dan combobox",
+                "description": "Input kod sekali guna enam slot dan combobox boleh cari, kedua-duanya mesra papan kekunci dan berlabel.",
+                "badge": "Baharu"
+            },
+            "conversation": {
+                "title": "Perbualan",
+                "description": "Gelembung, pengepala dan pengaki mesej, penatal mesej automatik dan lampiran fail.",
+                "badge": "Baharu"
+            },
+            "questionnaire": {
+                "title": "Soal selidik",
+                "description": "Satu soalan pada satu masa, dengan pintasan papan kekunci, pengumuman kemajuan dan pengesahan daripada primitif.",
+                "badge": "Baharu"
+            },
+            "mapMarkers": {
+                "title": "Penanda peta",
+                "description": "Penanda MapLibre dengan pop timbul, bersama senarai Marker supaya kanvas bukan satu-satunya saluran.",
+                "badge": "Baharu"
+            },
+            "landingTemplates": {
+                "title": "Templat halaman utama",
+                "description": "Setiap templat halaman utama awam yang berdaftar, dengan bahagian yang dipaparkan dan pautan pratonton langsung.",
+                "badge": "Baharu"
+            }
+        },
+        "references": {
+            "label": "Rujukan",
+            "blocks": "Blok",
+            "examples": "Contoh",
+            "brand": "Jenama",
+            "landing": "Halaman utama"
+        },
+        "componentDemos": {
+            "emptyAndItem": {
+                "listTitle": "Senarai projek",
+                "listDescription": "Buang setiap baris untuk melihat keadaan Empty mengambil alih.",
+                "restore": "Pulihkan senarai",
+                "remove": "Buang {name}",
+                "emptyTitle": "Tiada projek tinggal",
+                "emptyDescription": "Semua baris telah dibuang. Pulihkan senarai untuk mengembalikannya.",
+                "variantsTitle": "Varian",
+                "variantsDescription": "Item menyediakan varian outline dan muted serta dua saiz; Empty berfungsi dengan atau tanpa media.",
+                "bareEmptyTitle": "Tiada apa untuk dipaparkan",
+                "bareEmptyDescription": "Keadaan Empty tanpa media dan tanpa tindakan tetap satu mercu tanda, bukan kotak kosong.",
+                "status": {
+                    "active": "Aktif",
+                    "paused": "Dijeda",
+                    "archived": "Diarkib"
+                },
+                "variant": {
+                    "outline": "Item outline",
+                    "muted": "Item muted, saiz kecil"
+                }
+            },
+            "chartPrimitives": {
+                "barTitle": "Sesi mengikut peranti",
+                "barDescription": "Carta bar berkumpulan dipacu oleh ChartContainer dan token carta tema.",
+                "lineTitle": "Jumlah sesi",
+                "lineDescription": "Baris yang sama sebagai satu siri garis.",
+                "channelTitle": "Pelawat mengikut saluran",
+                "channelDescription": "Satu siri, satu warna, dan nombor yang sama diulang sebagai jadual.",
+                "month": "Bulan",
+                "channel": "Saluran",
+                "total": "Jumlah sepanjang tempoh: {total} sesi.",
+                "series": {
+                    "desktop": "Desktop",
+                    "mobile": "Mudah alih",
+                    "visitors": "Pelawat",
+                    "total": "Jumlah"
+                }
+            },
+            "otpAndCombobox": {
+                "otpTitle": "Kod sekali guna",
+                "otpDescription": "Enam slot, menyokong tampal, dengan label sebenar dan petunjuk berkaitan.",
+                "otpLabel": "Kod pengesahan",
+                "otpHint": "Masukkan enam digit yang dihantar ke e-mel anda. Menampal keseluruhan kod juga berfungsi.",
+                "verify": "Sahkan",
+                "verified": "Kod diterima.",
+                "entered": "{n} daripada 6 digit dimasukkan.",
+                "comboTitle": "Combobox boleh cari",
+                "comboDescription": "Taip untuk menapis, kekunci anak panah untuk bergerak, Enter untuk memilih.",
+                "comboLabel": "Zon waktu",
+                "comboPlaceholder": "Pilih zon waktu",
+                "comboSearch": "Cari zon waktu",
+                "comboEmpty": "Tiada zon waktu sepadan dengan carian itu.",
+                "comboSelected": "Dipilih {zone}.",
+                "comboNone": "Belum ada zon waktu dipilih."
+            },
+            "conversation": {
+                "you": "Anda",
+                "threadTitle": "Bicara",
+                "threadDescription": "Kawasan langsung yang mengumumkan mesej baharu dan menatal ke yang terkini.",
+                "scrollToLatest": "Tatal ke mesej terkini",
+                "draftLabel": "Mesej",
+                "draftPlaceholder": "Tulis balasan",
+                "send": "Hantar",
+                "attachmentsTitle": "Lampiran",
+                "attachmentsDescription": "Attachment memaparkan kad fail dengan media, tajuk dan saiz."
+            },
+            "questionnaire": {
+                "title": "Tinjauan permulaan",
+                "description": "Satu soalan pada satu masa. Pintasan huruf memilih jawapan; kemajuan diumumkan secara sopan.",
+                "freeTextPlaceholder": "Beritahu kami dalam satu ayat",
+                "required": "Jawapan diperlukan sebelum meneruskan.",
+                "previous": "Kembali",
+                "next": "Seterusnya",
+                "submit": "Selesai",
+                "submitted": "Terima kasih — jawapan anda telah direkodkan.",
+                "choices": {
+                    "engineer": "Jurutera",
+                    "designer": "Pereka",
+                    "operator": "Operasi",
+                    "solo": "Saya sahaja",
+                    "small": "2 hingga 20 orang",
+                    "large": "Lebih 20 orang"
+                },
+                "items": {
+                    "role": {
+                        "title": "Apakah yang paling menggambarkan peranan anda?",
+                        "description": "Ini hanya mengubah contoh yang kami tunjukkan dahulu."
+                    },
+                    "size": {
+                        "title": "Berapa besar pasukan anda?",
+                        "description": "Digunakan untuk memilih nilai lalai yang munasabah bagi paparan kongsi."
+                    },
+                    "goal": {
+                        "title": "Apakah yang anda harap dihantar dahulu?",
+                        "description": "Satu ayat sudah memadai."
+                    }
+                }
+            },
+            "mapMarkers": {
+                "mapTitle": "Peta liputan",
+                "mapDescription": "Penanda MapLibre; memilih satu akan mengemas kini senarai di sebelahnya.",
+                "listTitle": "Lokasi",
+                "listDescription": "Penanda yang sama sebagai baris boleh fokus, supaya peta bukan satu-satunya jalan masuk.",
+                "separator": "Pilihan",
+                "selected": "Dipilih {name}.",
+                "none": "Belum ada lokasi dipilih."
             }
         }
     },

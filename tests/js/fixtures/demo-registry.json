@@ -410,6 +410,98 @@
                 "platform"
             ],
             "titleKey": "gallery.demos.offlineShell.title"
+        },
+        {
+            "badgeKey": "gallery.demos.emptyAndItem.badge",
+            "descriptionKey": "gallery.demos.emptyAndItem.description",
+            "icon": "PackageOpen",
+            "key": "emptyAndItem",
+            "playground": null,
+            "route": "admin.demo.empty-and-item",
+            "since": "2.6.0",
+            "tags": [
+                "layout"
+            ],
+            "titleKey": "gallery.demos.emptyAndItem.title"
+        },
+        {
+            "badgeKey": "gallery.demos.chartPrimitives.badge",
+            "descriptionKey": "gallery.demos.chartPrimitives.description",
+            "icon": "ChartArea",
+            "key": "chartPrimitives",
+            "playground": null,
+            "route": "admin.demo.chart-primitives",
+            "since": "2.6.0",
+            "tags": [
+                "dashboard",
+                "charts"
+            ],
+            "titleKey": "gallery.demos.chartPrimitives.title"
+        },
+        {
+            "badgeKey": "gallery.demos.otpAndCombobox.badge",
+            "descriptionKey": "gallery.demos.otpAndCombobox.description",
+            "icon": "KeyRound",
+            "key": "otpAndCombobox",
+            "playground": null,
+            "route": "admin.demo.otp-and-combobox",
+            "since": "2.6.0",
+            "tags": [
+                "forms"
+            ],
+            "titleKey": "gallery.demos.otpAndCombobox.title"
+        },
+        {
+            "badgeKey": "gallery.demos.conversation.badge",
+            "descriptionKey": "gallery.demos.conversation.description",
+            "icon": "MessagesSquare",
+            "key": "conversation",
+            "playground": null,
+            "route": "admin.demo.conversation",
+            "since": "2.6.0",
+            "tags": [
+                "content"
+            ],
+            "titleKey": "gallery.demos.conversation.title"
+        },
+        {
+            "badgeKey": "gallery.demos.questionnaire.badge",
+            "descriptionKey": "gallery.demos.questionnaire.description",
+            "icon": "ClipboardList",
+            "key": "questionnaire",
+            "playground": null,
+            "route": "admin.demo.questionnaire",
+            "since": "2.6.0",
+            "tags": [
+                "forms"
+            ],
+            "titleKey": "gallery.demos.questionnaire.title"
+        },
+        {
+            "badgeKey": "gallery.demos.mapMarkers.badge",
+            "descriptionKey": "gallery.demos.mapMarkers.description",
+            "icon": "MapPin",
+            "key": "mapMarkers",
+            "playground": null,
+            "route": "admin.demo.map-markers",
+            "since": "2.6.0",
+            "tags": [
+                "data"
+            ],
+            "titleKey": "gallery.demos.mapMarkers.title"
+        },
+        {
+            "badgeKey": "gallery.demos.landingTemplates.badge",
+            "descriptionKey": "gallery.demos.landingTemplates.description",
+            "icon": "Layout",
+            "key": "landingTemplates",
+            "playground": null,
+            "route": "admin.demo.landing-templates",
+            "since": "2.6.0",
+            "tags": [
+                "platform"
+            ],
+            "titleKey": "gallery.demos.landingTemplates.title"
         }
     ]
 }

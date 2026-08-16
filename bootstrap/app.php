@@ -36,9 +36,16 @@ return Application::configure(basePath: dirname(__DIR__))
 
             if (in_array($status, $errorPages) && !request()->is('errors/*')) {
                 try {
-                    return Inertia::render("Errors/{$status}")
+                    // >>> MYRA v2.6 [C] START — MaintenanceSettings::$message is
+                    // configurable today and rendered nowhere. 503 now shows it.
+                    $props = $status === 503
+                        ? ['maintenanceMessage' => app(\App\Brand\BrandManager::class)->maintenanceMessage()]
+                        : [];
+
+                    return Inertia::render("Errors/{$status}", $props)
                         ->toResponse(request())
                         ->setStatusCode($status);
+                    // <<< MYRA v2.6 [C] END
                 } catch (\Throwable) {
                     return $response;
                 }

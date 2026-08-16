@@ -76,6 +76,9 @@ class SettingController extends Controller
         $settings->save();
 
         cache()->forget('site_settings_shared');
+        // >>> MYRA v2.6 [C] START
+        app(\App\Brand\BrandManager::class)->forget();
+        // <<< MYRA v2.6 [C] END
 
         return back()->with('success', ucfirst($group) . ' settings updated successfully.');
     }
@@ -83,8 +86,13 @@ class SettingController extends Controller
     public function updateAppearance(Request $request): RedirectResponse
     {
         $request->validate([
-            'logo' => ['nullable', 'image', 'max:2048'],
-            'favicon' => ['nullable', 'image', 'max:1024'],
+            // >>> MYRA v2.6 [C] START
+            // 'image' ACCEPTS SVG onto the public disk (same-origin stored XSS)
+            // and REJECTS .ico, the one format a favicon wants. SafeImage sniffs
+            // magic bytes and ignores the client extension entirely.
+            'logo' => ['nullable', new \App\Rules\SafeImage('logo')],
+            'favicon' => ['nullable', new \App\Rules\SafeImage('favicon')],
+            // <<< MYRA v2.6 [C] END
             'primary_color' => ['nullable', 'string', 'max:20'],
             'theme' => ['nullable', 'string', 'max:20'],
             'logo_position' => ['nullable', 'string', 'in:sidebar,header'],
@@ -152,7 +160,14 @@ class SettingController extends Controller
 
         $settings->save();
 
+        // >>> MYRA v2.6 [C] START
+        $this->seedBrandFromAppearance($request, $settings);
+        // <<< MYRA v2.6 [C] END
+
         cache()->forget('site_settings_shared');
+        // >>> MYRA v2.6 [C] START
+        app(\App\Brand\BrandManager::class)->forget();
+        // <<< MYRA v2.6 [C] END
 
         return back()->with('success', 'Appearance settings updated successfully.');
     }
@@ -220,7 +235,68 @@ class SettingController extends Controller
         $settings->save();
 
         cache()->forget('site_settings_shared');
+        // >>> MYRA v2.6 [C] START
+        app(\App\Brand\BrandManager::class)->forget();
+        // <<< MYRA v2.6 [C] END
 
         return back()->with('success', 'Homepage settings updated successfully.');
     }
+
+    // >>> MYRA v2.6 [C] START
+    /**
+     * ONE-WAY FIRST SEED, never a write-through. The Brand page is authoritative
+     * once the manager is enabled: an Appearance save may FILL a brand slot that
+     * is still empty, and may never overwrite one an operator deliberately set.
+     * Only slots this very request submitted are considered.
+     *
+     * No-op while the brand manager is off.
+     */
+    private function seedBrandFromAppearance(Request $request, AppearanceSettings $appearance): void
+    {
+        try {
+            $brand = app(\App\Settings\BrandSettings::class);
+
+            if (! $brand->enabled) {
+                return;
+            }
+
+            // request input/file name => [brand property, freshly saved value]
+            $candidates = [
+                'logo' => ['logo_path', $appearance->logo_path],
+                'favicon' => ['favicon_path', $appearance->favicon_path],
+                'sidebar_background' => ['sidebar_background', $appearance->sidebar_background],
+                'sidebar_foreground' => ['sidebar_foreground', $appearance->sidebar_foreground],
+                'sidebar_accent' => ['sidebar_accent', $appearance->sidebar_accent],
+            ];
+
+            $seeded = false;
+
+            foreach ($candidates as $input => [$property, $value]) {
+                if (! $request->hasFile($input) && ! $request->filled($input)) {
+                    continue; // untouched by this save
+                }
+
+                if ($value === null || $value === '') {
+                    continue;
+                }
+
+                $current = $brand->$property;
+
+                if ($current !== null && $current !== '') {
+                    continue; // deliberate brand value — never clobber it
+                }
+
+                $brand->$property = $value;
+                $seeded = true;
+            }
+
+            if ($seeded) {
+                $brand->version = $brand->version + 1;
+                $brand->save();
+            }
+        } catch (\Throwable) {
+            // A missing brand group must never break the Appearance tab.
+        }
+    }
+    // <<< MYRA v2.6 [C] END
 }

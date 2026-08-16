@@ -1,0 +1,25 @@
+{
+    "_note": "Each key is a path prefix relative to the repo root; the array is the needles that path may legitimately contain. '*' allows every needle. tests/ is not scanned at all.",
+    "allow": {
+        "app/Brand/Brand.php": ["config('app.name')"],
+        "app/Brand/BrandManager.php": ["config('app.name')"],
+        "app/Brand/BrandPalette.php": ["#09090b"],
+        "app/Admin/Report/Pdf/PdfDocument.php": ["myra-pdf-"],
+        "app/Http/Controllers/Admin/BackupController.php": ["config('app.name')"],
+        "resources/js/app.ts": ["VITE_APP_NAME"],
+        "resources/views/brand/offline.blade.php": ["#09090b"],
+        "resources/js/blocks/": ["*"],
+        "resources/js/examples/": ["*"]
+    },
+    "_reasons": {
+        "app/Brand/Brand.php": "Brand::fallback() is the DB-less boot path; config('app.name') is the genuine last resort and can never be resolved from the brand itself.",
+        "app/Brand/BrandManager.php": "The disabled branch must reproduce the pre-2.6 PDF author/footer byte for byte.",
+        "app/Brand/BrandPalette.php": "#09090b is the dark surface token, not a product name.",
+        "app/Admin/Report/Pdf/PdfDocument.php": "tempPrefix() falls back to the historic prefix when brand resolution is unavailable.",
+        "app/Http/Controllers/Admin/BackupController.php": "A filesystem path prefix that must match spatie/laravel-backup's own config, not a brand string.",
+        "resources/js/app.ts": "Last-resort title fallback, reached only when the server emitted no brand meta.",
+        "resources/views/brand/offline.blade.php": "Dark-scheme surface colour in a static, pre-CSS file.",
+        "resources/js/blocks/": "Vendored upstream shadcn source (bundle A).",
+        "resources/js/examples/": "Vendored upstream shadcn source (bundle B)."
+    }
+}

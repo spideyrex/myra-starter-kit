@@ -464,7 +464,118 @@
         "email": "邮箱",
         "password": "密码",
         "rememberMe": "记住我",
-        "alreadyRegistered": "已注册？"
+        "alreadyRegistered": "已注册？",
+        "defaultTagline": "最好的后台体验始于坚实的基础。",
+        "loginTitle": "登录",
+        "loginSubtitle": "输入您的凭据以访问账户",
+        "registerTitle": "创建账户",
+        "registerSubtitle": "填写您的信息以开始使用",
+        "name": "姓名",
+        "confirmPasswordLabel": "确认密码",
+        "forgotPasswordLink": "忘记密码？",
+        "noAccount": "还没有账户？",
+        "signUp": "注册",
+        "haveAccount": "已有账户？",
+        "strength": {
+            "weak": "弱",
+            "fair": "一般",
+            "good": "良好",
+            "strong": "强",
+            "veryStrong": "非常强"
+        }
+    },
+    "brand": {
+        "title": "品牌",
+        "description": "名称、标志、颜色与排版的唯一真实来源，供所有界面使用。",
+        "save": "保存品牌",
+        "enable": {
+            "label": "启用品牌管理器",
+            "help": "默认关闭。关闭时每个界面都完全保持 2.6 之前的行为。"
+        },
+        "tabs": {
+            "identity": "标识",
+            "colour": "颜色",
+            "typography": "排版",
+            "assets": "资源",
+            "preview": "预览"
+        },
+        "fields": {
+            "name": "名称",
+            "shortName": "简称",
+            "tagline": "标语",
+            "description": "描述",
+            "primary": "主色",
+            "accent": "强调色",
+            "preset": "调色板预设",
+            "fontSans": "无衬线字体",
+            "fontMono": "等宽字体",
+            "radius": "圆角半径",
+            "darkDefault": "默认深色",
+            "logoPosition": "标志位置",
+            "sidebarBackground": "侧栏背景",
+            "sidebarForeground": "侧栏前景",
+            "sidebarAccent": "侧栏强调色"
+        },
+        "logoPositions": {
+            "sidebar": "侧栏",
+            "header": "页眉"
+        },
+        "assets": {
+            "logo": "标志",
+            "logoDark": "标志（深色）",
+            "mark": "方形标记",
+            "favicon": "网站图标",
+            "ogImage": "社交分享图",
+            "upload": "上传",
+            "remove": "移除",
+            "rejectedSvg": "拒绝 SVG：它是可携带脚本的标记，而资源磁盘是同源的。",
+            "icoAccepted": "接受 PNG、JPEG、WebP 和 ICO。文件类型由字节读取，而非文件名。"
+        },
+        "preview": {
+            "surfaces": {
+                "admin": "后台外壳",
+                "login": "登录",
+                "public": "公开站点",
+                "email": "邮件",
+                "pdf": "PDF 导出",
+                "install": "安装 / PWA"
+            }
+        },
+        "contrast": {
+            "ok": "对比度 {ratio}:1 — 通过 AA。",
+            "warning": "对比度 {ratio}:1 低于 {minimum}:1 的最低要求。"
+        },
+        "reset": {
+            "label": "重置为默认",
+            "confirm": "重置所有品牌值并关闭品牌管理器？"
+        },
+        "errors": {
+            "home": "返回首页",
+            "403": {
+                "title": "禁止访问",
+                "body": "您没有权限查看此页面。"
+            },
+            "404": {
+                "title": "页面未找到",
+                "body": "您查找的页面不存在或已被移动。"
+            },
+            "419": {
+                "title": "页面已过期",
+                "body": "您的会话已超时。请刷新页面后重试。"
+            },
+            "500": {
+                "title": "出错了",
+                "body": "发生了意外错误。团队已收到通知。"
+            },
+            "503": {
+                "title": "维护中",
+                "body": "我们正在进行维护，稍后即将恢复。"
+            }
+        },
+        "settingsLink": {
+            "label": "品牌管理器",
+            "help": "面向所有界面的名称、标志、图标、调色板与排版。"
+        }
     },
     "validation": {
         "required": "{field} 为必填项",

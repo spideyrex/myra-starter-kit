@@ -117,8 +117,10 @@ class TwoFactorController extends Controller
         $google2fa = new Google2FA();
         $secret = decrypt($user->two_factor_secret);
 
+        // >>> MYRA v2.6 [C] START — the issuer is what the authenticator app shows.
         $qrCodeUrl = $google2fa->getQRCodeUrl(
-            config('app.name'),
+            app(\App\Brand\BrandManager::class)->current()->name,
+        // <<< MYRA v2.6 [C] END
             $user->email,
             $secret,
         );

@@ -1,4 +1,4 @@
-import { computed, watchEffect } from 'vue';
+import { computed, getCurrentScope, onScopeDispose, watchEffect } from 'vue';
 import { usePage } from '@inertiajs/vue3';
 import type { PageProps } from '@/types';
 
@@ -242,7 +242,10 @@ export function isLightColor(hex: string): boolean {
 }
 
 /** Darken or lighten a hex color by adjusting OKLab L, returning an oklch() string. */
-function adjustLightness(hex: string, delta: number): string {
+// >>> MYRA v2.6 [C] START — exported so tests/js/brandColorParity.spec.ts can sweep
+// the REAL implementation App\Brand\Color is asserted against.
+export function adjustLightness(hex: string, delta: number): string {
+// <<< MYRA v2.6 [C] END
     const r = parseInt(hex.slice(1, 3), 16) / 255;
     const g = parseInt(hex.slice(3, 5), 16) / 255;
     const b = parseInt(hex.slice(5, 7), 16) / 255;
@@ -272,7 +275,18 @@ export function useThemeColors() {
     const page = usePage<PageProps>();
     const siteSettings = computed(() => page.props.siteSettings);
 
+    // >>> MYRA v2.6 [C] START
+    // When app.blade.php emitted the tokens server-side there is nothing to do:
+    // the brand is already correct before first paint, and re-applying here
+    // would overwrite it with the legacy preset.
+    function serverEmitted(): boolean {
+        return typeof document !== 'undefined' && document.getElementById('myra-brand') !== null;
+    }
+    // <<< MYRA v2.6 [C] END
+
     function applyTheme() {
+        if (serverEmitted()) return;
+
         const themeName = siteSettings.value?.theme || 'zinc';
         const preset = themePresets[themeName];
         if (!preset) return;
@@ -332,4 +346,12 @@ export function useThemeColors() {
         }
     });
     observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
+
+    // >>> MYRA v2.6 [C] START — one observer leaked per calling component until now.
+    if (getCurrentScope()) {
+        onScopeDispose(() => observer.disconnect());
+    }
+    // <<< MYRA v2.6 [C] END
+
+    return { applyTheme, observer };
 }

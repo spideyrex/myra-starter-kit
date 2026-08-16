@@ -22,6 +22,34 @@ final class ChartVector
         [0.42, 0.34, 0.76], [0.16, 0.63, 0.72], [0.62, 0.55, 0.16], [0.55, 0.35, 0.28],
     ];
 
+    // >>> MYRA v2.6 [C] START
+    /**
+     * A null palette is today's constants, byte for byte.
+     *
+     * @return array<int, array{0:float,1:float,2:float}>
+     */
+    public static function palette(?\App\Brand\BrandPalette $b = null): array
+    {
+        return $b === null ? self::PALETTE : $b->chartSeries(count(self::PALETTE));
+    }
+
+    /** @var array<int, array{0:float,1:float,2:float}>|null */
+    private ?array $brandSwatches = null;
+
+    public function withPalette(?\App\Brand\BrandPalette $b): self
+    {
+        $this->brandSwatches = self::palette($b);
+
+        return $this;
+    }
+
+    /** @return array<int, array{0:float,1:float,2:float}> */
+    private function swatches(): array
+    {
+        return $this->brandSwatches ?? self::PALETTE;
+    }
+    // <<< MYRA v2.6 [C] END
+
     private const AXIS = [0.55, 0.58, 0.63];
 
     private const GRID = [0.89, 0.90, 0.92];
@@ -105,7 +133,7 @@ final class ChartVector
 
                 $height = $plotH * ($value / $max);
                 $bx = $plotX + $i * $slot + $slot * 0.15 + $m * $barWidth;
-                $doc->rect($bx, $plotY, $barWidth, $height, self::PALETTE[$m % count(self::PALETTE)]);
+                $doc->rect($bx, $plotY, $barWidth, $height, $this->swatches()[$m % count($this->swatches())]);
             }
         }
 
@@ -131,7 +159,7 @@ final class ChartVector
                 $points[] = [$plotX + $i * $step, $plotY + $plotH * ($value / $max)];
             }
 
-            $doc->polyline($points, self::PALETTE[$m % count(self::PALETTE)], 1.4);
+            $doc->polyline($points, $this->swatches()[$m % count($this->swatches())], 1.4);
         }
 
         $this->drawCategoryTicks($doc, $plotX, $plotY, $step > 0 ? $step : $plotW);
@@ -156,7 +184,7 @@ final class ChartVector
 
         foreach ($values as $i => $value) {
             $sweep = ($value / $total) * 2 * M_PI;
-            $doc->sector($cx, $cy, $radius, $angle, $angle + $sweep, self::PALETTE[$i % count(self::PALETTE)]);
+            $doc->sector($cx, $cy, $radius, $angle, $angle + $sweep, $this->swatches()[$i % count($this->swatches())]);
             $angle += $sweep;
         }
 
@@ -164,7 +192,7 @@ final class ChartVector
         $rowY = $cy + $radius;
 
         foreach ($this->labels as $i => $label) {
-            $doc->rect($legendX, $rowY - 6, 7, 7, self::PALETTE[$i % count(self::PALETTE)]);
+            $doc->rect($legendX, $rowY - 6, 7, 7, $this->swatches()[$i % count($this->swatches())]);
             $percent = $total > 0 ? round($values[$i] / $total * 100, 1) : 0.0;
             $doc->text($label.'  '.$percent.'%', $legendX + 12, $rowY - 5, 8.5, 'regular', self::TICK);
             $rowY -= 13;
@@ -229,7 +257,7 @@ final class ChartVector
         $offset = 0.0;
 
         foreach (array_keys($this->series) as $i => $measure) {
-            $doc->rect($x + $offset, $y - 6, 7, 7, self::PALETTE[$i % count(self::PALETTE)]);
+            $doc->rect($x + $offset, $y - 6, 7, 7, $this->swatches()[$i % count($this->swatches())]);
             $doc->text($measure, $x + $offset + 11, $y - 5, 8.0, 'regular', self::TICK);
             $offset += 22 + $doc->stringWidth($measure, 8.0);
 

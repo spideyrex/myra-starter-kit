@@ -436,6 +436,25 @@ return [
     ],
     // <<< MYRA v2.5 [C] END
 
+    // >>> MYRA v2.6 [C] START
+    /*
+    |--------------------------------------------------------------------------
+    | Brand manager
+    |--------------------------------------------------------------------------
+    |
+    | `probe_ttl` bounds how long a FOREIGN write (tinker, a seeder, a second
+    | web node with its own cache) can stay invisible. App-path writes are
+    | invalidated instantly by BrandCacheSubscriber; the probe is only the
+    | safety net. 0 disables it — the event path still works.
+    |
+    */
+    'brand' => [
+        'probe_ttl' => env('MYRA_BRAND_PROBE_TTL', 60),
+        'cache_ttl' => 3600,
+        'min_contrast' => 4.5,
+    ],
+    // <<< MYRA v2.6 [C] END
+
     // >>> MYRA v2.3 [D] START
     /*
     |--------------------------------------------------------------------------

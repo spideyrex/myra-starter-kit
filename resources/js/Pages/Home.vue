@@ -1,22 +1,31 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { ref } from 'vue';
 import { Head, Link } from '@inertiajs/vue3';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import type { HomepageData, SiteSettings } from '@/types';
 import { useThemeColors } from '@/composables/useThemeColors';
+// >>> MYRA v2.6 [C] START
+import BrandMark from '@/components/brand/BrandMark.vue';
+import { useBrand } from '@/composables/useBrand';
+// <<< MYRA v2.6 [C] END
 import {
     Zap, Shield, BarChart3, Users, Lock, Globe, Rocket, Heart, Star,
     Code, Database, Cloud, Settings, Mail, Bell, Search, Layers, Layout,
     Menu, X, Check, ArrowRight, Quote,
 } from 'lucide-vue-next';
 
-const props = defineProps<{
+defineProps<{
     settings: HomepageData;
     siteSettings?: SiteSettings;
     authenticated: boolean;
 }>();
+
+// >>> MYRA v2.6 [C] START — the brand is the ONE source; no duplicated
+// site_name/logo_url fallback rule lives on this page any more.
+const { name: siteName } = useBrand();
+// <<< MYRA v2.6 [C] END
 
 useThemeColors();
 
@@ -47,9 +56,6 @@ function smoothScroll(url: string) {
         el?.scrollIntoView({ behavior: 'smooth' });
     }
 }
-
-const siteName = computed(() => props.siteSettings?.site_name || 'App');
-const logoUrl = computed(() => props.siteSettings?.logo_url);
 </script>
 
 <template>
@@ -59,14 +65,11 @@ const logoUrl = computed(() => props.siteSettings?.logo_url);
         <!-- Navbar -->
         <nav class="sticky top-0 z-50 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
             <div class="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-                <!-- Logo + Site Name -->
+                <!-- >>> MYRA v2.6 [C] START -->
                 <Link href="/" class="flex items-center gap-2.5">
-                    <img v-if="logoUrl" :src="logoUrl" :alt="siteName" class="h-8 w-auto" />
-                    <div v-else class="flex size-8 items-center justify-center rounded-lg bg-primary text-primary-foreground font-bold text-sm">
-                        {{ siteName.charAt(0) }}
-                    </div>
-                    <span class="text-lg font-bold">{{ siteName }}</span>
+                    <BrandMark size="md" />
                 </Link>
+                <!-- <<< MYRA v2.6 [C] END -->
 
                 <!-- Desktop nav links -->
                 <div class="hidden items-center gap-1 md:flex">
@@ -312,13 +315,9 @@ const logoUrl = computed(() => props.siteSettings?.logo_url);
         <footer class="border-t bg-muted/30">
             <div class="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
                 <div class="flex flex-col items-center justify-between gap-6 sm:flex-row">
-                    <div class="flex items-center gap-2">
-                        <img v-if="logoUrl" :src="logoUrl" :alt="siteName" class="h-6 w-auto" />
-                        <div v-else class="flex size-6 items-center justify-center rounded bg-primary text-primary-foreground text-xs font-bold">
-                            {{ siteName.charAt(0) }}
-                        </div>
-                        <span class="font-semibold">{{ siteName }}</span>
-                    </div>
+                    <!-- >>> MYRA v2.6 [C] START -->
+                    <BrandMark size="sm" />
+                    <!-- <<< MYRA v2.6 [C] END -->
                     <div class="flex flex-wrap items-center gap-6">
                         <template v-for="link in settings.footer_links" :key="link.label">
                             <a

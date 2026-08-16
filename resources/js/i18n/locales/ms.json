@@ -464,7 +464,118 @@
         "email": "E-mel",
         "password": "Kata Laluan",
         "rememberMe": "Ingat saya",
-        "alreadyRegistered": "Sudah berdaftar?"
+        "alreadyRegistered": "Sudah berdaftar?",
+        "defaultTagline": "Pengalaman admin terbaik bermula dengan asas yang kukuh.",
+        "loginTitle": "Log Masuk",
+        "loginSubtitle": "Masukkan kelayakan anda untuk mengakses akaun anda",
+        "registerTitle": "Cipta akaun",
+        "registerSubtitle": "Masukkan butiran anda untuk bermula",
+        "name": "Nama",
+        "confirmPasswordLabel": "Sahkan Kata Laluan",
+        "forgotPasswordLink": "Lupa kata laluan?",
+        "noAccount": "Tiada akaun?",
+        "signUp": "Daftar",
+        "haveAccount": "Sudah ada akaun?",
+        "strength": {
+            "weak": "Lemah",
+            "fair": "Sederhana",
+            "good": "Baik",
+            "strong": "Kuat",
+            "veryStrong": "Sangat Kuat"
+        }
+    },
+    "brand": {
+        "title": "Jenama",
+        "description": "Satu sumber kebenaran untuk nama, logo, warna dan tipografi yang digunakan setiap permukaan.",
+        "save": "Simpan jenama",
+        "enable": {
+            "label": "Aktifkan pengurus jenama",
+            "help": "Dimatikan secara lalai. Semasa ia dimatikan setiap permukaan mengekalkan kelakuan pra-2.6 dengan tepat."
+        },
+        "tabs": {
+            "identity": "Identiti",
+            "colour": "Warna",
+            "typography": "Tipografi",
+            "assets": "Aset",
+            "preview": "Pratonton"
+        },
+        "fields": {
+            "name": "Nama",
+            "shortName": "Nama pendek",
+            "tagline": "Slogan",
+            "description": "Penerangan",
+            "primary": "Warna utama",
+            "accent": "Warna aksen",
+            "preset": "Pratetap palet",
+            "fontSans": "Keluarga sans",
+            "fontMono": "Keluarga mono",
+            "radius": "Jejari bucu",
+            "darkDefault": "Gelap secara lalai",
+            "logoPosition": "Kedudukan logo",
+            "sidebarBackground": "Latar bar sisi",
+            "sidebarForeground": "Teks bar sisi",
+            "sidebarAccent": "Aksen bar sisi"
+        },
+        "logoPositions": {
+            "sidebar": "Bar sisi",
+            "header": "Pengepala"
+        },
+        "assets": {
+            "logo": "Logo",
+            "logoDark": "Logo (gelap)",
+            "mark": "Tanda segi empat",
+            "favicon": "Favicon",
+            "ogImage": "Imej perkongsian sosial",
+            "upload": "Muat naik",
+            "remove": "Buang",
+            "rejectedSvg": "SVG ditolak: ia markah yang boleh membawa skrip dan cakera aset adalah asal-sama.",
+            "icoAccepted": "PNG, JPEG, WebP dan ICO diterima. Jenis fail dibaca daripada baitnya, bukan namanya."
+        },
+        "preview": {
+            "surfaces": {
+                "admin": "Cangkerang admin",
+                "login": "Log masuk",
+                "public": "Laman awam",
+                "email": "E-mel",
+                "pdf": "Eksport PDF",
+                "install": "Pasang / PWA"
+            }
+        },
+        "contrast": {
+            "ok": "Kontras {ratio}:1 — lulus AA.",
+            "warning": "Kontras {ratio}:1 di bawah minimum {minimum}:1."
+        },
+        "reset": {
+            "label": "Tetapkan semula",
+            "confirm": "Tetapkan semula setiap nilai jenama dan matikan pengurus jenama?"
+        },
+        "errors": {
+            "home": "Kembali ke laman utama",
+            "403": {
+                "title": "Dilarang",
+                "body": "Anda tidak mempunyai kebenaran untuk melihat halaman ini."
+            },
+            "404": {
+                "title": "Halaman tidak dijumpai",
+                "body": "Halaman yang anda cari tidak wujud atau telah dipindahkan."
+            },
+            "419": {
+                "title": "Halaman tamat tempoh",
+                "body": "Sesi anda tamat tempoh. Muat semula halaman dan cuba lagi."
+            },
+            "500": {
+                "title": "Sesuatu tidak kena",
+                "body": "Ralat tidak dijangka berlaku. Pasukan telah dimaklumkan."
+            },
+            "503": {
+                "title": "Dalam penyelenggaraan",
+                "body": "Kami sedang menjalankan penyelenggaraan. Kami akan kembali sebentar lagi."
+            }
+        },
+        "settingsLink": {
+            "label": "Pengurus jenama",
+            "help": "Nama, logo, favicon, palet dan tipografi untuk setiap permukaan."
+        }
     },
     "validation": {
         "required": "{field} diperlukan",

@@ -800,5 +800,81 @@
             "view": "Lihat {count} rekod",
             "viewUnavailable": "Segmen ini tidak boleh dibuka sebagai jadual."
         }
+    },
+    "assistant": {
+        "appliedTree": "Pepohon yang dihantar ke penapis",
+        "apply": "Guna",
+        "askHint": "Terangkan apa yang anda mahu lihat. Model hanya boleh menamakan medan dalam senarai putih {scope}.",
+        "askPlaceholder": "Terangkan baris yang anda mahu…",
+        "askTitle": "Minta satu penapis",
+        "compile": "Kompil",
+        "disabled": "Dimatikan",
+        "disabledHint": "Penapis AI dimatikan. Tetapkan bendera di bawah dan konfigurasikan pembekal dalam tetapan AI.",
+        "discard": "Buang",
+        "enabled": "Dihidupkan",
+        "errors": {
+            "couldNotUnderstand": "Itu tidak dapat dijadikan penapis. Cuba ubah ayat anda.",
+            "promptLength": "Tulis antara satu aksara dan 500 aksara.",
+            "providerDown": "Pembekal AI tidak memberi respons.",
+            "rateLimited": "Terlalu banyak permintaan. Cuba lagi seminit lagi.",
+            "sqlDetected": "Model membalas dengan SQL, yang tidak sekali-kali diterima."
+        },
+        "hostile": {
+            "column": "Lajur rekaan: password",
+            "description": "Setiap butang meminta output yang mungkin dihasilkan oleh model terjejas. Semuanya ditolak di pelayan.",
+            "operator": "Operator tidak dikenali: raw",
+            "overCap": "Lebih banyak peraturan daripada yang dibenarkan set medan",
+            "run": "Hantar",
+            "sql": "Rentetan SQL mentah",
+            "title": "Output model yang berniat jahat"
+        },
+        "offline": {
+            "banner": "Anda di luar talian. Data tidak tersedia sehingga sambungan kembali.",
+            "description": "Rangka aplikasi dan aset binaan dicache. Apa-apa di sebalik pengesahan tidak pernah dicache.",
+            "retry": "Cuba lagi",
+            "title": "Rangka luar talian"
+        },
+        "pipeline": {
+            "description": "Model hanya boleh menghasilkan pepohon peraturan yang sama seperti yang boleh ditaip manusia. Ia dihurai oleh RuleTree terhadap set operator tertutup dan senarai putih medan sebelum boleh menyentuh pangkalan data.",
+            "title": "Model tidak pernah menulis SQL"
+        },
+        "pwa": {
+            "allowListDescription": "Permintaan mesti benar-benar sepadan dengan rangka statik atau aset binaan bercincang. Selain itu tidak pernah sampai ke kod cache.",
+            "allowListTitle": "Senarai benar positif",
+            "cached": "Boleh dicache",
+            "decisionHint": "Dinilai secara langsung oleh fungsi yang sama yang dijalankan service worker.",
+            "decisionTable": "Keputusan cache",
+            "install": "Pasang aplikasi",
+            "no": "Tidak",
+            "notRegistered": "Tidak didaftarkan",
+            "online": "Dalam talian",
+            "purge": "Bersihkan cache",
+            "purged": "Cache dibersihkan.",
+            "registered": "Didaftarkan",
+            "registration": "Service worker",
+            "reload": "Muat semula",
+            "request": "Permintaan",
+            "unregister": "Nyahdaftar worker",
+            "updateAvailable": "Kemas kini tersedia",
+            "yes": "Ya"
+        },
+        "review": "Semak syarat sebelum menggunakannya. Tiada apa berjalan sehingga anda berbuat demikian.",
+        "schema": {
+            "command": "Arahan untuk dijalankan",
+            "draft": "Draf",
+            "title": "Draf skema"
+        },
+        "scope": {
+            "activity": "Log aktiviti",
+            "users": "Pengguna"
+        },
+        "subtitle": "Bahasa tabii dikompil menjadi pepohon peraturan yang disahkan — tidak pernah menjadi SQL.",
+        "summary": {
+            "generate": "Ringkaskan papan pemuka",
+            "streaming": "Sedang menulis…",
+            "title": "Ringkasan papan pemuka"
+        },
+        "title": "Penapis AI",
+        "unresolved": "Tiada syarat dihasilkan."
     }
 }

@@ -319,6 +319,10 @@ Route::middleware(['auth', 'verified', 'active', '2fa'])->prefix('admin')->name(
     Route::get('/demo/scale', [DemoController::class, 'scale'])->name('demo.scale');
     Route::get('/demo/scale-cursor', [DemoController::class, 'scaleCursor'])->name('demo.scale-cursor');
     // <<< MYRA v2.4 [D] END
+    // >>> MYRA v2.5 [D] START
+    Route::get('/demo/ai-filter', [DemoController::class, 'aiFilter'])->name('demo.ai-filter');
+    Route::get('/demo/offline-shell', [DemoController::class, 'offlineShell'])->name('demo.offline-shell');
+    // <<< MYRA v2.5 [D] END
     Route::get('/demo/reordering', [DemoController::class, 'reordering'])->name('demo.reordering');
     Route::post('/demo/reorder', [DemoController::class, 'demoReorder'])->name('demo.reorder');
     Route::get('/demo/widgets', [DemoController::class, 'widgets'])->name('demo.widgets');
@@ -364,6 +368,17 @@ Route::middleware(['auth', 'verified', 'active', '2fa'])->prefix('admin')->name(
     Route::post('/report-schedules/{reportSchedule}/test', [ReportScheduleController::class, 'test'])
         ->middleware(['permission:reports.schedule', 'throttle:3,10'])->name('report-schedules.test');
     // <<< MYRA v2.3 [D] END
+
+    // >>> MYRA v2.5 [D] START
+    // Tighter throttles than ai.assist's 30/min because each call is a paid
+    // provider round-trip. All three 404 while their config flag is false.
+    Route::post('/ai/filter', [\App\Http\Controllers\Admin\AiFilterController::class, 'compile'])
+        ->middleware(['permission:ai.filter', 'throttle:10,1'])->name('ai.filter');
+    Route::post('/ai/schema', [\App\Http\Controllers\Admin\AiFilterController::class, 'schema'])
+        ->middleware(['permission:ai.schema', 'throttle:5,1'])->name('ai.schema');
+    Route::post('/ai/summarise', [\App\Http\Controllers\Admin\AiFilterController::class, 'summarise'])
+        ->middleware(['permission:ai.summarise', 'throttle:10,1'])->name('ai.summarise');
+    // <<< MYRA v2.5 [D] END
 
     // myra:routes — make:myra-* commands insert generated routes above this line. Do not remove.
 });

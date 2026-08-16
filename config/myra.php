@@ -351,4 +351,46 @@ return [
     ],
     // <<< MYRA v2.3 [D] END
 
+    // >>> MYRA v2.5 [D] START
+    /*
+    |--------------------------------------------------------------------------
+    | AI surfaces
+    |--------------------------------------------------------------------------
+    |
+    | Every AI surface is OFF until an admin turns it on. Shipping dark is the
+    | only safe default on a live site. With these false the routes 404.
+    |
+    */
+
+    'ai' => [
+        'features' => [
+            'filter'    => env('MYRA_AI_FILTER', false),
+            'schema'    => env('MYRA_AI_SCHEMA', false),
+            'summarise' => env('MYRA_AI_SUMMARISE', false),
+        ],
+        // POST admin/ai/assist has no permission gate today. Turning this on
+        // adds one; false keeps v2.4.0 behaviour byte-for-byte.
+        'gate_assist'         => env('MYRA_AI_GATE_ASSIST', false),
+        'max_prompt'          => 500,
+        'json_max_bytes'      => 8192,
+        'summary_max_buckets' => 40,
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | PWA / offline shell
+    |--------------------------------------------------------------------------
+    |
+    | OFF. With this false: no manifest link is rendered, myra-sw.js is never
+    | registered, any previously-registered myra-sw.js is actively unregistered
+    | and its caches purged, and the FCM registration keeps its CURRENT root
+    | scope untouched.
+    |
+    */
+
+    'pwa' => [
+        'enabled' => env('MYRA_PWA', false),
+    ],
+    // <<< MYRA v2.5 [D] END
+
 ];

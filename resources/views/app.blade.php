@@ -15,6 +15,14 @@
             <link rel="icon" href="{{ Storage::disk('public')->url($faviconPath) }}">
         @endif
 
+        {{-- >>> MYRA v2.5 [D] START --}}
+        @if(config('myra.pwa.enabled') === true)
+            <link rel="manifest" href="/manifest.webmanifest">
+            <meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
+            <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#09090b">
+        @endif
+        {{-- <<< MYRA v2.5 [D] END --}}
+
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">
         <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />

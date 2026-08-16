@@ -57,6 +57,12 @@ class MyraLessonController extends Controller
             'position' => ['nullable', 'integer', 'min:0', 'max:9999'],
         ]);
 
+        // A blank Position arrives as null (ConvertEmptyStringsToNull) and the
+        // column is NOT NULL; drop the key so the column default applies.
+        if (($validated['position'] ?? null) === null) {
+            unset($validated['position']);
+        }
+
         // Through the relation: course_id comes from the URL, so a course_id in
         // the request body cannot move the row to another parent.
         $this->childRelation($parent)->create($validated);

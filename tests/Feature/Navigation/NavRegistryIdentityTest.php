@@ -24,6 +24,25 @@ class NavRegistryIdentityTest extends TestCase
         parent::tearDown();
     }
 
+    /**
+     * THE DEPLOY PROOF. No config() override here on purpose: this asserts the
+     * config file as it ships, so upgrading a live site adds nothing to the
+     * sidebar of a super-admin (who bypasses every ability via Gate::before).
+     */
+    public function test_the_shipped_config_contributes_nothing(): void
+    {
+        $this->assertSame(
+            [],
+            config('myra.clusters'),
+            'config/myra.php must ship an empty cluster list — the demo cluster is opt-in via MYRA_DEMO_CLUSTERS.',
+        );
+
+        $user = $this->actingAsSuperAdmin();
+
+        $this->assertSame([], NavRegistry::forUser($user));
+        $this->assertSame([], $this->get(route('dashboard'))->viewData('page')['props']['myraNav']);
+    }
+
     public function test_no_clusters_means_an_empty_registry(): void
     {
         config(['myra.clusters' => []]);

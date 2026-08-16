@@ -93,9 +93,12 @@ class NestedResourceScopeBindingTest extends TestCase
 
     public function test_a_parent_the_actor_does_not_own_is_a_404_not_a_403(): void
     {
-        $this->actingAs($this->demoUser());
+        $owner = $this->demoUser();
+        $this->actingAs($owner);
         $foreignCourse = MyraCourse::query()->create(['title' => 'Not yours']);
 
+        // A DIFFERENT holder of the same ability: the ability is not the thing
+        // being tested here, ownership is.
         $this->actingAs($this->demoUser());
 
         $this->get(route('admin.learning.courses.lessons.index', $foreignCourse))
@@ -132,13 +135,41 @@ class NestedResourceScopeBindingTest extends TestCase
 
     public function test_the_routes_require_the_demo_ability(): void
     {
-        $this->actingAs($this->demoUser());
-        $course = MyraCourse::query()->create(['title' => 'First']);
+        // The parent must be resolvable BY THE ACTOR. SubstituteBindings runs in
+        // the web group, before any controller code, and the 'owned' scope turns
+        // a parent the actor does not own into a 404 — which would hide the
+        // ability check instead of proving it. So the actor owns this course.
+        $plain = $this->makeUser();
+        $this->actingAs($plain);
 
-        $this->actingAs($this->makeUser());
+        $course = MyraCourse::query()->create(['title' => 'First']);
 
         $this->get(route('admin.learning.courses.lessons.index', $course))->assertForbidden();
         $this->post(route('admin.learning.courses.lessons.store', $course), ['title' => 'Nope'])->assertForbidden();
+
+        // Positive control: same actor, same course, ability granted. If these
+        // pass, the 403s above came from the ability gate and nothing else.
+        $plain->givePermissionTo('demo.view');
+        $this->actingAs($plain->fresh());
+
+        $this->get(route('admin.learning.courses.lessons.index', $course))->assertOk();
+        $this->post(route('admin.learning.courses.lessons.store', $course), ['title' => 'Allowed'])->assertRedirect();
+    }
+
+    public function test_a_blank_position_falls_back_to_the_column_default(): void
+    {
+        $this->actingAs($this->demoUser());
+
+        $course = MyraCourse::query()->create(['title' => 'First']);
+
+        // The Vue form initialises position: '' and ConvertEmptyStringsToNull
+        // makes that a null; the column is NOT NULL, so writing it would 500.
+        $this->post(route('admin.learning.courses.lessons.store', $course), [
+            'title' => 'No position',
+            'position' => '',
+        ])->assertRedirect();
+
+        $this->assertSame(0, MyraLesson::query()->where('title', 'No position')->firstOrFail()->position);
     }
 
     public function test_the_sort_whitelist_ignores_an_unlisted_column(): void

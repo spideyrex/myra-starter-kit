@@ -92,10 +92,14 @@ return [
     | `myraNav` Inertia prop serialises as [] and the sidebar is byte-identical
     | to v2.3 — merging an empty server list is the identity operation.
     |
+    | Ships EMPTY on purpose: upgrading to v2.4 must not add an entry to a live
+    | sidebar. The bundled Learning demo is opt-in via MYRA_DEMO_CLUSTERS=true;
+    | its pages stay reachable by URL either way.
+    |
     */
 
     'clusters' => [
-        \App\Admin\Clusters\LearningCluster::class,
+        ...(env('MYRA_DEMO_CLUSTERS', false) ? [\App\Admin\Clusters\LearningCluster::class] : []),
         // myra:clusters — make:myra-cluster inserts clusters above this line.
     ],
     // <<< MYRA v2.4 [B] END

@@ -411,4 +411,8 @@ Route::middleware(['auth', 'verified', 'active', '2fa'])->prefix('admin')->name(
     // myra:routes — make:myra-* commands insert generated routes above this line. Do not remove.
 });
 
+// >>> MYRA v2.6 [A] START
+require __DIR__.'/myra/blocks.php';
+// <<< MYRA v2.6 [A] END
+
 require __DIR__.'/auth.php';

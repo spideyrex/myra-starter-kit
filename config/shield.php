@@ -51,6 +51,9 @@ return [
         // >>> MYRA v2.3 [B] START
         'reports' => ['view', 'export', 'schedule'],
         // <<< MYRA v2.3 [B] END
+        // >>> MYRA v2.6 [A] START
+        'blocks' => ['view'],
+        // <<< MYRA v2.6 [A] END
         /* myra:modules */
     ],
 

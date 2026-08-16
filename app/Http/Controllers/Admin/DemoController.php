@@ -32,10 +32,16 @@ class DemoController extends Controller
     // Static / Client-only demos (no data needed)
     // =========================================================================
 
-    public function index()
+    // >>> MYRA v2.5 [C] START
+    public function index(Request $request)
     {
-        return Inertia::render('Admin/Demo/Index');
+        // Registry-driven and permission-filtered. If seeding failed at boot
+        // this is `[]` and the page falls back to its own hardcoded list.
+        return Inertia::render('Admin/Demo/Index', [
+            'demos' => \App\Admin\Demo\DemoRegistry::forUser($request->user()),
+        ]);
     }
+    // <<< MYRA v2.5 [C] END
 
     public function richTextEditor()
     {
@@ -293,6 +299,22 @@ class DemoController extends Controller
         ]);
     }
     // <<< MYRA v2.4 [C] END
+
+    // >>> MYRA v2.5 [C] START
+    /** Client-only surface: the playground mounts the real primitives in the browser. */
+    public function playground()
+    {
+        return Inertia::render('Admin/Demo/Playground', [
+            'playgroundsEnabled' => config('myra.gallery.playgrounds') === true,
+        ]);
+    }
+
+    /** ReportDelivery.vue is a client-side showcase — it needs no server data. */
+    public function reportDelivery()
+    {
+        return Inertia::render('Admin/Demo/ReportDelivery');
+    }
+    // <<< MYRA v2.5 [C] END
 
     public function globalSearch()
     {

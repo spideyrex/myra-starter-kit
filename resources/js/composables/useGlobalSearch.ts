@@ -58,6 +58,55 @@ function writeRecent(items: SearchItem[]): void {
     }
 }
 
+export interface HighlightRun {
+    text: string;
+    mark: boolean;
+}
+
+const MAX_MATCHES = 24;
+
+/**
+ * Client-side equivalent of the offsets the search endpoint returns, so a
+ * purely local list (the gallery, the command registry) highlights through the
+ * same SearchHighlight component. Offsets only — never HTML, never v-html.
+ */
+export function matchOffsets(
+    text: string,
+    query: string,
+    field: 'title' | 'description' = 'title',
+): SearchMatch[] {
+    const haystack = (text ?? '').toLowerCase();
+    const terms = (query ?? '').toLowerCase().split(/\s+/).filter(t => t.length > 0);
+
+    if (haystack === '' || terms.length === 0) return [];
+
+    const found: SearchMatch[] = [];
+
+    for (const term of terms) {
+        let from = 0;
+        while (found.length < MAX_MATCHES) {
+            const at = haystack.indexOf(term, from);
+            if (at === -1) break;
+            found.push({ field, start: at, length: term.length });
+            from = at + term.length;
+        }
+    }
+
+    // Sorted and non-overlapping so highlightRuns can consume them directly.
+    found.sort((a, b) => a.start - b.start || b.length - a.length);
+
+    const merged: SearchMatch[] = [];
+    let cursor = -1;
+
+    for (const match of found) {
+        if (match.start < cursor) continue;
+        merged.push(match);
+        cursor = match.start + match.length;
+    }
+
+    return merged;
+}
+
 /**
  * Split `text` into runs so the caller can wrap matched runs in <mark>.
  * Text is never interpolated into HTML — this returns plain strings.
@@ -66,7 +115,7 @@ export function highlightRuns(
     text: string,
     matches: SearchMatch[] | undefined,
     field: 'title' | 'description' = 'title',
-): Array<{ text: string; mark: boolean }> {
+): HighlightRun[] {
     const ranges = (matches ?? [])
         .filter(m => m.field === field && m.length > 0 && m.start >= 0 && m.start < text.length)
         .sort((a, b) => a.start - b.start);

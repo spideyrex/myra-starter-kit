@@ -261,6 +261,45 @@ function runCommand(callback: () => void) {
 function handleCommandInput(value: string) {
     searchQuery.value = value;
 }
+
+// >>> MYRA v2.5 [C] START
+import { Kbd } from '@/components/ui/kbd';
+import { useCommandRegistry, type Command } from '@/composables/useCommandRegistry';
+import { navigateCommandId, useCoreCommands } from '@/commands/coreCommands';
+
+useCoreCommands({ toggleTheme: toggleDark });
+
+const { commands: registeredCommands } = useCommandRegistry();
+
+/**
+ * This dialog already renders every navigable nav leaf and the dark-mode
+ * action, so the same command from the registry would appear twice. Dedupe
+ * HERE, in the host that owns the duplicate — the registry itself stays
+ * complete for other hosts (the standalone CommandPalette has no nav groups).
+ */
+const alreadyRendered = computed(() => new Set([
+    'theme.toggle',
+    ...paletteGroups.value.flatMap((group: any) => group.items.map((item: any) => navigateCommandId(String(item.href)))),
+]));
+
+const paletteCommandGroups = computed(() => {
+    const grouped = new Map<string, Command[]>();
+
+    for (const command of registeredCommands.value) {
+        if (alreadyRendered.value.has(command.id)) continue;
+        if (!grouped.has(command.groupKey)) grouped.set(command.groupKey, []);
+        grouped.get(command.groupKey)!.push(command);
+    }
+
+    return [...grouped.entries()].map(([groupKey, items]) => ({ groupKey, items }));
+});
+
+function runRegistered(command: Command) {
+    commandOpen.value = false;
+    resetSearch();
+    void command.run({ close: () => { commandOpen.value = false; } });
+}
+// <<< MYRA v2.5 [C] END
 </script>
 
 <template>
@@ -488,6 +527,23 @@ function handleCommandInput(value: string) {
                 </CommandItem>
             </CommandGroup>
             <CommandSeparator />
+            <!-- >>> MYRA v2.5 [C] START -->
+            <template v-for="group in paletteCommandGroups" :key="group.groupKey">
+                <CommandGroup :heading="$t(group.groupKey)">
+                    <CommandItem
+                        v-for="cmd in group.items"
+                        :key="cmd.id"
+                        :value="`myra-cmd-${cmd.id}`"
+                        @select="runRegistered(cmd)"
+                    >
+                        <component :is="cmd.icon" v-if="cmd.icon" class="mr-2 size-4" />
+                        {{ $t(cmd.titleKey) }}
+                        <Kbd v-if="cmd.shortcut" class="ml-auto">{{ cmd.shortcut }}</Kbd>
+                    </CommandItem>
+                </CommandGroup>
+                <CommandSeparator />
+            </template>
+            <!-- <<< MYRA v2.5 [C] END -->
             <CommandGroup :heading="$t('common.actions')">
                 <CommandItem value="Profile" @select="runCommand(() => router.visit(route('profile.show')))">
                     <User class="mr-2 size-4" />

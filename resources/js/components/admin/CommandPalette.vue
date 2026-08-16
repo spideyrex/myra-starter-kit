@@ -4,9 +4,11 @@ import { useI18n } from 'vue-i18n';
 import { router } from '@inertiajs/vue3';
 import { useEventListener } from '@vueuse/core';
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from '@/components/ui/dialog';
-import { Search, Clock, Loader2 } from 'lucide-vue-next';
+import { Kbd } from '@/components/ui/kbd';
+import { Search, Clock, Loader2, Command as CommandIcon } from 'lucide-vue-next';
 import SearchHighlight from '@/components/admin/SearchHighlight.vue';
 import { useGlobalSearch, type SearchItem } from '@/composables/useGlobalSearch';
+import { useCommandRegistry, type CommandMatch } from '@/composables/useCommandRegistry';
 
 const props = withDefaults(defineProps<{
     /** Set false when a host layout already owns the Cmd/Ctrl+K binding. */
@@ -20,20 +22,59 @@ const { t } = useI18n();
 const inputRef = ref<HTMLInputElement | null>(null);
 const listboxId = 'myra-command-listbox';
 
-const { query, results, loading, hasSearched, activeIndex, flatItems, recent, next, prev, open: markOpened, reset } =
+const { query, results, loading, hasSearched, activeIndex, flatItems, recent, open: markOpened, reset } =
     useGlobalSearch();
+
+const { match } = useCommandRegistry();
+
+/** One listbox, two kinds of row — the a11y machinery below is unchanged. */
+type CommandRow = { kind: 'command'; id: string; command: CommandMatch };
+type RecordRow = { kind: 'record'; id: string; item: SearchItem; groupLabel: string | null };
+type PaletteRow = CommandRow | RecordRow;
 
 const showRecent = computed(() => query.value.length < 2 && recent.value.length > 0);
 
-const visibleItems = computed<SearchItem[]>(() => (showRecent.value ? recent.value : flatItems.value));
+const commandRows = computed<CommandRow[]>(() =>
+    match(query.value).slice(0, 8).map(command => ({ kind: 'command', id: `cmd-${command.id}`, command })),
+);
 
-function optionId(item: SearchItem, index: number): string {
-    return `${listboxId}-opt-${index}-${item.id}`;
+const recordRows = computed<RecordRow[]>(() => {
+    if (showRecent.value) {
+        return recent.value.map((item, i) => ({
+            kind: 'record' as const,
+            id: `rec-${i}-${item.id}`,
+            item,
+            groupLabel: null,
+        }));
+    }
+
+    const out: RecordRow[] = [];
+
+    for (const group of results.value) {
+        let first = true;
+        for (const item of group.items) {
+            out.push({
+                kind: 'record' as const,
+                id: `${group.key ?? group.group}-${item.id}`,
+                item,
+                groupLabel: first ? group.group : null,
+            });
+            first = false;
+        }
+    }
+
+    return out;
+});
+
+const rows = computed<PaletteRow[]>(() => [...commandRows.value, ...recordRows.value]);
+
+function optionId(row: PaletteRow, index: number): string {
+    return `${listboxId}-opt-${index}-${row.id}`;
 }
 
 const activeDescendant = computed(() => {
-    const item = visibleItems.value[activeIndex.value];
-    return item ? optionId(item, activeIndex.value) : undefined;
+    const row = rows.value[activeIndex.value];
+    return row ? optionId(row, activeIndex.value) : undefined;
 });
 
 // The binding lives here, so no shared layout has to be edited.
@@ -54,22 +95,29 @@ watch(open, async (isOpen) => {
     }
 });
 
+watch(rows, (list) => {
+    if (activeIndex.value > list.length - 1) activeIndex.value = 0;
+});
+
 function move(delta: 1 | -1) {
-    if (showRecent.value) {
-        const total = recent.value.length;
-        if (total === 0) return;
-        activeIndex.value = (activeIndex.value + delta + total) % total;
-        return;
-    }
-    delta === 1 ? next() : prev();
+    const total = rows.value.length;
+    if (total === 0) return;
+    activeIndex.value = (activeIndex.value + delta + total) % total;
 }
 
-function choose(item?: SearchItem) {
-    const target = item ?? visibleItems.value[activeIndex.value];
+function choose(row?: PaletteRow) {
+    const target = row ?? rows.value[activeIndex.value];
     if (!target) return;
-    markOpened(target);
+
+    if (target.kind === 'command') {
+        open.value = false;
+        void target.command.run({ close: () => { open.value = false; } });
+        return;
+    }
+
+    markOpened(target.item);
     open.value = false;
-    router.visit(target.url);
+    router.visit(target.item.url);
 }
 
 function onKeydown(e: KeyboardEvent) {
@@ -102,7 +150,7 @@ defineExpose({ open });
                     role="combobox"
                     type="text"
                     autocomplete="off"
-                    :aria-expanded="visibleItems.length > 0"
+                    :aria-expanded="rows.length > 0"
                     :aria-controls="listboxId"
                     :aria-activedescendant="activeDescendant"
                     :aria-label="t('search.placeholder')"
@@ -114,64 +162,71 @@ defineExpose({ open });
             </div>
 
             <p class="sr-only" role="status" aria-live="polite" aria-atomic="true">
-                {{ loading ? t('common.loading') : t('search.a11y.results', { n: flatItems.length }) }}
+                {{ loading ? t('common.loading') : t('search.a11y.results', { n: rows.length }) }}
             </p>
 
             <div class="max-h-[60vh] overflow-y-auto p-1">
-                <p v-if="showRecent" class="px-2 py-1.5 text-xs font-medium text-muted-foreground">
-                    {{ t('search.recent') }}
-                </p>
-
-                <ul :id="listboxId" role="listbox" :aria-label="t('search.a11y.results', { n: visibleItems.length })" class="space-y-0.5">
-                    <template v-if="showRecent">
+                <ul :id="listboxId" role="listbox" :aria-label="t('search.a11y.results', { n: rows.length })" class="space-y-0.5">
+                    <template v-if="commandRows.length">
+                        <li role="presentation" class="px-2 pb-1 pt-2 text-xs font-medium text-muted-foreground">
+                            {{ t('gallery.commands.heading') }}
+                        </li>
                         <li
-                            v-for="(item, i) in recent"
-                            :id="optionId(item, i)"
-                            :key="`recent-${item.url}`"
+                            v-for="(row, i) in commandRows"
+                            :id="optionId(row, i)"
+                            :key="row.id"
                             role="option"
                             :aria-selected="activeIndex === i"
                             :class="[
                                 'flex cursor-pointer items-center gap-2 rounded-md px-2 py-2 text-sm',
                                 activeIndex === i ? 'bg-accent text-accent-foreground' : '',
                             ]"
-                            @click="choose(item)"
+                            @click="choose(row)"
                             @mousemove="activeIndex = i"
                         >
-                            <Clock class="size-4 shrink-0 text-muted-foreground" aria-hidden="true" />
-                            <span class="truncate">{{ item.title }}</span>
+                            <component
+                                :is="row.command.icon ?? CommandIcon"
+                                class="size-4 shrink-0 text-muted-foreground"
+                                aria-hidden="true"
+                            />
+                            <span class="truncate">
+                                <SearchHighlight :text="row.command.title" :matches="row.command.matches" field="title" />
+                            </span>
+                            <Kbd v-if="row.command.shortcut" class="ml-auto">{{ row.command.shortcut }}</Kbd>
                         </li>
                     </template>
 
-                    <template v-else>
-                        <template v-for="group in results" :key="group.key ?? group.group">
-                            <li role="presentation" class="px-2 pb-1 pt-2 text-xs font-medium text-muted-foreground">
-                                {{ group.group }}
-                            </li>
-                            <li
-                                v-for="item in group.items"
-                                :id="optionId(item, flatItems.indexOf(item))"
-                                :key="`${group.key}-${item.id}`"
-                                role="option"
-                                :aria-selected="flatItems.indexOf(item) === activeIndex"
-                                :class="[
-                                    'flex cursor-pointer flex-col rounded-md px-2 py-2 text-sm',
-                                    flatItems.indexOf(item) === activeIndex ? 'bg-accent text-accent-foreground' : '',
-                                ]"
-                                @click="choose(item)"
-                                @mousemove="activeIndex = flatItems.indexOf(item)"
-                            >
-                                <span class="truncate font-medium">
-                                    <SearchHighlight :text="item.title" :matches="item.matches" field="title" />
-                                </span>
-                                <span v-if="item.description" class="truncate text-xs text-muted-foreground">
-                                    <SearchHighlight :text="item.description" :matches="item.matches" field="description" />
-                                </span>
-                            </li>
-                        </template>
+                    <li v-if="showRecent" role="presentation" class="px-2 pb-1 pt-2 text-xs font-medium text-muted-foreground">
+                        {{ t('search.recent') }}
+                    </li>
+
+                    <template v-for="(row, i) in recordRows" :key="row.id">
+                        <li v-if="row.groupLabel" role="presentation" class="px-2 pb-1 pt-2 text-xs font-medium text-muted-foreground">
+                            {{ row.groupLabel }}
+                        </li>
+                        <li
+                            :id="optionId(row, commandRows.length + i)"
+                            role="option"
+                            :aria-selected="commandRows.length + i === activeIndex"
+                            :class="[
+                                'flex cursor-pointer flex-col rounded-md px-2 py-2 text-sm',
+                                commandRows.length + i === activeIndex ? 'bg-accent text-accent-foreground' : '',
+                            ]"
+                            @click="choose(row)"
+                            @mousemove="activeIndex = commandRows.length + i"
+                        >
+                            <span class="flex items-center gap-2 truncate font-medium">
+                                <Clock v-if="showRecent" class="size-4 shrink-0 text-muted-foreground" aria-hidden="true" />
+                                <SearchHighlight :text="row.item.title" :matches="row.item.matches" field="title" />
+                            </span>
+                            <span v-if="row.item.description" class="truncate text-xs text-muted-foreground">
+                                <SearchHighlight :text="row.item.description" :matches="row.item.matches" field="description" />
+                            </span>
+                        </li>
                     </template>
                 </ul>
 
-                <p v-if="hasSearched && flatItems.length === 0" class="px-2 py-6 text-center text-sm text-muted-foreground">
+                <p v-if="hasSearched && rows.length === 0" class="px-2 py-6 text-center text-sm text-muted-foreground">
                     {{ t('search.noResults') }}
                 </p>
             </div>

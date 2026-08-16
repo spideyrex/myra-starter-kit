@@ -1,0 +1,361 @@
+{
+    "demos": [
+        {
+            "badgeKey": "gallery.demos.richTextEditor.badge",
+            "descriptionKey": "gallery.demos.richTextEditor.description",
+            "icon": "Type",
+            "key": "richTextEditor",
+            "playground": null,
+            "route": "admin.demo.rich-text-editor",
+            "since": "1.0.0",
+            "tags": [
+                "forms",
+                "content"
+            ],
+            "titleKey": "gallery.demos.richTextEditor.title"
+        },
+        {
+            "badgeKey": "gallery.demos.repeaterField.badge",
+            "descriptionKey": "gallery.demos.repeaterField.description",
+            "icon": "Repeat",
+            "key": "repeaterField",
+            "playground": null,
+            "route": "admin.demo.repeater-field",
+            "since": "1.0.0",
+            "tags": [
+                "forms"
+            ],
+            "titleKey": "gallery.demos.repeaterField.title"
+        },
+        {
+            "badgeKey": "gallery.demos.formBuilder.badge",
+            "descriptionKey": "gallery.demos.formBuilder.description",
+            "icon": "FormInput",
+            "key": "formBuilder",
+            "playground": null,
+            "route": "admin.demo.form-builder",
+            "since": "1.0.0",
+            "tags": [
+                "forms"
+            ],
+            "titleKey": "gallery.demos.formBuilder.title"
+        },
+        {
+            "badgeKey": "gallery.demos.bulkActions.badge",
+            "descriptionKey": "gallery.demos.bulkActions.description",
+            "icon": "CheckSquare",
+            "key": "bulkActions",
+            "playground": null,
+            "route": "admin.demo.bulk-actions",
+            "since": "1.0.0",
+            "tags": [
+                "tables"
+            ],
+            "titleKey": "gallery.demos.bulkActions.title"
+        },
+        {
+            "badgeKey": "gallery.demos.softDeletes.badge",
+            "descriptionKey": "gallery.demos.softDeletes.description",
+            "icon": "Trash2",
+            "key": "softDeletes",
+            "playground": null,
+            "route": "admin.demo.soft-deletes",
+            "since": "1.0.0",
+            "tags": [
+                "tables",
+                "data"
+            ],
+            "titleKey": "gallery.demos.softDeletes.title"
+        },
+        {
+            "badgeKey": "gallery.demos.actionModals.badge",
+            "descriptionKey": "gallery.demos.actionModals.description",
+            "icon": "PanelTop",
+            "key": "actionModals",
+            "playground": null,
+            "route": "admin.demo.action-modals",
+            "since": "1.0.0",
+            "tags": [
+                "tables"
+            ],
+            "titleKey": "gallery.demos.actionModals.title"
+        },
+        {
+            "badgeKey": "gallery.demos.importExport.badge",
+            "descriptionKey": "gallery.demos.importExport.description",
+            "icon": "Upload",
+            "key": "importExport",
+            "playground": null,
+            "route": "admin.demo.import-export",
+            "since": "1.0.0",
+            "tags": [
+                "data"
+            ],
+            "titleKey": "gallery.demos.importExport.title"
+        },
+        {
+            "badgeKey": "gallery.demos.globalSearch.badge",
+            "descriptionKey": "gallery.demos.globalSearch.description",
+            "icon": "Search",
+            "key": "globalSearch",
+            "playground": null,
+            "route": "admin.demo.global-search",
+            "since": "1.0.0",
+            "tags": [
+                "navigation"
+            ],
+            "titleKey": "gallery.demos.globalSearch.title"
+        },
+        {
+            "badgeKey": "gallery.demos.inlineEditing.badge",
+            "descriptionKey": "gallery.demos.inlineEditing.description",
+            "icon": "Pencil",
+            "key": "inlineEditing",
+            "playground": null,
+            "route": "admin.demo.inline-editing",
+            "since": "1.1.0",
+            "tags": [
+                "tables"
+            ],
+            "titleKey": "gallery.demos.inlineEditing.title"
+        },
+        {
+            "badgeKey": "gallery.demos.conditionalFields.badge",
+            "descriptionKey": "gallery.demos.conditionalFields.description",
+            "icon": "Eye",
+            "key": "conditionalFields",
+            "playground": null,
+            "route": "admin.demo.conditional-fields",
+            "since": "1.1.0",
+            "tags": [
+                "forms"
+            ],
+            "titleKey": "gallery.demos.conditionalFields.title"
+        },
+        {
+            "badgeKey": "gallery.demos.infolist.badge",
+            "descriptionKey": "gallery.demos.infolist.description",
+            "icon": "Info",
+            "key": "infolist",
+            "playground": null,
+            "route": "admin.demo.infolist",
+            "since": "1.1.0",
+            "tags": [
+                "layout"
+            ],
+            "titleKey": "gallery.demos.infolist.title"
+        },
+        {
+            "badgeKey": "gallery.demos.relationManager.badge",
+            "descriptionKey": "gallery.demos.relationManager.description",
+            "icon": "Link2",
+            "key": "relationManager",
+            "playground": null,
+            "route": "admin.demo.relation-manager",
+            "since": "1.1.0",
+            "tags": [
+                "tables",
+                "data"
+            ],
+            "titleKey": "gallery.demos.relationManager.title"
+        },
+        {
+            "badgeKey": "gallery.demos.grouping.badge",
+            "descriptionKey": "gallery.demos.grouping.description",
+            "icon": "Layers",
+            "key": "grouping",
+            "playground": null,
+            "route": "admin.demo.grouping",
+            "since": "1.1.0",
+            "tags": [
+                "tables"
+            ],
+            "titleKey": "gallery.demos.grouping.title"
+        },
+        {
+            "badgeKey": "gallery.demos.reordering.badge",
+            "descriptionKey": "gallery.demos.reordering.description",
+            "icon": "GripVertical",
+            "key": "reordering",
+            "playground": null,
+            "route": "admin.demo.reordering",
+            "since": "1.1.0",
+            "tags": [
+                "tables"
+            ],
+            "titleKey": "gallery.demos.reordering.title"
+        },
+        {
+            "badgeKey": "gallery.demos.widgets.badge",
+            "descriptionKey": "gallery.demos.widgets.description",
+            "icon": "LayoutDashboard",
+            "key": "widgets",
+            "playground": null,
+            "route": "admin.demo.widgets",
+            "since": "1.1.0",
+            "tags": [
+                "dashboard"
+            ],
+            "titleKey": "gallery.demos.widgets.title"
+        },
+        {
+            "badgeKey": "gallery.demos.fieldTypes.badge",
+            "descriptionKey": "gallery.demos.fieldTypes.description",
+            "icon": "ListChecks",
+            "key": "fieldTypes",
+            "playground": null,
+            "route": "admin.demo.field-types",
+            "since": "1.2.0",
+            "tags": [
+                "forms"
+            ],
+            "titleKey": "gallery.demos.fieldTypes.title"
+        },
+        {
+            "badgeKey": "gallery.demos.codeEditor.badge",
+            "descriptionKey": "gallery.demos.codeEditor.description",
+            "icon": "Code",
+            "key": "codeEditor",
+            "playground": null,
+            "route": "admin.demo.code-editor",
+            "since": "1.2.0",
+            "tags": [
+                "forms",
+                "content"
+            ],
+            "titleKey": "gallery.demos.codeEditor.title"
+        },
+        {
+            "badgeKey": "gallery.demos.advancedFilters.badge",
+            "descriptionKey": "gallery.demos.advancedFilters.description",
+            "icon": "SlidersHorizontal",
+            "key": "advancedFilters",
+            "playground": null,
+            "route": "admin.demo.advanced-filters",
+            "since": "1.2.0",
+            "tags": [
+                "tables"
+            ],
+            "titleKey": "gallery.demos.advancedFilters.title"
+        },
+        {
+            "badgeKey": "gallery.demos.wizard.badge",
+            "descriptionKey": "gallery.demos.wizard.description",
+            "icon": "Wand2",
+            "key": "wizard",
+            "playground": null,
+            "route": "admin.demo.wizard",
+            "since": "1.2.0",
+            "tags": [
+                "forms"
+            ],
+            "titleKey": "gallery.demos.wizard.title"
+        },
+        {
+            "badgeKey": "gallery.demos.map.badge",
+            "descriptionKey": "gallery.demos.map.description",
+            "icon": "MapPin",
+            "key": "map",
+            "playground": null,
+            "route": "admin.demo.map",
+            "since": "1.2.0",
+            "tags": [
+                "data"
+            ],
+            "titleKey": "gallery.demos.map.title"
+        },
+        {
+            "badgeKey": "gallery.demos.savedViews.badge",
+            "descriptionKey": "gallery.demos.savedViews.description",
+            "icon": "Bookmark",
+            "key": "savedViews",
+            "playground": null,
+            "route": "admin.demo.saved-views",
+            "since": "2.2.0",
+            "tags": [
+                "tables"
+            ],
+            "titleKey": "gallery.demos.savedViews.title"
+        },
+        {
+            "badgeKey": "gallery.demos.reports.badge",
+            "descriptionKey": "gallery.demos.reports.description",
+            "icon": "BarChart3",
+            "key": "reports",
+            "playground": null,
+            "route": "admin.demo.reports",
+            "since": "2.3.0",
+            "tags": [
+                "dashboard",
+                "data"
+            ],
+            "titleKey": "gallery.demos.reports.title"
+        },
+        {
+            "badgeKey": "gallery.demos.reportDelivery.badge",
+            "descriptionKey": "gallery.demos.reportDelivery.description",
+            "icon": "Send",
+            "key": "reportDelivery",
+            "playground": null,
+            "route": "admin.demo.report-delivery",
+            "since": "2.3.0",
+            "tags": [
+                "dashboard"
+            ],
+            "titleKey": "gallery.demos.reportDelivery.title"
+        },
+        {
+            "badgeKey": "gallery.demos.tenancy.badge",
+            "descriptionKey": "gallery.demos.tenancy.description",
+            "icon": "Building2",
+            "key": "tenancy",
+            "playground": null,
+            "route": "admin.demo.tenancy",
+            "since": "2.4.0",
+            "tags": [
+                "platform"
+            ],
+            "titleKey": "gallery.demos.tenancy.title"
+        },
+        {
+            "badgeKey": "gallery.demos.plugins.badge",
+            "descriptionKey": "gallery.demos.plugins.description",
+            "icon": "Puzzle",
+            "key": "plugins",
+            "playground": null,
+            "route": "admin.demo.plugins",
+            "since": "2.4.0",
+            "tags": [
+                "platform"
+            ],
+            "titleKey": "gallery.demos.plugins.title"
+        },
+        {
+            "badgeKey": "gallery.demos.scale.badge",
+            "descriptionKey": "gallery.demos.scale.description",
+            "icon": "Gauge",
+            "key": "scale",
+            "playground": null,
+            "route": "admin.demo.scale",
+            "since": "2.4.0",
+            "tags": [
+                "tables",
+                "platform"
+            ],
+            "titleKey": "gallery.demos.scale.title"
+        },
+        {
+            "badgeKey": "gallery.demos.playground.badge",
+            "descriptionKey": "gallery.demos.playground.description",
+            "icon": "SlidersHorizontal",
+            "key": "playground",
+            "playground": "statCard",
+            "route": "admin.demo.playground",
+            "since": "2.5.0",
+            "tags": [
+                "gallery"
+            ],
+            "titleKey": "gallery.demos.playground.title"
+        }
+    ]
+}

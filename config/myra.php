@@ -381,6 +381,24 @@ return [
     ],
     // <<< MYRA v2.3 [C] END
 
+    // >>> MYRA v2.5 [C] START
+    /*
+    |--------------------------------------------------------------------------
+    | Component gallery
+    |--------------------------------------------------------------------------
+    |
+    | The playground is a demo-only surface behind `demo.view`, so it is safe
+    | on — but it is still a flag, because "safe" is a judgement and a flag is
+    | a fact. With it false the Playground page renders a disabled notice and
+    | the gallery cards stop advertising a playground.
+    |
+    */
+
+    'gallery' => [
+        'playgrounds' => env('MYRA_GALLERY_PLAYGROUNDS', true),
+    ],
+    // <<< MYRA v2.5 [C] END
+
     // >>> MYRA v2.3 [D] START
     /*
     |--------------------------------------------------------------------------

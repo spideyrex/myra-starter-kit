@@ -583,6 +583,246 @@
         "viewportHeight": "Viewport height",
         "virtualized": "Virtualised"
     },
+    "gallery": {
+        "title": "Feature gallery",
+        "subtitle": "Every demo page in one searchable catalogue. Pick a card to explore the feature.",
+        "search": "Search demos",
+        "noResults": "No demo matches that search.",
+        "allTags": "All",
+        "viewDemo": "View demo",
+        "since": "Since v{version}",
+        "back": "Back to gallery",
+        "resultCount": "{n} demos shown.",
+        "tags": {
+            "forms": "Forms",
+            "tables": "Tables",
+            "data": "Data",
+            "dashboard": "Dashboard",
+            "navigation": "Navigation",
+            "layout": "Layout",
+            "platform": "Platform",
+            "content": "Content",
+            "gallery": "Gallery"
+        },
+        "playground": {
+            "title": "Component playground",
+            "description": "Edit props live against the real primitives and copy the generated snippet.",
+            "props": "Props",
+            "code": "Generated code",
+            "copy": "Copy",
+            "copied": "Copied",
+            "reset": "Reset",
+            "viewport": "Viewport",
+            "scheme": "Colour scheme",
+            "locale": "Language",
+            "keyboard": "Keyboard walkthrough",
+            "schemeLight": "Light",
+            "schemeDark": "Dark",
+            "disabledTitle": "Playgrounds are turned off",
+            "disabledDescription": "Set this flag to render the live playground on this page.",
+            "viewports": {
+                "sm": "Phone",
+                "md": "Tablet",
+                "lg": "Desktop"
+            },
+            "schemes": {
+                "light": "Light",
+                "dark": "Dark",
+                "split": "Split"
+            },
+            "specs": {
+                "statCard": "Stat card",
+                "button": "Button",
+                "badge": "Badge",
+                "emptyState": "Empty state"
+            },
+            "control": {
+                "title": "Title",
+                "value": "Value",
+                "description": "Description",
+                "color": "Colour",
+                "label": "Label",
+                "variant": "Variant",
+                "size": "Size",
+                "disabled": "Disabled"
+            },
+            "option": {
+                "blue": "Blue",
+                "green": "Green",
+                "violet": "Violet",
+                "rose": "Rose",
+                "default": "Default",
+                "secondary": "Secondary",
+                "destructive": "Destructive",
+                "outline": "Outline",
+                "ghost": "Ghost",
+                "link": "Link",
+                "sm": "Small",
+                "lg": "Large"
+            },
+            "keyboardSteps": {
+                "controls": "Tab into the props panel and change a control.",
+                "viewport": "Tab to the viewport group; arrow keys switch width.",
+                "scheme": "Tab to the colour scheme group; arrow keys switch light, dark and split.",
+                "locale": "Tab to the language select; Enter opens it and arrow keys pick en, ms or zh.",
+                "snippet": "Tab to the language tabs above the snippet; arrow keys switch Vue, TS and PHP.",
+                "copy": "Tab to Copy and press Enter; the snippet is plain text, never rendered HTML."
+            }
+        },
+        "commands": {
+            "heading": "Commands",
+            "themeToggle": "Toggle dark mode",
+            "shortcuts": "Keyboard shortcuts",
+            "locale": {
+                "en": "Switch to English",
+                "ms": "Switch to Bahasa Melayu",
+                "zh": "Switch to Chinese"
+            },
+            "group": {
+                "navigate": "Go to",
+                "action": "Actions",
+                "theme": "Preferences",
+                "demo": "Demos"
+            }
+        },
+        "demos": {
+            "richTextEditor": {
+                "title": "Rich text editor",
+                "description": "TipTap-powered WYSIWYG editor with a configurable toolbar, image and link support, and FormField integration.",
+                "badge": "TipTap v3"
+            },
+            "repeaterField": {
+                "title": "Repeater field",
+                "description": "Dynamic add and remove rows with reordering, collapsible items, and nested field schemas.",
+                "badge": "Form builder"
+            },
+            "formBuilder": {
+                "title": "Form builder",
+                "description": "Every field type and layout component: sections, grids, tabs, wizards and callouts.",
+                "badge": "All fields"
+            },
+            "bulkActions": {
+                "title": "Bulk actions",
+                "description": "Row selection, bulk actions with confirmation dialogs, filters and CSV export.",
+                "badge": "DataTable"
+            },
+            "softDeletes": {
+                "title": "Soft deletes and trash",
+                "description": "Trash, restore and force-delete with conditional row actions and a trashed filter.",
+                "badge": "SoftDeletes"
+            },
+            "actionModals": {
+                "title": "Action modals",
+                "description": "Inline CRUD in modal dialogs with dynamic form schemas and no page navigation.",
+                "badge": "Modal"
+            },
+            "importExport": {
+                "title": "Import and export",
+                "description": "CSV import with column mapping and preview, plus a streaming CSV export.",
+                "badge": "CSV"
+            },
+            "globalSearch": {
+                "title": "Global search",
+                "description": "Command palette with debounced API search across every resource.",
+                "badge": "Cmd+K"
+            },
+            "inlineEditing": {
+                "title": "Inline table editing",
+                "description": "Edit cell values directly in the table with select, text and toggle columns.",
+                "badge": "Inline edit"
+            },
+            "conditionalFields": {
+                "title": "Conditional fields",
+                "description": "Show or hide form fields from other field values using string or function conditions.",
+                "badge": "Visibility"
+            },
+            "infolist": {
+                "title": "Infolist and show page",
+                "description": "Schema-based read-only detail views with text, badge, date, boolean and image entries.",
+                "badge": "Infolist"
+            },
+            "relationManager": {
+                "title": "Relation managers",
+                "description": "An embedded table for managing related records on a detail page, with create modals.",
+                "badge": "Relations"
+            },
+            "grouping": {
+                "title": "Row grouping and summaries",
+                "description": "Group rows by column values with collapsible headers and aggregated summary rows.",
+                "badge": "Grouping"
+            },
+            "reordering": {
+                "title": "Drag-and-drop reordering",
+                "description": "Reorder table rows by drag or keyboard, persisting the sort order to the server.",
+                "badge": "Sortable"
+            },
+            "widgets": {
+                "title": "Dashboard widgets",
+                "description": "Configurable widget builders: stat, chart, table and custom widgets.",
+                "badge": "Widgets"
+            },
+            "fieldTypes": {
+                "title": "New field types",
+                "description": "Hints, toggle buttons, time picker, checkbox list, key-value and the markdown editor.",
+                "badge": "Fields"
+            },
+            "codeEditor": {
+                "title": "Code editor field",
+                "description": "CodeMirror 6 behind a lazy import: per-field language, line numbers, wrapping and copy.",
+                "badge": "CodeMirror"
+            },
+            "advancedFilters": {
+                "title": "Advanced filters",
+                "description": "Date range filters and a recursive query builder with AND/OR groups.",
+                "badge": "Filters"
+            },
+            "wizard": {
+                "title": "Wizard validation",
+                "description": "A five-step onboarding wizard with per-step validation, image editing and XLSX export.",
+                "badge": "Wizard"
+            },
+            "map": {
+                "title": "Map",
+                "description": "Theme-aware MapLibre GL maps: flight arcs, markers, popups, route lines and clustering.",
+                "badge": "MapLibre"
+            },
+            "savedViews": {
+                "title": "Saved views",
+                "description": "Named filter, sort and column presets per user, shareable with a team.",
+                "badge": "Views"
+            },
+            "reports": {
+                "title": "Reports and charts",
+                "description": "Composable report definitions with every measure computed in SQL: periods, comparisons and top-N.",
+                "badge": "Reports"
+            },
+            "reportDelivery": {
+                "title": "Report delivery",
+                "description": "Cross-filter chips, segment drill-down and the scheduled delivery dialog.",
+                "badge": "Delivery"
+            },
+            "tenancy": {
+                "title": "Tenancy",
+                "description": "Read-only tenancy status: scoped models, the tenant column and null-row policy.",
+                "badge": "Multi-tenant"
+            },
+            "plugins": {
+                "title": "Plugins",
+                "description": "Packages that register pages, permissions, reports and navigation — declared explicitly.",
+                "badge": "Plugins"
+            },
+            "scale": {
+                "title": "Scale",
+                "description": "100,000 rows, two pagination strategies, and a virtualised table body.",
+                "badge": "Scale"
+            },
+            "playground": {
+                "title": "Component playground",
+                "description": "Live prop editing over the real primitives, with copy-paste snippets in Vue, TypeScript and PHP.",
+                "badge": "New"
+            }
+        }
+    },
     "charts": {
         "a11y": {
             "canvas": "{chart} with {rows} data points.",

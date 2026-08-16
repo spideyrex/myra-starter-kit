@@ -41,6 +41,18 @@ class HomepageSettings extends Settings
     public string $navbar_cta_url;
     public array $navbar_links;
 
+    // >>> MYRA v2.6 [D] START
+    /** Registered TemplateRegistry key; an unknown value degrades to 'classic'. */
+    public string $template;
+
+    /** @var array<int,string> */
+    public array $section_order;
+
+    // Keyed by template key. No @var: spatie's PropertyReflector cannot resolve
+    // a nested array generic and throws before the group can hydrate.
+    public array $template_options;
+    // <<< MYRA v2.6 [D] END
+
     public static function group(): string
     {
         return 'homepage';

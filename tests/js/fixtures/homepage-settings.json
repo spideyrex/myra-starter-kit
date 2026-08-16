@@ -1,0 +1,133 @@
+{
+    "sectionOrder": [
+        "hero",
+        "features",
+        "testimonials",
+        "pricing",
+        "cta"
+    ],
+    "settings": {
+        "cta_button_text": "Start Building for Free",
+        "cta_button_url": "/register",
+        "cta_enabled": true,
+        "cta_subtitle": "Join thousands of developers who are already building with our platform.",
+        "cta_title": "Ready to Get Started?",
+        "enabled": true,
+        "features": [
+            {
+                "description": "Optimized for speed with built-in caching, lazy loading, and edge computing support.",
+                "icon": "Zap",
+                "title": "Lightning Fast"
+            },
+            {
+                "description": "Enterprise-grade security with two-factor authentication, role-based access, and audit logging.",
+                "icon": "Shield",
+                "title": "Secure by Default"
+            },
+            {
+                "description": "Real-time dashboards and detailed reports to help you make data-driven decisions.",
+                "icon": "BarChart3",
+                "title": "Powerful Analytics"
+            }
+        ],
+        "features_enabled": true,
+        "features_subtitle": "Powerful features to help you build, deploy, and scale your applications.",
+        "features_title": "Everything You Need",
+        "footer_links": [
+            {
+                "label": "Privacy Policy",
+                "url": "/pages/privacy-policy"
+            },
+            {
+                "label": "Terms of Service",
+                "url": "/pages/terms-of-service"
+            }
+        ],
+        "footer_text": "Building the future of web applications.",
+        "hero_cta_text": "Get Started",
+        "hero_cta_url": "/register",
+        "hero_image_path": null,
+        "hero_image_url": null,
+        "hero_subtitle": "The modern platform for building powerful web applications. Ship faster, scale effortlessly, and delight your users.",
+        "hero_title": "Build Something Amazing",
+        "navbar_cta_text": "Get Started",
+        "navbar_cta_url": "/register",
+        "navbar_links": [
+            {
+                "label": "Features",
+                "url": "#features"
+            },
+            {
+                "label": "Pricing",
+                "url": "#pricing"
+            },
+            {
+                "label": "Testimonials",
+                "url": "#testimonials"
+            }
+        ],
+        "pricing_enabled": true,
+        "pricing_plans": [
+            {
+                "cta_text": "Get Started",
+                "cta_url": "/register",
+                "features": "Up to 3 users,1 GB storage,Community support,Basic analytics",
+                "highlighted": false,
+                "name": "Free",
+                "period": "/month",
+                "price": "$0"
+            },
+            {
+                "cta_text": "Start Free Trial",
+                "cta_url": "/register",
+                "features": "Unlimited users,50 GB storage,Priority support,Advanced analytics,Custom branding,API access",
+                "highlighted": true,
+                "name": "Pro",
+                "period": "/month",
+                "price": "$29"
+            },
+            {
+                "cta_text": "Contact Sales",
+                "cta_url": "/register",
+                "features": "Unlimited everything,500 GB storage,Dedicated support,Custom integrations,SLA guarantee,SSO & SAML",
+                "highlighted": false,
+                "name": "Enterprise",
+                "period": "/month",
+                "price": "$99"
+            }
+        ],
+        "pricing_subtitle": "Choose the plan that fits your needs. No hidden fees, cancel anytime.",
+        "pricing_title": "Simple, Transparent Pricing",
+        "section_order": [
+            "hero",
+            "features",
+            "testimonials",
+            "pricing",
+            "cta"
+        ],
+        "template": "classic",
+        "template_options": [],
+        "testimonials": [
+            {
+                "name": "Sarah Chen",
+                "quote": "This platform has transformed how we build and ship products. The admin panel alone saved us months of development time.",
+                "role": "CTO at TechFlow"
+            },
+            {
+                "name": "Marcus Johnson",
+                "quote": "The best developer experience I've had. Everything just works, and the documentation is outstanding.",
+                "role": "Lead Developer at Startup Co"
+            },
+            {
+                "name": "Emily Rodriguez",
+                "quote": "We migrated from a custom solution and couldn't be happier. The built-in features cover 90% of what we need.",
+                "role": "Founder of DevStudio"
+            }
+        ],
+        "testimonials_enabled": true,
+        "testimonials_subtitle": "See what our users have to say about their experience.",
+        "testimonials_title": "Loved by Developers"
+    },
+    "template": "classic",
+    "templateOptions": {}
+}

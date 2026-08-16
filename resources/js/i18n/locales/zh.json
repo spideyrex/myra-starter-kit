@@ -622,6 +622,102 @@
             "italicSample": "斜体文字"
         }
     },
+    "landing": {
+        "title": "落地页",
+        "description": "选择公开首页所使用的模板，以及各版块的排列顺序。",
+        "nav": {
+            "label": "主导航",
+            "skipToContent": "跳到主要内容",
+            "dashboard": "仪表板",
+            "login": "登录",
+            "openMenu": "打开菜单",
+            "closeMenu": "关闭菜单"
+        },
+        "footer": {
+            "rights": "© {year} {name}。保留所有权利。"
+        },
+        "pricing": {
+            "popular": "最受欢迎"
+        },
+        "docs": {
+            "onThisPage": "本页内容"
+        },
+        "faq": {
+            "title": "常见问题",
+            "items": {
+                "billing": {
+                    "question": "如何计费？",
+                    "answer": "套餐按月计费，可随时更换等级，下一期账单将按比例结算。"
+                },
+                "trial": {
+                    "question": "有免费试用吗？",
+                    "answer": "每个套餐都包含试用期。试用结束前无需绑定银行卡。"
+                },
+                "support": {
+                    "question": "包含哪些支持？",
+                    "answer": "所有套餐均包含邮件支持。更高等级还提供共享频道与响应时间承诺。"
+                },
+                "cancel": {
+                    "question": "可以随时取消吗？",
+                    "answer": "可以。取消后将不再续订，数据在周期结束前仍可导出。"
+                }
+            }
+        },
+        "templates": {
+            "classic": {
+                "title": "经典",
+                "description": "原始布局：居中主视觉、三列功能区、用户评价、价格表与结尾行动号召。"
+            },
+            "spotlight": {
+                "title": "聚光",
+                "description": "品牌渐变背景上的居中主视觉，去掉价格表，只保留一个行动号召。"
+            },
+            "editorial": {
+                "title": "杂志",
+                "description": "左右分栏主视觉与双列、以文章为主的节奏，适合内容较多的发布页。"
+            },
+            "saas": {
+                "title": "SaaS",
+                "description": "价格优先，其后是功能与评价，以常见问题折叠面板收尾。"
+            },
+            "minimal": {
+                "title": "极简",
+                "description": "单窄栏、无图像、无价格表。阅读与加载都最快的一版。"
+            },
+            "docs": {
+                "title": "文档",
+                "description": "内容旁附带固定的版块导航栏，适合首页兼作文档的产品。"
+            }
+        },
+        "sections": {
+            "label": "版块",
+            "hero": "主视觉",
+            "features": "功能",
+            "testimonials": "用户评价",
+            "pricing": "价格",
+            "cta": "行动号召"
+        },
+        "sectionOrder": {
+            "label": "版块顺序",
+            "help": "版块按此顺序自上而下渲染。模板只会渲染它支持的版块。",
+            "moveUp": "将 {section} 上移",
+            "moveDown": "将 {section} 下移",
+            "reordered": "{section} 已移至第 {position} 位，共 {total} 项。"
+        },
+        "unsupported": {
+            "label": "此模板不渲染该版块",
+            "help": "所选模板不渲染该版块，因此它的位置不会产生影响。",
+            "disabled": "该版块已在首页设置中关闭。"
+        },
+        "preview": {
+            "label": "预览",
+            "openInNewTab": "在新标签页预览"
+        },
+        "picker": {
+            "label": "模板",
+            "help": "只改变排列与外观 — 每个模板渲染的首页内容完全相同。"
+        }
+    },
     "tenancy": {
         "title": "多租户",
         "subtitle": "需主动启用，默认关闭。关闭时不注册任何内容，也不改变任何查询。",
@@ -1029,7 +1125,8 @@
             "layout": "布局",
             "platform": "平台",
             "content": "内容",
-            "gallery": "展示库"
+            "gallery": "展示库",
+            "charts": "图表"
         },
         "playground": {
             "title": "组件试验场",
@@ -1267,6 +1364,157 @@
                 "title": "离线外壳",
                 "description": "应用外壳在无网络时仍可使用。仅缓存静态资源，绝不缓存您的数据。",
                 "badge": "PWA"
+            },
+            "emptyAndItem": {
+                "title": "Empty 与 Item",
+                "description": "带媒体、操作与分隔线的 Item 列表原语，列表清空后自动降级为 Empty 空状态。",
+                "badge": "新增"
+            },
+            "chartPrimitives": {
+                "title": "图表原语",
+                "description": "基于 Unovis 的 ChartContainer，使用主题化的系列色标，并在每张图旁附上屏幕阅读器数据表。",
+                "badge": "新增"
+            },
+            "otpAndCombobox": {
+                "title": "OTP 与组合框",
+                "description": "六格一次性验证码输入与可搜索组合框，均以键盘优先并带有标签。",
+                "badge": "新增"
+            },
+            "conversation": {
+                "title": "会话",
+                "description": "气泡、消息页眉页脚、自动滚动的消息滚动器与文件附件。",
+                "badge": "新增"
+            },
+            "questionnaire": {
+                "title": "问卷",
+                "description": "每次一题，带键盘快捷键、进度播报，校验由原语本身接线完成。",
+                "badge": "新增"
+            },
+            "mapMarkers": {
+                "title": "地图标记",
+                "description": "带弹出框的 MapLibre 标记，并配以 Marker 列表，画布绝不是唯一的信息通道。",
+                "badge": "新增"
+            },
+            "landingTemplates": {
+                "title": "落地页模板",
+                "description": "所有已注册的公开首页模板，列出各自渲染的版块并提供实时预览链接。",
+                "badge": "新增"
+            }
+        },
+        "references": {
+            "label": "参考",
+            "blocks": "区块",
+            "examples": "示例",
+            "brand": "品牌",
+            "landing": "落地页"
+        },
+        "componentDemos": {
+            "emptyAndItem": {
+                "listTitle": "项目列表",
+                "listDescription": "删除所有行即可看到 Empty 空状态接管。",
+                "restore": "恢复列表",
+                "remove": "删除 {name}",
+                "emptyTitle": "没有剩余项目",
+                "emptyDescription": "所有行都已删除。恢复列表即可找回。",
+                "variantsTitle": "变体",
+                "variantsDescription": "Item 提供 outline 与 muted 变体及两种尺寸；Empty 有无媒体皆可使用。",
+                "bareEmptyTitle": "暂无内容",
+                "bareEmptyDescription": "没有媒体也没有操作的 Empty 状态，依然是一个地标，而不是空白框。",
+                "status": {
+                    "active": "进行中",
+                    "paused": "已暂停",
+                    "archived": "已归档"
+                },
+                "variant": {
+                    "outline": "Outline 项",
+                    "muted": "Muted 项，小尺寸"
+                }
+            },
+            "chartPrimitives": {
+                "barTitle": "按设备划分的会话",
+                "barDescription": "由 ChartContainer 与主题图表色标驱动的分组柱状图。",
+                "lineTitle": "会话总数",
+                "lineDescription": "同一批数据以单条折线呈现。",
+                "channelTitle": "按渠道划分的访客",
+                "channelDescription": "一个系列、一种颜色，并以表格重复同样的数字。",
+                "month": "月份",
+                "channel": "渠道",
+                "total": "本期合计：{total} 次会话。",
+                "series": {
+                    "desktop": "桌面端",
+                    "mobile": "移动端",
+                    "visitors": "访客",
+                    "total": "合计"
+                }
+            },
+            "otpAndCombobox": {
+                "otpTitle": "一次性验证码",
+                "otpDescription": "六个格子，支持整段粘贴，配有真实标签与关联提示。",
+                "otpLabel": "验证码",
+                "otpHint": "请输入发送到您邮箱的六位数字。整段粘贴同样有效。",
+                "verify": "验证",
+                "verified": "验证码已接受。",
+                "entered": "已输入 {n} / 6 位。",
+                "comboTitle": "可搜索组合框",
+                "comboDescription": "输入以筛选，方向键移动，回车选择。",
+                "comboLabel": "时区",
+                "comboPlaceholder": "选择时区",
+                "comboSearch": "搜索时区",
+                "comboEmpty": "没有匹配该搜索的时区。",
+                "comboSelected": "已选择 {zone}。",
+                "comboNone": "尚未选择时区。"
+            },
+            "conversation": {
+                "you": "我",
+                "threadTitle": "会话线程",
+                "threadDescription": "一个实时区域，会播报新消息并滚动到最新一条。",
+                "scrollToLatest": "滚动到最新消息",
+                "draftLabel": "消息",
+                "draftPlaceholder": "写一条回复",
+                "send": "发送",
+                "attachmentsTitle": "附件",
+                "attachmentsDescription": "Attachment 渲染带媒体、标题与大小的文件卡片。"
+            },
+            "questionnaire": {
+                "title": "入门调查",
+                "description": "每次一题。字母快捷键可选择选项；进度会以礼貌方式播报。",
+                "freeTextPlaceholder": "用一句话告诉我们",
+                "required": "继续之前需要先作答。",
+                "previous": "上一题",
+                "next": "下一题",
+                "submit": "完成",
+                "submitted": "谢谢 — 您的答案已记录。",
+                "choices": {
+                    "engineer": "工程师",
+                    "designer": "设计师",
+                    "operator": "运营",
+                    "solo": "只有我",
+                    "small": "2 至 20 人",
+                    "large": "超过 20 人"
+                },
+                "items": {
+                    "role": {
+                        "title": "哪一项最符合您的角色？",
+                        "description": "这只会改变我们优先展示哪些示例。"
+                    },
+                    "size": {
+                        "title": "您的团队有多大？",
+                        "description": "用于为共享视图挑选合理的默认值。"
+                    },
+                    "goal": {
+                        "title": "您希望先交付什么？",
+                        "description": "一句话就够了。"
+                    }
+                }
+            },
+            "mapMarkers": {
+                "mapTitle": "覆盖地图",
+                "mapDescription": "MapLibre 标记；选中其一会同步更新旁边的列表。",
+                "listTitle": "地点",
+                "listDescription": "同样的标记以可聚焦的行呈现，地图绝不是唯一的入口。",
+                "separator": "当前选择",
+                "selected": "已选择 {name}。",
+                "none": "尚未选择地点。"
             }
         }
     },

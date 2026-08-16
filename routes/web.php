@@ -40,6 +40,10 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', [HomepageController::class, 'index'])->name('home');
 
+// >>> MYRA v2.6 [D] START
+require __DIR__.'/myra/landing.php';
+// <<< MYRA v2.6 [D] END
+
 // Public pages & blog
 Route::get('/pages/{slug}', [PublicPageController::class, 'show'])->name('pages.show');
 Route::get('/blog', [PublicArticleController::class, 'index'])->name('articles.index');

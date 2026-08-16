@@ -473,6 +473,31 @@ return [
     ],
     // <<< MYRA v2.3 [D] END
 
+    // >>> MYRA v2.6 [D] START
+    /*
+    |--------------------------------------------------------------------------
+    | Landing page templates
+    |--------------------------------------------------------------------------
+    |
+    | Arrangement and chrome only — every template renders the same
+    | HomepageSettings payload. An unregistered key always degrades to
+    | 'classic', so the public homepage cannot 500 on a stale setting.
+    |
+    */
+
+    'landing' => [
+        'templates' => [
+            \App\Homepage\Templates\ClassicTemplate::class,
+            \App\Homepage\Templates\SpotlightTemplate::class,
+            \App\Homepage\Templates\EditorialTemplate::class,
+            \App\Homepage\Templates\SaasTemplate::class,
+            \App\Homepage\Templates\MinimalTemplate::class,
+            \App\Homepage\Templates\DocsTemplate::class,
+            // myra:landing — make:myra-landing inserts templates above this line.
+        ],
+    ],
+    // <<< MYRA v2.6 [D] END
+
     // >>> MYRA v2.5 [D] START
     /*
     |--------------------------------------------------------------------------

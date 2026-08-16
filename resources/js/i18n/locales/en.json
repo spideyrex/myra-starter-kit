@@ -622,6 +622,102 @@
             "italicSample": "italic text"
         }
     },
+    "landing": {
+        "title": "Landing page",
+        "description": "Choose the template the public homepage renders with, and the order of its sections.",
+        "nav": {
+            "label": "Main",
+            "skipToContent": "Skip to content",
+            "dashboard": "Dashboard",
+            "login": "Log in",
+            "openMenu": "Open menu",
+            "closeMenu": "Close menu"
+        },
+        "footer": {
+            "rights": "© {year} {name}. All rights reserved."
+        },
+        "pricing": {
+            "popular": "Most popular"
+        },
+        "docs": {
+            "onThisPage": "On this page"
+        },
+        "faq": {
+            "title": "Frequently asked questions",
+            "items": {
+                "billing": {
+                    "question": "How does billing work?",
+                    "answer": "Plans are billed monthly and you can change tier at any time; the next invoice is prorated."
+                },
+                "trial": {
+                    "question": "Is there a free trial?",
+                    "answer": "Every plan starts with a trial period. No card is required until the trial ends."
+                },
+                "support": {
+                    "question": "What support is included?",
+                    "answer": "Email support is included on every plan. Higher tiers add a shared channel and a response-time target."
+                },
+                "cancel": {
+                    "question": "Can I cancel at any time?",
+                    "answer": "Yes. Cancelling stops the next renewal and your data stays exportable until the period ends."
+                }
+            }
+        },
+        "templates": {
+            "classic": {
+                "title": "Classic",
+                "description": "The original layout: centred hero, three-column features, testimonials, pricing and a closing call to action."
+            },
+            "spotlight": {
+                "title": "Spotlight",
+                "description": "A centred hero over a brand gradient, with the pricing wall dropped in favour of a single call to action."
+            },
+            "editorial": {
+                "title": "Editorial",
+                "description": "A split hero and a two-column, article-led rhythm for content-heavy launches."
+            },
+            "saas": {
+                "title": "SaaS",
+                "description": "Pricing first, then features and testimonials, closing with a frequently-asked-questions accordion."
+            },
+            "minimal": {
+                "title": "Minimal",
+                "description": "One narrow column, no imagery, no pricing table. The fastest page to read and to load."
+            },
+            "docs": {
+                "title": "Docs",
+                "description": "A sticky section rail beside the content, for products whose homepage doubles as documentation."
+            }
+        },
+        "sections": {
+            "label": "Sections",
+            "hero": "Hero",
+            "features": "Features",
+            "testimonials": "Testimonials",
+            "pricing": "Pricing",
+            "cta": "Call to action"
+        },
+        "sectionOrder": {
+            "label": "Section order",
+            "help": "Sections render top to bottom in this order. A template only renders the sections it supports.",
+            "moveUp": "Move {section} up",
+            "moveDown": "Move {section} down",
+            "reordered": "{section} moved to position {position} of {total}."
+        },
+        "unsupported": {
+            "label": "Not rendered by this template",
+            "help": "The selected template does not render this section, so its position has no effect.",
+            "disabled": "This section is turned off in the homepage settings."
+        },
+        "preview": {
+            "label": "Preview",
+            "openInNewTab": "Preview in a new tab"
+        },
+        "picker": {
+            "label": "Template",
+            "help": "Arrangement and chrome only — every template renders the same homepage content."
+        }
+    },
     "tenancy": {
         "title": "Multi-tenancy",
         "subtitle": "Opt-in, default off. With the flag off nothing is registered and no query changes.",
@@ -1029,7 +1125,8 @@
             "layout": "Layout",
             "platform": "Platform",
             "content": "Content",
-            "gallery": "Gallery"
+            "gallery": "Gallery",
+            "charts": "Charts"
         },
         "playground": {
             "title": "Component playground",
@@ -1267,6 +1364,157 @@
                 "title": "Offline shell",
                 "description": "The installable app shell keeps working without a connection. Only static assets are cached, never your data.",
                 "badge": "PWA"
+            },
+            "emptyAndItem": {
+                "title": "Empty and Item",
+                "description": "The Item list primitive with media, actions and separators, degrading to the Empty state when the list runs out.",
+                "badge": "New"
+            },
+            "chartPrimitives": {
+                "title": "Chart primitives",
+                "description": "ChartContainer over Unovis with themed series tokens, and an screen-reader data table beside every chart.",
+                "badge": "New"
+            },
+            "otpAndCombobox": {
+                "title": "OTP and combobox",
+                "description": "A six-slot one-time-code input and a searchable combobox, both keyboard-first and labelled.",
+                "badge": "New"
+            },
+            "conversation": {
+                "title": "Conversation",
+                "description": "Bubbles, message headers and footers, an autoscrolling message scroller and file attachments.",
+                "badge": "New"
+            },
+            "questionnaire": {
+                "title": "Questionnaire",
+                "description": "One question at a time, with keyboard shortcuts, progress announcement and validation wired by the primitive.",
+                "badge": "New"
+            },
+            "mapMarkers": {
+                "title": "Map markers",
+                "description": "MapLibre markers with popups, alongside a Marker list so the canvas is never the only channel.",
+                "badge": "New"
+            },
+            "landingTemplates": {
+                "title": "Landing templates",
+                "description": "Every registered public homepage template, with the sections each one renders and a live preview link.",
+                "badge": "New"
+            }
+        },
+        "references": {
+            "label": "Reference",
+            "blocks": "Blocks",
+            "examples": "Examples",
+            "brand": "Brand",
+            "landing": "Landing page"
+        },
+        "componentDemos": {
+            "emptyAndItem": {
+                "listTitle": "Project list",
+                "listDescription": "Remove every row to see the Empty state take over.",
+                "restore": "Restore the list",
+                "remove": "Remove {name}",
+                "emptyTitle": "No projects left",
+                "emptyDescription": "Every row was removed. Restore the list to bring them back.",
+                "variantsTitle": "Variants",
+                "variantsDescription": "Item ships outline and muted variants and two sizes; Empty works with or without media.",
+                "bareEmptyTitle": "Nothing to show",
+                "bareEmptyDescription": "An Empty state with no media and no action is still a landmark, not a blank box.",
+                "status": {
+                    "active": "Active",
+                    "paused": "Paused",
+                    "archived": "Archived"
+                },
+                "variant": {
+                    "outline": "Outline item",
+                    "muted": "Muted item, small size"
+                }
+            },
+            "chartPrimitives": {
+                "barTitle": "Sessions by device",
+                "barDescription": "A grouped bar chart driven by ChartContainer and the theme's chart tokens.",
+                "lineTitle": "Total sessions",
+                "lineDescription": "The same rows as a single line series.",
+                "channelTitle": "Visitors by channel",
+                "channelDescription": "One series, one colour, and the numbers repeated as a table.",
+                "month": "Month",
+                "channel": "Channel",
+                "total": "Total across the period: {total} sessions.",
+                "series": {
+                    "desktop": "Desktop",
+                    "mobile": "Mobile",
+                    "visitors": "Visitors",
+                    "total": "Total"
+                }
+            },
+            "otpAndCombobox": {
+                "otpTitle": "One-time code",
+                "otpDescription": "Six slots, paste-aware, with a real label and a described hint.",
+                "otpLabel": "Verification code",
+                "otpHint": "Enter the six digits sent to your email. Pasting the whole code works too.",
+                "verify": "Verify",
+                "verified": "Code accepted.",
+                "entered": "{n} of 6 digits entered.",
+                "comboTitle": "Searchable combobox",
+                "comboDescription": "Type to filter, arrow keys to move, Enter to pick.",
+                "comboLabel": "Timezone",
+                "comboPlaceholder": "Select a timezone",
+                "comboSearch": "Search timezones",
+                "comboEmpty": "No timezone matches that search.",
+                "comboSelected": "Selected {zone}.",
+                "comboNone": "No timezone selected yet."
+            },
+            "conversation": {
+                "you": "You",
+                "threadTitle": "Thread",
+                "threadDescription": "A live region that announces new messages and scrolls to the latest one.",
+                "scrollToLatest": "Scroll to the latest message",
+                "draftLabel": "Message",
+                "draftPlaceholder": "Write a reply",
+                "send": "Send",
+                "attachmentsTitle": "Attachments",
+                "attachmentsDescription": "Attachment renders a file card with media, title and size."
+            },
+            "questionnaire": {
+                "title": "Onboarding survey",
+                "description": "One question at a time. Letter shortcuts pick a choice; progress is announced politely.",
+                "freeTextPlaceholder": "Tell us in a sentence",
+                "required": "An answer is required before continuing.",
+                "previous": "Back",
+                "next": "Next",
+                "submit": "Finish",
+                "submitted": "Thanks — your answers were recorded.",
+                "choices": {
+                    "engineer": "Engineer",
+                    "designer": "Designer",
+                    "operator": "Operations",
+                    "solo": "Just me",
+                    "small": "2 to 20 people",
+                    "large": "More than 20 people"
+                },
+                "items": {
+                    "role": {
+                        "title": "What best describes your role?",
+                        "description": "This only changes which examples we show first."
+                    },
+                    "size": {
+                        "title": "How big is your team?",
+                        "description": "Used to pick sensible defaults for shared views."
+                    },
+                    "goal": {
+                        "title": "What are you hoping to ship first?",
+                        "description": "A sentence is plenty."
+                    }
+                }
+            },
+            "mapMarkers": {
+                "mapTitle": "Coverage map",
+                "mapDescription": "MapLibre markers; selecting one updates the list beside it.",
+                "listTitle": "Locations",
+                "listDescription": "The same markers as focusable rows, so the map is never the only way in.",
+                "separator": "Selection",
+                "selected": "Selected {name}.",
+                "none": "No location selected yet."
             }
         }
     },

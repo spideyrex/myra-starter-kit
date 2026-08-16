@@ -103,6 +103,7 @@ import {
     AlertTriangle,
     FlaskConical,
     LayoutGrid,
+    LayoutTemplate,
     BarChart3,
     // >>> MYRA v2.6 [C] START
     Palette,
@@ -226,6 +227,9 @@ const coreNavGroups = computed(() => [
             { title: t('nav.systemHealth'), href: route('admin.system-health.index'), icon: HeartPulse, permission: 'system-health.view' },
             { title: t('nav.apiTokens'), href: route('admin.api-tokens.index'), icon: Key, permission: 'api-tokens.view' },
             { title: t('nav.notifications'), href: route('admin.notifications.index'), icon: Bell, permission: 'notifications.view' },
+            // >>> MYRA v2.6 [D] START
+            { title: t('landing.title'), href: route('admin.landing.index'), icon: LayoutTemplate, permission: 'settings.edit' },
+            // <<< MYRA v2.6 [D] END
         ],
     },
     {

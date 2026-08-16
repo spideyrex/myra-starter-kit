@@ -14,6 +14,9 @@ import { Label } from '@/components/ui/label';
 import { ArrowRight, SearchX } from 'lucide-vue-next';
 import { resolveDemoIcon, type DemoEntry } from '@/demo/registry';
 import { useDemoSearch } from '@/composables/useDemoSearch';
+// >>> MYRA v2.6 [D] START
+import { routeExists } from '@/lib/routeExists';
+// <<< MYRA v2.6 [D] END
 
 const props = withDefaults(defineProps<{ demos?: DemoEntry[] }>(), { demos: () => [] });
 
@@ -47,6 +50,24 @@ function badgeLabel(entry: DemoEntry): string | null {
 
     return te(entry.badgeKey) ? t(entry.badgeKey) : null;
 }
+
+// >>> MYRA v2.6 [D] START
+/**
+ * Cross-bundle discoverability. Each reference catalogue is shipped by a
+ * different bundle, so a link is rendered only when that bundle's route
+ * actually exists — an isolated worktree simply shows fewer links.
+ */
+const REFERENCES = [
+    { name: 'admin.blocks.index', labelKey: 'gallery.references.blocks' },
+    { name: 'admin.examples.index', labelKey: 'gallery.references.examples' },
+    { name: 'admin.brand.index', labelKey: 'gallery.references.brand' },
+    { name: 'admin.landing.index', labelKey: 'gallery.references.landing' },
+] as const;
+
+const references = computed(() =>
+    REFERENCES.filter(entry => routeExists(entry.name) && te(entry.labelKey)),
+);
+// <<< MYRA v2.6 [D] END
 </script>
 
 <template>
@@ -95,6 +116,24 @@ function badgeLabel(entry: DemoEntry): string | null {
         <p class="sr-only" role="status" aria-live="polite" aria-atomic="true">
             {{ t('gallery.resultCount', { n: results.length }) }}
         </p>
+
+        <!-- >>> MYRA v2.6 [D] START -->
+        <nav
+            v-if="references.length"
+            class="mt-4 flex flex-wrap items-center gap-2 rounded-lg border bg-muted/30 p-3"
+            :aria-label="t('gallery.references.label')"
+        >
+            <span class="text-xs font-medium text-muted-foreground">{{ t('gallery.references.label') }}</span>
+            <Link
+                v-for="reference in references"
+                :key="reference.name"
+                :href="route(reference.name)"
+                class="rounded-md border bg-background px-2.5 py-1 text-xs font-medium transition-colors hover:border-primary/50"
+            >
+                {{ t(reference.labelKey) }}
+            </Link>
+        </nav>
+        <!-- <<< MYRA v2.6 [D] END -->
 
         <div v-if="results.length" class="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             <Card

@@ -1,0 +1,350 @@
+{
+    "chartPrimitives": {
+        "channels": [
+            {
+                "channel": "Organic",
+                "visitors": 4210
+            },
+            {
+                "channel": "Referral",
+                "visitors": 2180
+            },
+            {
+                "channel": "Email",
+                "visitors": 1640
+            },
+            {
+                "channel": "Social",
+                "visitors": 980
+            }
+        ],
+        "monthly": [
+            {
+                "desktop": 186,
+                "mobile": 80,
+                "month": "Jan"
+            },
+            {
+                "desktop": 305,
+                "mobile": 200,
+                "month": "Feb"
+            },
+            {
+                "desktop": 237,
+                "mobile": 120,
+                "month": "Mar"
+            },
+            {
+                "desktop": 173,
+                "mobile": 190,
+                "month": "Apr"
+            },
+            {
+                "desktop": 209,
+                "mobile": 130,
+                "month": "May"
+            },
+            {
+                "desktop": 264,
+                "mobile": 140,
+                "month": "Jun"
+            }
+        ]
+    },
+    "conversation": {
+        "attachments": [
+            {
+                "id": "log",
+                "kind": "text",
+                "name": "schedule-run.log",
+                "size": "18 KB"
+            },
+            {
+                "id": "csv",
+                "kind": "sheet",
+                "name": "orders-2026-08.csv",
+                "size": "2.4 MB"
+            }
+        ],
+        "thread": [
+            {
+                "at": "09:12",
+                "author": "Aisyah Rahman",
+                "body": "The export finished — 12,480 rows in the archive.",
+                "id": 1,
+                "initials": "AR",
+                "side": "incoming"
+            },
+            {
+                "at": "09:14",
+                "author": "You",
+                "body": "Perfect. Did the schedule pick up the new filter?",
+                "id": 2,
+                "initials": "ME",
+                "side": "outgoing"
+            },
+            {
+                "at": "09:15",
+                "author": "Aisyah Rahman",
+                "body": "It did. I attached the run log so you can check the compiled rule tree.",
+                "id": 3,
+                "initials": "AR",
+                "side": "incoming"
+            },
+            {
+                "at": "09:18",
+                "author": "You",
+                "body": "Thanks — I will queue the next delivery for Friday.",
+                "id": 4,
+                "initials": "ME",
+                "side": "outgoing"
+            }
+        ]
+    },
+    "emptyAndItem": {
+        "projects": [
+            {
+                "id": "atlas",
+                "meta": "Updated 2 hours ago",
+                "name": "Atlas",
+                "size": "48 MB",
+                "status": "active"
+            },
+            {
+                "id": "beacon",
+                "meta": "Updated yesterday",
+                "name": "Beacon",
+                "size": "12 MB",
+                "status": "active"
+            },
+            {
+                "id": "cinder",
+                "meta": "Updated last week",
+                "name": "Cinder",
+                "size": "204 MB",
+                "status": "paused"
+            },
+            {
+                "id": "delta",
+                "meta": "Updated 3 weeks ago",
+                "name": "Delta",
+                "size": "7 MB",
+                "status": "archived"
+            }
+        ]
+    },
+    "landingTemplates": {
+        "templates": [
+            {
+                "component": "Public/Templates/Classic",
+                "descriptionKey": "landing.templates.classic.description",
+                "key": "classic",
+                "since": "2.6.0",
+                "supports": [
+                    "hero",
+                    "features",
+                    "testimonials",
+                    "pricing",
+                    "cta"
+                ],
+                "thumbnail": "/images/templates/classic.svg",
+                "titleKey": "landing.templates.classic.title"
+            },
+            {
+                "component": "Public/Templates/Spotlight",
+                "descriptionKey": "landing.templates.spotlight.description",
+                "key": "spotlight",
+                "since": "2.6.0",
+                "supports": [
+                    "hero",
+                    "features",
+                    "testimonials",
+                    "cta"
+                ],
+                "thumbnail": "/images/templates/spotlight.svg",
+                "titleKey": "landing.templates.spotlight.title"
+            },
+            {
+                "component": "Public/Templates/Editorial",
+                "descriptionKey": "landing.templates.editorial.description",
+                "key": "editorial",
+                "since": "2.6.0",
+                "supports": [
+                    "hero",
+                    "features",
+                    "testimonials",
+                    "cta"
+                ],
+                "thumbnail": "/images/templates/editorial.svg",
+                "titleKey": "landing.templates.editorial.title"
+            },
+            {
+                "component": "Public/Templates/SaaS",
+                "descriptionKey": "landing.templates.saas.description",
+                "key": "saas",
+                "since": "2.6.0",
+                "supports": [
+                    "hero",
+                    "features",
+                    "testimonials",
+                    "pricing",
+                    "cta"
+                ],
+                "thumbnail": "/images/templates/saas.svg",
+                "titleKey": "landing.templates.saas.title"
+            },
+            {
+                "component": "Public/Templates/Minimal",
+                "descriptionKey": "landing.templates.minimal.description",
+                "key": "minimal",
+                "since": "2.6.0",
+                "supports": [
+                    "hero",
+                    "features",
+                    "cta"
+                ],
+                "thumbnail": "/images/templates/minimal.svg",
+                "titleKey": "landing.templates.minimal.title"
+            },
+            {
+                "component": "Public/Templates/Docs",
+                "descriptionKey": "landing.templates.docs.description",
+                "key": "docs",
+                "since": "2.6.0",
+                "supports": [
+                    "hero",
+                    "features",
+                    "pricing",
+                    "cta"
+                ],
+                "thumbnail": "/images/templates/docs.svg",
+                "titleKey": "landing.templates.docs.title"
+            }
+        ]
+    },
+    "mapMarkers": {
+        "markers": [
+            {
+                "id": "kul",
+                "lat": 3.139,
+                "lng": 101.6869,
+                "name": "Kuala Lumpur",
+                "region": "Federal Territory",
+                "tone": "primary"
+            },
+            {
+                "id": "png",
+                "lat": 5.4141,
+                "lng": 100.3293,
+                "name": "George Town",
+                "region": "Penang",
+                "tone": "accent"
+            },
+            {
+                "id": "jhb",
+                "lat": 1.4927,
+                "lng": 103.7414,
+                "name": "Johor Bahru",
+                "region": "Johor",
+                "tone": "accent"
+            },
+            {
+                "id": "bki",
+                "lat": 5.9804,
+                "lng": 116.0735,
+                "name": "Kota Kinabalu",
+                "region": "Sabah",
+                "tone": "muted"
+            },
+            {
+                "id": "kch",
+                "lat": 1.5535,
+                "lng": 110.3592,
+                "name": "Kuching",
+                "region": "Sarawak",
+                "tone": "muted"
+            }
+        ]
+    },
+    "otpAndCombobox": {
+        "timezones": [
+            {
+                "label": "UTC",
+                "value": "UTC"
+            },
+            {
+                "label": "Kuala Lumpur (GMT+8)",
+                "value": "Asia/Kuala_Lumpur"
+            },
+            {
+                "label": "Singapore (GMT+8)",
+                "value": "Asia/Singapore"
+            },
+            {
+                "label": "Tokyo (GMT+9)",
+                "value": "Asia/Tokyo"
+            },
+            {
+                "label": "London (GMT+0)",
+                "value": "Europe/London"
+            },
+            {
+                "label": "Berlin (GMT+1)",
+                "value": "Europe/Berlin"
+            },
+            {
+                "label": "New York (GMT-5)",
+                "value": "America/New_York"
+            },
+            {
+                "label": "Los Angeles (GMT-8)",
+                "value": "America/Los_Angeles"
+            }
+        ]
+    },
+    "questionnaire": {
+        "questions": [
+            {
+                "choices": [
+                    {
+                        "labelKey": "gallery.componentDemos.questionnaire.choices.engineer",
+                        "value": "engineer"
+                    },
+                    {
+                        "labelKey": "gallery.componentDemos.questionnaire.choices.designer",
+                        "value": "designer"
+                    },
+                    {
+                        "labelKey": "gallery.componentDemos.questionnaire.choices.operator",
+                        "value": "operator"
+                    }
+                ],
+                "id": "role",
+                "type": "choice"
+            },
+            {
+                "choices": [
+                    {
+                        "labelKey": "gallery.componentDemos.questionnaire.choices.solo",
+                        "value": "solo"
+                    },
+                    {
+                        "labelKey": "gallery.componentDemos.questionnaire.choices.small",
+                        "value": "small"
+                    },
+                    {
+                        "labelKey": "gallery.componentDemos.questionnaire.choices.large",
+                        "value": "large"
+                    }
+                ],
+                "id": "size",
+                "type": "choice"
+            },
+            {
+                "choices": [],
+                "id": "goal",
+                "type": "text"
+            }
+        ]
+    }
+}

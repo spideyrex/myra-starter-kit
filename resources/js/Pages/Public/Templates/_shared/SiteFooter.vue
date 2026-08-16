@@ -1,6 +1,8 @@
 <script setup lang="ts">
+import { computed } from 'vue';
 import { Link } from '@inertiajs/vue3';
 import { useI18n } from 'vue-i18n';
+import { safeSrc, safeUrl } from '@/composables/useSafeUrl';
 import type { HomepageData } from '@/types';
 import { useSiteBrand } from './useSiteBrand';
 
@@ -8,6 +10,15 @@ defineProps<{ settings: HomepageData }>();
 
 const { t } = useI18n();
 const { name, initial, logoUrl } = useSiteBrand();
+
+/** Authored by an admin, rendered to anonymous visitors: scheme-gated, always. */
+const footerUrl = (url: unknown): string => safeUrl(url) || '#';
+
+/** Anything that leaves the SPA router: an absolute target or an in-page anchor. */
+const isExternalOrAnchor = (url: unknown): boolean =>
+    typeof url === 'string' && (url.startsWith('http') || url.startsWith('#'));
+
+const brandLogo = computed(() => safeSrc(logoUrl.value));
 
 const year = new Date().getFullYear();
 </script>
@@ -17,7 +28,7 @@ const year = new Date().getFullYear();
         <div class="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
             <div class="flex flex-col items-center justify-between gap-6 sm:flex-row">
                 <div class="flex items-center gap-2">
-                    <img v-if="logoUrl" :src="logoUrl" :alt="name" class="h-6 w-auto" />
+                    <img v-if="brandLogo" :src="brandLogo" :alt="name" class="h-6 w-auto" />
                     <div
                         v-else
                         aria-hidden="true"
@@ -30,8 +41,8 @@ const year = new Date().getFullYear();
                 <div class="flex flex-wrap items-center gap-6">
                     <template v-for="link in settings.footer_links" :key="link.label">
                         <a
-                            v-if="link.url.startsWith('http') || link.url.startsWith('#')"
-                            :href="link.url"
+                            v-if="isExternalOrAnchor(link.url)"
+                            :href="footerUrl(link.url)"
                             class="text-sm text-muted-foreground transition-colors hover:text-foreground"
                             target="_blank"
                             rel="noopener noreferrer"
@@ -40,7 +51,7 @@ const year = new Date().getFullYear();
                         </a>
                         <Link
                             v-else
-                            :href="link.url"
+                            :href="footerUrl(link.url)"
                             class="text-sm text-muted-foreground transition-colors hover:text-foreground"
                         >
                             {{ link.label }}

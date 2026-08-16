@@ -7,7 +7,7 @@ return [
     | Framework version
     |--------------------------------------------------------------------------
     */
-    'version' => '2.7.0',
+    'version' => '2.7.1',
 
     /*
     |--------------------------------------------------------------------------
@@ -513,6 +513,30 @@ return [
     ],
     // <<< MYRA v2.6 [D] END
 
+    // >>> MYRA v2.7 [A] START
+    /*
+    |--------------------------------------------------------------------------
+    | Page builder sections
+    |--------------------------------------------------------------------------
+    |
+    | The authorable sections of the public page. A package contributes one the
+    | same way it contributes a template: a class with a static define().
+    | SectionRegistry::seed() reads this list and then
+    | myra.pagebuilder_extra.extra_sections, so two owners never share an array.
+    |
+    */
+
+    'pagebuilder' => [
+        'sections' => [
+            \App\Homepage\Sections\Types\HeroSectionType::class,
+            \App\Homepage\Sections\Types\FeaturesSectionType::class,
+            \App\Homepage\Sections\Types\TestimonialsSectionType::class,
+            \App\Homepage\Sections\Types\PricingSectionType::class,
+            \App\Homepage\Sections\Types\CtaSectionType::class,
+        ],
+    ],
+    // <<< MYRA v2.7 [A] END
+
     // >>> MYRA v2.5 [D] START
     /*
     |--------------------------------------------------------------------------
@@ -554,5 +578,31 @@ return [
         'enabled' => env('MYRA_PWA', false),
     ],
     // <<< MYRA v2.5 [D] END
+
+    // >>> MYRA v2.7 [C] START
+    /*
+    |--------------------------------------------------------------------------
+    | Page builder — the starter section library
+    |--------------------------------------------------------------------------
+    |
+    | Declared in its own top-level key so a package can extend the library
+    | without editing the core adapters' array, then merged into
+    | `myra.pagebuilder.sections` — the array the registry actually reads — by
+    | MyraServiceProvider::register(). Nothing else has to know this key exists.
+    | Every class exposes `public static function define(): SectionType`.
+    |
+    */
+
+    'pagebuilder_extra' => [
+        'extra_sections' => [
+            \App\Homepage\Sections\Types\RichTextSectionType::class,
+            \App\Homepage\Sections\Types\ImageSectionType::class,
+            \App\Homepage\Sections\Types\StatsSectionType::class,
+            \App\Homepage\Sections\Types\FaqSectionType::class,
+            \App\Homepage\Sections\Types\DividerSectionType::class,
+            // myra:sections — package section types are appended above this line.
+        ],
+    ],
+    // <<< MYRA v2.7 [C] END
 
 ];

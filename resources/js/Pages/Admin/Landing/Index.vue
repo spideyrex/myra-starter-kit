@@ -1,13 +1,15 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
-import { Head, useForm } from '@inertiajs/vue3';
+import { Head, Link, useForm } from '@inertiajs/vue3';
 import { useI18n } from 'vue-i18n';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import PageHeader from '@/components/PageHeader.vue';
 import TemplatePicker from '@/components/admin/TemplatePicker.vue';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { ArrowDown, ArrowUp, ExternalLink } from 'lucide-vue-next';
+import { ArrowDown, ArrowUp, ExternalLink, LayoutTemplate } from 'lucide-vue-next';
+import { routeExists } from '@/lib/routeExists';
 import type { TemplateSchema } from '@/types';
 
 const props = defineProps<{
@@ -53,6 +55,18 @@ function move(index: number, delta: number) {
 
 const previewUrl = computed(() => `/?template=${encodeURIComponent(form.template)}`);
 
+// >>> MYRA v2.7 [D] START
+// The builder ships with the editor bundle. Ziggy is asked for the name first so
+// a renamed route still resolves; the path is the spec's, and is the fallback.
+const builderRouteName = computed(() =>
+    ['admin.landing.builder', 'admin.landing.builder.index'].find(routeExists) ?? null,
+);
+
+const builderHref = computed(() =>
+    builderRouteName.value ? route(builderRouteName.value) : '/admin/landing/builder',
+);
+// <<< MYRA v2.7 [D] END
+
 function submit() {
     form.put(route('admin.landing.update'), { preserveScroll: true });
 }
@@ -75,6 +89,26 @@ function submit() {
                 </a>
             </template>
         </PageHeader>
+
+        <!-- >>> MYRA v2.7 [D] START -->
+        <Card class="mt-6">
+            <CardHeader>
+                <div class="flex flex-wrap items-start justify-between gap-3">
+                    <div class="min-w-0">
+                        <CardTitle class="flex items-center gap-2 text-base">
+                            <LayoutTemplate class="size-4 text-muted-foreground" aria-hidden="true" />
+                            {{ t('landing.builder.title') }}
+                            <Badge variant="secondary">{{ t('landing.builder.badge') }}</Badge>
+                        </CardTitle>
+                        <CardDescription class="mt-1">{{ t('landing.builder.description') }}</CardDescription>
+                    </div>
+                    <Button as-child>
+                        <Link :href="builderHref">{{ t('landing.builder.open') }}</Link>
+                    </Button>
+                </div>
+            </CardHeader>
+        </Card>
+        <!-- <<< MYRA v2.7 [D] END -->
 
         <form class="mt-6 space-y-6" @submit.prevent="submit">
             <Card>

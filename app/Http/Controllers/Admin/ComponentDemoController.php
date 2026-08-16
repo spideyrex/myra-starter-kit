@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Homepage\TemplateRegistry;
 use App\Http\Controllers\Controller;
+use App\Settings\HomepageSettings;
 use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -146,4 +147,50 @@ class ComponentDemoController extends Controller
             'templates' => TemplateRegistry::toClientSchema(),
         ]);
     }
+
+    // >>> MYRA v2.7 [D] START
+
+    /**
+     * The page-builder gallery: the real section catalogue plus the brand
+     * context the public renderer needs. Read-only — it saves nothing.
+     */
+    public function pageBuilder(): Response
+    {
+        Gate::authorize('demo.view');
+
+        $settings = app(HomepageSettings::class);
+        $data = $settings->toArray();
+        $data['hero_image_url'] = null;
+        unset($data['blocks']);
+
+        return Inertia::render('Admin/Demo/PageBuilder', [
+            'sections' => $this->sectionCatalogue(),
+            'settings' => $data,
+        ]);
+    }
+
+    /**
+     * SectionRegistry ships with the page-builder model. A build without it
+     * degrades to an empty catalogue instead of a 500.
+     *
+     * @return array<int,array<string,mixed>>
+     */
+    private function sectionCatalogue(): array
+    {
+        /** @var class-string $registry */
+        $registry = 'App\\Homepage\\Sections\\SectionRegistry';
+
+        if (! class_exists($registry) || ! method_exists($registry, 'toClientSchema')) {
+            return [];
+        }
+
+        if (method_exists($registry, 'seed')) {
+            $registry::seed();
+        }
+
+        $schema = $registry::toClientSchema();
+
+        return is_array($schema) ? array_values($schema) : [];
+    }
+    // <<< MYRA v2.7 [D] END
 }

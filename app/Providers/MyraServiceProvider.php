@@ -35,6 +35,12 @@ class MyraServiceProvider extends ServiceProvider
                 $manifest->importResources(),
             )]);
         }
+
+        // >>> MYRA v2.7 [C] START
+        // No merge here on purpose. SectionRegistry::seed() already spreads
+        // myra.pagebuilder_extra.extra_sections alongside the core list, so
+        // folding it into myra.pagebuilder.sections counted every extra twice.
+        // <<< MYRA v2.7 [C] END
     }
 
     public function boot(): void

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, defineAsyncComponent, type Component, type DefineComponent } from 'vue';
-import type { HomepageData } from '@/types';
+import type { HomepageData, PageSectionRow } from '@/types';
 import Classic from './Public/Templates/Classic.vue';
 
 const props = withDefaults(
@@ -10,8 +10,10 @@ const props = withDefaults(
         template?: string;
         templateOptions?: Record<string, Record<string, unknown>>;
         sectionOrder?: string[];
+        /** The authored page. Empty falls through to the flat settings. */
+        blocks?: PageSectionRow[];
     }>(),
-    { template: 'classic', templateOptions: () => ({}), sectionOrder: () => [] },
+    { template: 'classic', templateOptions: () => ({}), sectionOrder: () => [], blocks: () => [] },
 );
 
 const modules = import.meta.glob<DefineComponent>('./Public/Templates/*.vue');
@@ -54,5 +56,6 @@ const resolved = computed<Component>(() => {
         :authenticated="props.authenticated"
         :section-order="props.sectionOrder"
         :template-options="props.templateOptions"
+        :blocks="props.blocks"
     />
 </template>

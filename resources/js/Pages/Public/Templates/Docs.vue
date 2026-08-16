@@ -5,9 +5,9 @@ import { useI18n } from 'vue-i18n';
 import { useThemeColors } from '@/composables/useThemeColors';
 import SiteNavbar from './_shared/SiteNavbar.vue';
 import SiteFooter from './_shared/SiteFooter.vue';
-import OrderedSections from './_shared/OrderedSections.vue';
+import TemplateBody from './_shared/TemplateBody.vue';
 import { useSiteBrand } from './_shared/useSiteBrand';
-import type { HomepageData } from '@/types';
+import type { HomepageData, PageSectionRow } from '@/types';
 
 const props = withDefaults(
     defineProps<{
@@ -16,8 +16,9 @@ const props = withDefaults(
         sectionOrder?: string[];
         /** Per-section presentation overrides from HomepageSettings::$template_options. */
         templateOptions?: Record<string, Record<string, unknown>>;
+        blocks?: PageSectionRow[];
     }>(),
-    { sectionOrder: () => [], templateOptions: () => ({}) },
+    { sectionOrder: () => [], templateOptions: () => ({}), blocks: () => [] },
 );
 
 useThemeColors();
@@ -61,10 +62,11 @@ const rail = computed(() =>
             </aside>
 
             <main id="content" class="min-w-0 flex-1">
-                <OrderedSections
+                <TemplateBody
+                    :blocks="blocks"
                     :settings="settings"
                     :order="sectionOrder"
-                :overrides="templateOptions"
+                    :overrides="templateOptions"
                     :supports="['hero', 'features', 'pricing', 'cta']"
                     :variants="{
                         hero: { align: 'left', compact: true },

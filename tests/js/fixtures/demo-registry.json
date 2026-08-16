@@ -516,6 +516,19 @@
                 "platform"
             ],
             "titleKey": "gallery.demos.roleDashboards.title"
+        },
+        {
+            "badgeKey": "gallery.demos.pageBuilder.badge",
+            "descriptionKey": "gallery.demos.pageBuilder.description",
+            "icon": "LayoutTemplate",
+            "key": "pageBuilder",
+            "playground": null,
+            "route": "admin.demo.page-builder",
+            "since": "2.7.0",
+            "tags": [
+                "platform"
+            ],
+            "titleKey": "gallery.demos.pageBuilder.title"
         }
     ]
 }

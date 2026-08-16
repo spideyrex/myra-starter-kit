@@ -58,6 +58,19 @@ class LandingController extends Controller
         $settings->section_order = $this->normaliseOrder($validated['section_order']);
         $settings->save();
 
+        // >>> MYRA v2.7 [A] START
+        // The template choice always applies; the section ORDER only does while
+        // the page builder is empty, because a block list carries its own order.
+        $blocks = $settings->blocks ?? [];
+
+        if (is_array($blocks) && $blocks !== []) {
+            return back()->with(
+                'warning',
+                __('Template updated. Section order now comes from the page builder — reorder the sections there.'),
+            );
+        }
+        // <<< MYRA v2.7 [A] END
+
         return back()->with('success', __('Landing template updated.'));
     }
 

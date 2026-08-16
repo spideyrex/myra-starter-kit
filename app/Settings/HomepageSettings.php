@@ -53,6 +53,16 @@ class HomepageSettings extends Settings
     public array $template_options;
     // <<< MYRA v2.6 [D] END
 
+    // >>> MYRA v2.7 [A] START
+    /**
+     * The ordered page-section list. Empty means the flat properties above
+     * still drive the page — they are never mutated, so writing [] is an exact
+     * rollback. No @var: spatie's PropertyReflector cannot resolve a nested
+     * array generic and throws before the group can hydrate.
+     */
+    public array $blocks;
+    // <<< MYRA v2.7 [A] END
+
     public static function group(): string
     {
         return 'homepage';

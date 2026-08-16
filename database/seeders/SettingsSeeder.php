@@ -129,6 +129,17 @@ class SettingsSeeder extends Seeder
             ['group' => 'firebase', 'name' => 'vapid_key', 'payload' => json_encode(null)],
         ];
 
+        // >>> MYRA v2.7 [A] START
+        // Empty on purpose, exactly like the migration: an empty list keeps the
+        // flat settings above authoritative, so the shipped homepage editor is
+        // the one that drives the page until the author adopts the builder.
+        $settings[] = [
+            'group' => 'homepage',
+            'name' => 'blocks',
+            'payload' => json_encode([]),
+        ];
+        // <<< MYRA v2.7 [A] END
+
         foreach ($settings as $setting) {
             DB::table('settings')->updateOrInsert(
                 ['group' => $setting['group'], 'name' => $setting['name']],

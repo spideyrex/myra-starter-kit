@@ -1,10 +1,15 @@
 <script setup lang="ts">
+import { computed } from 'vue';
 import { Link } from '@inertiajs/vue3';
 import { Button } from '@/components/ui/button';
 import { ArrowRight } from 'lucide-vue-next';
+import { safeUrl } from '@/composables/useSafeUrl';
 import type { HomepageData } from '@/types';
 
-withDefaults(defineProps<{ settings: HomepageData; muted?: boolean }>(), { muted: false });
+const props = withDefaults(defineProps<{ settings: HomepageData; muted?: boolean }>(), { muted: false });
+
+/** Authored by an admin, rendered to anonymous visitors: scheme-gated, always. */
+const ctaUrl = computed(() => safeUrl(props.settings?.cta_button_url) || '#');
 </script>
 
 <template>
@@ -25,7 +30,7 @@ withDefaults(defineProps<{ settings: HomepageData; muted?: boolean }>(), { muted
                         {{ settings.cta_subtitle }}
                     </p>
                     <div class="mt-8">
-                        <Link :href="settings.cta_button_url">
+                        <Link :href="ctaUrl">
                             <Button size="lg" :variant="muted ? 'default' : 'secondary'" class="gap-2 text-base">
                                 {{ settings.cta_button_text }}
                                 <ArrowRight class="size-4" aria-hidden="true" />

@@ -723,6 +723,12 @@
         "picker": {
             "label": "Template",
             "help": "Arrangement and chrome only — every template renders the same homepage content."
+        },
+        "builder": {
+            "title": "Page builder",
+            "description": "Build the page out of ordered sections instead of the fixed fields below. The template above still supplies the navbar, the footer and the presentation.",
+            "open": "Open page builder",
+            "badge": "New"
         }
     },
     "tenancy": {
@@ -1473,6 +1479,11 @@
             "roleDashboards": {
                 "title": "Role dashboards",
                 "description": "A default dashboard per role, personalisable by each user, resettable to the role default at any time.",
+                "badge": "New"
+            },
+            "pageBuilder": {
+                "title": "Page builder",
+                "description": "The section types the landing page builder offers, and a live example of each rendered by the public renderer.",
                 "badge": "New"
             }
         },
@@ -2373,5 +2384,444 @@
         },
         "title": "AI filters",
         "unresolved": "No conditions were produced."
+    },
+    "pageBuilder": {
+        "render": {
+            "unavailable": "This section could not be displayed."
+        },
+        "editor": {
+            "title": "Page builder",
+            "description": "Compose the public homepage from ordered sections. The template still owns the navbar, the footer and each section’s presentation.",
+            "save": "Save",
+            "saving": "Saving…",
+            "savedToast": "Page sections saved.",
+            "discard": "Discard changes",
+            "undo": "Undo",
+            "redo": "Redo",
+            "dirty": "Unsaved changes",
+            "saved": "All changes saved",
+            "openPreview": "Open the public page in a new tab",
+            "addSection": "Add section",
+            "limit": "{count} of {max} sections",
+            "convertFailed": "The current homepage could not be converted.",
+            "convertEmpty": "There is nothing to convert.",
+            "convertLoaded": "Loaded {count} sections for review. Nothing is saved until you press Save.",
+            "tabs": {
+                "sections": "Sections",
+                "preview": "Preview"
+            },
+            "preview": {
+                "label": "Preview",
+                "savedOnly": "This preview shows the saved page. Save to see the sections you are editing."
+            },
+            "empty": {
+                "title": "Your page has no sections yet",
+                "description": "Add a section, or convert the settings the homepage renders today into an editable list.",
+                "convert": "Convert my current homepage",
+                "revert": "Revert to classic settings"
+            },
+            "catalogue": {
+                "title": "Add a section",
+                "description": "Search the registered section types and pick one to insert.",
+                "placeholder": "Search section types…",
+                "empty": "No section type matches that search.",
+                "unavailable": "No section types are registered, so nothing can be added yet.",
+                "maxReached": "At most {max} per page.",
+                "blocked": "This page is already at its section limit.",
+                "groups": {
+                    "content": "Content",
+                    "proof": "Social proof",
+                    "conversion": "Conversion",
+                    "layout": "Layout"
+                }
+            },
+            "card": {
+                "hidden": "Hidden",
+                "hasErrors": "Needs attention",
+                "show": "Show {label}",
+                "hide": "Hide {label}",
+                "duplicate": "Duplicate {label}",
+                "delete": "Delete {label}",
+                "presentation": "Presentation",
+                "variantDefault": "Template default",
+                "variantOn": "On",
+                "variantOff": "Off",
+                "unknown": {
+                    "title": "This section type is unavailable",
+                    "description": "Nothing on this site provides the type {type}. Its content is kept exactly as it is and survives the next save."
+                }
+            },
+            "list": {
+                "addRow": "Add item",
+                "removeRow": "Remove item {index}",
+                "moveUp": "Move item {index} up",
+                "moveDown": "Move item {index} down",
+                "rowLabel": "Item {index}",
+                "full": "At most {max} items."
+            },
+            "icon": {
+                "none": "No icon",
+                "unavailable": "{name} is not one of the available icons. Saving this section clears it."
+            },
+            "image": {
+                "upload": "Upload an image",
+                "replace": "Replace image",
+                "remove": "Remove",
+                "uploading": "Uploading…",
+                "failed": "That image could not be uploaded.",
+                "none": "No image selected"
+            },
+            "confirm": {
+                "delete": {
+                    "title": "Delete this section?",
+                    "description": "{label} is removed from the page. Nothing is saved until you press Save.",
+                    "confirm": "Delete"
+                },
+                "discard": {
+                    "title": "Discard your changes?",
+                    "description": "The page returns to the last saved version.",
+                    "confirm": "Discard"
+                },
+                "revert": {
+                    "title": "Revert to the classic settings?",
+                    "description": "The section list is cleared and the homepage falls back to the settings it used before the builder. Nothing is saved until you press Save.",
+                    "confirm": "Revert"
+                }
+            },
+            "errors": {
+                "title": "Some sections need attention."
+            },
+            "a11y": {
+                "list": "Page sections",
+                "roledescription": "Sortable page section",
+                "instructions": "Press Space to pick up a section, then use the arrow keys to move it. Press Space again to drop it, Home or End to move it to the start or the end, or Escape to cancel.",
+                "grabHandle": "Reorder {label}",
+                "moved": "{label} moved to position {index} of {total}.",
+                "position": "Section {index} of {total}"
+            }
+        },
+        "sections": {
+            "groups": {
+                "content": "Content",
+                "proof": "Social proof",
+                "conversion": "Conversion",
+                "layout": "Layout"
+            },
+            "hero": {
+                "label": "Hero",
+                "description": "A headline, a supporting line, one call to action and an optional image.",
+                "fields": {
+                    "title": "Headline",
+                    "subtitle": "Supporting text",
+                    "cta_text": "Button label",
+                    "cta_url": "Button link",
+                    "image_path": "Image"
+                },
+                "variants": {
+                    "align": "Alignment",
+                    "compact": "Compact"
+                },
+                "variantOptions": {
+                    "align": {
+                        "center": "Centred",
+                        "split": "Split",
+                        "left": "Left"
+                    }
+                }
+            },
+            "features": {
+                "label": "Feature grid",
+                "description": "A grid of short benefit cards, each with an icon.",
+                "fields": {
+                    "title": "Headline",
+                    "subtitle": "Supporting text",
+                    "items": "Features"
+                },
+                "itemFields": {
+                    "icon": "Icon",
+                    "title": "Title",
+                    "description": "Description"
+                },
+                "variants": {
+                    "columns": "Columns",
+                    "bare": "No background"
+                },
+                "variantOptions": {
+                    "columns": {
+                        "2": "Two",
+                        "3": "Three"
+                    }
+                }
+            },
+            "testimonials": {
+                "label": "Testimonials",
+                "description": "Quotes from customers, each with a name and a role.",
+                "fields": {
+                    "title": "Headline",
+                    "subtitle": "Supporting text",
+                    "items": "Testimonials"
+                },
+                "itemFields": {
+                    "name": "Name",
+                    "role": "Role",
+                    "quote": "Quote"
+                },
+                "variants": {
+                    "tinted": "Tinted background"
+                }
+            },
+            "pricing": {
+                "label": "Pricing table",
+                "description": "Plans with a price, a feature list and a call to action.",
+                "fields": {
+                    "title": "Headline",
+                    "subtitle": "Supporting text",
+                    "plans": "Plans"
+                },
+                "planFields": {
+                    "name": "Plan name",
+                    "price": "Price",
+                    "period": "Billing period",
+                    "features": "Features, comma separated",
+                    "cta_text": "Button label",
+                    "cta_url": "Button link",
+                    "highlighted": "Highlight this plan"
+                },
+                "variants": {
+                    "tinted": "Tinted background"
+                }
+            },
+            "cta": {
+                "label": "Call to action",
+                "description": "A closing band with one headline and one button.",
+                "fields": {
+                    "title": "Headline",
+                    "subtitle": "Supporting text",
+                    "button_text": "Button label",
+                    "button_url": "Button link"
+                },
+                "variants": {
+                    "muted": "Muted background"
+                }
+            },
+            "rich_text": {
+                "label": "Rich text",
+                "description": "Free-form prose. Markup is cleaned before it is stored and again before it is shown.",
+                "fields": {
+                    "heading": "Heading",
+                    "body": "Body"
+                },
+                "variants": {
+                    "width": "Width",
+                    "tinted": "Tinted background"
+                },
+                "variantOptions": {
+                    "width": {
+                        "prose": "Reading width",
+                        "wide": "Wide"
+                    }
+                }
+            },
+            "image": {
+                "label": "Image",
+                "description": "A single picture with required alternative text and an optional caption.",
+                "fields": {
+                    "image_path": "Image",
+                    "alt": "Alternative text",
+                    "caption": "Caption",
+                    "link_url": "Link"
+                },
+                "variants": {
+                    "width": "Width",
+                    "rounded": "Rounded corners"
+                },
+                "variantOptions": {
+                    "width": {
+                        "contained": "Contained",
+                        "full": "Full bleed"
+                    }
+                }
+            },
+            "stats": {
+                "label": "Statistics",
+                "description": "Up to four headline numbers, each with a short label.",
+                "fields": {
+                    "title": "Headline",
+                    "items": "Statistics"
+                },
+                "itemFields": {
+                    "value": "Value",
+                    "label": "Label"
+                },
+                "variants": {
+                    "tinted": "Tinted background"
+                }
+            },
+            "faq": {
+                "label": "Questions and answers",
+                "description": "Questions and answers in a keyboard-accessible accordion.",
+                "fields": {
+                    "title": "Headline",
+                    "subtitle": "Supporting text",
+                    "items": "Questions"
+                },
+                "itemFields": {
+                    "question": "Question",
+                    "answer": "Answer"
+                },
+                "variants": {
+                    "tinted": "Tinted background"
+                }
+            },
+            "divider": {
+                "label": "Divider",
+                "description": "A rule or a run of empty space between two sections.",
+                "fields": {
+                    "style": "Style",
+                    "size": "Size"
+                },
+                "fieldOptions": {
+                    "style": {
+                        "rule": "Rule",
+                        "space": "Space"
+                    },
+                    "size": {
+                        "sm": "Small",
+                        "md": "Medium",
+                        "lg": "Large"
+                    }
+                }
+            }
+        },
+        "demo": {
+            "title": "Page builder",
+            "description": "A page is the template you picked plus an ordered list of section blocks. This gallery lists every section type the server registers and renders one live example of each.",
+            "readOnly": "Read-only gallery. Nothing on this page is saved, and the public homepage is untouched.",
+            "openBuilder": "Open page builder",
+            "openDocs": "Read the guide",
+            "catalogue": {
+                "title": "Section catalogue",
+                "description": "Declared server-side, shipped as JSON. A package registers a section type the same way it registers a template, and it appears here with no frontend change.",
+                "fields": "Fields",
+                "presentation": "Presentation",
+                "maxPerPage": "Max per page",
+                "unlimited": "Unlimited",
+                "since": "Since",
+                "none": "None",
+                "empty": "No section types are registered on this build, so there is nothing to list yet."
+            },
+            "groups": {
+                "content": "Content",
+                "proof": "Social proof",
+                "conversion": "Conversion",
+                "layout": "Layout"
+            },
+            "preview": {
+                "title": "Live examples",
+                "description": "Every example below is rendered by the same components the public homepage uses, so what you see here is what an anonymous visitor gets.",
+                "unavailable": "The public section renderer is not available on this build, so the catalogue is shown without live examples.",
+                "failed": "This example could not be rendered. The rest of the page is unaffected — that containment is the point."
+            },
+            "samples": {
+                "hero": {
+                    "title": "Ship a landing page without shipping code",
+                    "subtitle": "Compose the page out of sections, reorder them, and publish. The template keeps owning the chrome.",
+                    "cta_text": "Start building"
+                },
+                "features": {
+                    "title": "Built on what is already there",
+                    "subtitle": "Every section reuses a renderer the homepage has shipped since v2.6.",
+                    "first": {
+                        "title": "Ordered sections",
+                        "description": "Drag or use the keyboard to reorder. The order you save is the order a visitor reads."
+                    },
+                    "second": {
+                        "title": "Safe by default",
+                        "description": "Authored HTML is sanitised on write and again on render, and every link is checked against an allowlist."
+                    },
+                    "third": {
+                        "title": "Never blank",
+                        "description": "A malformed block is dropped, a throwing section removes only itself, and an empty list falls back to the classic settings."
+                    }
+                },
+                "testimonials": {
+                    "title": "What the team says",
+                    "subtitle": "Quotes are content, not code.",
+                    "first": {
+                        "name": "Aisyah Rahman",
+                        "role": "Head of Marketing",
+                        "quote": "I changed the homepage twice before lunch and never opened an editor."
+                    },
+                    "second": {
+                        "name": "Daniel Ooi",
+                        "role": "Engineering Lead",
+                        "quote": "The rollback is one field. That is the part that let us say yes."
+                    }
+                },
+                "pricing": {
+                    "title": "Simple pricing",
+                    "subtitle": "The plan list is a repeatable field, so a plan is added without a deploy.",
+                    "first": {
+                        "name": "Starter",
+                        "price": "$0",
+                        "period": "per month",
+                        "features": "One page, five sections, community support",
+                        "cta_text": "Get started"
+                    },
+                    "second": {
+                        "name": "Team",
+                        "price": "$29",
+                        "period": "per month",
+                        "features": "Unlimited sections, live preview, priority support",
+                        "cta_text": "Choose Team"
+                    }
+                },
+                "cta": {
+                    "title": "Ready to build your page?",
+                    "subtitle": "Open the builder and add your first section.",
+                    "button_text": "Open the builder"
+                },
+                "richText": {
+                    "heading": "Rich text",
+                    "body": "<p>Authored HTML is cleaned on the server before it is stored, and cleaned again in the browser before it is rendered. A script tag never survives either pass.</p>"
+                },
+                "image": {
+                    "alt": "A placeholder illustration standing in for an uploaded image",
+                    "caption": "Uploads are validated by magic bytes; the filename the browser sent is ignored."
+                },
+                "stats": {
+                    "title": "By the numbers",
+                    "first": {
+                        "value": "10",
+                        "label": "Section types"
+                    },
+                    "second": {
+                        "value": "6",
+                        "label": "Templates"
+                    },
+                    "third": {
+                        "value": "3",
+                        "label": "Locales"
+                    }
+                },
+                "faq": {
+                    "title": "Questions",
+                    "subtitle": "The short version.",
+                    "first": {
+                        "question": "What happens to my current homepage?",
+                        "answer": "Nothing. The existing settings stay on disk and are converted into an equivalent block list you can review before saving."
+                    },
+                    "second": {
+                        "question": "How do I roll back?",
+                        "answer": "Empty the block list. The classic settings were never modified, so the old page returns exactly as it was."
+                    }
+                }
+            }
+        },
+        "docs": {
+            "title": "Documentation",
+            "description": "The stored block shape, the degradation guarantees, how a package contributes a section type, the preview contract and the rollback procedure.",
+            "link": "Read the page builder guide"
+        }
     }
 }

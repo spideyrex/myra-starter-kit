@@ -49,6 +49,44 @@ class DemoController extends Controller
         return Inertia::render('Admin/Demo/FormBuilder');
     }
 
+    // >>> MYRA v2.4 [A] START
+    /**
+     * Read-only plugin inventory. Every row is a real loaded manifest — there
+     * is no sample data on this page.
+     */
+    public function plugins()
+    {
+        $rows = [];
+
+        foreach (\App\Admin\Plugin\PluginRegistry::manifests() as $id => $manifest) {
+            $surface = $manifest->toArray();
+            $plugin = \App\Admin\Plugin\PluginRegistry::get($id);
+
+            $rows[] = [
+                'id' => $id,
+                'class' => $plugin ? $plugin::class : '',
+                'permissions' => count($surface['permissions']),
+                'reports' => count($surface['reports']),
+                'imports' => count($surface['imports']),
+                'routes' => $surface['routeGroups'] + $surface['publicRouteGroups'],
+                'nav' => count($surface['nav']),
+                'migrations' => count($surface['migrations']),
+            ];
+        }
+
+        $failed = [];
+        foreach (\App\Admin\Plugin\PluginRegistry::failed() as $class => $exception) {
+            $failed[] = ['class' => $class, 'message' => $exception->getMessage()];
+        }
+
+        return Inertia::render('Admin/Demo/Plugins', [
+            'plugins' => $rows,
+            'failed' => $failed,
+            'strict' => \App\Admin\Plugin\PluginRegistry::strict(),
+        ]);
+    }
+    // <<< MYRA v2.4 [A] END
+
     public function conditionalFields()
     {
         return Inertia::render('Admin/Demo/ConditionalFields');

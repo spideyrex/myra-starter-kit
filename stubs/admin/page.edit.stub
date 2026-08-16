@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { Head } from '@inertiajs/vue3';
+import { useI18n } from 'vue-i18n';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import PageHeader from '@/components/PageHeader.vue';
 import { FormFields, ResourceForm } from '@/components/admin';
@@ -13,9 +14,11 @@ const props = defineProps<{
     };
 }>();
 
+const { t } = useI18n();
+
 const schema = [
-    Section.make('{{ model }} Details').schema([
-        TextInput.make('name').required(),
+    Section.make(t('generated.{{ routePrefix }}.section')).schema([
+        TextInput.make('name').label(t('generated.{{ routePrefix }}.columns.name')).required(),
     ]),
 ];
 
@@ -25,17 +28,32 @@ const { form, submit } = useResourceForm({
     },
     updateRoute: 'admin.{{ routePrefix }}.update',
     updateRouteParams: props.{{ modelVariable }}.id,
-    confirm: { title: 'Update {{ model }}', description: 'Are you sure you want to save these changes?', confirmText: 'Save' },
+    confirm: {
+        title: t('generated.{{ routePrefix }}.editTitle'),
+        description: t('generated.{{ routePrefix }}.confirmUpdate'),
+        confirmText: t('common.save'),
+    },
 });
 </script>
 
 <template>
-    <AuthenticatedLayout :breadcrumbs="[{ label: '{{ modelPlural }}', href: route('admin.{{ routePrefix }}.index') }, { label: 'Edit' }]">
-        <Head :title="`Edit ${{{ modelVariable }}.name}`" />
+    <AuthenticatedLayout :breadcrumbs="[
+        { label: t('generated.{{ routePrefix }}.title'), href: route('admin.{{ routePrefix }}.index') },
+        { label: t('common.edit') },
+    ]">
+        <Head :title="t('generated.{{ routePrefix }}.editTitle')" />
 
-        <PageHeader :title="`Edit ${{{ modelVariable }}.name}`" description="Update {{ modelVariable }} details." />
+        <PageHeader
+            :title="`${t('generated.{{ routePrefix }}.editTitle')} — ${ {{ modelVariable }}.name }`"
+            :description="t('generated.{{ routePrefix }}.editDescription')"
+        />
 
-        <ResourceForm :processing="form.processing" submit-text="Update {{ model }}" :cancel-href="route('admin.{{ routePrefix }}.index')" @submit="submit">
+        <ResourceForm
+            :processing="form.processing"
+            :submit-text="t('common.save')"
+            :cancel-href="route('admin.{{ routePrefix }}.index')"
+            @submit="submit"
+        >
             <FormFields :schema="schema" :form="form" />
         </ResourceForm>
     </AuthenticatedLayout>

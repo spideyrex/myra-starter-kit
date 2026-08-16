@@ -31,6 +31,35 @@
         "demo": "Demo",
         "reports": "Laporan"
     },
+    "plugins": {
+        "title": "Plugin",
+        "description": "Pakej yang mendaftarkan halaman, kebenaran, laporan, import dan navigasi \u2014 diisytiharkan secara eksplisit, bukan ditemui secara automatik.",
+        "back": "Kembali ke demo",
+        "loaded": "Plugin dimuatkan",
+        "loadedDescription": "Setiap baris ialah manifes sebenar yang digunakan semasa but. Kiraan menunjukkan sumbangan setiap plugin.",
+        "empty": "Tiada plugin didaftarkan",
+        "emptyDescription": "Tambah kelas ke myra.extensions.plugins dalam config/myra.php, atau jalankan make:myra-plugin.",
+        "strictOn": "Ketat: plugin yang gagal akan melontar ralat",
+        "strictOff": "Dikuarantin: plugin yang gagal diasingkan",
+        "failedTitle": "Plugin gagal",
+        "failedDescription": "Kelas ini dikuarantin semasa but. Panel admin kekal berjalan.",
+        "columns": {
+            "id": "Id",
+            "class": "Kelas",
+            "permissions": "Modul kebenaran",
+            "reports": "Laporan",
+            "imports": "Import",
+            "routes": "Kumpulan laluan",
+            "nav": "Item navigasi",
+            "migrations": "Laluan migrasi"
+        },
+        "example": {
+            "nav": "Plugin contoh",
+            "title": "Satu plugin ialah satu kelas",
+            "description": "Satu kelas abstrak, satu kaedah wajib yang memulangkan manifes. Tiada penyedia, tiada panggilan pendaftaran."
+        }
+    },
+    "generated": {},
     "common": {
         "save": "Simpan",
         "cancel": "Batal",

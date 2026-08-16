@@ -422,7 +422,7 @@
             "burst": "\u7a81\u53d1 30 \u4e2a\u4fe1\u53f7",
             "hide": "\u6a21\u62df\u9690\u85cf\u6807\u7b7e\u9875",
             "show": "\u6a21\u62df\u53ef\u89c1\u6807\u7b7e\u9875",
-            "unchanged": "\u8fd4\u56de {unchanged:true}",
+            "unchanged": "\u8fd4\u56de {'{'}unchanged: true{'}'}",
             "failOne": "\u8ba9\u4e00\u4e2a\u69fd\u4f4d\u5931\u8d25",
             "reset": "\u91cd\u7f6e",
             "requestCount": "\u5df2\u53d1\u51fa\u7684 POST \u8bf7\u6c42",

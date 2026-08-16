@@ -139,6 +139,53 @@ class WidgetBatchVersionTest extends TestCase
         $this->assertNull($second->json('results.events.unchanged'));
     }
 
+    /**
+     * The stamp is MAX(users.updated_at)|COUNT(users). Assigning a role writes
+     * `model_has_roles` only, so the stamp cannot move while the role breakdown
+     * changes underneath it. Refusing to stamp is the only sound answer.
+     */
+    public function test_a_relation_dimension_is_never_short_circuited(): void
+    {
+        $this->actingAsSuperAdmin();
+        $this->seedUsers();
+
+        $spec = $this->spec();
+        $spec['dimension'] = 'role';
+
+        $first = $this->postJson(route('admin.reports.widgets'), [
+            'widgets' => [self::SLOT => $spec],
+        ])->assertOk();
+
+        $this->assertSame('', $first->json('results.' . self::SLOT . '.version'));
+
+        $second = $this->postJson(route('admin.reports.widgets'), [
+            'widgets' => [self::SLOT => $spec],
+            'versions' => [self::SLOT => ''],
+        ])->assertOk();
+
+        $this->assertNull($second->json('results.' . self::SLOT . '.unchanged'));
+        $this->assertIsArray($second->json('results.' . self::SLOT . '.rows'));
+    }
+
+    public function test_a_relation_filter_is_never_short_circuited(): void
+    {
+        $this->actingAsSuperAdmin();
+        $this->seedUsers();
+
+        $spec = $this->spec();
+        $spec['query'] = [
+            'conjunction' => 'and',
+            'rules' => [['field' => 'roles', 'operator' => 'related_to', 'value' => ['admin']]],
+            'groups' => [],
+        ];
+
+        $response = $this->postJson(route('admin.reports.widgets'), [
+            'widgets' => [self::SLOT => $spec],
+        ])->assertOk();
+
+        $this->assertSame('', $response->json('results.' . self::SLOT . '.version'));
+    }
+
     public function test_a_write_changes_the_version(): void
     {
         $this->actingAsSuperAdmin();

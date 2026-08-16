@@ -2,6 +2,7 @@
 
 namespace App\Admin\Report;
 
+use App\Admin\QueryBuilder\Operator;
 use App\Admin\Tenancy\Tenancy;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Support\Arrayable;
@@ -92,9 +93,50 @@ final class ReportResult implements Arrayable
      */
     public static function stamp(ReportDefinition $definition, ReportRequest $request, ?Authenticatable $actor, ?string $dataset = null): string
     {
+        if (! self::stampable($request)) {
+            return '';
+        }
+
         $dataset ??= self::datasetStamp($definition, $actor);
 
         return $dataset === '' ? '' : sha1($request->fingerprint($actor) . '|' . $dataset);
+    }
+
+    /**
+     * The dataset stamp only ever sees the report's OWN table. A request whose
+     * result depends on a RELATED table can therefore change without moving the
+     * stamp — assigning a role writes `model_has_roles` only, leaving
+     * MAX(users.updated_at) and COUNT(users) byte-identical while the role
+     * breakdown is now wrong. Such a request is never short-circuited.
+     */
+    public static function stampable(ReportRequest $request): bool
+    {
+        if ($request->dimension()->isRelation()) {
+            return false;
+        }
+
+        return ! self::usesRelationFilter($request->filters()->root());
+    }
+
+    private static function usesRelationFilter(array $node): bool
+    {
+        $relational = Operator::forType('relation');
+
+        foreach ((array) ($node['rules'] ?? []) as $rule) {
+            $operator = is_array($rule) ? Operator::tryFrom((string) ($rule['operator'] ?? '')) : null;
+
+            if ($operator !== null && in_array($operator, $relational, true)) {
+                return true;
+            }
+        }
+
+        foreach ((array) ($node['groups'] ?? []) as $child) {
+            if (is_array($child) && self::usesRelationFilter($child)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**

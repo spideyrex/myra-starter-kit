@@ -422,7 +422,7 @@
             "burst": "Letusan 30 isyarat",
             "hide": "Simulasi tab tersembunyi",
             "show": "Simulasi tab kelihatan",
-            "unchanged": "Balas {unchanged:true}",
+            "unchanged": "Balas {'{'}unchanged: true{'}'}",
             "failOne": "Gagalkan satu slot",
             "reset": "Set semula",
             "requestCount": "Permintaan POST dihantar",

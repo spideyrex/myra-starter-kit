@@ -3,8 +3,10 @@
 namespace Tests\Feature\Realtime;
 
 use App\Admin\Realtime\Jobs\EmitWidgetSignal;
+use App\Admin\Realtime\Jobs\FanOutWidgetSignal;
 use App\Admin\Realtime\WidgetDataChanged;
 use App\Admin\Realtime\WidgetSignal;
+use App\Models\User;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Cache;
 use Tests\TestCase;
@@ -70,6 +72,69 @@ class WidgetSignalTest extends TestCase
         }
 
         Bus::assertDispatchedTimes(EmitWidgetSignal::class, 1);
+    }
+
+    public function test_emit_queues_the_audience_walk_instead_of_running_it_in_the_request(): void
+    {
+        config()->set('myra.realtime.enabled', true);
+
+        $actor = $this->actingAsSuperAdmin();
+
+        // Three more users who WOULD pass the permission check. If emit() still
+        // walked the table synchronously there would be four signals, not one.
+        User::factory()->count(3)->create()->each(fn (User $u) => $u->assignRole('super-admin'));
+
+        Bus::fake();
+        Cache::flush();
+
+        WidgetSignal::emit('users');
+
+        Bus::assertDispatchedTimes(EmitWidgetSignal::class, 1);
+        Bus::assertDispatched(
+            EmitWidgetSignal::class,
+            fn (EmitWidgetSignal $job) => $job->userId === (int) $actor->id,
+        );
+
+        Bus::assertDispatchedTimes(FanOutWidgetSignal::class, 1);
+        Bus::assertDispatched(
+            FanOutWidgetSignal::class,
+            fn (FanOutWidgetSignal $job) => $job->topics === ['users'],
+        );
+    }
+
+    public function test_the_fan_out_job_signals_only_users_who_may_see_the_report(): void
+    {
+        config()->set('myra.realtime.enabled', true);
+
+        $admin = $this->actingAsSuperAdmin();
+        $stranger = $this->makeUser();
+
+        Bus::fake();
+        Cache::flush();
+
+        (new FanOutWidgetSignal(['users']))->handle();
+
+        Bus::assertDispatched(
+            EmitWidgetSignal::class,
+            fn (EmitWidgetSignal $job) => $job->userId === (int) $admin->id,
+        );
+        Bus::assertNotDispatched(
+            EmitWidgetSignal::class,
+            fn (EmitWidgetSignal $job) => $job->userId === (int) $stranger->id,
+        );
+    }
+
+    public function test_the_fan_out_job_is_inert_when_realtime_is_off(): void
+    {
+        config()->set('myra.realtime.enabled', false);
+
+        $this->actingAsSuperAdmin();
+
+        Bus::fake();
+
+        (new FanOutWidgetSignal(['users']))->handle();
+
+        Bus::assertNothingDispatched();
     }
 
     public function test_an_unknown_topic_shape_is_dropped(): void

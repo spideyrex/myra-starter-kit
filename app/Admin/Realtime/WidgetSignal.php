@@ -3,6 +3,7 @@
 namespace App\Admin\Realtime;
 
 use App\Admin\Realtime\Jobs\EmitWidgetSignal;
+use App\Admin\Realtime\Jobs\FanOutWidgetSignal;
 use App\Admin\Report\ReportRegistry;
 use App\Models\User;
 use Illuminate\Contracts\Auth\Access\Authorizable;
@@ -53,8 +54,51 @@ final class WidgetSignal
         self::dispatch($userId, $topics);
     }
 
-    /** Fan-out to every user permitted to see the topic's report, chunked. */
+    /**
+     * Fan-out to every user permitted to see the topic's report.
+     *
+     * The caller's request pays for the ACTOR only. The audience walk is a
+     * queued job: a synchronous chunkById over the whole users table with a
+     * permission check per user is a request-time stall on any real user base.
+     */
     public static function emit(string ...$topics): void
+    {
+        if (! self::enabled()) {
+            return;
+        }
+
+        $topics = self::clean($topics);
+
+        if ($topics === []) {
+            return;
+        }
+
+        try {
+            $actor = self::actor();
+
+            if ($actor !== null) {
+                $allowed = self::permitted($actor, $topics);
+                $actorId = (int) $actor->getAuthIdentifier();
+
+                if ($allowed !== [] && $actorId > 0) {
+                    self::dispatch($actorId, $allowed);
+                }
+            }
+
+            FanOutWidgetSignal::dispatch($topics);
+        } catch (Throwable $e) {
+            report($e);
+        }
+    }
+
+    /**
+     * The audience walk itself — WORKER ONLY, called by FanOutWidgetSignal.
+     * The permission relations are eager-loaded so a chunk costs a handful of
+     * queries rather than two per user.
+     *
+     * @param  string[]  $topics
+     */
+    public static function fanOut(array $topics): void
     {
         if (! self::enabled()) {
             return;
@@ -69,12 +113,10 @@ final class WidgetSignal
         try {
             User::query()
                 ->select(['id'])
+                ->with(['roles.permissions', 'permissions'])
                 ->chunkById(self::CHUNK, function ($users) use ($topics) {
                     foreach ($users as $user) {
-                        $allowed = array_values(array_filter(
-                            $topics,
-                            static fn (string $topic) => self::permits($user, $topic),
-                        ));
+                        $allowed = self::permitted($user, $topics);
 
                         if ($allowed !== []) {
                             self::dispatch((int) $user->id, $allowed);
@@ -84,6 +126,28 @@ final class WidgetSignal
         } catch (Throwable $e) {
             report($e);
         }
+    }
+
+    /** Null outside a request, or if the guard cannot answer. */
+    private static function actor(): ?Authenticatable
+    {
+        try {
+            return auth()->user();
+        } catch (Throwable) {
+            return null;
+        }
+    }
+
+    /**
+     * @param  string[]  $topics
+     * @return string[]
+     */
+    private static function permitted(mixed $user, array $topics): array
+    {
+        return array_values(array_filter(
+            $topics,
+            static fn (string $topic) => self::permits($user, $topic),
+        ));
     }
 
     /** A bulk update is ONE signal per (topic, user), not N. */

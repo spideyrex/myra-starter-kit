@@ -52,8 +52,13 @@ final class ReportBatch
             // Freshness FIRST: an unchanged slot skips the aggregation entirely.
             // `''` (no versionKey declared, or the stamp query failed) can never
             // match, so the default path is byte-identical to v2.4.0.
-            $datasets[$key] ??= ReportResult::datasetStamp($definition, $user);
-            $version = ReportResult::stamp($definition, $request, $user, $datasets[$key]);
+            $version = '';
+
+            if (ReportResult::stampable($request)) {
+                $datasets[$key] ??= ReportResult::datasetStamp($definition, $user);
+                $version = ReportResult::stamp($definition, $request, $user, $datasets[$key]);
+            }
+
             $known = $knownVersions[(string) $slot] ?? null;
 
             if ($version !== '' && is_string($known) && $known === $version) {

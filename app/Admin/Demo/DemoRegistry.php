@@ -158,6 +158,7 @@ final class DemoRegistry
             // <<< MYRA v2.6 [D] END
             // >>> MYRA v2.7 [D] START
             'roleDashboards' => ['route' => 'admin.demo.role-dashboards', 'icon' => 'LayoutDashboard', 'tags' => ['dashboard', 'platform'], 'since' => '2.7.0', 'permission' => 'dashboard.manage-roles'],
+            'pageBuilder' => ['route' => 'admin.demo.page-builder', 'icon' => 'LayoutTemplate', 'tags' => ['platform'], 'since' => '2.7.0'],
             // <<< MYRA v2.7 [D] END
         ];
     }

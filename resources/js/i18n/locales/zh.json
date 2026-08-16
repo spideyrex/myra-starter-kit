@@ -836,6 +836,43 @@
             "payloadDescription": "实例以目录键加绑定的形式传输。服务端重新推导 schema，并拒绝任何无法解析的内容。"
         }
     },
+    "roleDashboardAdmin": {
+        "title": "角色仪表板",
+        "subtitle": "为每个角色设定默认仪表板。该角色的用户会自动获得它，并且仍可自行个性化。",
+        "breadcrumb": "角色仪表板",
+        "nav": "角色仪表板",
+        "caption": "各角色及其提供给用户的默认仪表板",
+        "columns": {
+            "role": "角色",
+            "priority": "优先级",
+            "status": "仪表板",
+            "widgets": "小部件",
+            "updated": "最后编辑",
+            "actions": "操作"
+        },
+        "configured": "已配置",
+        "notConfigured": "未配置",
+        "inactive": "角色已停用",
+        "locked": "只有超级管理员才能编辑该角色的仪表板。",
+        "configure": "配置",
+        "configureRole": "配置 {role} 仪表板",
+        "clear": "清除",
+        "clearRole": "清除 {role} 仪表板",
+        "clearTitle": "清除 {role} 仪表板？",
+        "clearDescription": "{role} 的用户将回退到其次高且已配置仪表板的角色，或回退到默认仪表板。个人布局不受影响。",
+        "clearConfirm": "清除仪表板",
+        "cancel": "取消",
+        "emptyTitle": "尚无角色配置仪表板",
+        "empty": "配置一个后，该角色的每位用户都会将其作为默认仪表板。在此之前一切保持不变。",
+        "widgetCount": "显示 {count} 个",
+        "never": "从未",
+        "priorityHint": "拥有多个角色的用户将获得其中优先级最高且已配置仪表板的角色的仪表板。",
+        "banner": {
+            "title": "正在编辑 {role} 仪表板",
+            "description": "您看到的正是 {role} 所看到的内容。该角色无法查看的小部件不会被提供，也不会被保存。",
+            "back": "返回角色仪表板"
+        }
+    },
     "reports": {
         "title": "报表",
         "subtitle": "服务端聚合——每一个数字都由数据库计算。",

@@ -836,6 +836,43 @@
             "payloadDescription": "Instances travel as a catalogue key plus a binding. The server re-derives the schema and rejects anything that does not resolve."
         }
     },
+    "roleDashboardAdmin": {
+        "title": "Role dashboards",
+        "subtitle": "Give each role a default dashboard. A user of that role gets it automatically and may still personalise their own.",
+        "breadcrumb": "Role dashboards",
+        "nav": "Role dashboards",
+        "caption": "Roles and the default dashboard each one hands to its users",
+        "columns": {
+            "role": "Role",
+            "priority": "Priority",
+            "status": "Dashboard",
+            "widgets": "Widgets",
+            "updated": "Last edited",
+            "actions": "Actions"
+        },
+        "configured": "Configured",
+        "notConfigured": "Not configured",
+        "inactive": "Role disabled",
+        "locked": "Only a super-admin can author this role's dashboard.",
+        "configure": "Configure",
+        "configureRole": "Configure the {role} dashboard",
+        "clear": "Clear",
+        "clearRole": "Clear the {role} dashboard",
+        "clearTitle": "Clear the {role} dashboard?",
+        "clearDescription": "Users of {role} fall back to their next highest role that has a dashboard, or to the default dashboard. Personal layouts are untouched.",
+        "clearConfirm": "Clear dashboard",
+        "cancel": "Cancel",
+        "emptyTitle": "No role has a dashboard yet",
+        "empty": "Configure one and every user of that role gets it as their default. Until then nothing changes for anyone.",
+        "widgetCount": "{count} shown",
+        "never": "Never",
+        "priorityHint": "A user holding several roles gets the dashboard of the highest-priority role that has one.",
+        "banner": {
+            "title": "Editing the {role} dashboard",
+            "description": "You are seeing exactly what a {role} sees. Widgets that role cannot see are neither offered nor saved.",
+            "back": "Back to role dashboards"
+        }
+    },
     "reports": {
         "title": "Reports",
         "subtitle": "Server-side aggregation — the database computes every number.",

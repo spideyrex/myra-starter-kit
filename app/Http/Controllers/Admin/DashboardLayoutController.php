@@ -4,11 +4,18 @@ namespace App\Http\Controllers\Admin;
 
 use App\Admin\Dashboard\DashboardKey;
 use App\Admin\Dashboard\LayoutShape;
+// >>> MYRA v2.7 [B] START
+use App\Admin\Dashboard\RolePrincipal;
+// <<< MYRA v2.7 [B] END
 use App\Admin\Dashboard\WidgetCatalogue;
 use App\Admin\Dashboard\WidgetInstance;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\DashboardLayoutRequest;
 use App\Models\DashboardLayout;
+// >>> MYRA v2.7 [B] START
+use App\Models\Role;
+use App\Models\RoleDashboard;
+// <<< MYRA v2.7 [B] END
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -67,6 +74,30 @@ class DashboardLayoutController extends Controller
     {
         Gate::authorize('create', DashboardLayout::class);
 
+        // >>> MYRA v2.7 [B] START
+        // Absent `role`, behaviour is unchanged. One endpoint, one filter: a
+        // second one would duplicate the boundary that IS the security control.
+        $role = $this->authoringRole($request);
+
+        if ($role !== null) {
+            return response()->json(['widgets' => WidgetCatalogue::forUser(new RolePrincipal($role))]);
+        }
+        // <<< MYRA v2.7 [B] END
+
         return response()->json(['widgets' => WidgetCatalogue::forUser($request->user())]);
     }
+
+    // >>> MYRA v2.7 [B] START
+    /** Authoring a document rendered for other people is an escalation: its own ability. */
+    private function authoringRole(Request $request): ?Role
+    {
+        if (! $request->filled('role')) {
+            return null;
+        }
+
+        Gate::authorize('manage', RoleDashboard::class);
+
+        return Role::query()->findOrFail((int) $request->query('role'));
+    }
+    // <<< MYRA v2.7 [B] END
 }

@@ -178,6 +178,16 @@ const coreNavGroups = computed(() => [
         items: [
             { title: t('nav.users'), href: route('admin.users.index'), icon: Users, permission: 'users.view' },
             { title: t('nav.roles'), href: route('admin.roles.index'), icon: Shield, permission: 'roles.view' },
+            // >>> MYRA v2.7 [B] START
+            ...((route as any)().has('admin.role-dashboards.index')
+                ? [{
+                    title: t('roleDashboardAdmin.nav'),
+                    href: route('admin.role-dashboards.index'),
+                    icon: LayoutDashboard,
+                    permission: 'dashboard.manage-roles',
+                }]
+                : []),
+            // <<< MYRA v2.7 [B] END
         ],
     },
     {

@@ -97,6 +97,45 @@ return [
         'accept' => ['image/jpeg', 'image/png', 'image/gif', 'image/webp'],
     ],
 
+    // >>> MYRA v2.4 [C] START
+    /*
+    |--------------------------------------------------------------------------
+    | Multi-tenancy — OPT-IN, DEFAULT OFF
+    |--------------------------------------------------------------------------
+    |
+    | With `enabled` false NOTHING is registered: no global scope, no creating
+    | hook, no validation-rule change, no middleware, no Inertia prop. The
+    | disabled path is asserted byte-identical against a committed SQL baseline
+    | in tests/Feature/Tenancy/DisabledPathIsNoOpTest.
+    |
+    | `models` is a second, independent lock: a model may carry BelongsToTenant
+    | and still not be scoped until it is named here.
+    |
+    | `enabled` is compared with ===, so MYRA_TENANCY must be literally `true`.
+    | Anything else — including `1` — leaves tenancy off.
+    |
+    */
+    'tenancy' => [
+        'enabled'            => env('MYRA_TENANCY', false),
+        'model'              => \App\Models\Team::class,
+        'column'             => 'team_id',
+        'null_rows'          => 'strict',   // 'strict' | 'shared'
+        'super_admin_bypass' => true,
+        'models'             => [],
+
+        // Rows that belong to a tenant through the team pivot rather than a
+        // tenant column — `users` is the only such table today.
+        'membership_table'    => 'team_user',
+        'membership_user_key' => 'user_id',
+        'membership_tables'   => ['users'],
+
+        // Tables an operator has DELIBERATELY declared tenant-shared. Anything
+        // not listed here, not carrying the tenant column and not scoped by
+        // membership returns zero rows rather than every tenant's rows.
+        'shared_tables'       => [],
+    ],
+    // <<< MYRA v2.4 [C] END
+
     /*
     |--------------------------------------------------------------------------
     | Exports

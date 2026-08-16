@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Models\Traits\BelongsToTenant;
 use App\Models\Traits\OwnedByUser;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
@@ -15,7 +16,8 @@ use Spatie\MediaLibrary\InteractsWithMedia;
 
 class Page extends Model implements HasMedia
 {
-    use HasFactory, SoftDeletes, LogsActivity, InteractsWithMedia, OwnedByUser;
+    // Inert until both tenancy locks are open. See app/Admin/Tenancy/Tenancy.php.
+    use HasFactory, SoftDeletes, LogsActivity, InteractsWithMedia, OwnedByUser, BelongsToTenant;
 
     protected $fillable = [
         'title',

@@ -4,12 +4,15 @@ namespace App\Http\Controllers\Admin;
 
 use App\Admin\QueryBuilder\FieldSet;
 use App\Admin\QueryBuilder\FieldSpec;
+use App\Admin\Tenancy\Tenancy;
 use App\Admin\Traits\HandlesQueryBuilder;
 use App\Admin\Traits\SearchableQuery;
+use App\Models\Traits\BelongsToTenant;
 use App\Models\User;
 use App\Http\Controllers\Controller;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Schema;
 
 use Inertia\Inertia;
 
@@ -58,6 +61,42 @@ class DemoController extends Controller
     {
         return Inertia::render('Admin/Demo/WizardDemo');
     }
+
+    // >>> MYRA v2.4 [C] START
+    /** Read-only tenancy status. Changes no data and registers no scope. */
+    public function tenancy()
+    {
+        $models = array_values(array_filter(
+            (array) config('myra.tenancy.models', []),
+            fn ($class) => is_string($class) && class_exists($class),
+        ));
+
+        return Inertia::render('Admin/Demo/Tenancy', [
+            'status' => [
+                'enabled' => Tenancy::enabled(),
+                'column' => Tenancy::column(),
+                'nullRows' => (string) config('myra.tenancy.null_rows', 'strict'),
+                'models' => array_map(function (string $class) {
+                    /** @var \Illuminate\Database\Eloquent\Model $instance */
+                    $instance = new $class;
+                    $column = Tenancy::column();
+                    $hasColumn = Schema::hasColumn($instance->getTable(), $column);
+
+                    return [
+                        'class' => $class,
+                        'usesTrait' => in_array(BelongsToTenant::class, class_uses_recursive($class), true),
+                        'hasColumn' => $hasColumn,
+                        'nullRows' => $hasColumn
+                            ? (int) $instance->newQuery()->withoutGlobalScopes()->whereNull($column)->count()
+                            : 0,
+                        'scoped' => array_key_exists('tenant', $instance->getGlobalScopes()),
+                    ];
+                }, $models),
+                'currentTeam' => Tenancy::current()?->only('id', 'name'),
+            ],
+        ]);
+    }
+    // <<< MYRA v2.4 [C] END
 
     public function globalSearch()
     {

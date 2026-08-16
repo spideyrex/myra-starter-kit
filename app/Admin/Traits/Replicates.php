@@ -2,6 +2,7 @@
 
 namespace App\Admin\Traits;
 
+use App\Admin\Tenancy\Tenancy;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -30,8 +31,9 @@ trait Replicates
     protected function replicateGuarded(): array
     {
         // created_by is guarded so the replica is re-stamped with the acting user
-        // rather than inheriting — or being repointed to — another owner.
-        return ['id', 'created_by', 'created_at', 'updated_at', 'deleted_at'];
+        // rather than inheriting — or being repointed to — another owner. The
+        // tenant column is guarded for the same reason.
+        return ['id', 'created_by', Tenancy::column(), 'created_at', 'updated_at', 'deleted_at'];
     }
 
     /** Columns carrying a unique index — regenerated on the clone. */

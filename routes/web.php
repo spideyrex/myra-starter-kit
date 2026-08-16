@@ -283,6 +283,9 @@ Route::middleware(['auth', 'verified', 'active', '2fa'])->prefix('admin')->name(
     Route::get('/demo/import-sample', [DemoController::class, 'importSample'])->name('demo.import-sample');
     // <<< MYRA v2.2 [C] END
     Route::get('/demo/global-search', [DemoController::class, 'globalSearch'])->name('demo.global-search');
+    // >>> MYRA v2.4 [C] START
+    Route::get('/demo/tenancy', [DemoController::class, 'tenancy'])->name('demo.tenancy');
+    // <<< MYRA v2.4 [C] END
     // >>> MYRA v2.2 [B] START
     Route::get('/demo/saved-views', [DemoController::class, 'savedViews'])->name('demo.saved-views');
     // <<< MYRA v2.2 [B] END

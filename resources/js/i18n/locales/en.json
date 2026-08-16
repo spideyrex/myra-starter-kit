@@ -632,6 +632,12 @@
     "landing": {
         "title": "Landing page",
         "description": "Choose the template the public homepage renders with, and the order of its sections.",
+        "builder": {
+            "title": "Page builder",
+            "description": "Build the page out of ordered sections instead of the fixed fields below. The template above still supplies the navbar, the footer and the presentation.",
+            "open": "Open page builder",
+            "badge": "New"
+        },
         "nav": {
             "label": "Main",
             "skipToContent": "Skip to content",
@@ -1405,6 +1411,11 @@
             "landingTemplates": {
                 "title": "Landing templates",
                 "description": "Every registered public homepage template, with the sections each one renders and a live preview link.",
+                "badge": "New"
+            },
+            "pageBuilder": {
+                "title": "Page builder",
+                "description": "The section types the landing page builder offers, and a live example of each rendered by the public renderer.",
                 "badge": "New"
             }
         },
@@ -2231,5 +2242,128 @@
         },
         "title": "AI filters",
         "unresolved": "No conditions were produced."
+    },
+    "pageBuilder": {
+        "demo": {
+            "title": "Page builder",
+            "description": "A page is the template you picked plus an ordered list of section blocks. This gallery lists every section type the server registers and renders one live example of each.",
+            "readOnly": "Read-only gallery. Nothing on this page is saved, and the public homepage is untouched.",
+            "openBuilder": "Open page builder",
+            "openDocs": "Read the guide",
+            "catalogue": {
+                "title": "Section catalogue",
+                "description": "Declared server-side, shipped as JSON. A package registers a section type the same way it registers a template, and it appears here with no frontend change.",
+                "fields": "Fields",
+                "presentation": "Presentation",
+                "maxPerPage": "Max per page",
+                "unlimited": "Unlimited",
+                "since": "Since",
+                "none": "None",
+                "empty": "No section types are registered on this build, so there is nothing to list yet."
+            },
+            "groups": {
+                "content": "Content",
+                "proof": "Social proof",
+                "conversion": "Conversion",
+                "layout": "Layout"
+            },
+            "preview": {
+                "title": "Live examples",
+                "description": "Every example below is rendered by the same components the public homepage uses, so what you see here is what an anonymous visitor gets.",
+                "unavailable": "The public section renderer is not available on this build, so the catalogue is shown without live examples.",
+                "failed": "This example could not be rendered. The rest of the page is unaffected — that containment is the point."
+            },
+            "samples": {
+                "hero": {
+                    "title": "Ship a landing page without shipping code",
+                    "subtitle": "Compose the page out of sections, reorder them, and publish. The template keeps owning the chrome.",
+                    "cta_text": "Start building"
+                },
+                "features": {
+                    "title": "Built on what is already there",
+                    "subtitle": "Every section reuses a renderer the homepage has shipped since v2.6.",
+                    "first": {
+                        "title": "Ordered sections",
+                        "description": "Drag or use the keyboard to reorder. The order you save is the order a visitor reads."
+                    },
+                    "second": {
+                        "title": "Safe by default",
+                        "description": "Authored HTML is sanitised on write and again on render, and every link is checked against an allowlist."
+                    },
+                    "third": {
+                        "title": "Never blank",
+                        "description": "A malformed block is dropped, a throwing section removes only itself, and an empty list falls back to the classic settings."
+                    }
+                },
+                "testimonials": {
+                    "title": "What the team says",
+                    "subtitle": "Quotes are content, not code.",
+                    "first": {
+                        "name": "Aisyah Rahman",
+                        "role": "Head of Marketing",
+                        "quote": "I changed the homepage twice before lunch and never opened an editor."
+                    },
+                    "second": {
+                        "name": "Daniel Ooi",
+                        "role": "Engineering Lead",
+                        "quote": "The rollback is one field. That is the part that let us say yes."
+                    }
+                },
+                "pricing": {
+                    "title": "Simple pricing",
+                    "subtitle": "The plan list is a repeatable field, so a plan is added without a deploy.",
+                    "first": {
+                        "name": "Starter",
+                        "price": "$0",
+                        "period": "per month",
+                        "features": "One page, five sections, community support",
+                        "cta_text": "Get started"
+                    },
+                    "second": {
+                        "name": "Team",
+                        "price": "$29",
+                        "period": "per month",
+                        "features": "Unlimited sections, live preview, priority support",
+                        "cta_text": "Choose Team"
+                    }
+                },
+                "cta": {
+                    "title": "Ready to build your page?",
+                    "subtitle": "Open the builder and add your first section.",
+                    "button_text": "Open the builder"
+                },
+                "richText": {
+                    "heading": "Rich text",
+                    "body": "<p>Authored HTML is cleaned on the server before it is stored, and cleaned again in the browser before it is rendered. A script tag never survives either pass.</p>"
+                },
+                "image": {
+                    "alt": "A placeholder illustration standing in for an uploaded image",
+                    "caption": "Uploads are validated by magic bytes; the filename the browser sent is ignored."
+                },
+                "stats": {
+                    "title": "By the numbers",
+                    "first": { "value": "10", "label": "Section types" },
+                    "second": { "value": "6", "label": "Templates" },
+                    "third": { "value": "3", "label": "Locales" }
+                },
+                "faq": {
+                    "title": "Questions",
+                    "subtitle": "The short version.",
+                    "first": {
+                        "question": "What happens to my current homepage?",
+                        "answer": "Nothing. The existing settings stay on disk and are converted into an equivalent block list you can review before saving."
+                    },
+                    "second": {
+                        "question": "How do I roll back?",
+                        "answer": "Empty the block list. The classic settings were never modified, so the old page returns exactly as it was."
+                    }
+                }
+            }
+        },
+        "docs": {
+            "title": "Documentation",
+            "description": "The stored block shape, the degradation guarantees, how a package contributes a section type, the preview contract and the rollback procedure.",
+            "link": "Read the page builder guide"
+        }
     }
 }

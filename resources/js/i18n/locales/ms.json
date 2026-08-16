@@ -632,6 +632,12 @@
     "landing": {
         "title": "Halaman utama",
         "description": "Pilih templat untuk halaman utama awam, dan susunan bahagiannya.",
+        "builder": {
+            "title": "Pembina halaman",
+            "description": "Bina halaman daripada bahagian tersusun, bukan medan tetap di bawah. Templat di atas masih membekalkan bar navigasi, pengaki dan persembahannya.",
+            "open": "Buka pembina halaman",
+            "badge": "Baharu"
+        },
         "nav": {
             "label": "Utama",
             "skipToContent": "Langkau ke kandungan",
@@ -1405,6 +1411,11 @@
             "landingTemplates": {
                 "title": "Templat halaman utama",
                 "description": "Setiap templat halaman utama awam yang berdaftar, dengan bahagian yang dipaparkan dan pautan pratonton langsung.",
+                "badge": "Baharu"
+            },
+            "pageBuilder": {
+                "title": "Pembina halaman",
+                "description": "Jenis bahagian yang ditawarkan oleh pembina halaman utama, serta satu contoh langsung setiap satu yang dipaparkan oleh perender awam.",
                 "badge": "Baharu"
             }
         },
@@ -2231,5 +2242,128 @@
         },
         "title": "Penapis AI",
         "unresolved": "Tiada syarat dihasilkan."
+    },
+    "pageBuilder": {
+        "demo": {
+            "title": "Pembina halaman",
+            "description": "Satu halaman ialah templat yang anda pilih ditambah senarai bahagian yang tersusun. Galeri ini menyenaraikan setiap jenis bahagian yang didaftarkan pelayan dan memaparkan satu contoh langsung bagi setiap satu.",
+            "readOnly": "Galeri baca sahaja. Tiada apa-apa di halaman ini disimpan, dan halaman utama awam tidak disentuh.",
+            "openBuilder": "Buka pembina halaman",
+            "openDocs": "Baca panduan",
+            "catalogue": {
+                "title": "Katalog bahagian",
+                "description": "Diisytiharkan di pelayan dan dihantar sebagai JSON. Sesuatu pakej mendaftarkan jenis bahagian sama seperti ia mendaftarkan templat, dan ia muncul di sini tanpa sebarang perubahan bahagian hadapan.",
+                "fields": "Medan",
+                "presentation": "Persembahan",
+                "maxPerPage": "Maksimum setiap halaman",
+                "unlimited": "Tanpa had",
+                "since": "Sejak",
+                "none": "Tiada",
+                "empty": "Tiada jenis bahagian didaftarkan pada binaan ini, jadi belum ada apa-apa untuk disenaraikan."
+            },
+            "groups": {
+                "content": "Kandungan",
+                "proof": "Bukti sosial",
+                "conversion": "Penukaran",
+                "layout": "Susun atur"
+            },
+            "preview": {
+                "title": "Contoh langsung",
+                "description": "Setiap contoh di bawah dipaparkan oleh komponen yang sama seperti halaman utama awam, jadi apa yang anda lihat di sini ialah apa yang pelawat tanpa nama terima.",
+                "unavailable": "Perender bahagian awam tiada pada binaan ini, jadi katalog dipaparkan tanpa contoh langsung.",
+                "failed": "Contoh ini tidak dapat dipaparkan. Selebihnya halaman tidak terjejas — pembendungan itulah tujuannya."
+            },
+            "samples": {
+                "hero": {
+                    "title": "Terbitkan halaman utama tanpa menulis kod",
+                    "subtitle": "Susun halaman daripada bahagian, ubah urutannya, dan terbitkan. Templat tetap memiliki bahagian rangkanya.",
+                    "cta_text": "Mula membina"
+                },
+                "features": {
+                    "title": "Dibina atas apa yang sudah ada",
+                    "subtitle": "Setiap bahagian menggunakan semula perender yang telah dihantar halaman utama sejak v2.6.",
+                    "first": {
+                        "title": "Bahagian tersusun",
+                        "description": "Seret atau guna papan kekunci untuk menyusun semula. Urutan yang anda simpan ialah urutan yang dibaca pelawat."
+                    },
+                    "second": {
+                        "title": "Selamat secara lalai",
+                        "description": "HTML yang ditulis dibersihkan semasa disimpan dan sekali lagi semasa dipaparkan, dan setiap pautan disemak terhadap senarai benar."
+                    },
+                    "third": {
+                        "title": "Tidak pernah kosong",
+                        "description": "Blok yang rosak digugurkan, bahagian yang gagal hanya membuang dirinya sendiri, dan senarai kosong kembali kepada tetapan klasik."
+                    }
+                },
+                "testimonials": {
+                    "title": "Kata pasukan kami",
+                    "subtitle": "Petikan ialah kandungan, bukan kod.",
+                    "first": {
+                        "name": "Aisyah Rahman",
+                        "role": "Ketua Pemasaran",
+                        "quote": "Saya menukar halaman utama dua kali sebelum tengah hari tanpa membuka sebarang editor."
+                    },
+                    "second": {
+                        "name": "Daniel Ooi",
+                        "role": "Ketua Kejuruteraan",
+                        "quote": "Pengembaliannya hanya satu medan. Itulah bahagian yang membuatkan kami bersetuju."
+                    }
+                },
+                "pricing": {
+                    "title": "Harga yang mudah",
+                    "subtitle": "Senarai pelan ialah medan berulang, jadi pelan baharu ditambah tanpa penerbitan kod.",
+                    "first": {
+                        "name": "Permulaan",
+                        "price": "$0",
+                        "period": "sebulan",
+                        "features": "Satu halaman, lima bahagian, sokongan komuniti",
+                        "cta_text": "Mula sekarang"
+                    },
+                    "second": {
+                        "name": "Pasukan",
+                        "price": "$29",
+                        "period": "sebulan",
+                        "features": "Bahagian tanpa had, pratonton langsung, sokongan keutamaan",
+                        "cta_text": "Pilih Pasukan"
+                    }
+                },
+                "cta": {
+                    "title": "Sedia untuk membina halaman anda?",
+                    "subtitle": "Buka pembina dan tambah bahagian pertama anda.",
+                    "button_text": "Buka pembina"
+                },
+                "richText": {
+                    "heading": "Teks kaya",
+                    "body": "<p>HTML yang ditulis dibersihkan di pelayan sebelum disimpan, dan dibersihkan sekali lagi dalam pelayar sebelum dipaparkan. Tag skrip tidak pernah terselamat daripada mana-mana peringkat.</p>"
+                },
+                "image": {
+                    "alt": "Ilustrasi pengganti bagi imej yang dimuat naik",
+                    "caption": "Muat naik disahkan melalui bait ajaib; nama fail yang dihantar pelayar diabaikan."
+                },
+                "stats": {
+                    "title": "Dalam angka",
+                    "first": { "value": "10", "label": "Jenis bahagian" },
+                    "second": { "value": "6", "label": "Templat" },
+                    "third": { "value": "3", "label": "Bahasa" }
+                },
+                "faq": {
+                    "title": "Soalan",
+                    "subtitle": "Versi ringkasnya.",
+                    "first": {
+                        "question": "Apa jadi pada halaman utama saya sekarang?",
+                        "answer": "Tiada apa-apa. Tetapan sedia ada kekal pada cakera dan ditukar menjadi senarai blok yang setara untuk anda semak sebelum menyimpan."
+                    },
+                    "second": {
+                        "question": "Bagaimana saya berpatah balik?",
+                        "answer": "Kosongkan senarai blok. Tetapan klasik tidak pernah diubah, jadi halaman lama kembali betul-betul seperti asal."
+                    }
+                }
+            }
+        },
+        "docs": {
+            "title": "Dokumentasi",
+            "description": "Bentuk blok yang disimpan, jaminan penurunan taraf, cara pakej menyumbang jenis bahagian, kontrak pratonton dan prosedur pengembalian.",
+            "link": "Baca panduan pembina halaman"
+        }
     }
 }

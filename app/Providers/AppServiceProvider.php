@@ -64,5 +64,16 @@ class AppServiceProvider extends ServiceProvider
             UsedDiskSpaceCheck::new()->warnWhenUsedSpaceIsAbovePercentage(70)->failWhenUsedSpaceIsAbovePercentage(90),
             EnvCheck::new(),
         ]);
+
+        // >>> MYRA v2.5 [C] START
+        // Fail-soft: a bad gallery declaration must never take down a route or
+        // an artisan command. With seeding skipped the Index page falls back to
+        // its own list, so the worst case is v2.4.0 behaviour.
+        try {
+            \App\Admin\Demo\DemoRegistry::seed();
+        } catch (\Throwable $e) {
+            report($e);
+        }
+        // <<< MYRA v2.5 [C] END
     }
 }

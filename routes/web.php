@@ -286,6 +286,12 @@ Route::middleware(['auth', 'verified', 'active', '2fa'])->prefix('admin')->name(
     // >>> MYRA v2.4 [C] START
     Route::get('/demo/tenancy', [DemoController::class, 'tenancy'])->name('demo.tenancy');
     // <<< MYRA v2.4 [C] END
+    // >>> MYRA v2.5 [C] START
+    // ReportDelivery.vue has shipped since v2.3 with no route at all — the
+    // gallery registry makes that drift a failing test, so it gets one here.
+    Route::get('/demo/playground', [DemoController::class, 'playground'])->name('demo.playground');
+    Route::get('/demo/report-delivery', [DemoController::class, 'reportDelivery'])->name('demo.report-delivery');
+    // <<< MYRA v2.5 [C] END
     // >>> MYRA v2.2 [B] START
     Route::get('/demo/saved-views', [DemoController::class, 'savedViews'])->name('demo.saved-views');
     // <<< MYRA v2.2 [B] END

@@ -451,6 +451,246 @@
         "viewportHeight": "Tinggi port pandang",
         "virtualized": "Divirtualkan"
     },
+    "gallery": {
+        "title": "Galeri ciri",
+        "subtitle": "Setiap halaman demo dalam satu katalog boleh dicari. Pilih kad untuk meneroka ciri itu.",
+        "search": "Cari demo",
+        "noResults": "Tiada demo sepadan dengan carian itu.",
+        "allTags": "Semua",
+        "viewDemo": "Lihat demo",
+        "since": "Sejak v{version}",
+        "back": "Kembali ke galeri",
+        "resultCount": "{n} demo dipaparkan.",
+        "tags": {
+            "forms": "Borang",
+            "tables": "Jadual",
+            "data": "Data",
+            "dashboard": "Papan pemuka",
+            "navigation": "Navigasi",
+            "layout": "Susun atur",
+            "platform": "Platform",
+            "content": "Kandungan",
+            "gallery": "Galeri"
+        },
+        "playground": {
+            "title": "Taman komponen",
+            "description": "Sunting prop secara langsung ke atas primitif sebenar dan salin cebisan yang dijana.",
+            "props": "Prop",
+            "code": "Kod dijana",
+            "copy": "Salin",
+            "copied": "Disalin",
+            "reset": "Set semula",
+            "viewport": "Port pandangan",
+            "scheme": "Skema warna",
+            "locale": "Bahasa",
+            "keyboard": "Panduan papan kekunci",
+            "schemeLight": "Cerah",
+            "schemeDark": "Gelap",
+            "disabledTitle": "Taman permainan dimatikan",
+            "disabledDescription": "Tetapkan bendera ini untuk memaparkan taman permainan langsung pada halaman ini.",
+            "viewports": {
+                "sm": "Telefon",
+                "md": "Tablet",
+                "lg": "Desktop"
+            },
+            "schemes": {
+                "light": "Cerah",
+                "dark": "Gelap",
+                "split": "Belah"
+            },
+            "specs": {
+                "statCard": "Kad statistik",
+                "button": "Butang",
+                "badge": "Lencana",
+                "emptyState": "Keadaan kosong"
+            },
+            "control": {
+                "title": "Tajuk",
+                "value": "Nilai",
+                "description": "Perihal",
+                "color": "Warna",
+                "label": "Label",
+                "variant": "Varian",
+                "size": "Saiz",
+                "disabled": "Dilumpuhkan"
+            },
+            "option": {
+                "blue": "Biru",
+                "green": "Hijau",
+                "violet": "Ungu",
+                "rose": "Merah jambu",
+                "default": "Lalai",
+                "secondary": "Sekunder",
+                "destructive": "Merosakkan",
+                "outline": "Garis luar",
+                "ghost": "Hantu",
+                "link": "Pautan",
+                "sm": "Kecil",
+                "lg": "Besar"
+            },
+            "keyboardSteps": {
+                "controls": "Tab ke panel prop dan ubah satu kawalan.",
+                "viewport": "Tab ke kumpulan port pandangan; kekunci anak panah menukar lebar.",
+                "scheme": "Tab ke kumpulan skema warna; kekunci anak panah menukar cerah, gelap dan belah.",
+                "locale": "Tab ke pilihan bahasa; Enter membukanya dan kekunci anak panah memilih en, ms atau zh.",
+                "snippet": "Tab ke tab bahasa di atas cebisan; kekunci anak panah menukar Vue, TS dan PHP.",
+                "copy": "Tab ke Salin dan tekan Enter; cebisan ialah teks biasa, bukan HTML dipaparkan."
+            }
+        },
+        "commands": {
+            "heading": "Arahan",
+            "themeToggle": "Togol mod gelap",
+            "shortcuts": "Pintasan papan kekunci",
+            "locale": {
+                "en": "Tukar ke bahasa Inggeris",
+                "ms": "Tukar ke Bahasa Melayu",
+                "zh": "Tukar ke bahasa Cina"
+            },
+            "group": {
+                "navigate": "Pergi ke",
+                "action": "Tindakan",
+                "theme": "Keutamaan",
+                "demo": "Demo"
+            }
+        },
+        "demos": {
+            "richTextEditor": {
+                "title": "Penyunting teks kaya",
+                "description": "Penyunting WYSIWYG berkuasa TipTap dengan bar alat boleh dikonfigur, sokongan imej dan pautan, serta integrasi FormField.",
+                "badge": "TipTap v3"
+            },
+            "repeaterField": {
+                "title": "Medan pengulang",
+                "description": "Tambah dan buang baris secara dinamik dengan penyusunan semula, item boleh runtuh dan skema medan bersarang.",
+                "badge": "Pembina borang"
+            },
+            "formBuilder": {
+                "title": "Pembina borang",
+                "description": "Setiap jenis medan dan komponen susun atur: seksyen, grid, tab, wizard dan kotak nota.",
+                "badge": "Semua medan"
+            },
+            "bulkActions": {
+                "title": "Tindakan pukal",
+                "description": "Pemilihan baris, tindakan pukal dengan dialog pengesahan, penapis dan eksport CSV.",
+                "badge": "DataTable"
+            },
+            "softDeletes": {
+                "title": "Padam lembut dan sampah",
+                "description": "Buang, pulih dan padam paksa dengan tindakan baris bersyarat serta penapis sampah.",
+                "badge": "SoftDeletes"
+            },
+            "actionModals": {
+                "title": "Modal tindakan",
+                "description": "CRUD dalam dialog modal dengan skema borang dinamik tanpa navigasi halaman.",
+                "badge": "Modal"
+            },
+            "importExport": {
+                "title": "Import dan eksport",
+                "description": "Import CSV dengan pemetaan lajur dan pratonton, serta eksport CSV secara penstriman.",
+                "badge": "CSV"
+            },
+            "globalSearch": {
+                "title": "Carian global",
+                "description": "Palet arahan dengan carian API ternyahlantun merentas setiap sumber.",
+                "badge": "Cmd+K"
+            },
+            "inlineEditing": {
+                "title": "Suntingan jadual dalam baris",
+                "description": "Sunting nilai sel terus dalam jadual dengan lajur pilihan, teks dan togol.",
+                "badge": "Sunting dalam baris"
+            },
+            "conditionalFields": {
+                "title": "Medan bersyarat",
+                "description": "Tunjuk atau sembunyi medan borang berdasarkan nilai medan lain menggunakan syarat rentetan atau fungsi.",
+                "badge": "Keterlihatan"
+            },
+            "infolist": {
+                "title": "Infolist dan halaman papar",
+                "description": "Paparan perincian baca sahaja berasaskan skema dengan entri teks, lencana, tarikh, boolean dan imej.",
+                "badge": "Infolist"
+            },
+            "relationManager": {
+                "title": "Pengurus perhubungan",
+                "description": "Jadual terbenam untuk mengurus rekod berkaitan pada halaman perincian, dengan modal cipta.",
+                "badge": "Perhubungan"
+            },
+            "grouping": {
+                "title": "Pengumpulan baris dan ringkasan",
+                "description": "Kumpulkan baris mengikut nilai lajur dengan pengepala boleh runtuh dan baris ringkasan teragregat.",
+                "badge": "Pengumpulan"
+            },
+            "reordering": {
+                "title": "Susun semula seret dan lepas",
+                "description": "Susun semula baris jadual dengan seretan atau papan kekunci, menyimpan susunan ke pelayan.",
+                "badge": "Boleh isih"
+            },
+            "widgets": {
+                "title": "Widget papan pemuka",
+                "description": "Pembina widget boleh dikonfigur: statistik, carta, jadual dan widget tersuai.",
+                "badge": "Widget"
+            },
+            "fieldTypes": {
+                "title": "Jenis medan baharu",
+                "description": "Petunjuk, butang togol, pemilih masa, senarai kotak semak, kunci-nilai dan penyunting markdown.",
+                "badge": "Medan"
+            },
+            "codeEditor": {
+                "title": "Medan penyunting kod",
+                "description": "CodeMirror 6 di sebalik import malas: bahasa setiap medan, nombor baris, balutan dan salin.",
+                "badge": "CodeMirror"
+            },
+            "advancedFilters": {
+                "title": "Penapis lanjutan",
+                "description": "Penapis julat tarikh dan pembina pertanyaan rekursif dengan kumpulan DAN/ATAU.",
+                "badge": "Penapis"
+            },
+            "wizard": {
+                "title": "Pengesahan wizard",
+                "description": "Wizard lima langkah dengan pengesahan setiap langkah, penyuntingan imej dan eksport XLSX.",
+                "badge": "Wizard"
+            },
+            "map": {
+                "title": "Peta",
+                "description": "Peta MapLibre GL sedar tema: lengkung penerbangan, penanda, pop timbul, garis laluan dan kelompok.",
+                "badge": "MapLibre"
+            },
+            "savedViews": {
+                "title": "Paparan tersimpan",
+                "description": "Pratetap penapis, isihan dan lajur bernama bagi setiap pengguna, boleh dikongsi dengan pasukan.",
+                "badge": "Paparan"
+            },
+            "reports": {
+                "title": "Laporan dan carta",
+                "description": "Takrifan laporan boleh gubah dengan setiap ukuran dikira dalam SQL: tempoh, perbandingan dan N teratas.",
+                "badge": "Laporan"
+            },
+            "reportDelivery": {
+                "title": "Penghantaran laporan",
+                "description": "Cip tapis silang, gerudi segmen dan dialog penghantaran berjadual.",
+                "badge": "Penghantaran"
+            },
+            "tenancy": {
+                "title": "Penyewaan",
+                "description": "Status penyewaan baca sahaja: model berskop, lajur penyewa dan dasar baris null.",
+                "badge": "Berbilang penyewa"
+            },
+            "plugins": {
+                "title": "Pemalam",
+                "description": "Pakej yang mendaftar halaman, kebenaran, laporan dan navigasi — diisytihar secara eksplisit.",
+                "badge": "Pemalam"
+            },
+            "scale": {
+                "title": "Skala",
+                "description": "100,000 baris, dua strategi penomboran, dan badan jadual maya.",
+                "badge": "Skala"
+            },
+            "playground": {
+                "title": "Taman komponen",
+                "description": "Suntingan prop langsung ke atas primitif sebenar, dengan cebisan salin-tampal dalam Vue, TypeScript dan PHP.",
+                "badge": "Baharu"
+            }
+        }
+    },
     "charts": {
         "a11y": {
             "canvas": "{chart} dengan {rows} titik data.",

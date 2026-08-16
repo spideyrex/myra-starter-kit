@@ -451,6 +451,246 @@
         "viewportHeight": "视口高度",
         "virtualized": "已虚拟化"
     },
+    "gallery": {
+        "title": "功能展示库",
+        "subtitle": "所有演示页面汇总为一个可搜索目录，点击卡片即可查看。",
+        "search": "搜索演示",
+        "noResults": "没有匹配的演示。",
+        "allTags": "全部",
+        "viewDemo": "查看演示",
+        "since": "自 v{version}",
+        "back": "返回展示库",
+        "resultCount": "显示 {n} 个演示。",
+        "tags": {
+            "forms": "表单",
+            "tables": "表格",
+            "data": "数据",
+            "dashboard": "仪表板",
+            "navigation": "导航",
+            "layout": "布局",
+            "platform": "平台",
+            "content": "内容",
+            "gallery": "展示库"
+        },
+        "playground": {
+            "title": "组件试验场",
+            "description": "在真实基础组件上实时编辑属性，并复制生成的代码片段。",
+            "props": "属性",
+            "code": "生成的代码",
+            "copy": "复制",
+            "copied": "已复制",
+            "reset": "重置",
+            "viewport": "视口",
+            "scheme": "配色方案",
+            "locale": "语言",
+            "keyboard": "键盘操作指引",
+            "schemeLight": "浅色",
+            "schemeDark": "深色",
+            "disabledTitle": "试验场已关闭",
+            "disabledDescription": "设置此开关后本页将渲染实时试验场。",
+            "viewports": {
+                "sm": "手机",
+                "md": "平板",
+                "lg": "桌面"
+            },
+            "schemes": {
+                "light": "浅色",
+                "dark": "深色",
+                "split": "并排"
+            },
+            "specs": {
+                "statCard": "统计卡片",
+                "button": "按钮",
+                "badge": "徽章",
+                "emptyState": "空状态"
+            },
+            "control": {
+                "title": "标题",
+                "value": "数值",
+                "description": "描述",
+                "color": "颜色",
+                "label": "文本",
+                "variant": "变体",
+                "size": "尺寸",
+                "disabled": "禁用"
+            },
+            "option": {
+                "blue": "蓝色",
+                "green": "绿色",
+                "violet": "紫色",
+                "rose": "玫红",
+                "default": "默认",
+                "secondary": "次要",
+                "destructive": "危险",
+                "outline": "描边",
+                "ghost": "幽灵",
+                "link": "链接",
+                "sm": "小",
+                "lg": "大"
+            },
+            "keyboardSteps": {
+                "controls": "用 Tab 进入属性面板并修改控件。",
+                "viewport": "Tab 到视口分组，方向键切换宽度。",
+                "scheme": "Tab 到配色分组，方向键切换浅色、深色与并排。",
+                "locale": "Tab 到语言选择框，Enter 打开后用方向键选择 en、ms 或 zh。",
+                "snippet": "Tab 到片段上方的语言标签，方向键切换 Vue、TS 与 PHP。",
+                "copy": "Tab 到复制并回车；片段始终是纯文本，绝不作为 HTML 渲染。"
+            }
+        },
+        "commands": {
+            "heading": "命令",
+            "themeToggle": "切换深色模式",
+            "shortcuts": "键盘快捷键",
+            "locale": {
+                "en": "切换到英文",
+                "ms": "切换到马来文",
+                "zh": "切换到中文"
+            },
+            "group": {
+                "navigate": "前往",
+                "action": "操作",
+                "theme": "偏好设置",
+                "demo": "演示"
+            }
+        },
+        "demos": {
+            "richTextEditor": {
+                "title": "富文本编辑器",
+                "description": "基于 TipTap 的所见即所得编辑器，工具栏可配置，支持图片与链接，并与 FormField 集成。",
+                "badge": "TipTap v3"
+            },
+            "repeaterField": {
+                "title": "重复字段",
+                "description": "动态增删行，支持重新排序、可折叠条目与嵌套字段结构。",
+                "badge": "表单构建器"
+            },
+            "formBuilder": {
+                "title": "表单构建器",
+                "description": "涵盖全部字段类型与布局组件：分区、网格、标签页、向导与提示框。",
+                "badge": "全部字段"
+            },
+            "bulkActions": {
+                "title": "批量操作",
+                "description": "行选择、带确认对话框的批量操作、筛选与 CSV 导出。",
+                "badge": "数据表"
+            },
+            "softDeletes": {
+                "title": "软删除与回收站",
+                "description": "回收、恢复与强制删除，配合条件行操作与回收站筛选。",
+                "badge": "软删除"
+            },
+            "actionModals": {
+                "title": "操作弹窗",
+                "description": "在模态框中完成增删改查，表单结构动态生成，无需跳转页面。",
+                "badge": "模态框"
+            },
+            "importExport": {
+                "title": "导入与导出",
+                "description": "支持列映射与预览的 CSV 导入，以及流式 CSV 导出。",
+                "badge": "CSV"
+            },
+            "globalSearch": {
+                "title": "全局搜索",
+                "description": "命令面板，跨全部资源的防抖 API 搜索。",
+                "badge": "Cmd+K"
+            },
+            "inlineEditing": {
+                "title": "表格行内编辑",
+                "description": "在表格中直接编辑单元格，支持下拉、文本与开关列。",
+                "badge": "行内编辑"
+            },
+            "conditionalFields": {
+                "title": "条件字段",
+                "description": "依据其他字段的值显示或隐藏表单字段，条件可为字符串或函数。",
+                "badge": "可见性"
+            },
+            "infolist": {
+                "title": "信息列表与详情页",
+                "description": "基于结构定义的只读详情页，包含文本、徽章、日期、布尔与图片条目。",
+                "badge": "信息列表"
+            },
+            "relationManager": {
+                "title": "关联管理器",
+                "description": "详情页内嵌表格，管理关联记录并支持新建弹窗。",
+                "badge": "关联关系"
+            },
+            "grouping": {
+                "title": "行分组与汇总",
+                "description": "按列值分组，支持可折叠分组头与聚合汇总行。",
+                "badge": "分组"
+            },
+            "reordering": {
+                "title": "拖拽重排",
+                "description": "通过拖拽或键盘重排表格行，并将顺序持久化到服务端。",
+                "badge": "可排序"
+            },
+            "widgets": {
+                "title": "仪表板小组件",
+                "description": "可配置的小组件构建器：统计、图表、表格与自定义组件。",
+                "badge": "小组件"
+            },
+            "fieldTypes": {
+                "title": "新字段类型",
+                "description": "提示、切换按钮、时间选择器、复选列表、键值对与 Markdown 编辑器。",
+                "badge": "字段"
+            },
+            "codeEditor": {
+                "title": "代码编辑器字段",
+                "description": "懒加载的 CodeMirror 6：按字段设置语言、行号、自动换行与复制。",
+                "badge": "CodeMirror"
+            },
+            "advancedFilters": {
+                "title": "高级筛选",
+                "description": "日期区间筛选与支持 AND/OR 分组的递归查询构建器。",
+                "badge": "筛选器"
+            },
+            "wizard": {
+                "title": "向导校验",
+                "description": "五步引导向导，逐步校验，支持图片编辑与 XLSX 导出。",
+                "badge": "向导"
+            },
+            "map": {
+                "title": "地图",
+                "description": "随主题切换的 MapLibre GL 地图：航线弧、标记、弹窗、路线与聚合。",
+                "badge": "MapLibre"
+            },
+            "savedViews": {
+                "title": "已保存视图",
+                "description": "按用户保存的筛选、排序与列预设，可与团队共享。",
+                "badge": "视图"
+            },
+            "reports": {
+                "title": "报表与图表",
+                "description": "可组合的报表定义，所有度量均在 SQL 中计算：周期、对比与 Top-N。",
+                "badge": "报表"
+            },
+            "reportDelivery": {
+                "title": "报表投递",
+                "description": "交叉筛选标签、分段下钻与定时投递对话框。",
+                "badge": "投递"
+            },
+            "tenancy": {
+                "title": "多租户",
+                "description": "只读的租户状态：受限模型、租户列与空行策略。",
+                "badge": "多租户"
+            },
+            "plugins": {
+                "title": "插件",
+                "description": "注册页面、权限、报表与导航的扩展包 —— 全部显式声明。",
+                "badge": "插件"
+            },
+            "scale": {
+                "title": "规模",
+                "description": "十万行数据、两种分页策略与虚拟化表格主体。",
+                "badge": "规模"
+            },
+            "playground": {
+                "title": "组件试验场",
+                "description": "在真实基础组件上实时编辑属性，并生成 Vue、TypeScript 与 PHP 可复制片段。",
+                "badge": "新"
+            }
+        }
+    },
     "charts": {
         "a11y": {
             "canvas": "{chart}，包含 {rows} 个数据点。",

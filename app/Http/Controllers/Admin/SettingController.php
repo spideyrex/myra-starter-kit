@@ -48,6 +48,7 @@ class SettingController extends Controller
             'ai' => array_merge(app(AiSettings::class)->toArray(), [
                 'api_key' => app(AiSettings::class)->api_key ? str_repeat('*', 8) : null,
             ]),
+            'timezones' => \App\Support\Timezones::options(),
         ]);
     }
 
@@ -72,6 +73,15 @@ class SettingController extends Controller
             default => [],
         };
 
+        // A <select> is a client-side affordance, not a constraint: the stored
+        // timezone drives date rendering and report windows, so it is checked
+        // against the IANA list here regardless of what the form sent.
+        if ($group === 'general' && $request->has('timezone')) {
+            $request->validate([
+                'timezone' => ['required', 'string', 'timezone'],
+            ]);
+        }
+
         // Boolean settings must be cast (typed bool properties reject loose input).
         $booleanFields = ['registration_enabled'];
 
@@ -90,7 +100,7 @@ class SettingController extends Controller
         app(\App\Brand\BrandManager::class)->forget();
         // <<< MYRA v2.6 [C] END
 
-        return back()->with('success', ucfirst($group) . ' settings updated successfully.');
+        return back()->with('success', ucfirst($group).' settings updated successfully.');
     }
 
     public function updateAppearance(Request $request): RedirectResponse

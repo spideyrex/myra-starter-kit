@@ -25,6 +25,7 @@ const props = defineProps<{
     maintenance: Record<string, any>;
     homepage: Record<string, any>;
     ai: Record<string, any>;
+    timezones?: { value: string; label: string }[];
 }>();
 
 // >>> MYRA v2.6 [C] START — guarded so an isolated worktree without the route
@@ -275,7 +276,7 @@ const generalSchema = [
     TextInput.make('admin_email').email(),
     Textarea.make('site_description').colSpan(2),
     TextInput.make('site_url'),
-    TextInput.make('timezone'),
+    Select.make('timezone').searchable().options(props.timezones ?? [{ value: 'UTC', label: '(UTC+00:00) UTC' }]),
     TextInput.make('login_tagline').colSpan(2).label('Login Tagline').placeholder('Shown on the login screen'),
     Toggle.make('registration_enabled').label('Enable public sign up'),
 ];

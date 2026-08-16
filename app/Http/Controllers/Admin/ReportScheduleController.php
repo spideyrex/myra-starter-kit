@@ -10,7 +10,6 @@ use App\Http\Controllers\Controller;
 use App\Jobs\SendScheduledReport;
 use App\Models\ReportSchedule;
 use Carbon\CarbonImmutable;
-use DateTimeZone;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
@@ -42,7 +41,7 @@ class ReportScheduleController extends Controller
                     'titleKey' => $schema['titleKey'] ?? ('reports.'.$key.'.title'),
                 ])
                 ->values(),
-            'timezones' => DateTimeZone::listIdentifiers(),
+            'timezones' => \App\Support\Timezones::identifiers(),
             'people' => RecipientResolver::addressableFor($user),
             'canMailExternal' => (bool) $user?->can('reports.schedule.external'),
         ]);
@@ -147,7 +146,7 @@ class ReportScheduleController extends Controller
             ]);
         }
 
-        if (! in_array($data['timezone'], DateTimeZone::listIdentifiers(), true)) {
+        if (! \App\Support\Timezones::isValid((string) $data['timezone'])) {
             throw ValidationException::withMessages([
                 'timezone' => __('reportDelivery.errors.badTimezone'),
             ]);

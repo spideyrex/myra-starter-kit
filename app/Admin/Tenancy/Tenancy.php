@@ -8,6 +8,7 @@ use Closure;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Validation\Rule;
@@ -29,6 +30,15 @@ final class Tenancy
 {
     private static ?bool $enabled = null;
 
+    /**
+     * Set only by without(). Deliberately NOT the same flag as $enabled:
+     * $enabled is memoised and is what BelongsToTenant consults at boot, and
+     * Eloquent boots a model exactly once per process. Turning $enabled off for
+     * the duration of a callback would permanently unscope any model whose
+     * first touch happened inside it.
+     */
+    private static bool $bypassed = false;
+
     private static bool $overridden = false;
 
     private static Model|int|string|null $override = null;
@@ -49,6 +59,18 @@ final class Tenancy
     public static function enabled(): bool
     {
         return self::$enabled ??= config('myra.tenancy.enabled', false) === true;
+    }
+
+    /** True while a without() callback is on the stack. */
+    public static function bypassed(): bool
+    {
+        return self::$bypassed;
+    }
+
+    /** Tenancy is on AND no bypass is in effect: the gate every predicate uses. */
+    public static function active(): bool
+    {
+        return self::enabled() && ! self::$bypassed;
     }
 
     public static function column(): string
@@ -172,13 +194,16 @@ final class Tenancy
             }
         }
 
-        $wasEnabled = self::$enabled;
-        self::$enabled = false;
+        // NEVER touch $enabled here: it is memoised and it is what
+        // BelongsToTenant reads at boot, so clearing it would permanently
+        // unscope any model first touched inside the callback.
+        $was = self::$bypassed;
+        self::$bypassed = true;
 
         try {
             return $callback();
         } finally {
-            self::$enabled = $wasEnabled;
+            self::$bypassed = $was;
         }
     }
 
@@ -188,7 +213,7 @@ final class Tenancy
      */
     public static function apply(Builder|\Illuminate\Database\Query\Builder $query, string $table): void
     {
-        if (! self::enabled()) {
+        if (! self::active()) {
             return;
         }
 
@@ -227,7 +252,7 @@ final class Tenancy
         string $table,
         string $userKeyColumn = 'id',
     ): void {
-        if (! self::enabled()) {
+        if (! self::active()) {
             return;
         }
 
@@ -267,7 +292,7 @@ final class Tenancy
         Builder|\Illuminate\Database\Query\Builder $query,
         string $table,
     ): void {
-        if (! self::enabled() || self::scopes($modelClass)) {
+        if (! self::active() || self::scopes($modelClass)) {
             return;
         }
 
@@ -290,12 +315,32 @@ final class Tenancy
         $query->whereRaw('1 = 0');
     }
 
+    /**
+     * The public, unauthenticated read surface (articles, pages, categories).
+     *
+     * A guest resolves no tenant and the tenant predicate FAILS CLOSED, so the
+     * day an operator lists Article/Page/Category in myra.tenancy.models the
+     * public site would go blank. That is an outage, not a safeguard, so the
+     * tenant scope is lifted here unless the operator explicitly opts in via
+     * myra.tenancy.scope_public. A literal no-op while tenancy is disabled.
+     */
+    public static function publicQuery(Builder|Relation $query): Builder|Relation
+    {
+        if (self::enabled() && ! (bool) config('myra.tenancy.scope_public', false)) {
+            // A Relation forwards this to its inner builder and returns itself,
+            // so return $query rather than the call's result.
+            $query->withoutGlobalScope('tenant');
+        }
+
+        return $query;
+    }
+
     /** Unique within the tenant. Degrades to a plain Rule::unique when disabled. */
     public static function unique(string $table, string $column = 'NULL'): Unique
     {
         $rule = Rule::unique($table, $column);
 
-        if (! self::enabled()) {
+        if (! self::active()) {
             return $rule;
         }
 
@@ -313,7 +358,7 @@ final class Tenancy
     {
         $rule = Rule::exists($table, $column);
 
-        if (! self::enabled()) {
+        if (! self::active()) {
             return $rule;
         }
 
@@ -382,6 +427,7 @@ final class Tenancy
     public static function flush(): void
     {
         self::$enabled = null;
+        self::$bypassed = false;
         self::$overridden = false;
         self::$override = null;
         self::$overrideModel = null;

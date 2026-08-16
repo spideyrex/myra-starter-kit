@@ -7,6 +7,7 @@ use App\Models\Article;
 use App\Models\Team;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Validation\Rule;
 use RuntimeException;
 use Spatie\Permission\PermissionRegistrar;
 use Tests\TestCase;
@@ -241,6 +242,87 @@ class EnabledScopingTest extends TestCase
         $this->assertSame(1, Article::query()->count());
         $this->assertSame(2, Tenancy::without(fn () => Article::query()->count()));
         $this->assertSame(1, Article::query()->count());
+    }
+
+    /**
+     * THE cross-tenant leak this class exists to prevent. Eloquent boots a model
+     * exactly ONCE per process, so if without() suppressed tenancy by clearing
+     * the memoised enabled flag, a model whose first touch happened inside the
+     * callback would register neither the global scope nor the creating hook —
+     * and would stay unscoped for the rest of the request.
+     */
+    public function test_a_model_first_touched_inside_without_is_scoped_again_afterwards(): void
+    {
+        $user = $this->actingAsMemberOfA();
+
+        Tenancy::for($this->teamA, fn () => Article::factory()->create(['created_by' => $user->id]));
+        Tenancy::for($this->teamB, fn () => Article::factory()->create(['created_by' => $user->id]));
+
+        // Force the model's one and only boot to happen inside the bypass.
+        Model::clearBootedModels();
+
+        $this->assertSame(2, Tenancy::without(fn () => Article::query()->count()));
+
+        $this->assertArrayHasKey(
+            'tenant',
+            (new Article)->getGlobalScopes(),
+            'without() must not stop the tenant scope being registered at boot.',
+        );
+
+        $this->assertSame(1, Article::query()->count(), 'Scoping did not come back after without() returned.');
+        $this->assertFalse(Tenancy::bypassed());
+        $this->assertTrue(Tenancy::enabled(), 'without() must never clear the memoised enabled flag.');
+    }
+
+    public function test_without_restores_the_bypass_even_when_the_callback_throws(): void
+    {
+        $user = $this->actingAsMemberOfA();
+
+        Tenancy::for($this->teamA, fn () => Article::factory()->create(['created_by' => $user->id]));
+        Tenancy::for($this->teamB, fn () => Article::factory()->create(['created_by' => $user->id]));
+
+        try {
+            Tenancy::without(function () {
+                throw new RuntimeException('boom');
+            });
+        } catch (RuntimeException) {
+            // expected
+        }
+
+        $this->assertFalse(Tenancy::bypassed());
+        $this->assertSame(1, Article::query()->count());
+    }
+
+    /** A nested bypass must restore to "bypassed", not to "scoped". */
+    public function test_nested_without_calls_unwind_correctly(): void
+    {
+        $user = $this->actingAsMemberOfA();
+
+        Tenancy::for($this->teamA, fn () => Article::factory()->create(['created_by' => $user->id]));
+        Tenancy::for($this->teamB, fn () => Article::factory()->create(['created_by' => $user->id]));
+
+        Tenancy::without(function () {
+            $this->assertSame(2, Article::query()->count());
+
+            Tenancy::without(fn () => $this->assertSame(2, Article::query()->count()));
+
+            $this->assertTrue(Tenancy::bypassed(), 'The inner without() ended the outer bypass.');
+            $this->assertSame(2, Article::query()->count());
+        });
+
+        $this->assertSame(1, Article::query()->count());
+    }
+
+    /** The validation rules follow the bypass and come back with it. */
+    public function test_without_lifts_the_validation_rule_predicate_and_restores_it(): void
+    {
+        $this->actingAsMemberOfA();
+
+        // The tenant predicate is a query callback, not a stringable where.
+        $this->assertCount(1, Tenancy::unique('articles', 'slug')->queryCallbacks());
+        $this->assertCount(0, Tenancy::without(fn () => Tenancy::unique('articles', 'slug'))->queryCallbacks());
+        $this->assertCount(1, Tenancy::unique('articles', 'slug')->queryCallbacks());
+        $this->assertCount(0, Rule::unique('articles', 'slug')->queryCallbacks());
     }
 
     public function test_a_model_carrying_the_trait_is_unscoped_until_it_is_listed(): void

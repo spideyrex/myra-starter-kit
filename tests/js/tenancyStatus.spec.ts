@@ -1,24 +1,32 @@
-import { beforeAll, describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { mount } from '@vue/test-utils';
 import { testI18n } from './helpers/i18n';
 import en from '@/i18n/locales/en.json';
 import status from './fixtures/tenancy-status.json';
-import TenancyPage from '@/Pages/Admin/Demo/Tenancy.vue';
+
+// Inertia's Head/Link are anonymous/renamed components, so `stubs` keyed by the
+// local import alias never matches. Replace them at the module boundary instead.
+vi.mock('@inertiajs/vue3', async (importOriginal) => ({
+    ...(await importOriginal<Record<string, unknown>>()),
+    Head: { name: 'Head', props: ['title'], template: '<span />' },
+    Link: { name: 'Link', props: ['href'], template: '<a :href="href"><slot /></a>' },
+}));
+
+const TenancyPage = (await import('@/Pages/Admin/Demo/Tenancy.vue')).default;
 
 const layoutStub = { name: 'AuthenticatedLayout', props: ['breadcrumbs'], template: '<div><slot /></div>' };
-const headStub = { name: 'Head', props: ['title'], template: '<span />' };
-const linkStub = { name: 'Link', props: ['href'], template: '<a :href="href"><slot /></a>' };
 
-beforeAll(() => {
-    (globalThis as any).route = (name: string) => `/${name.replace(/\./g, '/')}`;
-});
+// Ziggy installs route() into app.config.globalProperties; the template compiles
+// it to _ctx.route, which never falls back to globalThis.
+const route = (name: string) => `/${name.replace(/\./g, '/')}`;
 
 function mountPage(overrides: Record<string, any> = {}) {
     return mount(TenancyPage, {
         props: { status: { ...(status as any), ...overrides } },
         global: {
             plugins: [testI18n()],
-            stubs: { AuthenticatedLayout: layoutStub, Head: headStub, Link: linkStub },
+            mocks: { route },
+            stubs: { AuthenticatedLayout: layoutStub },
         },
     });
 }

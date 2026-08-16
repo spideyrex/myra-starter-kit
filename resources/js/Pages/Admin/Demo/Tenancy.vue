@@ -38,7 +38,7 @@ const nullRowsLabel = computed(() =>
 </script>
 
 <template>
-    <AuthenticatedLayout :breadcrumbs="[{ label: t('nav.demo'), href: route('admin.demo.index') }, { label: t('tenancy.title') }]">
+    <AuthenticatedLayout :breadcrumbs="[{ label: t('navGroups.demo'), href: route('admin.demo.index') }, { label: t('tenancy.title') }]">
         <Head :title="t('tenancy.title')" />
 
         <PageHeader :title="t('tenancy.title')" :description="t('tenancy.subtitle')">

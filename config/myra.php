@@ -129,6 +129,12 @@ return [
         'membership_user_key' => 'user_id',
         'membership_tables'   => ['users'],
 
+        // The public, unauthenticated surface. A guest resolves no tenant and
+        // the predicate fails closed, so scoping the public site would blank it
+        // the day Article/Page/Category are listed above. Opt in only if the
+        // public site really is per-tenant (and a tenant is resolvable there).
+        'scope_public'        => false,
+
         // Tables an operator has DELIBERATELY declared tenant-shared. Anything
         // not listed here, not carrying the tenant column and not scoped by
         // membership returns zero rows rather than every tenant's rows.

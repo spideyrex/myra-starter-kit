@@ -43,6 +43,25 @@ Most tables carry the tenant column (`team_id`) and are scoped by
 `Tenancy::applyForModel()` picks between them, and **fails closed** for a table that has
 neither — unless the operator has deliberately listed it in `myra.tenancy.shared_tables`.
 
+## The bypass
+
+`Tenancy::without($callback)` is the audited escape hatch. It sets a **separate**
+`$bypassed` flag, restored in a `finally`, and never touches the memoised `enabled`
+flag. That distinction is load-bearing: `BelongsToTenant::bootBelongsToTenant()` reads
+`Tenancy::scopes()` -> `enabled()`, and Eloquent boots a model exactly once per process,
+so clearing `enabled` for the duration of a callback would leave any model first touched
+inside it permanently unscoped — a cross-tenant leak for the rest of the request.
+`apply()`, `applyMembership()`, `applyForModel()`, `unique()` and `exists()` all gate on
+`Tenancy::active()` (enabled AND not bypassed). Nested `without()` calls unwind correctly.
+
+## The public site
+
+The public, unauthenticated surface (`PublicArticleController`, `PublicPageController`)
+resolves no tenant, and the predicate fails closed — so listing `Article`/`Page`/
+`Category` for scoping would blank the public site. Those read paths go through
+`Tenancy::publicQuery()`, which lifts the `tenant` global scope unless the operator sets
+`myra.tenancy.scope_public = true`. A literal no-op while tenancy is disabled.
+
 ## Null rows
 
 `null_rows = 'strict'` (default) hides rows whose tenant column is NULL from everyone but

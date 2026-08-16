@@ -153,6 +153,20 @@ class DisabledPathIsNoOpTest extends TestCase
 
         $this->assertSame($before, $query->toBase()->toSql());
         $this->assertSame([], $query->toBase()->getBindings());
+
+        // The public-surface helper must not even remove a scope when disabled.
+        $public = Tenancy::publicQuery(Article::query());
+        $this->assertSame($before, $public->toBase()->toSql());
+        $this->assertSame([], $public->removedScopes());
+    }
+
+    /** With the flag off, without() is a plain call-through: no state to leak. */
+    public function test_without_is_a_plain_call_through_when_disabled(): void
+    {
+        $this->assertFalse(Tenancy::bypassed());
+        $this->assertSame('ok', Tenancy::without(fn () => 'ok'));
+        $this->assertFalse(Tenancy::bypassed());
+        $this->assertFalse(Tenancy::enabled());
     }
 
     /** @return array<string,array<string,mixed>> */

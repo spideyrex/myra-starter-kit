@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Admin\Tenancy\Tenancy;
 use App\Models\Page;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
@@ -12,7 +13,7 @@ class PublicPageController extends Controller
 {
     public function show(string $slug): Response|HttpResponse
     {
-        $page = Page::withoutGlobalScope('owned')->where('slug', $slug)->published()->firstOrFail();
+        $page = Tenancy::publicQuery(Page::withoutGlobalScope('owned'))->where('slug', $slug)->published()->firstOrFail();
 
         if (!$page->is_public && !Auth::check()) {
             return redirect()->route('login');

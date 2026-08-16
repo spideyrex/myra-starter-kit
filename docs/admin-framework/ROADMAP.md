@@ -94,12 +94,12 @@ The "view, filter, search, export, import" stability mandate.
 - [x] `Sql::LIKE_ESCAPE` removed; `escapeLiteral()` remains the single source of the literal.
 - [x] `HasRelationManagers::paginateRelation()` whitelists `sort`; an unlisted column falls back
       to `$defaultSort` instead of reaching `orderBy()` as raw client input.
-- [ ] MySQL `sql_mode=NO_BACKSLASH_ESCAPES` would break the emitted `ESCAPE '\\'` literal.
+- [x] MySQL `sql_mode=NO_BACKSLASH_ESCAPES` would break the emitted `ESCAPE '\\'` literal. — v2.5.1
       `escapeLiteral()` needs a third case if any deployment runs that mode.
-- [ ] `Sql::like()` is still public and can be misused without its `ESCAPE` clause — only a
+- [x] `Sql::like()` is still public and can be misused without its `ESCAPE` clause — only a — v2.5.1
       docblock guards it. Consider making it internal.
 - [x] `InlineUploadController::show()` null-guards `$request->user()` and answers 404, not a fatal.
-- [ ] The inline-upload public URL contains a doubled segment (`/uploads/inline/inline/{id}/`),
+- [x] The inline-upload public URL contains a doubled segment (`/uploads/inline/inline/{id}/`), — v2.5.1
       now enshrined by an assertion. Cosmetic, but worth a clean route.
 - [x] 100k+ row performance (virtualised rows, cursor pagination) — deliberately deferred from — v2.4.0
       the v2.2.0 sweep, not attempted.

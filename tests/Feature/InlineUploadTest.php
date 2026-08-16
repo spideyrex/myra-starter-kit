@@ -77,10 +77,10 @@ class InlineUploadTest extends TestCase
         $response = $this->upload($this->pngFile());
 
         $response->assertOk();
-        $this->assertStringContainsString(
-            '/uploads/inline/inline/' . $user->id . '/',
-            (string) $response->json('url'),
-        );
+        // One 'inline' segment, not two: the route re-adds the storage prefix.
+        $url = (string) $response->json('url');
+        $this->assertStringContainsString('/uploads/inline/' . $user->id . '/', $url);
+        $this->assertStringNotContainsString('/uploads/inline/inline/', $url);
         $this->assertCount(1, Storage::disk('local')->files('inline/' . $user->id));
     }
 
@@ -137,11 +137,13 @@ class InlineUploadTest extends TestCase
 
         $path = $this->storeAs($owner);
 
+        // The URL carries the path without its storage prefix...
         $this->assertMatchesRegularExpression(
-            '#^inline/' . $owner->id . '/[0-9A-HJKMNP-TV-Z]{26}\.png$#',
+            '#^' . $owner->id . '/[0-9A-HJKMNP-TV-Z]{26}\.png$#',
             $path,
         );
-        $this->assertTrue(Storage::disk('local')->exists($path));
+        // ...and still resolves to the exact key on the private disk.
+        $this->assertTrue(Storage::disk('local')->exists('inline/' . $path));
     }
 
     public function test_the_owner_may_read_their_own_upload(): void

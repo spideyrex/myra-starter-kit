@@ -2,12 +2,16 @@
 
 namespace App\Support;
 
+use Illuminate\Database\ConnectionInterface;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Query\Builder as QueryBuilder;
 use InvalidArgumentException;
+use Throwable;
 
 final class Sql
 {
+    /** Per-connection `sql_mode` probe result; true = backslashes are reprocessed. */
+    private static array $backslashEscapes = [];
     /**
      * Escape LIKE wildcards so a user's `%` or `_` cannot widen the match or
      * force a full table scan.
@@ -50,7 +54,7 @@ final class Sql
         $sql = sprintf(
             '%s like ? escape %s',
             $base->getGrammar()->wrap(self::assertColumn($column)),
-            self::escapeLiteral($base->getConnection()->getDriverName()),
+            self::escapeLiteral($base->getConnection()),
         );
 
         return $query->whereRaw($sql, [self::like($value, $mode)], $boolean);
@@ -77,12 +81,44 @@ final class Sql
     }
 
     /**
-     * MySQL/MariaDB re-process backslashes inside string literals, so the
-     * escape char must be doubled there. SQLite, Postgres (with standard
-     * conforming strings) and SQL Server take the literal as written.
+     * MySQL/MariaDB re-process backslashes inside string literals, so the escape
+     * char must be doubled there — UNLESS sql_mode contains NO_BACKSLASH_ESCAPES,
+     * where a doubled backslash is a two-character string and MySQL rejects it as
+     * an ESCAPE argument. SQLite, Postgres (standard conforming strings) and SQL
+     * Server take the literal as written.
      */
-    private static function escapeLiteral(string $driver): string
+    private static function escapeLiteral(ConnectionInterface $connection): string
     {
-        return in_array($driver, ['mysql', 'mariadb'], true) ? "'\\\\'" : "'\\'";
+        $driver = $connection->getDriverName();
+
+        if (! in_array($driver, ['mysql', 'mariadb'], true)) {
+            return "'\\'";
+        }
+
+        return self::reprocessesBackslashes($connection) ? "'\\\\'" : "'\\'";
+    }
+
+    /** Probed once per connection; a failed probe assumes standard MySQL behaviour. */
+    private static function reprocessesBackslashes(ConnectionInterface $connection): bool
+    {
+        $key = $connection->getName() ?: 'default';
+
+        if (! array_key_exists($key, self::$backslashEscapes)) {
+            try {
+                $mode = (string) ($connection->selectOne('select @@sql_mode as mode')->mode ?? '');
+            } catch (Throwable) {
+                $mode = '';
+            }
+
+            self::$backslashEscapes[$key] = ! str_contains(strtoupper($mode), 'NO_BACKSLASH_ESCAPES');
+        }
+
+        return self::$backslashEscapes[$key];
+    }
+
+    /** Test seam: drop the cached sql_mode probes. */
+    public static function flushDriverCache(): void
+    {
+        self::$backslashEscapes = [];
     }
 }

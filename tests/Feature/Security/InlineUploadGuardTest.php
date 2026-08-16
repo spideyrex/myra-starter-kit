@@ -13,7 +13,7 @@ use Tests\TestCase;
  */
 class InlineUploadGuardTest extends TestCase
 {
-    private const PATH = 'inline/1/01J0000000000000000000000A.png';
+    private const PATH = '1/01J0000000000000000000000A.png';
 
     protected function setUp(): void
     {

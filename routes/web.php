@@ -187,8 +187,11 @@ Route::middleware(['auth', 'verified', 'active', '2fa'])->prefix('admin')->name(
         ->middleware(['permission:media.create', 'throttle:30,1'])->name('uploads.inline');
     // No `permission:media.view` middleware: the controller authorises owner OR
     // media.view, and the middleware would lock an owner out of their own image.
+    // {path} is the storage path WITHOUT its 'inline/' prefix — the controller
+    // re-adds it — so the public URL reads /uploads/inline/{user}/{ulid}.ext
+    // rather than doubling the segment.
     Route::get('/uploads/inline/{path}', [InlineUploadController::class, 'show'])
-        ->where('path', 'inline/.*')->name('uploads.inline.show');
+        ->where('path', '[0-9]+/[0-9A-HJKMNP-TV-Z]{26}\.[a-z]{3,4}')->name('uploads.inline.show');
     // <<< MYRA v2.2 [A] END
 
     // System Health

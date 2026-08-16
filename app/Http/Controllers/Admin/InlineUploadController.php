@@ -56,16 +56,22 @@ class InlineUploadController extends Controller
         );
 
         return response()->json([
-            'url' => route('admin.uploads.inline.show', ['path' => $path]),
+            // The route re-adds the 'inline/' prefix, so strip it from the URL.
+            'url' => route('admin.uploads.inline.show', [
+                'path' => Str::after($path, 'inline/'),
+            ]),
         ]);
     }
 
     public function show(Request $request, string $path): StreamedResponse
     {
+        // The route carries the path without its storage prefix; re-add it here.
         abort_unless(
-            preg_match('#^inline/(\d+)/[0-9A-HJKMNP-TV-Z]{26}\.(jpg|png|gif|webp)$#', $path, $m) === 1,
+            preg_match('#^(\d+)/[0-9A-HJKMNP-TV-Z]{26}\.(jpg|png|gif|webp)$#', $path, $m) === 1,
             404,
         );
+
+        $path = 'inline/' . $path;
 
         $user = $request->user();
         abort_unless($user !== null, 404);

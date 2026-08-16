@@ -29,6 +29,67 @@ class SqlLikeTest extends TestCase
         $this->assertStringContainsString('escape', strtolower($sql));
     }
 
+    /**
+     * The MySQL branch doubles the backslash; every other driver takes it as
+     * written. Only the non-MySQL branch is executable here (the suite runs on
+     * sqlite) — the NO_BACKSLASH_ESCAPES case needs a real MySQL connection.
+     */
+    public function test_a_non_mysql_driver_emits_a_single_character_escape(): void
+    {
+        Sql::flushDriverCache();
+
+        $sql = Sql::whereLike(User::query(), 'name', '100%')->toSql();
+
+        $this->assertSame('sqlite', User::query()->getConnection()->getDriverName());
+        $this->assertStringContainsString("escape '\\'", $sql);
+        $this->assertStringNotContainsString("escape '\\\\'", $sql);
+    }
+
+    /**
+     * Sql::like() stays public because the escaping tests above assert its exact
+     * output, but a bare pattern with no ESCAPE clause is the original v2.2.1
+     * defect. Nothing in app/ may call it directly — whereLike()/orWhereLike()
+     * are the only sanctioned seams. This guard fails CI if that regresses.
+     */
+    public function test_no_application_code_calls_the_bare_pattern_helper(): void
+    {
+        $offenders = [];
+
+        $files = new \RecursiveIteratorIterator(
+            new \RecursiveDirectoryIterator(base_path('app'), \FilesystemIterator::SKIP_DOTS)
+        );
+
+        foreach ($files as $file) {
+            if ($file->getExtension() !== 'php') {
+                continue;
+            }
+
+            $source = (string) file_get_contents($file->getPathname());
+
+            // Sql.php itself legitimately calls like() from whereLike().
+            if (str_ends_with(str_replace('\\', '/', $file->getPathname()), 'app/Support/Sql.php')) {
+                continue;
+            }
+
+            if (str_contains($source, 'Sql::like(')) {
+                $offenders[] = $file->getPathname();
+            }
+        }
+
+        $this->assertSame([], $offenders,
+            'Sql::like() produces a pattern with no ESCAPE clause. Use Sql::whereLike()/orWhereLike().');
+    }
+
+    public function test_flushing_the_driver_cache_is_idempotent(): void
+    {
+        Sql::flushDriverCache();
+        Sql::flushDriverCache();
+
+        $this->assertStringContainsString('escape', strtolower(
+            Sql::whereLike(User::query(), 'name', 'x')->toSql()
+        ));
+    }
+
     public function test_an_escaped_wildcard_matches_a_literal_percent(): void
     {
         User::factory()->create(['name' => '100% cotton']);

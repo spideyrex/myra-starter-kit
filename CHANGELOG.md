@@ -2,6 +2,29 @@
 
 All notable changes to the Myra Starter Kit are documented here.
 
+## v2.5.1 — 2026-08
+
+Carried follow-ups. No feature changes.
+
+### Fixed
+- **`ESCAPE` under `NO_BACKSLASH_ESCAPES`.** MySQL/MariaDB normally reprocess backslashes inside
+  string literals, so the escape char is emitted doubled — but under
+  `sql_mode=NO_BACKSLASH_ESCAPES` that doubled literal is a two-character string and MySQL rejects
+  it as an `ESCAPE` argument. `Sql` now probes `@@sql_mode` once per connection (cached, and failing
+  soft to standard behaviour if the probe errors) and emits the correct literal either way.
+  *The non-MySQL branch is covered by tests; the MySQL branches need a real MySQL connection and
+  are reasoned, not executed.*
+- **Doubled upload URL segment.** Inline image URLs read `/uploads/inline/inline/{user}/…` because
+  the route parameter carried the storage prefix as well. The route now takes the path without its
+  prefix and the controller re-adds it, so URLs read `/uploads/inline/{user}/{ulid}.ext`. The
+  storage layout is unchanged. Verified against production first: zero stored rows referenced the
+  old URL, so nothing breaks.
+
+### Added
+- Guard test: nothing under `app/` may call `Sql::like()` directly. It returns a pattern with no
+  `ESCAPE` clause — the original v2.2.1 defect — so `whereLike()`/`orWhereLike()` are the only
+  sanctioned seams. Reintroducing a bare call now fails CI.
+
 ## v2.5.0 — 2026-08 — "Dashboards, realtime, gallery, AI"
 
 Every new subsystem in this release ships **off by default** and is inert until its flag is set.

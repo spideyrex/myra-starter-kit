@@ -723,6 +723,12 @@
         "picker": {
             "label": "Templat",
             "help": "Susun atur dan hiasan sahaja — setiap templat memaparkan kandungan halaman utama yang sama."
+        },
+        "builder": {
+            "title": "Pembina halaman",
+            "description": "Bina halaman daripada bahagian tersusun, bukan medan tetap di bawah. Templat di atas masih membekalkan bar navigasi, pengaki dan persembahannya.",
+            "open": "Buka pembina halaman",
+            "badge": "Baharu"
         }
     },
     "tenancy": {
@@ -1473,6 +1479,11 @@
             "roleDashboards": {
                 "title": "Papan pemuka peranan",
                 "description": "Papan pemuka lalai bagi setiap peranan, boleh diperibadikan oleh setiap pengguna dan boleh ditetapkan semula kepada lalai peranan bila-bila masa.",
+                "badge": "Baharu"
+            },
+            "pageBuilder": {
+                "title": "Pembina halaman",
+                "description": "Jenis bahagian yang ditawarkan oleh pembina halaman utama, serta satu contoh langsung setiap satu yang dipaparkan oleh perender awam.",
                 "badge": "Baharu"
             }
         },
@@ -2377,6 +2388,440 @@
     "pageBuilder": {
         "render": {
             "unavailable": "Bahagian ini tidak dapat dipaparkan."
+        },
+        "editor": {
+            "title": "Pembina halaman",
+            "description": "Bina halaman utama awam daripada bahagian yang tersusun. Templat masih memiliki bar navigasi, pengaki dan persembahan setiap bahagian.",
+            "save": "Simpan",
+            "saving": "Menyimpan…",
+            "savedToast": "Bahagian halaman disimpan.",
+            "discard": "Buang perubahan",
+            "undo": "Buat asal",
+            "redo": "Buat semula",
+            "dirty": "Perubahan belum disimpan",
+            "saved": "Semua perubahan disimpan",
+            "openPreview": "Buka halaman awam dalam tab baharu",
+            "addSection": "Tambah bahagian",
+            "limit": "{count} daripada {max} bahagian",
+            "convertFailed": "Halaman utama semasa tidak dapat ditukar.",
+            "convertEmpty": "Tiada apa-apa untuk ditukar.",
+            "convertLoaded": "{count} bahagian dimuatkan untuk semakan. Tiada apa-apa disimpan sehingga anda menekan Simpan.",
+            "tabs": {
+                "sections": "Bahagian",
+                "preview": "Pratonton"
+            },
+            "preview": {
+                "label": "Pratonton",
+                "savedOnly": "Pratonton ini menunjukkan halaman yang disimpan. Simpan untuk melihat bahagian yang sedang anda sunting."
+            },
+            "empty": {
+                "title": "Halaman anda belum mempunyai bahagian",
+                "description": "Tambah satu bahagian, atau tukar tetapan yang dipaparkan halaman utama hari ini kepada senarai yang boleh disunting.",
+                "convert": "Tukar halaman utama semasa saya",
+                "revert": "Kembali kepada tetapan klasik"
+            },
+            "catalogue": {
+                "title": "Tambah bahagian",
+                "description": "Cari jenis bahagian yang berdaftar dan pilih satu untuk dimasukkan.",
+                "placeholder": "Cari jenis bahagian…",
+                "empty": "Tiada jenis bahagian sepadan dengan carian itu.",
+                "unavailable": "Tiada jenis bahagian didaftarkan, jadi belum ada apa-apa yang boleh ditambah.",
+                "maxReached": "Paling banyak {max} setiap halaman.",
+                "blocked": "Halaman ini sudah mencapai had bahagiannya.",
+                "groups": {
+                    "content": "Kandungan",
+                    "proof": "Bukti sosial",
+                    "conversion": "Penukaran",
+                    "layout": "Susun atur"
+                }
+            },
+            "card": {
+                "hidden": "Tersembunyi",
+                "hasErrors": "Perlu perhatian",
+                "show": "Tunjukkan {label}",
+                "hide": "Sembunyikan {label}",
+                "duplicate": "Gandakan {label}",
+                "delete": "Padam {label}",
+                "presentation": "Persembahan",
+                "variantDefault": "Lalai templat",
+                "variantOn": "Hidup",
+                "variantOff": "Mati",
+                "unknown": {
+                    "title": "Jenis bahagian ini tidak tersedia",
+                    "description": "Tiada apa-apa di laman ini menyediakan jenis {type}. Kandungannya dikekalkan seperti sedia ada dan kekal selepas simpanan berikutnya."
+                }
+            },
+            "list": {
+                "addRow": "Tambah item",
+                "removeRow": "Buang item {index}",
+                "moveUp": "Alihkan item {index} ke atas",
+                "moveDown": "Alihkan item {index} ke bawah",
+                "rowLabel": "Item {index}",
+                "full": "Paling banyak {max} item."
+            },
+            "icon": {
+                "none": "Tiada ikon",
+                "unavailable": "{name} bukan salah satu ikon yang tersedia. Menyimpan seksyen ini akan mengosongkannya."
+            },
+            "image": {
+                "upload": "Muat naik imej",
+                "replace": "Ganti imej",
+                "remove": "Buang",
+                "uploading": "Memuat naik…",
+                "failed": "Imej itu tidak dapat dimuat naik.",
+                "none": "Tiada imej dipilih"
+            },
+            "confirm": {
+                "delete": {
+                    "title": "Padam bahagian ini?",
+                    "description": "{label} akan dibuang daripada halaman. Tiada apa-apa disimpan sehingga anda menekan Simpan.",
+                    "confirm": "Padam"
+                },
+                "discard": {
+                    "title": "Buang perubahan anda?",
+                    "description": "Halaman kembali kepada versi terakhir yang disimpan.",
+                    "confirm": "Buang"
+                },
+                "revert": {
+                    "title": "Kembali kepada tetapan klasik?",
+                    "description": "Senarai bahagian dikosongkan dan halaman utama kembali kepada tetapan yang digunakannya sebelum pembina ini. Tiada apa-apa disimpan sehingga anda menekan Simpan.",
+                    "confirm": "Kembali"
+                }
+            },
+            "errors": {
+                "title": "Beberapa bahagian memerlukan perhatian."
+            },
+            "a11y": {
+                "list": "Bahagian halaman",
+                "roledescription": "Bahagian halaman boleh susun",
+                "instructions": "Tekan Space untuk mengangkat bahagian, kemudian guna kekunci anak panah untuk mengalihkannya. Tekan Space sekali lagi untuk melepaskannya, Home atau End untuk ke permulaan atau penghujung, atau Escape untuk membatalkan.",
+                "grabHandle": "Susun semula {label}",
+                "moved": "{label} dialihkan ke kedudukan {index} daripada {total}.",
+                "position": "Bahagian {index} daripada {total}"
+            }
+        },
+        "sections": {
+            "groups": {
+                "content": "Kandungan",
+                "proof": "Bukti sosial",
+                "conversion": "Penukaran",
+                "layout": "Susun atur"
+            },
+            "hero": {
+                "label": "Hero",
+                "description": "Satu tajuk utama, satu baris sokongan, satu seruan tindakan dan imej pilihan.",
+                "fields": {
+                    "title": "Tajuk utama",
+                    "subtitle": "Teks sokongan",
+                    "cta_text": "Label butang",
+                    "cta_url": "Pautan butang",
+                    "image_path": "Imej"
+                },
+                "variants": {
+                    "align": "Penjajaran",
+                    "compact": "Padat"
+                },
+                "variantOptions": {
+                    "align": {
+                        "center": "Tengah",
+                        "split": "Belah",
+                        "left": "Kiri"
+                    }
+                }
+            },
+            "features": {
+                "label": "Grid ciri",
+                "description": "Grid kad manfaat ringkas, setiap satu dengan ikon.",
+                "fields": {
+                    "title": "Tajuk utama",
+                    "subtitle": "Teks sokongan",
+                    "items": "Ciri"
+                },
+                "itemFields": {
+                    "icon": "Ikon",
+                    "title": "Tajuk",
+                    "description": "Penerangan"
+                },
+                "variants": {
+                    "columns": "Lajur",
+                    "bare": "Tanpa latar belakang"
+                },
+                "variantOptions": {
+                    "columns": {
+                        "2": "Dua",
+                        "3": "Tiga"
+                    }
+                }
+            },
+            "testimonials": {
+                "label": "Testimoni",
+                "description": "Petikan daripada pelanggan, setiap satu dengan nama dan jawatan.",
+                "fields": {
+                    "title": "Tajuk utama",
+                    "subtitle": "Teks sokongan",
+                    "items": "Testimoni"
+                },
+                "itemFields": {
+                    "name": "Nama",
+                    "role": "Jawatan",
+                    "quote": "Petikan"
+                },
+                "variants": {
+                    "tinted": "Latar belakang berwarna"
+                }
+            },
+            "pricing": {
+                "label": "Jadual harga",
+                "description": "Pelan dengan harga, senarai ciri dan seruan tindakan.",
+                "fields": {
+                    "title": "Tajuk utama",
+                    "subtitle": "Teks sokongan",
+                    "plans": "Pelan"
+                },
+                "planFields": {
+                    "name": "Nama pelan",
+                    "price": "Harga",
+                    "period": "Tempoh bil",
+                    "features": "Ciri, dipisahkan koma",
+                    "cta_text": "Label butang",
+                    "cta_url": "Pautan butang",
+                    "highlighted": "Serlahkan pelan ini"
+                },
+                "variants": {
+                    "tinted": "Latar belakang berwarna"
+                }
+            },
+            "cta": {
+                "label": "Seruan tindakan",
+                "description": "Jalur penutup dengan satu tajuk dan satu butang.",
+                "fields": {
+                    "title": "Tajuk utama",
+                    "subtitle": "Teks sokongan",
+                    "button_text": "Label butang",
+                    "button_url": "Pautan butang"
+                },
+                "variants": {
+                    "muted": "Latar belakang lembut"
+                }
+            },
+            "rich_text": {
+                "label": "Teks kaya",
+                "description": "Prosa bebas. Markup dibersihkan sebelum disimpan dan sekali lagi sebelum dipaparkan.",
+                "fields": {
+                    "heading": "Tajuk",
+                    "body": "Kandungan"
+                },
+                "variants": {
+                    "width": "Lebar",
+                    "tinted": "Latar belakang berwarna"
+                },
+                "variantOptions": {
+                    "width": {
+                        "prose": "Lebar bacaan",
+                        "wide": "Lebar penuh"
+                    }
+                }
+            },
+            "image": {
+                "label": "Imej",
+                "description": "Satu gambar dengan teks alternatif wajib dan kapsyen pilihan.",
+                "fields": {
+                    "image_path": "Imej",
+                    "alt": "Teks alternatif",
+                    "caption": "Kapsyen",
+                    "link_url": "Pautan"
+                },
+                "variants": {
+                    "width": "Lebar",
+                    "rounded": "Bucu bulat"
+                },
+                "variantOptions": {
+                    "width": {
+                        "contained": "Terkandung",
+                        "full": "Penuh"
+                    }
+                }
+            },
+            "stats": {
+                "label": "Statistik",
+                "description": "Sehingga empat nombor utama, setiap satu dengan label ringkas.",
+                "fields": {
+                    "title": "Tajuk utama",
+                    "items": "Statistik"
+                },
+                "itemFields": {
+                    "value": "Nilai",
+                    "label": "Label"
+                },
+                "variants": {
+                    "tinted": "Latar belakang berwarna"
+                }
+            },
+            "faq": {
+                "label": "Soalan dan jawapan",
+                "description": "Soalan dan jawapan dalam akordion yang boleh dicapai papan kekunci.",
+                "fields": {
+                    "title": "Tajuk utama",
+                    "subtitle": "Teks sokongan",
+                    "items": "Soalan"
+                },
+                "itemFields": {
+                    "question": "Soalan",
+                    "answer": "Jawapan"
+                },
+                "variants": {
+                    "tinted": "Latar belakang berwarna"
+                }
+            },
+            "divider": {
+                "label": "Pemisah",
+                "description": "Garis atau ruang kosong antara dua bahagian.",
+                "fields": {
+                    "style": "Gaya",
+                    "size": "Saiz"
+                },
+                "fieldOptions": {
+                    "style": {
+                        "rule": "Garis",
+                        "space": "Ruang"
+                    },
+                    "size": {
+                        "sm": "Kecil",
+                        "md": "Sederhana",
+                        "lg": "Besar"
+                    }
+                }
+            }
+        },
+        "demo": {
+            "title": "Pembina halaman",
+            "description": "Satu halaman ialah templat yang anda pilih ditambah senarai bahagian yang tersusun. Galeri ini menyenaraikan setiap jenis bahagian yang didaftarkan pelayan dan memaparkan satu contoh langsung bagi setiap satu.",
+            "readOnly": "Galeri baca sahaja. Tiada apa-apa di halaman ini disimpan, dan halaman utama awam tidak disentuh.",
+            "openBuilder": "Buka pembina halaman",
+            "openDocs": "Baca panduan",
+            "catalogue": {
+                "title": "Katalog bahagian",
+                "description": "Diisytiharkan di pelayan dan dihantar sebagai JSON. Sesuatu pakej mendaftarkan jenis bahagian sama seperti ia mendaftarkan templat, dan ia muncul di sini tanpa sebarang perubahan bahagian hadapan.",
+                "fields": "Medan",
+                "presentation": "Persembahan",
+                "maxPerPage": "Maksimum setiap halaman",
+                "unlimited": "Tanpa had",
+                "since": "Sejak",
+                "none": "Tiada",
+                "empty": "Tiada jenis bahagian didaftarkan pada binaan ini, jadi belum ada apa-apa untuk disenaraikan."
+            },
+            "groups": {
+                "content": "Kandungan",
+                "proof": "Bukti sosial",
+                "conversion": "Penukaran",
+                "layout": "Susun atur"
+            },
+            "preview": {
+                "title": "Contoh langsung",
+                "description": "Setiap contoh di bawah dipaparkan oleh komponen yang sama seperti halaman utama awam, jadi apa yang anda lihat di sini ialah apa yang pelawat tanpa nama terima.",
+                "unavailable": "Perender bahagian awam tiada pada binaan ini, jadi katalog dipaparkan tanpa contoh langsung.",
+                "failed": "Contoh ini tidak dapat dipaparkan. Selebihnya halaman tidak terjejas — pembendungan itulah tujuannya."
+            },
+            "samples": {
+                "hero": {
+                    "title": "Terbitkan halaman utama tanpa menulis kod",
+                    "subtitle": "Susun halaman daripada bahagian, ubah urutannya, dan terbitkan. Templat tetap memiliki bahagian rangkanya.",
+                    "cta_text": "Mula membina"
+                },
+                "features": {
+                    "title": "Dibina atas apa yang sudah ada",
+                    "subtitle": "Setiap bahagian menggunakan semula perender yang telah dihantar halaman utama sejak v2.6.",
+                    "first": {
+                        "title": "Bahagian tersusun",
+                        "description": "Seret atau guna papan kekunci untuk menyusun semula. Urutan yang anda simpan ialah urutan yang dibaca pelawat."
+                    },
+                    "second": {
+                        "title": "Selamat secara lalai",
+                        "description": "HTML yang ditulis dibersihkan semasa disimpan dan sekali lagi semasa dipaparkan, dan setiap pautan disemak terhadap senarai benar."
+                    },
+                    "third": {
+                        "title": "Tidak pernah kosong",
+                        "description": "Blok yang rosak digugurkan, bahagian yang gagal hanya membuang dirinya sendiri, dan senarai kosong kembali kepada tetapan klasik."
+                    }
+                },
+                "testimonials": {
+                    "title": "Kata pasukan kami",
+                    "subtitle": "Petikan ialah kandungan, bukan kod.",
+                    "first": {
+                        "name": "Aisyah Rahman",
+                        "role": "Ketua Pemasaran",
+                        "quote": "Saya menukar halaman utama dua kali sebelum tengah hari tanpa membuka sebarang editor."
+                    },
+                    "second": {
+                        "name": "Daniel Ooi",
+                        "role": "Ketua Kejuruteraan",
+                        "quote": "Pengembaliannya hanya satu medan. Itulah bahagian yang membuatkan kami bersetuju."
+                    }
+                },
+                "pricing": {
+                    "title": "Harga yang mudah",
+                    "subtitle": "Senarai pelan ialah medan berulang, jadi pelan baharu ditambah tanpa penerbitan kod.",
+                    "first": {
+                        "name": "Permulaan",
+                        "price": "$0",
+                        "period": "sebulan",
+                        "features": "Satu halaman, lima bahagian, sokongan komuniti",
+                        "cta_text": "Mula sekarang"
+                    },
+                    "second": {
+                        "name": "Pasukan",
+                        "price": "$29",
+                        "period": "sebulan",
+                        "features": "Bahagian tanpa had, pratonton langsung, sokongan keutamaan",
+                        "cta_text": "Pilih Pasukan"
+                    }
+                },
+                "cta": {
+                    "title": "Sedia untuk membina halaman anda?",
+                    "subtitle": "Buka pembina dan tambah bahagian pertama anda.",
+                    "button_text": "Buka pembina"
+                },
+                "richText": {
+                    "heading": "Teks kaya",
+                    "body": "<p>HTML yang ditulis dibersihkan di pelayan sebelum disimpan, dan dibersihkan sekali lagi dalam pelayar sebelum dipaparkan. Tag skrip tidak pernah terselamat daripada mana-mana peringkat.</p>"
+                },
+                "image": {
+                    "alt": "Ilustrasi pengganti bagi imej yang dimuat naik",
+                    "caption": "Muat naik disahkan melalui bait ajaib; nama fail yang dihantar pelayar diabaikan."
+                },
+                "stats": {
+                    "title": "Dalam angka",
+                    "first": {
+                        "value": "10",
+                        "label": "Jenis bahagian"
+                    },
+                    "second": {
+                        "value": "6",
+                        "label": "Templat"
+                    },
+                    "third": {
+                        "value": "3",
+                        "label": "Bahasa"
+                    }
+                },
+                "faq": {
+                    "title": "Soalan",
+                    "subtitle": "Versi ringkasnya.",
+                    "first": {
+                        "question": "Apa jadi pada halaman utama saya sekarang?",
+                        "answer": "Tiada apa-apa. Tetapan sedia ada kekal pada cakera dan ditukar menjadi senarai blok yang setara untuk anda semak sebelum menyimpan."
+                    },
+                    "second": {
+                        "question": "Bagaimana saya berpatah balik?",
+                        "answer": "Kosongkan senarai blok. Tetapan klasik tidak pernah diubah, jadi halaman lama kembali betul-betul seperti asal."
+                    }
+                }
+            }
+        },
+        "docs": {
+            "title": "Dokumentasi",
+            "description": "Bentuk blok yang disimpan, jaminan penurunan taraf, cara pakej menyumbang jenis bahagian, kontrak pratonton dan prosedur pengembalian.",
+            "link": "Baca panduan pembina halaman"
         }
     }
 }

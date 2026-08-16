@@ -449,3 +449,7 @@ require __DIR__.'/auth.php';
 // >>> MYRA v2.6 [B] START
 require __DIR__.'/myra/examples.php';
 // <<< MYRA v2.6 [B] END
+
+// >>> MYRA v2.7 [B] START
+require __DIR__.'/myra/pagebuilder.php';
+// <<< MYRA v2.7 [B] END

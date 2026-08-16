@@ -108,6 +108,9 @@ import {
     // >>> MYRA v2.6 [C] START
     Palette,
     // <<< MYRA v2.6 [C] END
+    // >>> MYRA v2.7 [PB-B] START
+    Blocks,
+    // <<< MYRA v2.7 [PB-B] END
 } from 'lucide-vue-next';
 
 defineProps<{
@@ -240,6 +243,17 @@ const coreNavGroups = computed(() => [
             // >>> MYRA v2.6 [D] START
             { title: t('landing.title'), href: route('admin.landing.index'), icon: LayoutTemplate, permission: 'settings.edit' },
             // <<< MYRA v2.6 [D] END
+            // >>> MYRA v2.7 [PB-B] START
+            // Guarded: the builder's routes ship with the page-builder bundle.
+            ...((route as any)().has('admin.landing.builder.index')
+                ? [{
+                    title: t('pageBuilder.editor.title'),
+                    href: route('admin.landing.builder.index'),
+                    icon: Blocks,
+                    permission: 'settings.edit',
+                }]
+                : []),
+            // <<< MYRA v2.7 [PB-B] END
         ],
     },
     {

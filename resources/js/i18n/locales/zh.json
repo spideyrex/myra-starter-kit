@@ -723,6 +723,12 @@
         "picker": {
             "label": "模板",
             "help": "只改变排列与外观 — 每个模板渲染的首页内容完全相同。"
+        },
+        "builder": {
+            "title": "页面构建器",
+            "description": "用可排序的版块来搭建页面，而不是下方的固定字段。上方的模板仍然提供导航栏、页脚与呈现样式。",
+            "open": "打开页面构建器",
+            "badge": "新增"
         }
     },
     "tenancy": {
@@ -1473,6 +1479,11 @@
             "roleDashboards": {
                 "title": "角色仪表板",
                 "description": "为每个角色提供默认仪表板，用户可自行个性化，并可随时重置回角色默认布局。",
+                "badge": "新增"
+            },
+            "pageBuilder": {
+                "title": "页面构建器",
+                "description": "落地页构建器提供的全部版块类型，以及每种类型由公开渲染器呈现的实时示例。",
                 "badge": "新增"
             }
         },
@@ -2377,6 +2388,440 @@
     "pageBuilder": {
         "render": {
             "unavailable": "此版块无法显示。"
+        },
+        "editor": {
+            "title": "页面构建器",
+            "description": "用有序的区块组合公开首页。模板仍然负责导航栏、页脚以及每个区块的呈现方式。",
+            "save": "保存",
+            "saving": "保存中…",
+            "savedToast": "页面区块已保存。",
+            "discard": "放弃更改",
+            "undo": "撤销",
+            "redo": "重做",
+            "dirty": "有未保存的更改",
+            "saved": "所有更改已保存",
+            "openPreview": "在新标签页中打开公开页面",
+            "addSection": "添加区块",
+            "limit": "{max} 个区块中的 {count} 个",
+            "convertFailed": "无法转换当前首页。",
+            "convertEmpty": "没有可转换的内容。",
+            "convertLoaded": "已载入 {count} 个区块供查看。在你按下保存之前不会写入任何内容。",
+            "tabs": {
+                "sections": "区块",
+                "preview": "预览"
+            },
+            "preview": {
+                "label": "预览",
+                "savedOnly": "此预览显示的是已保存的页面。保存后即可看到正在编辑的区块。"
+            },
+            "empty": {
+                "title": "此页面还没有任何区块",
+                "description": "添加一个区块，或把首页当前使用的设置转换成可编辑的区块列表。",
+                "convert": "转换我当前的首页",
+                "revert": "恢复为经典设置"
+            },
+            "catalogue": {
+                "title": "添加区块",
+                "description": "搜索已注册的区块类型并选择一个插入。",
+                "placeholder": "搜索区块类型…",
+                "empty": "没有匹配该搜索的区块类型。",
+                "unavailable": "尚未注册任何区块类型，因此暂时无法添加。",
+                "maxReached": "每页最多 {max} 个。",
+                "blocked": "此页面已达到区块上限。",
+                "groups": {
+                    "content": "内容",
+                    "proof": "口碑",
+                    "conversion": "转化",
+                    "layout": "布局"
+                }
+            },
+            "card": {
+                "hidden": "已隐藏",
+                "hasErrors": "需要处理",
+                "show": "显示 {label}",
+                "hide": "隐藏 {label}",
+                "duplicate": "复制 {label}",
+                "delete": "删除 {label}",
+                "presentation": "呈现方式",
+                "variantDefault": "模板默认",
+                "variantOn": "开",
+                "variantOff": "关",
+                "unknown": {
+                    "title": "此区块类型不可用",
+                    "description": "本站没有提供类型 {type}。其内容将原样保留，并在下次保存后依然存在。"
+                }
+            },
+            "list": {
+                "addRow": "添加条目",
+                "removeRow": "删除条目 {index}",
+                "moveUp": "把条目 {index} 上移",
+                "moveDown": "把条目 {index} 下移",
+                "rowLabel": "条目 {index}",
+                "full": "最多 {max} 个条目。"
+            },
+            "icon": {
+                "none": "无图标",
+                "unavailable": "{name} 不在可用图标列表中，保存该区块时会被清除。"
+            },
+            "image": {
+                "upload": "上传图片",
+                "replace": "替换图片",
+                "remove": "移除",
+                "uploading": "上传中…",
+                "failed": "该图片上传失败。",
+                "none": "未选择图片"
+            },
+            "confirm": {
+                "delete": {
+                    "title": "删除此区块？",
+                    "description": "{label} 将从页面中移除。在你按下保存之前不会写入任何内容。",
+                    "confirm": "删除"
+                },
+                "discard": {
+                    "title": "放弃你的更改？",
+                    "description": "页面将回到上一次保存的版本。",
+                    "confirm": "放弃"
+                },
+                "revert": {
+                    "title": "恢复为经典设置？",
+                    "description": "区块列表将被清空，首页回到使用构建器之前的设置。在你按下保存之前不会写入任何内容。",
+                    "confirm": "恢复"
+                }
+            },
+            "errors": {
+                "title": "部分区块需要处理。"
+            },
+            "a11y": {
+                "list": "页面区块",
+                "roledescription": "可排序的页面区块",
+                "instructions": "按空格键拾起一个区块，然后用方向键移动它。再次按空格键放下，按 Home 或 End 移到开头或结尾，按 Esc 取消。",
+                "grabHandle": "重新排序 {label}",
+                "moved": "{label} 已移动到第 {index} 个位置，共 {total} 个。",
+                "position": "第 {index} 个区块，共 {total} 个"
+            }
+        },
+        "sections": {
+            "groups": {
+                "content": "内容",
+                "proof": "信任背书",
+                "conversion": "转化",
+                "layout": "版式"
+            },
+            "hero": {
+                "label": "主视觉",
+                "description": "一个主标题、一行辅助文案、一个行动号召按钮，以及可选图片。",
+                "fields": {
+                    "title": "主标题",
+                    "subtitle": "辅助文案",
+                    "cta_text": "按钮文字",
+                    "cta_url": "按钮链接",
+                    "image_path": "图片"
+                },
+                "variants": {
+                    "align": "对齐方式",
+                    "compact": "紧凑"
+                },
+                "variantOptions": {
+                    "align": {
+                        "center": "居中",
+                        "split": "左右分栏",
+                        "left": "左对齐"
+                    }
+                }
+            },
+            "features": {
+                "label": "功能网格",
+                "description": "一组简短的卖点卡片，每张配一个图标。",
+                "fields": {
+                    "title": "主标题",
+                    "subtitle": "辅助文案",
+                    "items": "功能"
+                },
+                "itemFields": {
+                    "icon": "图标",
+                    "title": "标题",
+                    "description": "描述"
+                },
+                "variants": {
+                    "columns": "列数",
+                    "bare": "无背景"
+                },
+                "variantOptions": {
+                    "columns": {
+                        "2": "两列",
+                        "3": "三列"
+                    }
+                }
+            },
+            "testimonials": {
+                "label": "客户评价",
+                "description": "来自客户的引述，附姓名与职务。",
+                "fields": {
+                    "title": "主标题",
+                    "subtitle": "辅助文案",
+                    "items": "评价"
+                },
+                "itemFields": {
+                    "name": "姓名",
+                    "role": "职务",
+                    "quote": "引述"
+                },
+                "variants": {
+                    "tinted": "浅色背景"
+                }
+            },
+            "pricing": {
+                "label": "价格表",
+                "description": "包含价格、功能清单与行动号召的套餐。",
+                "fields": {
+                    "title": "主标题",
+                    "subtitle": "辅助文案",
+                    "plans": "套餐"
+                },
+                "planFields": {
+                    "name": "套餐名称",
+                    "price": "价格",
+                    "period": "计费周期",
+                    "features": "功能，以逗号分隔",
+                    "cta_text": "按钮文字",
+                    "cta_url": "按钮链接",
+                    "highlighted": "突出此套餐"
+                },
+                "variants": {
+                    "tinted": "浅色背景"
+                }
+            },
+            "cta": {
+                "label": "行动号召",
+                "description": "页尾条幅，一个标题加一个按钮。",
+                "fields": {
+                    "title": "主标题",
+                    "subtitle": "辅助文案",
+                    "button_text": "按钮文字",
+                    "button_url": "按钮链接"
+                },
+                "variants": {
+                    "muted": "柔和背景"
+                }
+            },
+            "rich_text": {
+                "label": "富文本",
+                "description": "自由排版的正文。标记在存储前与展示前各清理一次。",
+                "fields": {
+                    "heading": "标题",
+                    "body": "正文"
+                },
+                "variants": {
+                    "width": "宽度",
+                    "tinted": "浅色背景"
+                },
+                "variantOptions": {
+                    "width": {
+                        "prose": "阅读宽度",
+                        "wide": "加宽"
+                    }
+                }
+            },
+            "image": {
+                "label": "图片",
+                "description": "单张图片，替代文字为必填，图注可选。",
+                "fields": {
+                    "image_path": "图片",
+                    "alt": "替代文字",
+                    "caption": "图注",
+                    "link_url": "链接"
+                },
+                "variants": {
+                    "width": "宽度",
+                    "rounded": "圆角"
+                },
+                "variantOptions": {
+                    "width": {
+                        "contained": "限宽",
+                        "full": "通栏"
+                    }
+                }
+            },
+            "stats": {
+                "label": "数据",
+                "description": "最多四组关键数字，每组配一句简短说明。",
+                "fields": {
+                    "title": "主标题",
+                    "items": "数据"
+                },
+                "itemFields": {
+                    "value": "数值",
+                    "label": "说明"
+                },
+                "variants": {
+                    "tinted": "浅色背景"
+                }
+            },
+            "faq": {
+                "label": "常见问题",
+                "description": "以键盘可操作的折叠面板呈现的问答。",
+                "fields": {
+                    "title": "主标题",
+                    "subtitle": "辅助文案",
+                    "items": "问题"
+                },
+                "itemFields": {
+                    "question": "问题",
+                    "answer": "答案"
+                },
+                "variants": {
+                    "tinted": "浅色背景"
+                }
+            },
+            "divider": {
+                "label": "分隔",
+                "description": "两个区块之间的分隔线或留白。",
+                "fields": {
+                    "style": "样式",
+                    "size": "尺寸"
+                },
+                "fieldOptions": {
+                    "style": {
+                        "rule": "分隔线",
+                        "space": "留白"
+                    },
+                    "size": {
+                        "sm": "小",
+                        "md": "中",
+                        "lg": "大"
+                    }
+                }
+            }
+        },
+        "demo": {
+            "title": "页面构建器",
+            "description": "一个页面等于你选定的模板加上一组有序的版块。本图库列出服务端注册的每一种版块类型，并为每种类型渲染一个实时示例。",
+            "readOnly": "只读图库。本页不会保存任何内容，公开首页也不会被改动。",
+            "openBuilder": "打开页面构建器",
+            "openDocs": "阅读指南",
+            "catalogue": {
+                "title": "版块目录",
+                "description": "在服务端声明，以 JSON 形式下发。插件注册版块类型的方式与注册模板相同，无需改动前端即可出现在这里。",
+                "fields": "字段",
+                "presentation": "呈现",
+                "maxPerPage": "每页上限",
+                "unlimited": "不限",
+                "since": "起始版本",
+                "none": "无",
+                "empty": "此构建未注册任何版块类型，暂时没有可列出的内容。"
+            },
+            "groups": {
+                "content": "内容",
+                "proof": "社会认同",
+                "conversion": "转化",
+                "layout": "布局"
+            },
+            "preview": {
+                "title": "实时示例",
+                "description": "下方每个示例都由公开首页所用的同一批组件渲染，因此你看到的就是匿名访客看到的。",
+                "unavailable": "此构建中缺少公开版块渲染器，因此仅显示目录而没有实时示例。",
+                "failed": "该示例无法渲染。页面其余部分不受影响——这种隔离正是设计目的。"
+            },
+            "samples": {
+                "hero": {
+                    "title": "无需写代码也能上线落地页",
+                    "subtitle": "用版块拼出页面、随意排序、直接发布。模板依然负责导航栏与页脚。",
+                    "cta_text": "开始搭建"
+                },
+                "features": {
+                    "title": "构建在既有能力之上",
+                    "subtitle": "每个版块都复用首页自 v2.6 起就在使用的渲染组件。",
+                    "first": {
+                        "title": "有序版块",
+                        "description": "可拖拽也可用键盘重新排序。你保存的顺序就是访客阅读的顺序。"
+                    },
+                    "second": {
+                        "title": "默认安全",
+                        "description": "录入的 HTML 在写入时清洗一次、渲染时再清洗一次，每个链接都会与白名单比对。"
+                    },
+                    "third": {
+                        "title": "永不空白",
+                        "description": "损坏的版块会被丢弃，抛错的版块只会移除自己，列表为空时回退到经典设置。"
+                    }
+                },
+                "testimonials": {
+                    "title": "团队的评价",
+                    "subtitle": "引言属于内容，而不是代码。",
+                    "first": {
+                        "name": "Aisyah Rahman",
+                        "role": "市场负责人",
+                        "quote": "我在午饭前改了两次首页，全程没有打开过编辑器。"
+                    },
+                    "second": {
+                        "name": "Daniel Ooi",
+                        "role": "工程负责人",
+                        "quote": "回滚只需要改一个字段。正是这一点让我们点了头。"
+                    }
+                },
+                "pricing": {
+                    "title": "简单的定价",
+                    "subtitle": "套餐列表是可重复字段，新增套餐无需重新部署。",
+                    "first": {
+                        "name": "入门版",
+                        "price": "$0",
+                        "period": "每月",
+                        "features": "一个页面，五个版块，社区支持",
+                        "cta_text": "立即开始"
+                    },
+                    "second": {
+                        "name": "团队版",
+                        "price": "$29",
+                        "period": "每月",
+                        "features": "不限版块数量，实时预览，优先支持",
+                        "cta_text": "选择团队版"
+                    }
+                },
+                "cta": {
+                    "title": "准备好搭建你的页面了吗？",
+                    "subtitle": "打开构建器，添加第一个版块。",
+                    "button_text": "打开构建器"
+                },
+                "richText": {
+                    "heading": "富文本",
+                    "body": "<p>录入的 HTML 会在存入服务端之前清洗一次，并在浏览器渲染之前再清洗一次。脚本标签在任何一道关卡都无法存活。</p>"
+                },
+                "image": {
+                    "alt": "用于代替上传图片的占位插图",
+                    "caption": "上传文件通过魔数校验；浏览器提交的文件名会被忽略。"
+                },
+                "stats": {
+                    "title": "用数字说话",
+                    "first": {
+                        "value": "10",
+                        "label": "版块类型"
+                    },
+                    "second": {
+                        "value": "6",
+                        "label": "模板"
+                    },
+                    "third": {
+                        "value": "3",
+                        "label": "语言"
+                    }
+                },
+                "faq": {
+                    "title": "常见问题",
+                    "subtitle": "简短版本。",
+                    "first": {
+                        "question": "我现有的首页会怎样？",
+                        "answer": "不受影响。现有设置仍保留在存储中，并会转换成等价的版块列表，供你保存前先行检查。"
+                    },
+                    "second": {
+                        "question": "如何回滚？",
+                        "answer": "清空版块列表即可。经典设置从未被修改，旧页面会原样回来。"
+                    }
+                }
+            }
+        },
+        "docs": {
+            "title": "文档",
+            "description": "存储的版块结构、降级保证、插件如何贡献版块类型、预览契约以及回滚步骤。",
+            "link": "阅读页面构建器指南"
         }
     }
 }

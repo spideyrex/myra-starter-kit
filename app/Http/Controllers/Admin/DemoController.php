@@ -1010,6 +1010,26 @@ class DemoController extends Controller
     }
     // <<< MYRA v2.2 [B] END
 
+    // >>> MYRA v2.5 [B] START
+    /**
+     * The page proves the bus's coalescing and the surface states. Everything
+     * it needs is client-side; the server only reports whether realtime is on
+     * so the page can say "polling" instead of pretending to be live.
+     */
+    public function liveWidgets(Request $request)
+    {
+        return Inertia::render('Admin/Demo/LiveWidgets', [
+            'realtime' => [
+                'enabled' => config('myra.realtime.enabled') === true,
+                'coalesceMs' => (int) config('myra.realtime.coalesce_ms', 400),
+                'defaultPoll' => (int) config('myra.realtime.default_poll', 120),
+                'channel' => 'myra.dashboard.' . (int) ($request->user()?->getAuthIdentifier() ?? 0),
+            ],
+            'rowHeight' => (int) config('myra.performance.row_height', 44),
+        ]);
+    }
+    // <<< MYRA v2.5 [B] END
+
     // >>> MYRA v2.3 [B] START
     /**
      * Real data, real SQL. There is no HasSampleData provider here on purpose:

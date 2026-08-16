@@ -465,6 +465,58 @@
             "uploading": "Uploading image..."
         }
     },
+    "live": {
+        "connected": "Live",
+        "polling": "Polling",
+        "paused": "Paused",
+        "retry": "Retry",
+        "updatedAgo": "Updated {ago}",
+        "justNow": "just now",
+        "secondsAgo": "{count}s ago",
+        "minutesAgo": "{count}m ago",
+        "hoursAgo": "{count}h ago",
+        "requests": "Requests",
+        "tooltip": {
+            "connected": "Connected — updates arrive as they happen.",
+            "polling": "Not connected — refreshing on a timer."
+        },
+        "a11y": {
+            "loading": "Loading {label}.",
+            "ready": "{label} updated.",
+            "empty": "{label} has no data.",
+            "error": "{label} failed to load.",
+            "offline": "{label} is unavailable while offline.",
+            "streaming": "{label} is still arriving."
+        },
+        "errors": {
+            "batch": "The dashboard could not be refreshed.",
+            "slot": "This widget could not be refreshed.",
+            "tooManyReports": "Too many widgets were requested at once."
+        },
+        "demo": {
+            "title": "Real-time widgets and loading states",
+            "subtitle": "One socket, one coalesced batch, one timer — whatever the widget count.",
+            "busTitle": "Dashboard bus",
+            "busDescription": "Every widget below is tracked by a single bus. Watch the request counter.",
+            "mountSix": "Mount six widgets",
+            "burst": "Burst 30 signals",
+            "hide": "Simulate hidden tab",
+            "show": "Simulate visible tab",
+            "unchanged": "Reply {'{'}unchanged: true{'}'}",
+            "failOne": "Fail one slot",
+            "reset": "Reset",
+            "requestCount": "POST requests issued",
+            "signalCount": "Signals received",
+            "statesTitle": "Surface states",
+            "statesDescription": "Every state a data surface can be in, with the announcement it makes.",
+            "announcer": "Announcer output",
+            "clsTitle": "Zero layout shift",
+            "clsDescription": "The skeleton reserves the loaded geometry exactly, so nothing jumps.",
+            "skeleton": "Skeleton",
+            "loaded": "Loaded",
+            "heights": "Both boxes are {height} pixels tall."
+        }
+    },
     "views": {
         "a11y": {
             "menu": "Saved views menu"

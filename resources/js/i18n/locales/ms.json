@@ -465,6 +465,58 @@
             "uploading": "Memuat naik imej..."
         }
     },
+    "live": {
+        "connected": "Langsung",
+        "polling": "Tinjauan berkala",
+        "paused": "Dijeda",
+        "retry": "Cuba semula",
+        "updatedAgo": "Dikemas kini {ago}",
+        "justNow": "sebentar tadi",
+        "secondsAgo": "{count}s lalu",
+        "minutesAgo": "{count}m lalu",
+        "hoursAgo": "{count}j lalu",
+        "requests": "Permintaan",
+        "tooltip": {
+            "connected": "Bersambung — kemas kini tiba sebaik ia berlaku.",
+            "polling": "Tidak bersambung — menyegar mengikut pemasa."
+        },
+        "a11y": {
+            "loading": "Memuatkan {label}.",
+            "ready": "{label} dikemas kini.",
+            "empty": "{label} tiada data.",
+            "error": "{label} gagal dimuatkan.",
+            "offline": "{label} tidak tersedia semasa di luar talian.",
+            "streaming": "{label} masih tiba."
+        },
+        "errors": {
+            "batch": "Papan pemuka tidak dapat disegarkan.",
+            "slot": "Widget ini tidak dapat disegarkan.",
+            "tooManyReports": "Terlalu banyak widget diminta serentak."
+        },
+        "demo": {
+            "title": "Widget masa nyata dan keadaan pemuatan",
+            "subtitle": "Satu soket, satu kelompok bergabung, satu pemasa — tidak kira bilangan widget.",
+            "busTitle": "Bas papan pemuka",
+            "busDescription": "Setiap widget di bawah dijejaki oleh satu bas. Perhatikan pembilang permintaan.",
+            "mountSix": "Lekapkan enam widget",
+            "burst": "Letusan 30 isyarat",
+            "hide": "Simulasi tab tersembunyi",
+            "show": "Simulasi tab kelihatan",
+            "unchanged": "Balas {'{'}unchanged: true{'}'}",
+            "failOne": "Gagalkan satu slot",
+            "reset": "Set semula",
+            "requestCount": "Permintaan POST dihantar",
+            "signalCount": "Isyarat diterima",
+            "statesTitle": "Keadaan permukaan",
+            "statesDescription": "Setiap keadaan permukaan data, berserta pengumuman yang dibuatnya.",
+            "announcer": "Output pengumum",
+            "clsTitle": "Sifar anjakan susun atur",
+            "clsDescription": "Rangka menempah geometri sebenar dengan tepat, jadi tiada yang melompat.",
+            "skeleton": "Rangka",
+            "loaded": "Dimuatkan",
+            "heights": "Kedua-dua kotak setinggi {height} piksel."
+        }
+    },
     "views": {
         "a11y": {
             "menu": "Menu paparan tersimpan"

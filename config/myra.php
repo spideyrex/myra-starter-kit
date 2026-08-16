@@ -343,6 +343,30 @@ return [
     ],
     // <<< MYRA v2.3 [B] END
 
+    // >>> MYRA v2.5 [B] START
+    /*
+    |--------------------------------------------------------------------------
+    | Realtime widgets
+    |--------------------------------------------------------------------------
+    |
+    | OFF. With `enabled` false WidgetSignal is a no-op, no event is ever
+    | dispatched, and the dashboard bus falls back to polling. BROADCAST_CONNECTION
+    | is `log` on this deployment, so nothing reaches a socket regardless, and
+    | without VITE_REVERB_APP_KEY the client never opens one either.
+    |
+    | The broadcast payload is a CHANGE SIGNAL — report keys and a timestamp,
+    | never rows or aggregates. On receipt the client refetches through the
+    | existing Gate-checked, ownership-scoped widget batch endpoint.
+    |
+    */
+
+    'realtime' => [
+        'enabled'      => env('MYRA_REALTIME', false),
+        'coalesce_ms'  => 400,
+        'default_poll' => 120,
+    ],
+    // <<< MYRA v2.5 [B] END
+
     // >>> MYRA v2.3 [C] START
     /*
     |--------------------------------------------------------------------------

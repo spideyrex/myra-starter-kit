@@ -2,11 +2,22 @@
 
 namespace App\Admin\Report;
 
+use App\Admin\QueryBuilder\Operator;
+use App\Admin\Tenancy\Tenancy;
+use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Support\Arrayable;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
+use Throwable;
 
 /** The frozen wire shape the chart and delivery bundles consume. */
 final class ReportResult implements Arrayable
 {
+    // >>> MYRA v2.5 [B] START
+    private string $version = '';
+    // <<< MYRA v2.5 [B] END
+
+
     /** @param  ReportRow[]  $rows */
     public function __construct(
         private readonly ReportDefinition $definition,
@@ -68,6 +79,115 @@ final class ReportResult implements Arrayable
     {
         return $this->groupCount;
     }
+
+    // >>> MYRA v2.5 [B] START
+    /**
+     * Freshness stamp for the batch short-circuit. `''` means "never
+     * short-circuit": either the definition declared no version column, or the
+     * stamp query failed — both degrade to running the aggregation, which is
+     * the v2.4.0 behaviour.
+     *
+     * The stamp is deliberately computed from the DATASET (MAX(column) + row
+     * count under the ownership scope) combined with the request fingerprint,
+     * which already encodes the resolved absolute period, measures and filters.
+     */
+    public static function stamp(ReportDefinition $definition, ReportRequest $request, ?Authenticatable $actor, ?string $dataset = null): string
+    {
+        if (! self::stampable($request)) {
+            return '';
+        }
+
+        $dataset ??= self::datasetStamp($definition, $actor);
+
+        return $dataset === '' ? '' : sha1($request->fingerprint($actor) . '|' . $dataset);
+    }
+
+    /**
+     * The dataset stamp only ever sees the report's OWN table. A request whose
+     * result depends on a RELATED table can therefore change without moving the
+     * stamp — assigning a role writes `model_has_roles` only, leaving
+     * MAX(users.updated_at) and COUNT(users) byte-identical while the role
+     * breakdown is now wrong. Such a request is never short-circuited.
+     */
+    public static function stampable(ReportRequest $request): bool
+    {
+        if ($request->dimension()->isRelation()) {
+            return false;
+        }
+
+        return ! self::usesRelationFilter($request->filters()->root());
+    }
+
+    private static function usesRelationFilter(array $node): bool
+    {
+        $relational = Operator::forType('relation');
+
+        foreach ((array) ($node['rules'] ?? []) as $rule) {
+            $operator = is_array($rule) ? Operator::tryFrom((string) ($rule['operator'] ?? '')) : null;
+
+            if ($operator !== null && in_array($operator, $relational, true)) {
+                return true;
+            }
+        }
+
+        foreach ((array) ($node['groups'] ?? []) as $child) {
+            if (is_array($child) && self::usesRelationFilter($child)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * ONE cheap scalar query per (report, actor) — the caller memoises it across
+     * a batch, so twelve widgets over the same report cost one stamp query, not
+     * twelve. `''` disables the short-circuit.
+     */
+    public static function datasetStamp(ReportDefinition $definition, ?Authenticatable $actor): string
+    {
+        $column = $definition->versionKey();
+
+        if ($column === null) {
+            return '';
+        }
+
+        try {
+            /** @var class-string<Model> $modelClass */
+            $modelClass = $definition->modelClass();
+            $table = (new $modelClass)->getTable();
+
+            $query = $modelClass::query()
+                ->tap(fn (Builder $q) => ($definition->scopeFn())($q, $actor))
+                ->tap(fn (Builder $q) => Tenancy::applyForModel($modelClass, $q, $table))
+                ->toBase();
+
+            $wrapped = $query->getGrammar()->wrap($column);
+
+            // Aggregation in SQL: one row, two scalars, no model hydration.
+            $row = $query->selectRaw("MAX({$wrapped}) as myra_max, COUNT(*) as myra_count")->first();
+
+            return (string) ($row->myra_max ?? '') . '|' . (string) ($row->myra_count ?? '0');
+        } catch (Throwable $e) {
+            report($e);
+
+            return '';
+        }
+    }
+
+    public function withVersion(string $version): self
+    {
+        $clone = clone $this;
+        $clone->version = $version;
+
+        return $clone;
+    }
+
+    public function version(): string
+    {
+        return $this->version;
+    }
+    // <<< MYRA v2.5 [B] END
 
     public function toArray(): array
     {

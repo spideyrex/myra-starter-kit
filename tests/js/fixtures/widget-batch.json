@@ -1,0 +1,101 @@
+{
+    "results": {
+        "signups-by-status": {
+            "report": "users",
+            "state": {
+                "period": {
+                    "preset": "custom",
+                    "from": "2026-01-01",
+                    "to": "2026-12-31",
+                    "tz": "UTC"
+                },
+                "compare": "none",
+                "dimension": "status",
+                "bucket": null,
+                "measures": [
+                    "signups"
+                ],
+                "limit": 10,
+                "chart": "area",
+                "mode": "series",
+                "query": null,
+                "cross": []
+            },
+            "period": {
+                "preset": "custom",
+                "from": "2026-01-01",
+                "to": "2026-12-31",
+                "tz": "UTC",
+                "bucket": null
+            },
+            "comparison": null,
+            "dimension": {
+                "key": "status",
+                "labelKey": "reports.dim.status",
+                "type": "field",
+                "drillable": true,
+                "allowedBuckets": [],
+                "limit": 10
+            },
+            "measures": [
+                {
+                    "key": "signups",
+                    "labelKey": "reports.measure.signups",
+                    "format": "number",
+                    "decimals": 0,
+                    "goal": null,
+                    "invertTrend": false,
+                    "additive": true
+                }
+            ],
+            "rows": [
+                {
+                    "key": "active",
+                    "label": "active",
+                    "values": {
+                        "signups": 3
+                    },
+                    "previous": null,
+                    "deltas": {
+                        "signups": null
+                    },
+                    "isOther": false,
+                    "drill": {
+                        "url": "http://localhost/admin/users",
+                        "params": {
+                            "query": "{\"conjunction\":\"and\",\"rules\":[{\"field\":\"status\",\"operator\":\"in\",\"value\":[\"active\"]}],\"groups\":[]}"
+                        }
+                    }
+                },
+                {
+                    "key": "inactive",
+                    "label": "inactive",
+                    "values": {
+                        "signups": 1
+                    },
+                    "previous": null,
+                    "deltas": {
+                        "signups": null
+                    },
+                    "isOther": false,
+                    "drill": {
+                        "url": "http://localhost/admin/users",
+                        "params": {
+                            "query": "{\"conjunction\":\"and\",\"rules\":[{\"field\":\"status\",\"operator\":\"in\",\"value\":[\"inactive\"]}],\"groups\":[]}"
+                        }
+                    }
+                }
+            ],
+            "totals": {
+                "signups": 4
+            },
+            "previousTotals": null,
+            "deltas": {
+                "signups": null
+            },
+            "truncated": false,
+            "groupCount": 2,
+            "version": "<version>"
+        }
+    }
+}

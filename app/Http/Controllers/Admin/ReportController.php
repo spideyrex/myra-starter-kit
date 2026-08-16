@@ -68,7 +68,16 @@ class ReportController extends Controller
             throw ReportException::make('reports.errors.malformed');
         }
 
-        return response()->json(['results' => ReportBatch::run($specs, $request->user())]);
+        // >>> MYRA v2.5 [B] START
+        // Opaque, server-minted strings echoed back by the client. A forged or
+        // stale value can only ever cost a re-run, never disclose anything.
+        $versions = $request->input('versions', []);
+        $versions = is_array($versions) ? array_filter($versions, 'is_string') : [];
+        // <<< MYRA v2.5 [B] END
+
+        return response()->json([
+            'results' => ReportBatch::run($specs, $request->user(), $versions),
+        ]);
     }
 
     /** Exports the BUCKETS, not the source rows — the result is already capped. */

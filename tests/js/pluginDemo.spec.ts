@@ -18,7 +18,12 @@ vi.mock('@/components/admin/CodeBlock.vue', () => ({
     default: { name: 'CodeBlock', props: ['value'], template: '<pre class="stub-code" />' },
 }));
 
-(globalThis as any).route = (name: string) => `/${name.replace(/\./g, '/')}`;
+const route = (name: string) => `/${name.replace(/\./g, '/')}`;
+
+// Ziggy is installed as a Vue plugin in app.ts, so `route()` reaches templates
+// through app.config.globalProperties — globalThis alone never does.
+(globalThis as any).route = route;
+const ziggy = { install: (app: any) => { app.config.globalProperties.route = route; } };
 
 import en from '@/i18n/locales/en.json';
 import ms from '@/i18n/locales/ms.json';
@@ -38,7 +43,7 @@ function mountPage(props: Record<string, unknown> = {}, locale = 'en') {
             strict: fixture.strict,
             ...props,
         } as any,
-        global: { plugins: [i18n] },
+        global: { plugins: [i18n, ziggy] },
     });
 }
 

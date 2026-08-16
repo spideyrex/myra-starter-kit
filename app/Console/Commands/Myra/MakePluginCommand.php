@@ -3,8 +3,11 @@
 namespace App\Console\Commands\Myra;
 
 use App\Console\Commands\Myra\Concerns\ScaffoldsAdmin;
+use Composer\Autoload\ClassLoader;
 use Illuminate\Console\Command;
 use Illuminate\Support\Str;
+use Symfony\Component\Process\ExecutableFinder;
+use Symfony\Component\Process\Process;
 
 class MakePluginCommand extends Command
 {
@@ -78,16 +81,87 @@ class MakePluginCommand extends Command
         $this->writeRaw("{$path}/database/migrations/.gitkeep", '');
         $this->writeRaw("{$path}/resources/js/Pages/.gitkeep", '');
 
-        $this->registerPluginClass($fqcn);
+        // Order matters: the class must be autoloadable BEFORE it is declared in
+        // config, or the next boot resolves an unknown class.
         $this->registerAutoload($namespace, $path);
+
+        if ($this->dumpAutoload() && $this->isResolvable($fqcn, $namespace, $path)) {
+            $this->registerPluginClass($fqcn);
+        } else {
+            $this->warn('Skipped registering the plugin in config/myra.php: the class is not autoloadable yet.');
+            $this->warn("Run `composer dump-autoload`, then add \\{$fqcn}::class to myra.extensions.plugins.");
+        }
 
         $this->newLine();
         $this->components->info("Plugin '{$name}' scaffolded → {$path} (id: {$id}).");
-        $this->line('  1. composer dump-autoload   <fg=yellow>(required before the next request — an unautoloadable plugin class fails to register)</>');
-        $this->line("  2. Declare routes/reports/imports in {$path}/src/{$name}Plugin.php");
-        $this->line('  3. php artisan shield:generate   (creates the plugin\'s permissions)');
+        $this->line("  1. Declare routes/reports/imports in {$path}/src/{$name}Plugin.php");
+        $this->line('  2. php artisan shield:generate   (creates the plugin\'s permissions)');
 
         return self::SUCCESS;
+    }
+
+    /**
+     * Prove the class really loads before config declares it. The running
+     * ClassLoader predates the dump, so teach it the new prefix first.
+     */
+    private function isResolvable(string $fqcn, string $namespace, string $path): bool
+    {
+        $loader = require base_path('vendor/autoload.php');
+
+        if ($loader instanceof ClassLoader) {
+            $loader->addPsr4($namespace.'\\', base_path("{$path}/src"));
+        }
+
+        return class_exists($fqcn);
+    }
+
+    /** Regenerate the autoloader so the new class is resolvable on the next boot. */
+    private function dumpAutoload(): bool
+    {
+        $command = $this->composerCommand();
+
+        if ($command === null) {
+            $this->warn('composer executable not found; cannot refresh the autoloader.');
+
+            return false;
+        }
+
+        $process = new Process([...$command, 'dump-autoload'], base_path(), null, null, 300);
+        $process->run(fn ($type, $buffer) => $this->output->write($buffer));
+
+        if (! $process->isSuccessful()) {
+            $this->warn('composer dump-autoload failed.');
+
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Prefer composer.phar run through the PHP binary already executing artisan:
+     * a `composer` shim on PATH may point at a different, older PHP and then
+     * fail composer's own platform check.
+     *
+     * @return array<int,string>|null
+     */
+    private function composerCommand(): ?array
+    {
+        $phars = [base_path('composer.phar')];
+
+        $executable = (new ExecutableFinder)->find('composer');
+
+        if ($executable !== null) {
+            $phars[] = dirname($executable).DIRECTORY_SEPARATOR.'composer.phar';
+        }
+
+        foreach ($phars as $phar) {
+            if (is_file($phar)) {
+                return [PHP_BINARY, $phar];
+            }
+        }
+
+        return $executable === null ? null : [$executable];
     }
 
     /** Add a PSR-4 entry to the root composer.json when the plugin lives in-repo. */

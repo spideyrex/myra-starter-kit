@@ -32,12 +32,13 @@ return [
     | Plugins are listed EXPLICITLY. There is no composer auto-discovery: a
     | plugin registers routes inside the admin middleware stack and merges
     | RBAC modules, so installing a package must never be enough on its own.
-    | `strict` rethrows a failing plugin instead of quarantining it; null means
-    | "strict in local and testing, quarantined in production".
+    | A failing plugin is ALWAYS quarantined by default, in every environment —
+    | it must never take the admin down. `strict` is opt-in and rethrows
+    | instead; use it in CI when a broken plugin should fail the build.
     |
     */
     'extensions' => [
-        'strict'  => env('MYRA_PLUGINS_STRICT', null),
+        'strict'  => env('MYRA_PLUGINS_STRICT', false),
         'plugins' => [
             \App\Plugins\Example\ExamplePlugin::class,
             // myra:plugins — make:myra-plugin inserts classes above this line.

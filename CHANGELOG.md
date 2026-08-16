@@ -19,8 +19,10 @@ is unchanged.
   admin middleware stack and merges entries into `config('shield.modules')`, so `composer update`
   must never be enough on its own to grant either.
 - **A failing plugin is quarantined, not fatal.** `PluginRegistry::load()` catches per plugin,
-  records the exception in `failed()`, reports it, and carries on. `myra.extensions.strict` rethrows
-  instead; `null` means strict in local/testing and quarantined in production.
+  records the exception in `failed()`, reports it, and carries on — in *every* environment.
+  `load()` runs from `register()`, so a rethrow there aborts the entire bootstrap (every route,
+  every artisan command), not just the admin. `myra.extensions.strict` is therefore opt-in
+  (`MYRA_PLUGINS_STRICT=true`, off by default) and rethrows only when you ask for it, e.g. in CI.
 - `App\Support\Myra` — `Myra::adminRoutes()` registers into the admin group without re-declaring it,
   `Myra::publicRoutes()` is `web` only, plus `version()`, `plugin()`, `hasPlugin()`,
   `failedPlugins()`. `Myra::ADMIN_MIDDLEWARE` is a literal copy of the stack in `routes/web.php`, and
@@ -31,9 +33,11 @@ is unchanged.
   nested abilities), plain merges for report and import registries, then routes, policies, commands,
   migrations and translations at boot.
 - New `php artisan make:myra-plugin {Name}` — writes the plugin class, `composer.json`, three locale
-  files, a plain-PHPUnit manifest test and the empty migration/page directories; registers the class
-  at the `// myra:plugins` marker in `config/myra.php`; adds a PSR-4 entry to the root
-  `composer.json` for an in-repo path.
+  files, a plain-PHPUnit manifest test and the empty migration/page directories; adds a PSR-4 entry
+  to the root `composer.json` for an in-repo path, runs `composer dump-autoload`, and only then
+  registers the class at the `// myra:plugins` marker in `config/myra.php`. If composer is missing
+  or the dump fails it skips the config edit and tells you what to do, so the generator can never
+  leave a declared-but-unautoloadable plugin class behind.
 - Ships `App\Plugins\Example\ExamplePlugin` (id `myra-example`) — a real, listed plugin with one
   permission module, one admin route (`GET /admin/myra-example/ping`, an invokable controller so the
   route survives `route:cache`) and one nav item. The plugins demo page therefore always has a row.

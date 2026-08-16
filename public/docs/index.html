@@ -7067,7 +7067,7 @@ class BillingPlugin extends MyraPlugin
     <h3>Registration is explicit</h3>
     <p>Plugins are listed by class in <code>config('myra.extensions.plugins')</code>. There is deliberately <strong>no composer auto-discovery</strong>: a plugin registers routes <em>inside</em> the admin middleware stack and merges entries into <code>config('shield.modules')</code>, so installing a package must never be enough on its own to grant either.</p>
     <pre><code class="language-php">'extensions' =&gt; [
-    'strict'  =&gt; env('MYRA_PLUGINS_STRICT', null),
+    'strict'  =&gt; env('MYRA_PLUGINS_STRICT', false),
     'plugins' =&gt; [
         \App\Plugins\Example\ExamplePlugin::class,
         // myra:plugins &mdash; make:myra-plugin inserts classes above this line.
@@ -7076,7 +7076,7 @@ class BillingPlugin extends MyraPlugin
 
     <div class="callout callout-info">
         <div class="callout-title">&#8505; A failing plugin never takes down the admin</div>
-        <code>PluginRegistry::load()</code> catches per plugin, records the exception in <code>failed()</code>, reports it, and carries on. <code>myra.extensions.strict</code> rethrows instead; <code>null</code> means strict in local and testing, quarantined in production. The demo page at <code>/admin/demo/plugins</code> lists both the loaded plugins and the quarantined ones with their exception message.
+        <code>PluginRegistry::load()</code> catches per plugin, records the exception in <code>failed()</code>, reports it, and carries on &mdash; in <em>every</em> environment, because <code>load()</code> runs inside <code>register()</code> and a rethrow there aborts the whole bootstrap, not just the admin. <code>myra.extensions.strict</code> is opt-in (<code>MYRA_PLUGINS_STRICT=true</code>) and rethrows instead; use it in CI. The demo page at <code>/admin/demo/plugins</code> lists both the loaded plugins and the quarantined ones with their exception message.
     </div>
 
     <h3>Manifest surface</h3>
@@ -7100,8 +7100,8 @@ class BillingPlugin extends MyraPlugin
     <pre><code class="language-bash">php artisan make:myra-plugin Billing --id=billing --path=plugins/billing
 
 # writes the plugin class, composer.json, en/ms/zh lang files, a manifest test,
-# registers the class in config/myra.php, adds a PSR-4 entry, then:
-composer dump-autoload
+# adds the PSR-4 entry, runs composer dump-autoload, and only then registers the
+# class in config/myra.php — a class listed before it is autoloadable fails to load.
 php artisan shield:generate</code></pre>
 
     <h3>Stub design pass</h3>

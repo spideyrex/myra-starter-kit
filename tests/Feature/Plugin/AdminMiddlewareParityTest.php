@@ -39,8 +39,13 @@ class AdminMiddlewareParityTest extends TestCase
             Route::get('/myra-parity-probe', fn () => 'ok')->name('myra-parity-probe');
         });
 
-        $gathered = Route::getRoutes()->getByName('myra-parity-probe')->gatherMiddleware();
+        // RouteCollection indexes names inside add(), i.e. before the fluent
+        // ->name() lands. After boot nothing rebuilds that table, so refresh it.
+        Route::getRoutes()->refreshNameLookups();
 
-        $this->assertSame(['web'], array_values($gathered));
+        $probe = Route::getRoutes()->getByName('myra-parity-probe');
+        $this->assertNotNull($probe, 'The probe route was not registered.');
+
+        $this->assertSame(['web'], array_values($probe->gatherMiddleware()));
     }
 }

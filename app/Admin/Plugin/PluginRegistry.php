@@ -31,18 +31,13 @@ final class PluginRegistry
     }
 
     /**
-     * Null means "strict in local and testing, quarantined in production".
+     * OFF by default in every environment: a failing plugin is quarantined, not
+     * fatal. Opt in explicitly (MYRA_PLUGINS_STRICT=true) to rethrow instead.
      * Resolved at read time so a test may flip it without rebooting the app.
      */
     public static function strict(): bool
     {
-        $value = config('myra.extensions.strict');
-
-        if ($value === null) {
-            return app()->environment(['local', 'testing']);
-        }
-
-        return filter_var($value, FILTER_VALIDATE_BOOLEAN);
+        return filter_var(config('myra.extensions.strict', false), FILTER_VALIDATE_BOOLEAN);
     }
 
     /** @return array<string,MyraPlugin> */

@@ -77,11 +77,26 @@ class PluginRegistryTest extends TestCase
         $this->assertStringContainsString('requires Myra >= 99.0.0', PluginRegistry::failed()[FuturePlugin::class]->getMessage());
     }
 
-    public function test_strict_defaults_to_true_in_the_testing_environment(): void
+    public function test_strict_is_off_by_default_so_a_broken_plugin_never_takes_the_admin_down(): void
     {
         config(['myra.extensions.strict' => null]);
+        $this->assertFalse(PluginRegistry::strict());
 
+        config(['myra.extensions.strict' => true]);
         $this->assertTrue(PluginRegistry::strict());
+    }
+
+    public function test_the_shipped_default_quarantines_a_broken_plugin(): void
+    {
+        // No strict override at all: the config default is what production runs.
+        config(['myra.extensions.plugins' => ['App\\Plugins\\Nope\\NopePlugin']]);
+        PluginRegistry::flush();
+        PluginRegistry::load();
+
+        $this->assertArrayHasKey('App\\Plugins\\Nope\\NopePlugin', PluginRegistry::failed());
+
+        $this->actingAsAdmin();
+        $this->get(route('admin.users.index'))->assertOk();
     }
 
     public function test_plugin_config_is_read_without_an_accessor(): void

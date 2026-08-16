@@ -3,7 +3,14 @@
     "name": "myra/starter-kit",
     "type": "project",
     "description": "A production-ready Laravel + Inertia.js + Vue 3 admin dashboard with user management, roles & permissions, media manager, email system, backups, and more.",
-    "keywords": ["laravel", "admin", "dashboard", "inertia", "vue", "myra"],
+    "keywords": [
+        "laravel",
+        "admin",
+        "dashboard",
+        "inertia",
+        "vue",
+        "myra"
+    ],
     "license": "MIT",
     "authors": [
         {
@@ -19,6 +26,7 @@
     "require": {
         "php": "^8.2",
         "bacon/bacon-qr-code": "^3.0",
+        "fakerphp/faker": "^1.23",
         "inertiajs/inertia-laravel": "^2.0",
         "kreait/laravel-firebase": "^7.0",
         "laravel/framework": "^12.0",
@@ -34,7 +42,6 @@
         "tightenco/ziggy": "^2.0"
     },
     "require-dev": {
-        "fakerphp/faker": "^1.23",
         "laravel/breeze": "^2.3",
         "laravel/pail": "^1.2.2",
         "laravel/pint": "^1.24",

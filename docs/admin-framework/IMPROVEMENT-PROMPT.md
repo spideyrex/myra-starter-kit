@@ -107,6 +107,27 @@ Scale the fleet to the cluster size. Log anything you drop — silent truncation
 
 ---
 
+## 3b. RECURRING MISTAKES — check these before you commit
+
+These have each cost a sweep more than once. They are cheap to avoid and expensive to find.
+
+1. **Never name a test helper after an inherited framework method.** `post()`, `get()`, `put()`,
+   `delete()`, `run()`, `instance()`, `json()`, `call()` are all inherited from
+   `Illuminate\Foundation\Testing\TestCase` / `MakesHttpRequests` / `PHPUnit\Framework\TestCase`.
+   Declaring `private function post(...)` narrows an inherited public method's visibility, which is
+   a **fatal error at class load** — it kills the entire suite, not just that file. Name helpers
+   `postState()`, `runReport()`, `makeInstance()`. This has fataled three separate sweeps.
+2. **`$fillable` must include every column written through `create()`/`updateOrCreate()`.**
+   A column in the array passed to `updateOrCreate()` but missing from `$fillable` is silently
+   dropped — commonly the ownership column, which then leaves rows unowned.
+3. **A regression guard that asserts on your own source file will fail the moment you edit that
+   file.** If you assert `not.toContain('X')` over a component you also modified, re-check it.
+4. **i18n messages are compiled.** A literal `{` in a message is parsed as a named placeholder;
+   `"Reply {unchanged:true}"` is not a compilable vue-i18n message.
+5. **Fan-out must not walk a whole table synchronously in a request.** Queue it.
+
+---
+
 ## 4. THE GATE — all must pass, in order
 
 ```bash

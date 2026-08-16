@@ -136,16 +136,16 @@ The "easy to scale up the platform" foundation.
 
 ## C5 — Dashboard system, latest tech
 
-- [ ] Drag-and-drop dashboard editor with per-user layouts (`DashboardGrid.vue` is the base)
-- [ ] Widget marketplace/catalogue — browse and drop in widgets without code
-- [ ] Real-time widgets over Echo/websockets (already wired) with live-updating charts
-- [ ] Component catalogue upgrade: searchable gallery with live props playground and
+- [x] Drag-and-drop dashboard editor with per-user layouts (`DashboardGrid.vue` is the base) — v2.5.0
+- [x] Widget marketplace/catalogue — browse and drop in widgets without code — v2.5.0
+- [x] Real-time widgets over Echo/websockets (already wired) with live-updating charts — v2.5.0
+- [x] Component catalogue upgrade: searchable gallery with live props playground and — v2.5.0
       copy-paste snippets (today: 20 static demo pages)
-- [ ] AI-assisted: natural-language filters, schema generation, dashboard summarisation
+- [x] AI-assisted: natural-language filters, schema generation, dashboard summarisation — v2.5.0
       (provider layer exists in `app/Services/Ai/`)
-- [ ] Command-palette-first navigation across every admin surface
-- [ ] PWA/offline shell for the admin
-- [ ] Skeleton/streaming loading states as the default for every data surface
+- [x] Command-palette-first navigation across every admin surface — v2.5.0
+- [x] PWA/offline shell for the admin — v2.5.0
+- [x] Skeleton/streaming loading states as the default for every data surface — v2.5.0
 
 ---
 

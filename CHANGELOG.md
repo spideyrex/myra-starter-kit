@@ -2,6 +2,44 @@
 
 All notable changes to the Myra Starter Kit are documented here.
 
+## v2.5.0 — 2026-08 — "Dashboards, realtime, gallery, AI"
+
+Every new subsystem in this release ships **off by default** and is inert until its flag is set.
+
+### Added — Dashboard editor
+- Drag-and-drop dashboard with per-user saved layouts (`dashboard_layouts`, additive migration),
+  a widget catalogue to add tiles without code, and keyboard reordering.
+- `DashboardGrid` now emits an ordered key sequence rather than a grid-local index — the previous
+  positional emit meant ArrowDown on a chart tile could move an unrelated stat tile.
+
+### Added — Realtime & loading states
+- Widgets refresh over Echo/websockets (`MYRA_REALTIME`, default off) with a shared dashboard bus,
+  so a dashboard of N live widgets uses one subscription rather than N.
+- `DataSurface` + skeleton components as the default loading state for data surfaces.
+
+### Added — Gallery & command palette
+- Searchable component gallery with a live props playground and copy-paste snippets;
+  server-side `DemoRegistry` keeps the gallery and the demo pages from drifting apart.
+- Command palette mounted globally across admin surfaces.
+
+### Added — AI & PWA
+- Ask bar: natural language compiles to a **validated QueryBuilder rule tree** and is re-validated
+  server-side. Model output never becomes SQL, a raw `WHERE` fragment, or an unvalidated column.
+  Schema drafting and dashboard summarising on the same envelope. All three default off.
+- Installable PWA shell (`MYRA_PWA`, default off). The service worker caches **only** the static
+  shell and build assets — never an authenticated response, Inertia JSON, or user data.
+
+### Fixed
+- `DashboardLayout::$fillable` omitted `user_id` while the controller wrote it via `updateOrCreate()`,
+  so Laravel silently dropped it and layouts were persisted unowned. The owner is now assigned
+  outside mass assignment.
+- `WidgetSignal::emit()` fanned out synchronously inside the request, walking the whole users table
+  and calling `->can()` per user. Now queued.
+- Three test helpers (`instance()`, and `post()` twice) narrowed inherited framework methods — a
+  fatal at class load that killed the entire suite. Renamed.
+- `phpunit.xml` raises `memory_limit` to 512M; the suite already peaked at ~126M against PHP's
+  128M default and would have died on the merged tree.
+
 ## v2.4.0 — 2026-08 — "Extension, structure, tenancy, scale"
 
 Four bundles, each shipped as an isolated, additive change. Every feature that could alter what a

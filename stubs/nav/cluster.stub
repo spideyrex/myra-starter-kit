@@ -1,0 +1,31 @@
+<?php
+
+namespace App\Admin\Clusters;
+
+use App\Admin\Navigation\Cluster;
+use App\Admin\Navigation\NavItem;
+
+class {{ cluster }}Cluster extends Cluster
+{
+    public static string $slug = '{{ slug }}';
+
+    public static string $icon = '{{ icon }}';
+
+    public static ?string $groupLabelKey = '{{ groupLabelKey }}';
+
+    /** null → the cluster is visible whenever any of its children is. */
+    public static ?string $permission = null;
+
+    public static int $sort = 0;
+
+    /** @return NavItem[] */
+    public static function items(): array
+    {
+        return [
+            // NavItem::make('clusters.{{ slug }}.example.label')
+            //     ->route('admin.{{ slug }}.example.index')
+            //     ->icon('{{ icon }}')
+            //     ->permission('example.view'),
+        ];
+    }
+}

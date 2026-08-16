@@ -296,6 +296,20 @@ Route::middleware(['auth', 'verified', 'active', '2fa'])->prefix('admin')->name(
     Route::get('/demo/conditional-fields', [DemoController::class, 'conditionalFields'])->name('demo.conditional-fields');
     Route::get('/demo/infolist', [DemoController::class, 'infolist'])->name('demo.infolist');
     Route::get('/demo/relation-manager', [DemoController::class, 'relationManager'])->name('demo.relation-manager');
+    // >>> MYRA v2.4 [B] START
+    // Clusters demo: a nested resource (courses → lessons) and a singular
+    // resource (site identity). scopeBindings() turns a child that belongs to a
+    // different parent into a 404 with no controller code at all.
+    Route::get('/learning/courses', [\App\Http\Controllers\Admin\MyraCourseController::class, 'index'])->name('learning.courses.index');
+    Route::get('/learning/courses/{course}/lessons', [\App\Http\Controllers\Admin\MyraLessonController::class, 'index'])
+        ->scopeBindings()->name('learning.courses.lessons.index');
+    Route::post('/learning/courses/{course}/lessons', [\App\Http\Controllers\Admin\MyraLessonController::class, 'store'])
+        ->scopeBindings()->name('learning.courses.lessons.store');
+    Route::delete('/learning/courses/{course}/lessons/{lesson}', [\App\Http\Controllers\Admin\MyraLessonController::class, 'destroy'])
+        ->scopeBindings()->name('learning.courses.lessons.destroy');
+    Route::get('/learning/site-identity', [\App\Http\Controllers\Admin\MyraSiteIdentityController::class, 'show'])->name('learning.site-identity.show');
+    Route::put('/learning/site-identity', [\App\Http\Controllers\Admin\MyraSiteIdentityController::class, 'update'])->name('learning.site-identity.update');
+    // <<< MYRA v2.4 [B] END
     Route::post('/demo/relation-create', [DemoController::class, 'demoRelationCreate'])->name('demo.relation-create');
     Route::get('/demo/grouping', [DemoController::class, 'grouping'])->name('demo.grouping');
     Route::get('/demo/reordering', [DemoController::class, 'reordering'])->name('demo.reordering');

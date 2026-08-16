@@ -81,6 +81,25 @@ return [
         'max' => 25,
     ],
 
+    // >>> MYRA v2.4 [B] START
+    /*
+    |--------------------------------------------------------------------------
+    | Clusters and server-contributed navigation
+    |--------------------------------------------------------------------------
+    |
+    | Clusters group resources under one collapsible sidebar entry and, when
+    | $prefixesUrls is true, under one URL segment. With this list empty the
+    | `myraNav` Inertia prop serialises as [] and the sidebar is byte-identical
+    | to v2.3 — merging an empty server list is the identity operation.
+    |
+    */
+
+    'clusters' => [
+        \App\Admin\Clusters\LearningCluster::class,
+        // myra:clusters — make:myra-cluster inserts clusters above this line.
+    ],
+    // <<< MYRA v2.4 [B] END
+
     /*
     |--------------------------------------------------------------------------
     | Inline uploads

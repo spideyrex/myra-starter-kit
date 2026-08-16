@@ -1,0 +1,15 @@
+<?php
+
+namespace App\Models;
+
+{{ modelImports }}use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+
+class {{ model }} extends Model
+{
+    use HasFactory;
+{{ modelTraits }}
+    protected $fillable = [
+        'name',
+    ];
+}

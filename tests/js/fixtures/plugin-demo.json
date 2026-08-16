@@ -1,0 +1,16 @@
+{
+    "failed": [],
+    "plugins": [
+        {
+            "class": "App\\Plugins\\Example\\ExamplePlugin",
+            "id": "myra-example",
+            "imports": 0,
+            "migrations": 0,
+            "nav": 1,
+            "permissions": 1,
+            "reports": 0,
+            "routes": 1
+        }
+    ],
+    "strict": true
+}

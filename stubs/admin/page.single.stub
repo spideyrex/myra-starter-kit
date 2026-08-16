@@ -1,14 +1,20 @@
 <script setup lang="ts">
 import { Head } from '@inertiajs/vue3';
+import { useI18n } from 'vue-i18n';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import PageHeader from '@/components/PageHeader.vue';
+
+const { t } = useI18n();
 </script>
 
 <template>
-    <AuthenticatedLayout :breadcrumbs="[{ label: '{{ model }}' }]">
-        <Head title="{{ model }}" />
+    <AuthenticatedLayout :breadcrumbs="[{ label: t('generated.{{ routePrefix }}.title') }]">
+        <Head :title="t('generated.{{ routePrefix }}.title')" />
 
-        <PageHeader title="{{ model }}" description="Manage {{ modelVariable }} settings." />
+        <PageHeader
+            :title="t('generated.{{ routePrefix }}.title')"
+            :description="t('generated.{{ routePrefix }}.description')"
+        />
 
         <div class="mt-6">
             <!-- Add your content here -->

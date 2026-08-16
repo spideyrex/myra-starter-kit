@@ -7,7 +7,7 @@ return [
     | Framework version
     |--------------------------------------------------------------------------
     */
-    'version' => '2.3.0',
+    'version' => '2.4.0',
 
     /*
     |--------------------------------------------------------------------------
@@ -22,6 +22,32 @@ return [
 
     'nav_group' => 'Custom',
     'nav_icon' => 'LayoutGrid',
+
+    // >>> MYRA v2.4 [A] START
+    /*
+    |--------------------------------------------------------------------------
+    | Extensions (plugins)
+    |--------------------------------------------------------------------------
+    |
+    | Plugins are listed EXPLICITLY. There is no composer auto-discovery: a
+    | plugin registers routes inside the admin middleware stack and merges
+    | RBAC modules, so installing a package must never be enough on its own.
+    | A failing plugin is ALWAYS quarantined by default, in every environment —
+    | it must never take the admin down. `strict` is opt-in and rethrows
+    | instead; use it in CI when a broken plugin should fail the build.
+    |
+    */
+    'extensions' => [
+        'strict'  => env('MYRA_PLUGINS_STRICT', false),
+        'plugins' => [
+            \App\Plugins\Example\ExamplePlugin::class,
+            // myra:plugins — make:myra-plugin inserts classes above this line.
+        ],
+    ],
+
+    /** Per-install plugin configuration, read via YourPlugin::config('key'). */
+    'plugin_config' => [],
+    // <<< MYRA v2.4 [A] END
 
     /*
     |--------------------------------------------------------------------------

@@ -31,6 +31,35 @@
         "demo": "Demo",
         "reports": "Reports"
     },
+    "plugins": {
+        "title": "Plugins",
+        "description": "Packages that register pages, permissions, reports, imports and navigation \u2014 declared explicitly, never auto-discovered.",
+        "back": "Back to demos",
+        "loaded": "Loaded plugins",
+        "loadedDescription": "Every row is a real manifest applied at boot. The counts are the surface each plugin contributes.",
+        "empty": "No plugins registered",
+        "emptyDescription": "Add a class to myra.extensions.plugins in config/myra.php, or run make:myra-plugin.",
+        "strictOn": "Strict: a failing plugin throws",
+        "strictOff": "Quarantined: a failing plugin is isolated",
+        "failedTitle": "Failed plugins",
+        "failedDescription": "These classes were quarantined at boot. The admin panel stayed up.",
+        "columns": {
+            "id": "Id",
+            "class": "Class",
+            "permissions": "Permission modules",
+            "reports": "Reports",
+            "imports": "Imports",
+            "routes": "Route groups",
+            "nav": "Nav items",
+            "migrations": "Migration paths"
+        },
+        "example": {
+            "nav": "Example plugin",
+            "title": "A plugin is one class",
+            "description": "One abstract, one required method returning a manifest. No provider, no registration call."
+        }
+    },
+    "generated": {},
     "common": {
         "save": "Save",
         "cancel": "Cancel",

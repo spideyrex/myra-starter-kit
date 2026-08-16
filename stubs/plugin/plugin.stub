@@ -1,0 +1,35 @@
+<?php
+
+namespace {{ namespace }};
+
+use App\Admin\Plugin\Manifest;
+use App\Admin\Plugin\MyraPlugin;
+
+class {{ name }}Plugin extends MyraPlugin
+{
+    public static function id(): string
+    {
+        return '{{ id }}';
+    }
+
+    public function manifest(Manifest $manifest): Manifest
+    {
+        return $manifest
+            ->requires('{{ version }}')
+            ->permissions(['{{ id }}' => ['view']])
+            ->migrations(__DIR__.'/../database/migrations')
+            ->translations(__DIR__.'/../lang', '{{ id }}')
+            ->navItems([[
+                'group' => 'navGroups.system',
+                'labelKey' => 'plugins.{{ id }}.nav',
+                'href' => '/admin/{{ id }}',
+                'icon' => 'Puzzle',
+                'permission' => '{{ id }}.view',
+                'sort' => 0,
+                'items' => [],
+            ]]);
+
+        // Routes: add ->routes(fn () => Route::get(...)) with an invokable
+        // controller. Closure routes cannot survive `route:cache`.
+    }
+}

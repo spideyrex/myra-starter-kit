@@ -31,6 +31,35 @@
         "demo": "演示",
         "reports": "报表"
     },
+    "plugins": {
+        "title": "插件",
+        "description": "注册页面、权限、报表、导入与导航的扩展包 — 显式声明，绝不自动发现。",
+        "back": "返回演示",
+        "loaded": "已加载的插件",
+        "loadedDescription": "每一行都是启动时真实应用的清单，计数表示该插件贡献的接口面。",
+        "empty": "尚未注册插件",
+        "emptyDescription": "在 config/myra.php 的 myra.extensions.plugins 中添加类，或运行 make:myra-plugin。",
+        "strictOn": "严格模式：插件失败会抛出异常",
+        "strictOff": "隔离模式：插件失败会被隔离",
+        "failedTitle": "加载失败的插件",
+        "failedDescription": "这些类在启动时被隔离，后台面板保持可用。",
+        "columns": {
+            "id": "ID",
+            "class": "类",
+            "permissions": "权限模块",
+            "reports": "报表",
+            "imports": "导入",
+            "routes": "路由组",
+            "nav": "导航项",
+            "migrations": "迁移路径"
+        },
+        "example": {
+            "nav": "示例插件",
+            "title": "一个插件就是一个类",
+            "description": "一个抽象基类，一个返回清单的必需方法。无需服务提供者，无需注册调用。"
+        }
+    },
+    "generated": {},
     "common": {
         "save": "保存",
         "cancel": "取消",

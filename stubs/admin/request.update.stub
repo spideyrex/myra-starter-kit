@@ -1,0 +1,23 @@
+<?php
+
+namespace App\Http\Requests\Admin;
+
+use Illuminate\Foundation\Http\FormRequest;
+
+class Update{{ model }}Request extends FormRequest
+{
+    /** Authority is the route middleware plus the controller's Gate::authorize(). */
+    public function authorize(): bool
+    {
+        return true;
+    }
+
+    /** @return array<string,array<int,mixed>> */
+    public function rules(): array
+    {
+        return [
+            // TODO: replace with the real rules for {{ model }}.
+            'name' => ['required', 'string', 'max:255'],
+        ];
+    }
+}

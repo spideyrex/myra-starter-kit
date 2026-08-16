@@ -564,6 +564,12 @@
 
         <div class="nav-group">Reference</div>
         <a href="#type-definitions">Type Definitions</a>
+
+        <div class="nav-group">v2.4</div>
+        <a href="#myra-plugins">Plugin System</a>
+        <a href="#myra-clusters">Clusters &amp; Structure</a>
+        <a href="#myra-tenancy">Multi-Tenancy</a>
+        <a href="#myra-scale">Scale &amp; Testing</a>
     </nav>
 </aside>
 
@@ -7025,6 +7031,191 @@ class Project extends Model
             <tr><td>Permissions</td><td>Use <code>{resource}.{action}</code> naming (e.g., <code>users.view</code>)</td></tr>
         </tbody>
     </table>
+</section>
+
+<!-- ============================================================ -->
+<!-- MYRA v2.4 -->
+<!-- ============================================================ -->
+<section id="myra-plugins">
+    <h2>Plugin System <span class="version-badge">v2.4</span></h2>
+    <p>A plugin is <strong>one class</strong> extending one abstract with one required method that returns a <code>Manifest</code>. Everything the plugin contributes &mdash; permissions, reports, imports, routes, policies, commands, migrations, translations and sidebar items &mdash; is declared once, in that manifest. There is no package service provider and no per-panel registration call.</p>
+
+    <h3>Writing a plugin</h3>
+    <pre><code class="language-php">namespace App\Plugins\Billing;
+
+use App\Admin\Plugin\Manifest;
+use App\Admin\Plugin\MyraPlugin;
+
+class BillingPlugin extends MyraPlugin
+{
+    public static function id(): string
+    {
+        return 'billing';
+    }
+
+    public function manifest(Manifest $manifest): Manifest
+    {
+        return $manifest
+            -&gt;requires('2.4.0')
+            -&gt;permissions(['billing' =&gt; ['view', 'edit']])
+            -&gt;reports(['invoices' =&gt; InvoicesReport::class])
+            -&gt;routes(fn () =&gt; Route::get('/billing', InvoicesController::class)
+                -&gt;middleware('permission:billing.view')-&gt;name('billing.index'));
+    }
+}</code></pre>
+
+    <h3>Registration is explicit</h3>
+    <p>Plugins are listed by class in <code>config('myra.extensions.plugins')</code>. There is deliberately <strong>no composer auto-discovery</strong>: a plugin registers routes <em>inside</em> the admin middleware stack and merges entries into <code>config('shield.modules')</code>, so installing a package must never be enough on its own to grant either.</p>
+    <pre><code class="language-php">'extensions' =&gt; [
+    'strict'  =&gt; env('MYRA_PLUGINS_STRICT', false),
+    'plugins' =&gt; [
+        \App\Plugins\Example\ExamplePlugin::class,
+        // myra:plugins &mdash; make:myra-plugin inserts classes above this line.
+    ],
+],</code></pre>
+
+    <div class="callout callout-info">
+        <div class="callout-title">&#8505; A failing plugin never takes down the admin</div>
+        <code>PluginRegistry::load()</code> catches per plugin, records the exception in <code>failed()</code>, reports it, and carries on &mdash; in <em>every</em> environment, because <code>load()</code> runs inside <code>register()</code> and a rethrow there aborts the whole bootstrap, not just the admin. <code>myra.extensions.strict</code> is opt-in (<code>MYRA_PLUGINS_STRICT=true</code>) and rethrows instead; use it in CI. The demo page at <code>/admin/demo/plugins</code> lists both the loaded plugins and the quarantined ones with their exception message.
+    </div>
+
+    <h3>Manifest surface</h3>
+    <table>
+        <thead><tr><th>Method</th><th>Effect</th></tr></thead>
+        <tbody>
+            <tr><td><code>requires(string $minVersion)</code></td><td>Below it, the plugin fails to register</td></tr>
+            <tr><td><code>permissions(array $modules)</code></td><td>Deep-merged into <code>shield.modules</code>; <code>shield:generate</code> then creates the rows</td></tr>
+            <tr><td><code>reports(array $map)</code> / <code>imports(array $map)</code></td><td>Merged into the report and import registries</td></tr>
+            <tr><td><code>routes(callable)</code></td><td>Wrapped in <code>Myra::adminRoutes()</code> &mdash; the admin stack, prefix and name group</td></tr>
+            <tr><td><code>publicRoutes(callable)</code></td><td><code>web</code> middleware only</td></tr>
+            <tr><td><code>policies()</code>, <code>commands()</code>, <code>migrations()</code>, <code>translations()</code></td><td>Applied at boot</td></tr>
+            <tr><td><code>navItems(array $items)</code></td><td>Plain arrays, handed to <code>NavRegistry</code> when the navigation bundle is present</td></tr>
+        </tbody>
+    </table>
+
+    <h3>Middleware parity</h3>
+    <p><code>Myra::ADMIN_MIDDLEWARE</code> is a literal copy of the stack declared in <code>routes/web.php</code>, because a plugin registers its routes from a provider rather than inside that file. <code>tests/Feature/Plugin/AdminMiddlewareParityTest</code> compares both a core route and a plugin route against it and fails CI the moment the two drift.</p>
+
+    <h3>make:myra-plugin</h3>
+    <pre><code class="language-bash">php artisan make:myra-plugin Billing --id=billing --path=plugins/billing
+
+# writes the plugin class, composer.json, en/ms/zh lang files, a manifest test,
+# adds the PSR-4 entry, runs composer dump-autoload, and only then registers the
+# class in config/myra.php — a class listed before it is autoloadable fails to load.
+php artisan shield:generate</code></pre>
+
+    <h3>Stub design pass</h3>
+    <p><code>make:myra-resource</code> now emits everything that is universally safe on the first <code>npm run build</code>, with no manual follow-up:</p>
+    <table>
+        <thead><tr><th>Emitted by default</th><th>Why</th></tr></thead>
+        <tbody>
+            <tr><td><code>OwnedByUser</code> model, <code>created_by</code> <strong>not</strong> in <code>$fillable</code></td><td>Ownership scoping on by default; a mass-assignable owner column defeats it. Applies only to new, empty tables.</td></tr>
+            <tr><td>Migration with nullable <code>created_by</code> FK and <code>['created_by','created_at']</code> index</td><td>The scope's query path, indexed</td></tr>
+            <tr><td><code>Store&hellip;Request</code> / <code>Update&hellip;Request</code></td><td>Replaces the inline <code>validate()</code> placeholder; rules stay an obvious <code>TODO</code></td></tr>
+            <tr><td><code>Gate::authorize('{prefix}.{ability}')</code> in every controller method</td><td>Defence in depth behind the route middleware; survives a route being moved</td></tr>
+            <tr><td><code>table-key="{prefix}"</code> on the generated <code>DataTable</code></td><td>Without it saved views are silently off</td></tr>
+            <tr><td>Explicit <code>sortable:</code> whitelist in the service</td><td>The searchable list answers a different question</td></tr>
+            <tr><td><code>t('generated.&hellip;')</code> in every Vue page, keys written to en/ms/zh</td><td>No hardcoded English in generated UI</td></tr>
+            <tr><td>A feature test asserting the gates, ownership scoping and the sort whitelist</td><td>Plain PHPUnit; depends on no optional helper</td></tr>
+        </tbody>
+    </table>
+    <p>Behind a flag: <code>--unscoped</code> (lookup tables), <code>--soft-deletes</code>, <code>--group=</code> (now actually read &mdash; it places the nav item in its own sidebar group). Never emitted: <code>created_by</code> in <code>$fillable</code>, eager loads, indexes on columns that were not made sortable, or anything tenancy-related.</p>
+    <p><code>--print</code> is a true dry run: it renders every file and writes nothing. <code>tests/Feature/Generators/StubDesignPassTest</code> asserts against that real output, never against a copy of a stub.</p>
+</section>
+
+<section id="myra-clusters">
+    <h2>Clusters, Server Navigation, Nested &amp; Singular Resources <span class="version-badge">v2.4</span></h2>
+    <p>A <strong>cluster</strong> groups related resources under one collapsible sidebar entry and, optionally, one URL segment. Cluster membership merges from both directions: a cluster can enumerate its children, and a resource can declare its cluster.</p>
+
+    <h3>The sidebar addition is additive by construction</h3>
+    <p>The hardcoded navigation groups in <code>AuthenticatedLayout.vue</code> stay byte-identical. A new <code>myraNav</code> Inertia prop carries server contributions and serialises as <code>[]</code> when nothing is registered, so merging it is the identity operation. <code>tests/js/navIdentity.spec.ts</code> asserts that <code>myraNav: []</code> renders exactly the same list as the prop being absent entirely.</p>
+    <pre><code class="language-php">// App\Admin\Navigation
+NavItem::make('clusters.learning.courses')
+    -&gt;route('admin.learning.courses.index')
+    -&gt;icon('BookOpen')
+    -&gt;permission('demo.view');</code></pre>
+
+    <div class="callout callout-info">
+        <div class="callout-title">&#8505; Filtered twice, on purpose</div>
+        Permissions are filtered on the server in <code>NavRegistry::forUser()</code> and again on the client with <code>can()</code>. A server bug can therefore narrow visibility but never widen it. A parent with no surviving children is dropped entirely &mdash; an empty expander never renders. Icons cross the wire as strings resolved through an explicit allowlist; an unknown name degrades to <code>LayoutGrid</code>.
+    </div>
+
+    <h3>Nested resources</h3>
+    <p><code>ParentResource</code> + <code>ResolvesParentResource</code>. Implicit route binding ignores global scopes, so the parent is <strong>re-queried through its own scopes</strong> after binding: an out-of-scope parent becomes a 404, never a readable id. Generated nested routes carry <code>-&gt;scopeBindings()</code>, so <code>/admin/courses/1/lessons/9</code> 404s when lesson 9 belongs to another course &mdash; with no controller code and an indexed two-column lookup.</p>
+
+    <h3>Singular resources</h3>
+    <p><code>SingularResource</code> + <code>HandlesSingularRecord</code> for one-row settings pages. Exactly two routes are ever generated: <code>GET /admin/{key}</code> and <code>PUT /admin/{key}</code>. No create, no destroy, no <code>{record}</code> parameter. The first <code>PUT</code> creates the row; every later one updates the same row.</p>
+
+    <h3>Generators</h3>
+    <pre><code class="language-bash">php artisan make:myra-cluster Learning --icon=GraduationCap
+php artisan make:myra-nested Lesson --parent=Course
+php artisan make:myra-singleton SiteIdentity</code></pre>
+</section>
+
+<section id="myra-tenancy">
+    <h2>Multi-Tenancy <span class="version-badge">v2.4</span></h2>
+    <div class="callout callout-warning">
+        <div class="callout-title">&#9888; Opt-in, default off</div>
+        With <code>myra.tenancy.enabled</code> false, <strong>nothing is registered</strong>: no global scope, no creating hook, no validation-rule change, no middleware, no Inertia prop. <code>bootBelongsToTenant()</code> returns <em>before</em> <code>addGlobalScope</code> and <em>before</em> <code>static::creating</code> &mdash; a registered scope that returns early still mutates the builder and still appears in <code>getGlobalScopes()</code>, which is not good enough for a data-visibility feature.
+    </div>
+
+    <h3>Two independent locks</h3>
+    <p>Scoping requires <code>config('myra.tenancy.enabled') === true</code> <strong>and</strong> the model class listed in <code>config('myra.tenancy.models')</code>. Adding the trait to a model is not sufficient, so a merge that adds a trait can never change production visibility on its own.</p>
+    <pre><code class="language-php">'tenancy' =&gt; [
+    'enabled'            =&gt; env('MYRA_TENANCY', false),
+    'model'              =&gt; \App\Models\Team::class,
+    'column'             =&gt; 'team_id',
+    'null_rows'          =&gt; 'strict',   // 'strict' | 'shared'
+    'super_admin_bypass' =&gt; true,
+    'models'             =&gt; [],
+],</code></pre>
+
+    <h3>Fail closed</h3>
+    <p>With scoping active and no tenant resolved, the scope applies <code>1 = 0</code> &mdash; zero rows, not every row. Legacy rows with a NULL tenant column are invisible to non-super-admins under <code>null_rows: 'strict'</code>. The <code>'shared'</code> mode wraps its <code>orWhereNull</code> in a nested closure; an unwrapped one leaks the whole table.</p>
+
+    <h3>API</h3>
+    <table>
+        <thead><tr><th>Call</th><th>Effect</th></tr></thead>
+        <tbody>
+            <tr><td><code>Tenancy::apply($query, $table)</code></td><td>The single predicate, for query sites that do not go through Eloquent scopes. A literal no-op when disabled.</td></tr>
+            <tr><td><code>Tenancy::for($tenant, $callback)</code></td><td>The only way to change tenant. Restores in a <code>finally</code>, including on exception. There is no bare setter.</td></tr>
+            <tr><td><code>Tenancy::without($callback)</code></td><td>Audited escape hatch; logs to the activity log when tenancy is enabled.</td></tr>
+            <tr><td><code>Tenancy::unique()</code> / <code>exists()</code></td><td>Validation rules that do not leak across tenants, degrading to the plain rules when disabled.</td></tr>
+        </tbody>
+    </table>
+    <p>The tenant is resolved lazily from <code>users.current_team_id</code> with membership re-validated on every request &mdash; never from a route or query parameter. There is no tenancy middleware and no route change.</p>
+
+    <h3>Proving the disabled path</h3>
+    <p><code>myra:tenancy-baseline</code> writes the SQL and bindings for canonical queries as guest, member and super-admin. <code>tests/Feature/Tenancy/DisabledPathIsNoOpTest</code> asserts the live queries still match that baseline byte for byte, and that no <code>tenant</code> scope and no extra <code>creating</code> listener exists. <code>myra:tenancy-audit</code> refuses readiness while any NULL tenant row remains, turning a silent visibility change into a blocked deploy.</p>
+</section>
+
+<section id="myra-scale">
+    <h2>Scale &amp; Testing Helpers <span class="version-badge">v2.4</span></h2>
+
+    <h3>Cursor pagination is a sibling, never a replacement</h3>
+    <p><code>applySearchAndPaginate()</code> keeps its exact signature and behaviour &mdash; saved views, deep links and <code>meta.links</code> all depend on length-aware pagination. <code>applySearchAndCursorPaginate()</code> shares the same sort whitelist and per-page clamp and adds no <code>OFFSET</code> and no <code>COUNT(*)</code>.</p>
+    <div class="callout callout-info">
+        <div class="callout-title">&#8505; The primary-key tiebreak</div>
+        The cursor path <strong>always</strong> appends <code>orderBy(id)</code>. Without it, cursor pagination silently skips or repeats rows whenever the sort column is not unique. On the length-aware path the same tiebreak is optional and <strong>off by default</strong> (<code>myra.performance.stable_sort</code>), because turning it on changes the SQL of every existing admin table.
+    </div>
+    <p><code>meta.mode</code> is stamped only on cursor responses. An absent <code>mode</code> means length-aware, so every existing controller response is byte-identical and no controller needed an edit.</p>
+
+    <h3>Virtualised rows</h3>
+    <p><code>useVirtualRows</code> has zero dependencies and keeps the markup a real <code>&lt;table&gt;</code> with spacer rows, so <code>&lt;colgroup&gt;</code> widths, the sticky header and the column manager keep working. Rows are keyed by <code>row.id</code>, never by index &mdash; inline editing keys its optimistic value and its rollback the same way, and an index-recycling virtualiser would break all three. Virtualisation refuses, with a dev-only warning rather than a broken table, when <code>groupBy</code>, <code>reorderable</code> or an expanded-row slot is in play.</p>
+    <pre><code class="language-bash">php artisan myra:scale-seed 100000</code></pre>
+
+    <h3>Testing probes</h3>
+    <pre><code class="language-php">$this-&gt;myraTable($response, 'users')
+    -&gt;assertColumnExists('email')
+    -&gt;assertSortRejected('password')
+    -&gt;assertPerPageCapped(999)
+    -&gt;assertPaginationMode('length-aware')
+    -&gt;assertScopedToActor()
+    -&gt;assertSavedViewsEnabled();</code></pre>
+    <p>The probes read Inertia props &mdash; there is no DOM and no browser. <code>App\Admin\Testing</code> ships in <code>app/</code> rather than <code>tests/</code> so plugin authors can use it.</p>
+
+    <h3>Sort index guard</h3>
+    <p><code>SortIndexGuard</code> throws a named, actionable error naming the column and suggesting the migration when a sortable column has no index whose leading column it is. It is inert unless <code>myra.performance.assert_indexed_sorts</code> is on, and never throws in production &mdash; a missing index degrades to slow, never to a 500.</p>
 </section>
 
 </main>

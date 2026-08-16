@@ -11,12 +11,18 @@ class {{ model }}Service
 {
     use SearchableQuery;
 
+    /**
+     * `sortable` is declared explicitly rather than inheriting the searchable
+     * list: the two whitelists answer different questions. Every LIKE is built
+     * inside applySearchAndPaginate via Sql::orWhereLike.
+     */
     public function list(Request $request): LengthAwarePaginator
     {
         return $this->applySearchAndPaginate(
             {{ model }}::query(),
             $request,
             searchable: ['name'],
+            sortable: ['id', 'name', 'created_at'],
         );
     }
 

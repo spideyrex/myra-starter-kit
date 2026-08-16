@@ -1,0 +1,19 @@
+<?php
+
+namespace {{ namespace }}\Tests;
+
+use App\Admin\Plugin\Manifest;
+use PHPUnit\Framework\TestCase;
+use {{ namespace }}\{{ name }}Plugin;
+
+class {{ name }}PluginTest extends TestCase
+{
+    public function test_the_manifest_declares_the_plugin_surface(): void
+    {
+        $manifest = (new {{ name }}Plugin)->manifest(Manifest::make({{ name }}Plugin::id()));
+
+        $this->assertSame('{{ id }}', {{ name }}Plugin::id());
+        $this->assertSame(['{{ id }}' => ['view']], $manifest->permissionModules());
+        $this->assertNotEmpty($manifest->navItemArrays());
+    }
+}

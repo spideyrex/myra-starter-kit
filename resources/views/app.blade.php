@@ -11,6 +11,10 @@
 
         <meta name="brand" content="{{ json_encode($myraBrand->toArray()) }}">
 
+        {{-- >>> MYRA v2.8 [A] START — readable before Inertia boots --}}
+        <meta name="myra-appearance" content="{{ json_encode(\App\Appearance\Facades\Appearance::toInertiaProp(request())) }}">
+        {{-- <<< MYRA v2.8 [A] END --}}
+
         {!! \App\Brand\Facades\Brand::iconLinks() !!}
 
         @foreach(\App\Brand\Facades\Brand::metaTags() as $tag)
@@ -45,6 +49,11 @@
         {{-- >>> MYRA v2.6 [C] START — after @vite so the brand tokens win the cascade --}}
         {!! \App\Brand\Facades\Brand::styleTag() !!}
         {{-- <<< MYRA v2.6 [C] END --}}
+
+        {{-- >>> MYRA v2.8 [A] START — after the brand tokens so recipes can
+             reference --primary. Byte-empty at the shipped defaults. --}}
+        {!! \App\Appearance\Facades\Appearance::styleTag() !!}
+        {{-- <<< MYRA v2.8 [A] END --}}
 
         @inertiaHead
     </head>

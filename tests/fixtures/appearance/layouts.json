@@ -1,0 +1,42 @@
+[
+    {
+        "component": "SplitLayout",
+        "descriptionKey": "appearanceAdmin.layouts.split.description",
+        "flippable": true,
+        "key": "split",
+        "since": "2.8.0",
+        "supportsMedia": true,
+        "thumbnail": null,
+        "titleKey": "appearanceAdmin.layouts.split.title"
+    },
+    {
+        "component": "CenteredLayout",
+        "descriptionKey": "appearanceAdmin.layouts.centered.description",
+        "flippable": false,
+        "key": "centered",
+        "since": "2.8.0",
+        "supportsMedia": false,
+        "thumbnail": null,
+        "titleKey": "appearanceAdmin.layouts.centered.title"
+    },
+    {
+        "component": "CoverLayout",
+        "descriptionKey": "appearanceAdmin.layouts.cover.description",
+        "flippable": false,
+        "key": "cover",
+        "since": "2.8.0",
+        "supportsMedia": true,
+        "thumbnail": null,
+        "titleKey": "appearanceAdmin.layouts.cover.title"
+    },
+    {
+        "component": "CardLayout",
+        "descriptionKey": "appearanceAdmin.layouts.card.description",
+        "flippable": true,
+        "key": "card",
+        "since": "2.8.0",
+        "supportsMedia": true,
+        "thumbnail": null,
+        "titleKey": "appearanceAdmin.layouts.card.title"
+    }
+]

@@ -88,6 +88,12 @@ class HandleInertiaRequests extends Middleware
             // >>> MYRA v2.6 [C] START
             'brand' => fn () => app(\App\Brand\BrandManager::class)->toInertiaProp(),
             // <<< MYRA v2.6 [C] END
+            // >>> MYRA v2.8 [A] START
+            // Unconditional and never gated: the guest shell reads it on every
+            // one of the seven auth pages. A separate prop from `brand` on
+            // purpose — folding it in would change the brand payload shape.
+            'appearance' => fn () => app(\App\Appearance\AppearanceManager::class)->toInertiaProp($request),
+            // <<< MYRA v2.8 [A] END
             /** @deprecated v2.6 — use the `brand` prop. Kept for back-compat. */
             'siteSettings' => fn () => cache()->remember('site_settings_shared', 3600, function () {
                 $rows = DB::table('settings')->whereIn('group', ['general', 'appearance'])->get();

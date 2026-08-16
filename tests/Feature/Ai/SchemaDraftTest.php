@@ -23,7 +23,7 @@ class SchemaDraftTest extends TestCase
         return $fake;
     }
 
-    private function post(string $prompt = 'an invoice with a number, a total and a due date'): \Illuminate\Testing\TestResponse
+    private function postDraft(string $prompt = 'an invoice with a number, a total and a due date'): \Illuminate\Testing\TestResponse
     {
         return $this->postJson(route('admin.ai.schema'), ['prompt' => $prompt]);
     }
@@ -33,7 +33,7 @@ class SchemaDraftTest extends TestCase
         $this->actingAsSuperAdmin();
         $this->enable('{"model":"Invoice","fields":[{"name":"number","type":"text"},{"name":"total","type":"number"},{"name":"due_at","type":"date"}]}');
 
-        $response = $this->post()->assertOk();
+        $response = $this->postDraft()->assertOk();
 
         $this->assertSame('Invoice', $response->json('draft.model'));
         $this->assertCount(3, $response->json('draft.fields'));
@@ -50,7 +50,7 @@ class SchemaDraftTest extends TestCase
             .'{"name":"1bad","type":"text"}'
             .']}');
 
-        $fields = $this->post()->assertOk()->json('draft.fields');
+        $fields = $this->postDraft()->assertOk()->json('draft.fields');
 
         $this->assertSame([['name' => 'number', 'type' => 'text']], $fields);
     }
@@ -60,7 +60,7 @@ class SchemaDraftTest extends TestCase
         $this->actingAsSuperAdmin();
         $this->enable('{"model":"invoices; --","fields":[{"name":"number","type":"text"}]}');
 
-        $this->post()->assertStatus(422);
+        $this->postDraft()->assertStatus(422);
     }
 
     public function test_it_404s_when_the_flag_is_off(): void
@@ -69,7 +69,7 @@ class SchemaDraftTest extends TestCase
         $this->enable('{"model":"Invoice","fields":[{"name":"number","type":"text"}]}');
         config()->set('myra.ai.features.schema', false);
 
-        $this->post()->assertNotFound();
+        $this->postDraft()->assertNotFound();
     }
 
     public function test_it_403s_without_the_ability(): void
@@ -77,6 +77,6 @@ class SchemaDraftTest extends TestCase
         $this->actingAsUser();
         $this->enable('{"model":"Invoice","fields":[{"name":"number","type":"text"}]}');
 
-        $this->post()->assertForbidden();
+        $this->postDraft()->assertForbidden();
     }
 }

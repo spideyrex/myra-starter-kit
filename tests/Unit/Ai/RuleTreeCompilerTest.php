@@ -123,13 +123,35 @@ class RuleTreeCompilerTest extends TestCase
 
     public function test_a_grossly_over_cap_tree_is_stopped_by_the_shape_gate_first(): void
     {
-        // ViewShape caps at 25 before RuleTree ever runs. Both refusals are 422;
-        // this asserts the cheap bounded gate is genuinely in front.
-        [$compiler] = $this->compiler([$this->manyRules(40)]);
+        // ViewShape caps at 25 before RuleTree ever runs. The shape gate reports
+        // filters.errors.malformed; RuleTree would have said tooManyRules. The
+        // key is what proves the cheap bounded gate is genuinely in front.
+        [$compiler, $fake] = $this->compiler([$this->manyRules(40)]);
 
-        $this->expectException(ValidationException::class);
+        try {
+            $compiler->compile('forty things', $this->set(), null);
+            $this->fail('A 40-rule tree must never compile.');
+        } catch (AiCompileException $e) {
+            $this->assertSame('filters.errors.malformed', $e->key);
+        }
 
-        $compiler->compile('forty things', $this->set(), null);
+        $this->assertSame(2, $fake->calls, 'The shape gate is retryable like any other refusal.');
+    }
+
+    public function test_the_shape_gate_never_leaks_a_validation_exception(): void
+    {
+        // A ValidationException here would name a request field that does not
+        // exist and would bypass the repair retry entirely.
+        [$compiler] = $this->compiler(['{"conjunction":"and","rules":[],"groups":[],"extra":1}']);
+
+        try {
+            $compiler->compile('anything', $this->set(), null);
+            $this->fail('An off-shape tree must never compile.');
+        } catch (ValidationException) {
+            $this->fail('ViewShape must not leak ValidationException out of the compiler.');
+        } catch (AiCompileException $e) {
+            $this->assertSame('filters.errors.malformed', $e->key);
+        }
     }
 
     public function test_a_valid_tree_returns_a_rule_tree(): void

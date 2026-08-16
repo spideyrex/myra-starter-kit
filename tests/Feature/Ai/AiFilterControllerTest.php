@@ -24,7 +24,7 @@ class AiFilterControllerTest extends TestCase
         return $fake;
     }
 
-    private function post(array $body = []): \Illuminate\Testing\TestResponse
+    private function postCompile(array $body = []): \Illuminate\Testing\TestResponse
     {
         return $this->postJson(route('admin.ai.filter'), $body + [
             'prompt' => 'suspended accounts',
@@ -37,7 +37,7 @@ class AiFilterControllerTest extends TestCase
         $this->actingAsSuperAdmin();
         $this->enable(filter: false);
 
-        $this->post()->assertNotFound();
+        $this->postCompile()->assertNotFound();
     }
 
     public function test_it_404s_when_the_provider_is_disabled(): void
@@ -45,7 +45,7 @@ class AiFilterControllerTest extends TestCase
         $this->actingAsSuperAdmin();
         $this->enable(provider: false);
 
-        $this->post()->assertNotFound();
+        $this->postCompile()->assertNotFound();
     }
 
     public function test_it_403s_without_the_ability(): void
@@ -53,7 +53,7 @@ class AiFilterControllerTest extends TestCase
         $this->actingAsUser();
         $this->enable();
 
-        $this->post()->assertForbidden();
+        $this->postCompile()->assertForbidden();
     }
 
     public function test_an_unknown_scope_is_refused_by_validation(): void
@@ -61,7 +61,7 @@ class AiFilterControllerTest extends TestCase
         $this->actingAsSuperAdmin();
         $this->enable();
 
-        $this->post(['scope' => 'secrets'])->assertStatus(422);
+        $this->postCompile(['scope' => 'secrets'])->assertStatus(422);
     }
 
     public function test_the_eleventh_call_in_a_minute_is_throttled(): void
@@ -70,10 +70,10 @@ class AiFilterControllerTest extends TestCase
         $this->enable();
 
         foreach (range(1, 10) as $ignored) {
-            $this->post()->assertOk();
+            $this->postCompile()->assertOk();
         }
 
-        $this->post()->assertStatus(429);
+        $this->postCompile()->assertStatus(429);
     }
 
     public function test_a_compiled_tree_is_returned_unapplied(): void
@@ -81,7 +81,7 @@ class AiFilterControllerTest extends TestCase
         $this->actingAsSuperAdmin();
         $this->enable();
 
-        $response = $this->post()->assertOk();
+        $response = $this->postCompile()->assertOk();
 
         $response->assertJsonPath('applied', false);
         $this->assertSame('and', $response->json('tree.conjunction'));
@@ -101,7 +101,7 @@ class AiFilterControllerTest extends TestCase
         User::factory()->count(2)->create(['status' => 'suspended', 'created_by' => $admin->id]);
         User::factory()->count(3)->create(['status' => 'active', 'created_by' => $admin->id]);
 
-        $tree = $this->post()->assertOk()->json('tree');
+        $tree = $this->postCompile()->assertOk()->json('tree');
 
         $set = FilterScopes::resolve('users');
 

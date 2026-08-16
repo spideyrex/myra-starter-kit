@@ -9,6 +9,7 @@ use App\Admin\Views\ViewShape;
 use App\Services\Ai\AiCompileException;
 use App\Services\Ai\AiService;
 use Illuminate\Contracts\Auth\Authenticatable;
+use Illuminate\Validation\ValidationException;
 use Throwable;
 
 /**
@@ -73,7 +74,15 @@ final class RuleTreeCompiler
 
         AiOutputGuard::assertNoSql($raw);          // tripwire, NOT the defence
         $decoded = JsonEnvelope::decode($raw);
-        ViewShape::assertQueryTree($decoded, 'filter');   // cheap bounded shape gate
+
+        // The shape gate speaks ValidationException, which is the vocabulary of a
+        // request field, not of model output. Translate it so the repair retry
+        // sees it and the caller gets one error contract.
+        try {
+            ViewShape::assertQueryTree($decoded, 'filter');   // cheap bounded shape gate
+        } catch (ValidationException) {
+            throw AiCompileException::make('filters.errors.malformed');
+        }
 
         return RuleTree::parse($decoded, $set, $user);    // the ONLY path to SQL
     }

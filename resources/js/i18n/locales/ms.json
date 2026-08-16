@@ -56,7 +56,14 @@
         "example": {
             "nav": "Plugin contoh",
             "title": "Satu plugin ialah satu kelas",
-            "description": "Satu kelas abstrak, satu kaedah wajib yang memulangkan manifes. Tiada penyedia, tiada panggilan pendaftaran."
+            "description": "Satu kelas abstrak, satu kaedah wajib yang memulangkan manifes. Tiada penyedia, tiada panggilan pendaftaran.",
+            "cardTitle": "Pemalam rujukan",
+            "badge": "Dalam repo",
+            "cardDescription": "Halaman ini disajikan oleh pemalam, bukan oleh aplikasi teras.",
+            "apiNote": "Pemalam ini turut mendaftarkan laluan API JSON biasa. Ia dipanggil dengan fetch, bukan sebagai lawatan Inertia — item navigasi yang menunjuk ke laluan JSON akan menyekat UI.",
+            "ping": "Panggil laluan API",
+            "pinging": "Memanggil…",
+            "failed": "Permintaan gagal"
         }
     },
     "generated": {},
@@ -550,7 +557,6 @@
             "confirm": "Tetapkan semula setiap nilai jenama dan matikan pengurus jenama?"
         },
         "errors": {
-            "home": "Kembali ke laman utama",
             "403": {
                 "title": "Dilarang",
                 "body": "Anda tidak mempunyai kebenaran untuk melihat halaman ini."
@@ -570,7 +576,8 @@
             "503": {
                 "title": "Dalam penyelenggaraan",
                 "body": "Kami sedang menjalankan penyelenggaraan. Kami akan kembali sebentar lagi."
-            }
+            },
+            "home": "Kembali ke laman utama"
         },
         "settingsLink": {
             "label": "Pengurus jenama",

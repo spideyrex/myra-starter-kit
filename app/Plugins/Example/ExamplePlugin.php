@@ -4,6 +4,7 @@ namespace App\Plugins\Example;
 
 use App\Admin\Plugin\Manifest;
 use App\Admin\Plugin\MyraPlugin;
+use App\Plugins\Example\Http\IndexController;
 use App\Plugins\Example\Http\PingController;
 use Illuminate\Support\Facades\Route;
 
@@ -21,6 +22,12 @@ class ExamplePlugin extends MyraPlugin
             ->requires('2.4.0')
             ->permissions(['myra-example' => ['view']])
             ->routes(function () {
+                // The nav target must render Inertia; /ping stays a plain-JSON
+                // API route to show both kinds, but it is never linked from nav.
+                Route::get('/myra-example', IndexController::class)
+                    ->middleware('permission:myra-example.view')
+                    ->name('myra-example.index');
+
                 Route::get('/myra-example/ping', PingController::class)
                     ->middleware('permission:myra-example.view')
                     ->name('myra-example.ping');
@@ -28,7 +35,7 @@ class ExamplePlugin extends MyraPlugin
             ->navItems([[
                 'group' => 'navGroups.demo',
                 'labelKey' => 'plugins.example.nav',
-                'href' => '/admin/myra-example/ping',
+                'href' => '/admin/myra-example',
                 'icon' => 'Puzzle',
                 'permission' => 'myra-example.view',
                 'sort' => 0,

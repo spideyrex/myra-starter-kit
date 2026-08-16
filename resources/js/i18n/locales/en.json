@@ -56,7 +56,14 @@
         "example": {
             "nav": "Example plugin",
             "title": "A plugin is one class",
-            "description": "One abstract, one required method returning a manifest. No provider, no registration call."
+            "description": "One abstract, one required method returning a manifest. No provider, no registration call.",
+            "cardTitle": "Reference plugin",
+            "badge": "In-repo",
+            "cardDescription": "This page is served by the plugin, not by the core app.",
+            "apiNote": "The plugin also registers a plain-JSON API route. It is called with fetch, never as an Inertia visit — a nav item pointing at a JSON route would block the UI.",
+            "ping": "Call the API route",
+            "pinging": "Calling…",
+            "failed": "Request failed"
         }
     },
     "generated": {},
@@ -550,7 +557,6 @@
             "confirm": "Reset every brand value and switch the brand manager off?"
         },
         "errors": {
-            "home": "Back to home",
             "403": {
                 "title": "Forbidden",
                 "body": "You do not have permission to view this page."
@@ -570,7 +576,8 @@
             "503": {
                 "title": "Under maintenance",
                 "body": "We are performing maintenance. We will be back shortly."
-            }
+            },
+            "home": "Back to home"
         },
         "settingsLink": {
             "label": "Brand manager",

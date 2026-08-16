@@ -2,6 +2,17 @@
 
 All notable changes to the Myra Starter Kit are documented here.
 
+## v2.6.1 — 2026-08
+
+### Fixed
+- **The reference plugin blocked the admin UI.** Its nav item pointed at `/admin/myra-example/ping`,
+  a plain-JSON route, so clicking it raised "All Inertia requests must receive a valid Inertia
+  response" and covered the admin with an error modal. The nav item now targets a real Inertia page
+  (`Plugins/Example/Index`); the JSON route stays as an API example and is called with `fetch`,
+  never linked from navigation.
+- Guard test: every plugin nav item must resolve to an Inertia response. A nav target returning
+  JSON now fails CI instead of blocking the UI in production.
+
 ## v2.6.0 — 2026-08 — "shadcn parity, brand, templates"
 
 Every new subsystem ships behind a flag. Blocks and Examples are **reference pages** — they

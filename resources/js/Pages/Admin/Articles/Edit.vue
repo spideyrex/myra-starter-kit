@@ -26,6 +26,9 @@ const props = defineProps<{
 
 const isEditing = computed(() => !!props.article);
 
+/** reka-ui rejects an empty-string SelectItem value, so "None" needs a sentinel. */
+const NO_CATEGORY = '__none';
+
 const form = useForm({
     title: props.article?.title ?? '',
     slug: props.article?.slug ?? '',
@@ -228,12 +231,15 @@ function submit() {
                             <CardTitle class="text-base">Category</CardTitle>
                         </CardHeader>
                         <CardContent>
-                            <Select v-model="form.category_id">
+                            <Select
+                                :model-value="form.category_id ? String(form.category_id) : NO_CATEGORY"
+                                @update:model-value="(v: any) => (form.category_id = v === NO_CATEGORY ? '' : v)"
+                            >
                                 <SelectTrigger>
                                     <SelectValue placeholder="Select category" />
                                 </SelectTrigger>
                                 <SelectContent>
-                                    <SelectItem value="">None</SelectItem>
+                                    <SelectItem :value="NO_CATEGORY">None</SelectItem>
                                     <SelectItem v-for="cat in categories" :key="cat.id" :value="String(cat.id)">{{ cat.name }}</SelectItem>
                                 </SelectContent>
                             </Select>

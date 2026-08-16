@@ -2,6 +2,24 @@
 
 All notable changes to the Myra Starter Kit are documented here.
 
+## v2.6.2 — 2026-08
+
+### Fixed
+Found by an authenticated crawl of all 79 admin pages. None of these were visible to an HTTP-status
+check — every affected page returns 200.
+
+- **Empty-string `SelectItem` values.** reka-ui rejects `<SelectItem value="">`, so it threw at
+  render on the "All" option of every `DataTable` select and ternary filter, and on the "None"
+  category option of the article form. Replaced with a sentinel that maps back to an empty value
+  on change.
+- **`DataTable` threw on a paginator with no meta.** `lengthAwareData.meta.last_page` blew up when
+  a caller passed a bare `{ data: [...] }`. The computed now returns null unless `meta` is present,
+  so the table renders without pagination instead of failing.
+
+### Note
+`tests/js/demoRegistry.spec.ts` "ships no hardcoded English" mounts three locales in one test and
+is timing-sensitive under full-suite load; it failed once and passed on re-run. Flaky, not broken.
+
 ## v2.6.1 — 2026-08
 
 ### Fixed

@@ -112,9 +112,19 @@ const slots = useSlots();
 const cursorData = computed<CursorPaginatedData<any> | null>(() =>
     isCursor(props.data) ? (props.data as CursorPaginatedData<any>) : null,
 );
-const lengthAwareData = computed<PaginatedData<any> | null>(() =>
-    isCursor(props.data) ? null : (props.data as PaginatedData<any>),
-);
+const lengthAwareData = computed<PaginatedData<any> | null>(() => {
+    if (isCursor(props.data)) return null;
+
+    // A caller may pass a bare {data:[…]} with no paginator meta; reading
+    // meta.last_page on that throws and blanks the table.
+    const d = props.data as PaginatedData<any> | undefined;
+
+    return d && (d as any).meta ? d : null;
+});
+
+/** reka-ui rejects an empty-string SelectItem value, so "no filter" needs a sentinel. */
+const ANY_OPTION = '__any';
+const fromAnyOption = (v: unknown) => (v === ANY_OPTION || v == null ? '' : String(v));
 // <<< MYRA v2.4 [D] END
 
 function decodePaginationLabel(label: string): string {
@@ -987,14 +997,14 @@ defineExpose({ selectedIds, captureState });
                         <div v-if="filter.type === 'select'" class="space-y-1.5">
                             <label class="text-xs font-medium text-muted-foreground">{{ filter.label }}</label>
                             <UiSelect
-                                :model-value="filterValues[filter.name] || ''"
-                                @update:model-value="(v: any) => handleFilterChange(filter.name, String(v ?? ''))"
+                                :model-value="filterValues[filter.name] || ANY_OPTION"
+                                @update:model-value="(v: any) => handleFilterChange(filter.name, fromAnyOption(v))"
                             >
                                 <SelectTrigger class="h-8 w-[170px]">
                                     <SelectValue :placeholder="(filter as any).placeholder || 'All'" />
                                 </SelectTrigger>
                                 <SelectContent>
-                                    <SelectItem value="">All</SelectItem>
+                                    <SelectItem :value="ANY_OPTION">All</SelectItem>
                                     <SelectItem
                                         v-for="opt in (filter as any).options || []"
                                         :key="opt.value"
@@ -1010,14 +1020,14 @@ defineExpose({ selectedIds, captureState });
                         <div v-else-if="filter.type === 'ternary'" class="space-y-1.5">
                             <label class="text-xs font-medium text-muted-foreground">{{ filter.label }}</label>
                             <UiSelect
-                                :model-value="filterValues[filter.name] || ''"
-                                @update:model-value="(v: any) => handleFilterChange(filter.name, String(v ?? ''))"
+                                :model-value="filterValues[filter.name] || ANY_OPTION"
+                                @update:model-value="(v: any) => handleFilterChange(filter.name, fromAnyOption(v))"
                             >
                                 <SelectTrigger class="h-8 w-[140px]">
                                     <SelectValue placeholder="All" />
                                 </SelectTrigger>
                                 <SelectContent>
-                                    <SelectItem value="">All</SelectItem>
+                                    <SelectItem :value="ANY_OPTION">All</SelectItem>
                                     <SelectItem value="1">{{ (filter as any).trueLabel || 'Yes' }}</SelectItem>
                                     <SelectItem value="0">{{ (filter as any).falseLabel || 'No' }}</SelectItem>
                                 </SelectContent>

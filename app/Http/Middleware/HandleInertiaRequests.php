@@ -99,6 +99,26 @@ class HandleInertiaRequests extends Middleware
                     return false;
                 }
             }),
+            // >>> MYRA v2.5 [D] START
+            // Booleans and a build id only — never a provider key. Every value
+            // here is derived from config, so all-flags-default serialises to
+            // false/false/false and the client wires nothing up.
+            'pwaEnabled' => fn () => config('myra.pwa.enabled') === true,
+            'buildId' => fn () => cache()->remember('myra_build_id', 3600, function () {
+                try {
+                    $manifest = public_path('build/manifest.json');
+
+                    return substr(is_file($manifest) ? (md5_file($manifest) ?: 'dev') : 'dev', 0, 8);
+                } catch (\Throwable) {
+                    return 'dev';
+                }
+            }),
+            'aiFeatures' => fn () => [
+                'filter' => config('myra.ai.features.filter') === true,
+                'schema' => config('myra.ai.features.schema') === true,
+                'summarise' => config('myra.ai.features.summarise') === true,
+            ],
+            // <<< MYRA v2.5 [D] END
             'firebaseConfig' => fn () => cache()->remember('firebase_web_config', 3600, function () {
                 try {
                     $settings = app(FirebaseSettings::class);

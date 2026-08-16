@@ -8,6 +8,7 @@ use App\Settings\AiSettings;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class AiController extends Controller
@@ -76,6 +77,16 @@ class AiController extends Controller
 
     public function assist(Request $request): StreamedResponse
     {
+        // >>> MYRA v2.5 [D] START
+        // An ungated billable LLM endpoint is a defect, but gating it outright
+        // would break every editor on the live site the moment it deploys. The
+        // flag defaults FALSE, so today's behaviour is byte-identical; `ai.use`
+        // is seeded onto manager and editor so flipping it later is a no-op.
+        if (config('myra.ai.gate_assist') === true) {
+            Gate::authorize('ai.use');
+        }
+        // <<< MYRA v2.5 [D] END
+
         $request->validate([
             'action' => ['required', 'string', 'in:generate,improve,fix_grammar,make_shorter,make_longer,summarize,change_tone'],
             'text' => ['nullable', 'string', 'max:50000'],

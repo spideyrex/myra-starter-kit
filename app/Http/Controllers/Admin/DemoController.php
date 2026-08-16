@@ -393,6 +393,39 @@ class DemoController extends Controller
     }
     // <<< MYRA v2.2 [D] END
 
+    // >>> MYRA v2.5 [D] START
+    /**
+     * The AskBar against the `users` scope. `constraints` is the SAME client
+     * schema the manual query builder gets — the AI path and the manual path
+     * end up at the same RuleTree::parse().
+     */
+    public function aiFilter(Request $request)
+    {
+        return Inertia::render('Admin/Demo/AiFilter', [
+            'scope' => 'users',
+            'scopes' => \App\Admin\QueryBuilder\FilterScopes::map(),
+            'constraints' => \App\Admin\QueryBuilder\FilterScopes::resolve('users')
+                ->toClientSchema($request->user()),
+            'featureEnabled' => config('myra.ai.features.filter') === true,
+            'providerEnabled' => (function () {
+                try {
+                    return app(\App\Services\Ai\AiService::class)->isEnabled();
+                } catch (\Throwable) {
+                    return false;
+                }
+            })(),
+        ]);
+    }
+
+    /** Renders the service worker's allow-list decision live. */
+    public function offlineShell()
+    {
+        return Inertia::render('Admin/Demo/OfflineShell', [
+            'pwaEnabled' => config('myra.pwa.enabled') === true,
+        ]);
+    }
+    // <<< MYRA v2.5 [D] END
+
     // =========================================================================
     // Data-driven demos
     // =========================================================================

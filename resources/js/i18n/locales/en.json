@@ -1172,5 +1172,81 @@
             "view": "View {count} records",
             "viewUnavailable": "This segment cannot be opened as a table."
         }
+    },
+    "assistant": {
+        "appliedTree": "Tree handed to the filter",
+        "apply": "Apply",
+        "askHint": "Describe what you want to see. The model may only name fields in the {scope} whitelist.",
+        "askPlaceholder": "Describe the rows you want…",
+        "askTitle": "Ask for a filter",
+        "compile": "Compile",
+        "disabled": "Disabled",
+        "disabledHint": "AI filters are off. Set the flag below and configure a provider in AI settings.",
+        "discard": "Discard",
+        "enabled": "Enabled",
+        "errors": {
+            "couldNotUnderstand": "That could not be turned into a filter. Try rephrasing it.",
+            "promptLength": "Write between one character and 500 characters.",
+            "providerDown": "The AI provider did not respond.",
+            "rateLimited": "Too many requests. Try again in a minute.",
+            "sqlDetected": "The model replied with SQL, which is never accepted."
+        },
+        "hostile": {
+            "column": "Hallucinated column: password",
+            "description": "Each button asks the provider for output a compromised model might produce. Every one is refused server-side.",
+            "operator": "Unknown operator: raw",
+            "overCap": "More rules than the field set allows",
+            "run": "Send",
+            "sql": "Raw SQL string",
+            "title": "Hostile model output"
+        },
+        "offline": {
+            "banner": "You are offline. Data is not available until the connection returns.",
+            "description": "The shell and build assets are cached. Nothing behind authentication ever is.",
+            "retry": "Try again",
+            "title": "Offline shell"
+        },
+        "pipeline": {
+            "description": "The model may only emit the same rule tree a person can type. It is parsed by RuleTree against the closed operator set and the field whitelist before it can touch the database.",
+            "title": "The model never writes SQL"
+        },
+        "pwa": {
+            "allowListDescription": "A request must affirmatively match the static shell or a hashed build asset. Everything else never reaches cache code.",
+            "allowListTitle": "Positive allow-list",
+            "cached": "Cacheable",
+            "decisionHint": "Evaluated live by the same function the service worker runs.",
+            "decisionTable": "Cache decisions",
+            "install": "Install app",
+            "no": "No",
+            "notRegistered": "Not registered",
+            "online": "Online",
+            "purge": "Purge caches",
+            "purged": "Caches purged.",
+            "registered": "Registered",
+            "registration": "Service worker",
+            "reload": "Reload",
+            "request": "Request",
+            "unregister": "Unregister worker",
+            "updateAvailable": "Update available",
+            "yes": "Yes"
+        },
+        "review": "Review the conditions before applying them. Nothing runs until you do.",
+        "schema": {
+            "command": "Command to run",
+            "draft": "Draft",
+            "title": "Schema draft"
+        },
+        "scope": {
+            "activity": "Activity log",
+            "users": "Users"
+        },
+        "subtitle": "Natural language compiled into the validated rule tree — never into SQL.",
+        "summary": {
+            "generate": "Summarise dashboard",
+            "streaming": "Writing…",
+            "title": "Dashboard summary"
+        },
+        "title": "AI filters",
+        "unresolved": "No conditions were produced."
     }
 }

@@ -25,8 +25,19 @@ export function useFirebaseMessaging() {
         permissionStatus.value = Notification.permission;
 
         try {
+            // >>> MYRA v2.5 [D] START
+            // Two workers at scope `/` is last-registration-wins, and push dies
+            // silently. When the app shell is enabled the FCM worker moves to the
+            // SDK's documented narrow scope. With the flag off this call is
+            // byte-identical to v2.4.0.
+            const narrowScope = (page.props as Record<string, unknown>).pwaEnabled === true;
+            // <<< MYRA v2.5 [D] END
+
             // Register service worker and send config
-            const registration = await navigator.serviceWorker.register('/firebase-messaging-sw.js');
+            const registration = await navigator.serviceWorker.register(
+                '/firebase-messaging-sw.js',
+                narrowScope ? { scope: '/firebase-cloud-messaging-push-scope' } : undefined,
+            );
             registration.active?.postMessage({
                 type: 'FIREBASE_CONFIG',
                 config: {
@@ -85,8 +96,10 @@ export function useFirebaseMessaging() {
     });
 
     async function requestPermission(): Promise<string | null> {
-        const config = usePage<PageProps>().props.firebaseConfig;
+        const props = usePage<PageProps>().props;
+        const config = props.firebaseConfig;
         if (!config || !config.apiKey) return null;
+        const narrowScope = (props as Record<string, unknown>).pwaEnabled === true;
 
         try {
             const permission = await Notification.requestPermission();
@@ -109,7 +122,11 @@ export function useFirebaseMessaging() {
                 });
 
             const messaging = getMessaging(app);
-            const registration = await navigator.serviceWorker.getRegistration('/firebase-messaging-sw.js');
+            // Must match the scope used at registration, or this resolves the
+            // app-shell worker (or nothing) and getToken() fails.
+            const registration = await navigator.serviceWorker.getRegistration(
+                narrowScope ? '/firebase-cloud-messaging-push-scope' : '/firebase-messaging-sw.js',
+            );
 
             const token = await getToken(messaging, {
                 vapidKey: config.vapidKey,

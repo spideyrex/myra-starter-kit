@@ -1172,5 +1172,81 @@
             "view": "查看 {count} 条记录",
             "viewUnavailable": "该分段无法以表格打开。"
         }
+    },
+    "assistant": {
+        "appliedTree": "交给筛选器的规则树",
+        "apply": "应用",
+        "askHint": "描述你想看到的内容。模型只能使用 {scope} 白名单中的字段。",
+        "askPlaceholder": "描述你想要的记录…",
+        "askTitle": "让 AI 生成筛选条件",
+        "compile": "编译",
+        "disabled": "已停用",
+        "disabledHint": "AI 筛选已关闭。请设置下方开关，并在 AI 设置中配置服务商。",
+        "discard": "放弃",
+        "enabled": "已启用",
+        "errors": {
+            "couldNotUnderstand": "无法将其转换为筛选条件，请换一种说法。",
+            "promptLength": "请输入 1 到 500 个字符。",
+            "providerDown": "AI 服务商没有响应。",
+            "rateLimited": "请求过于频繁，请一分钟后再试。",
+            "sqlDetected": "模型返回了 SQL，这永远不会被接受。"
+        },
+        "hostile": {
+            "column": "凭空捏造的字段：password",
+            "description": "每个按钮都会请求一段被攻陷的模型可能生成的输出，服务端一律拒绝。",
+            "operator": "未知运算符：raw",
+            "overCap": "规则数量超出字段集允许的上限",
+            "run": "发送",
+            "sql": "原始 SQL 字符串",
+            "title": "恶意的模型输出"
+        },
+        "offline": {
+            "banner": "你当前处于离线状态，恢复连接前无法获取数据。",
+            "description": "只缓存应用外壳与构建产物，任何需要登录才能访问的内容都不会被缓存。",
+            "retry": "重试",
+            "title": "离线外壳"
+        },
+        "pipeline": {
+            "description": "模型只能输出人工也能手写的同一套规则树。它先由 RuleTree 依据封闭的运算符集合与字段白名单校验，之后才可能触及数据库。",
+            "title": "模型永远不会写 SQL"
+        },
+        "pwa": {
+            "allowListDescription": "请求必须明确匹配静态外壳或带哈希的构建资源，其余请求根本不会进入缓存代码。",
+            "allowListTitle": "白名单放行",
+            "cached": "可缓存",
+            "decisionHint": "由 service worker 运行的同一个函数实时判定。",
+            "decisionTable": "缓存判定",
+            "install": "安装应用",
+            "no": "否",
+            "notRegistered": "未注册",
+            "online": "在线",
+            "purge": "清除缓存",
+            "purged": "缓存已清除。",
+            "registered": "已注册",
+            "registration": "Service worker",
+            "reload": "重新加载",
+            "request": "请求",
+            "unregister": "注销 worker",
+            "updateAvailable": "有可用更新",
+            "yes": "是"
+        },
+        "review": "应用前请先检查这些条件。在你确认之前不会执行任何操作。",
+        "schema": {
+            "command": "待执行的命令",
+            "draft": "草稿",
+            "title": "结构草稿"
+        },
+        "scope": {
+            "activity": "活动日志",
+            "users": "用户"
+        },
+        "subtitle": "自然语言编译为经过校验的规则树——永远不会编译成 SQL。",
+        "summary": {
+            "generate": "生成仪表盘摘要",
+            "streaming": "正在生成…",
+            "title": "仪表盘摘要"
+        },
+        "title": "AI 筛选",
+        "unresolved": "没有生成任何条件。"
     }
 }

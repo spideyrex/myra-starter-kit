@@ -117,6 +117,14 @@ useFlashToasts();
 useEcho();
 useFirebaseMessaging();
 useThemeColors();
+// >>> MYRA v2.5 [D] START
+import { useServiceWorker } from '@/composables/useServiceWorker';
+import OfflineBanner from '@/components/admin/OfflineBanner.vue';
+
+// Inert unless myra.pwa.enabled is true: it registers nothing and, with the
+// flag off, actively unregisters a stale myra-sw.js and purges its caches.
+const sw = useServiceWorker();
+// <<< MYRA v2.5 [D] END
 
 const isDark = ref(document.documentElement.classList.contains('dark'));
 
@@ -564,4 +572,7 @@ function runRegistered(command: Command) {
 
     <Toaster />
     <ConfirmDialog />
+    <!-- >>> MYRA v2.5 [D] START -->
+    <OfflineBanner v-if="sw.offline.value" />
+    <!-- <<< MYRA v2.5 [D] END -->
 </template>

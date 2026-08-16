@@ -82,6 +82,16 @@ class RoleAndPermissionSeeder extends Seeder
             'articles.create',
             'articles.edit',
             'articles.delete',
+            // >>> MYRA v2.5 [D] START
+            // AI surfaces. `ai.use` is the back-compat gate for ai/assist and is
+            // granted to manager/editor below so myra.ai.gate_assist is safe to
+            // flip later. The array_diff on the admin role lands all four on
+            // admin and super-admin automatically.
+            'ai.filter',
+            'ai.schema',
+            'ai.summarise',
+            'ai.use',
+            // <<< MYRA v2.5 [D] END
 
             // Categories
             'categories.view',
@@ -125,6 +135,7 @@ class RoleAndPermissionSeeder extends Seeder
             'articles.view', 'articles.create', 'articles.edit',
             'categories.view', 'categories.create', 'categories.edit',
             'reports.view', 'reports.export', 'reports.schedule',
+            'ai.use', // >>> MYRA v2.5 [D] START <<< MYRA v2.5 [D] END
         ]);
 
         // Editor - content permissions
@@ -135,6 +146,7 @@ class RoleAndPermissionSeeder extends Seeder
             'pages.view', 'pages.create', 'pages.edit',
             'articles.view', 'articles.create', 'articles.edit',
             'categories.view', 'categories.create',
+            'ai.use', // >>> MYRA v2.5 [D] START <<< MYRA v2.5 [D] END
         ]);
 
         // Viewer - read-only

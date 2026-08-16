@@ -836,6 +836,43 @@
             "payloadDescription": "Tika bergerak sebagai kunci katalog serta pengikatan. Pelayan menerbitkan semula skema dan menolak apa-apa yang tidak dapat diselesaikan."
         }
     },
+    "roleDashboardAdmin": {
+        "title": "Papan pemuka peranan",
+        "subtitle": "Beri setiap peranan papan pemuka lalai. Pengguna peranan itu menerimanya secara automatik dan masih boleh memperibadikan papan pemuka sendiri.",
+        "breadcrumb": "Papan pemuka peranan",
+        "nav": "Papan pemuka peranan",
+        "caption": "Peranan dan papan pemuka lalai yang diberikan kepada penggunanya",
+        "columns": {
+            "role": "Peranan",
+            "priority": "Keutamaan",
+            "status": "Papan pemuka",
+            "widgets": "Widget",
+            "updated": "Kali terakhir disunting",
+            "actions": "Tindakan"
+        },
+        "configured": "Dikonfigurasikan",
+        "notConfigured": "Belum dikonfigurasikan",
+        "inactive": "Peranan dilumpuhkan",
+        "locked": "Hanya super-admin boleh mengarang papan pemuka peranan ini.",
+        "configure": "Konfigurasikan",
+        "configureRole": "Konfigurasikan papan pemuka {role}",
+        "clear": "Kosongkan",
+        "clearRole": "Kosongkan papan pemuka {role}",
+        "clearTitle": "Kosongkan papan pemuka {role}?",
+        "clearDescription": "Pengguna {role} akan kembali kepada peranan berkeutamaan tertinggi berikutnya yang mempunyai papan pemuka, atau kepada papan pemuka lalai. Susun atur peribadi tidak disentuh.",
+        "clearConfirm": "Kosongkan papan pemuka",
+        "cancel": "Batal",
+        "emptyTitle": "Belum ada peranan yang mempunyai papan pemuka",
+        "empty": "Konfigurasikan satu dan setiap pengguna peranan itu menerimanya sebagai lalai. Sehingga itu, tiada apa-apa berubah.",
+        "widgetCount": "{count} dipaparkan",
+        "never": "Tidak pernah",
+        "priorityHint": "Pengguna yang memegang beberapa peranan menerima papan pemuka peranan berkeutamaan tertinggi yang mempunyai satu.",
+        "banner": {
+            "title": "Menyunting papan pemuka {role}",
+            "description": "Anda melihat tepat apa yang dilihat oleh {role}. Widget yang tidak boleh dilihat peranan itu tidak ditawarkan dan tidak disimpan.",
+            "back": "Kembali ke papan pemuka peranan"
+        }
+    },
     "reports": {
         "title": "Laporan",
         "subtitle": "Pengagregatan di pelayan — pangkalan data mengira setiap nombor.",

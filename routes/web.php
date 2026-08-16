@@ -277,6 +277,21 @@ Route::middleware(['auth', 'verified', 'active', '2fa'])->prefix('admin')->name(
         ->name('dashboard-layouts.destroy');
     // <<< MYRA v2.5 [A] END
 
+    // >>> MYRA v2.7 [B] START
+    // Per-role default dashboards. Authoring a document rendered for other
+    // people is an escalation surface, so it carries its own ability.
+    Route::get('/role-dashboards', [\App\Http\Controllers\Admin\RoleDashboardController::class, 'index'])
+        ->middleware('permission:dashboard.manage-roles')->name('role-dashboards.index');
+    Route::get('/role-dashboards/{role}/edit', [\App\Http\Controllers\Admin\DashboardController::class, 'editForRole'])
+        ->middleware('permission:dashboard.manage-roles')->name('role-dashboards.edit');
+    Route::put('/role-dashboards/{role}', [\App\Http\Controllers\Admin\RoleDashboardController::class, 'update'])
+        ->middleware(['permission:dashboard.manage-roles', 'throttle:30,1'])
+        ->name('role-dashboards.update');
+    Route::delete('/role-dashboards/{role}', [\App\Http\Controllers\Admin\RoleDashboardController::class, 'destroy'])
+        ->middleware(['permission:dashboard.manage-roles', 'throttle:30,1'])
+        ->name('role-dashboards.destroy');
+    // <<< MYRA v2.7 [B] END
+
     // Global Search
     // >>> MYRA v2.2 [D] START
     Route::get('/search', [SearchController::class, 'index'])

@@ -132,6 +132,11 @@ const dashboard = useDashboardLayout({
     catalogue: () => (page.props as any).dashboardCatalogue ?? [],
     editable: canCustomise,
     t: (key, params) => t(key, (params ?? {}) as any),
+    // >>> MYRA v2.7 [B] START
+    // Spread so the option is optional at type level until C declares it; the
+    // composable switches its save/reset URLs to the role endpoints on it.
+    ...({ authoringRole: () => (page.props as any).dashboardAuthoringRole ?? null } as any),
+    // <<< MYRA v2.7 [B] END
 });
 
 // A saved layout is honoured even with editing turned off — the flag hides the
@@ -248,6 +253,20 @@ function getInitials(name: string): string {
     return name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
 }
 
+// >>> MYRA v2.7 [B] START
+// Authoring a ROLE's dashboard renders this very page, resolved through that
+// role's eyes. Null on the real dashboard, so everything below is inert there.
+const RoleAuthoringBanner = defineAsyncComponent(() => import('@/components/admin/RoleAuthoringBanner.vue'));
+
+const authoringRole = computed<{ id: number; name: string } | null>(
+    () => (page.props as any).dashboardAuthoringRole ?? null,
+);
+
+const roleDashboardsHref = computed<string | null>(() => (
+    (route as any)().has('admin.role-dashboards.index') ? route('admin.role-dashboards.index') : null
+));
+// <<< MYRA v2.7 [B] END
+
 const quickActions = computed(() => [
     { label: t('charts.dashboard.addUser'), icon: UserPlus, href: 'admin.users.create', color: 'text-emerald-600 dark:text-emerald-400', bg: 'bg-emerald-500/10 dark:bg-emerald-400/15' },
     { label: t('charts.dashboard.manageRoles'), icon: Shield, href: 'admin.roles.index', color: 'text-blue-600 dark:text-blue-400', bg: 'bg-blue-500/10 dark:bg-blue-400/15' },
@@ -292,6 +311,14 @@ const quickActions = computed(() => [
                     </div>
                 </div>
             </div>
+
+            <!-- >>> MYRA v2.7 [B] START -->
+            <RoleAuthoringBanner
+                v-if="authoringRole"
+                :role="authoringRole.name"
+                :back-href="roleDashboardsHref"
+            />
+            <!-- <<< MYRA v2.7 [B] END -->
 
             <!-- >>> MYRA v2.5 [A] START -->
             <DashboardEditorBar

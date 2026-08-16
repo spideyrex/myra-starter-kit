@@ -63,6 +63,9 @@ class RoleAndPermissionSeeder extends Seeder
             // Notifications
             'notifications.view',
             'notifications.create',
+            // >>> MYRA v2.5 [A] START
+            'dashboard.customise',
+            // <<< MYRA v2.5 [A] END
 
             // Firebase
             'firebase.view',

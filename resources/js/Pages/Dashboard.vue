@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, defineAsyncComponent } from 'vue';
 import { Head, Link, usePage } from '@inertiajs/vue3';
 import { useI18n } from 'vue-i18n';
 import type { PageProps } from '@/types';
@@ -16,8 +16,12 @@ import {
     UserCog, Shield, HeartPulse, Settings, ArrowRight,
     CalendarDays, Sparkles,
 } from 'lucide-vue-next';
-import { StatWidget, ChartWidget } from '@/composables/useDashboardWidgets';
+import { StatWidget, ChartWidget, type ColSpan } from '@/composables/useDashboardWidgets';
 import type { ReportResultPayload, ReportState } from '@/components/admin/charts/types';
+// >>> MYRA v2.5 [A] START
+import { useDashboardLayout } from '@/composables/useDashboardLayout';
+import { useInstanceResults } from '@/composables/useInstanceResults';
+// <<< MYRA v2.5 [A] END
 
 const page = usePage<PageProps>();
 const { t, locale } = useI18n();
@@ -113,6 +117,38 @@ const chartWidgets = computed(() => [
         .type('doughnut').colSpan({ sm: 2, lg: 2 }).height(280).legend()
         .emptyState({ headingKey: 'charts.empty.heading', descriptionKey: 'charts.dashboard.byStatusDescription' }),
 ]);
+
+// >>> MYRA v2.5 [A] START
+// Per-user layout. With the flag off, no saved row and an empty catalogue this
+// is inert: `layout` is null, `instances` is empty and the bar never renders.
+const DashboardEditorBar = defineAsyncComponent(() => import('@/components/admin/DashboardEditorBar.vue'));
+
+const canCustomise = computed(() => (page.props as any).canCustomiseDashboard === true);
+
+const dashboard = useDashboardLayout({
+    dashboard: 'admin.dashboard',
+    declared: () => [...statWidgets.value, ...chartWidgets.value],
+    saved: () => (page.props as any).dashboardLayout ?? null,
+    catalogue: () => (page.props as any).dashboardCatalogue ?? [],
+    editable: canCustomise,
+    t: (key, params) => t(key, (params ?? {}) as any),
+});
+
+// A saved layout is honoured even with editing turned off — the flag hides the
+// bar, it must never silently discard a layout the user already saved.
+const editorLayout = computed(() => dashboard.layout.value);
+const editing = computed(() => canCustomise.value && dashboard.editing.value);
+
+// A grid emits its OWN key sequence: the three grids share one global order, so
+// an index into any one of them would land on the wrong tile.
+function onReorder(key: string, orderedKeys: string[]): void {
+    dashboard.reorderWithin(orderedKeys, key);
+}
+
+// Catalogue-added tiles are report-bound but nothing on this page computes their
+// data. Inert while `instances` is empty, which is the default.
+const instanceResults = useInstanceResults({ widgets: () => dashboard.instances.value });
+// <<< MYRA v2.5 [A] END
 
 // --- Local adapter: page props -> frozen report wire shape --------------------
 
@@ -257,11 +293,71 @@ const quickActions = computed(() => [
                 </div>
             </div>
 
+            <!-- >>> MYRA v2.5 [A] START -->
+            <DashboardEditorBar
+                v-if="canCustomise"
+                :editing="dashboard.editing.value"
+                :dirty="dashboard.dirty.value"
+                :saving="dashboard.saving.value"
+                :customised="dashboard.customised.value"
+                :announcement="dashboard.announcement.value"
+                :catalogue="(page.props as any).dashboardCatalogue ?? []"
+                :used="dashboard.usedCatalogueKeys.value"
+                :hidden="dashboard.hidden.value"
+                @update:editing="dashboard.editing.value = $event"
+                @add="(key: string, binding: any) => dashboard.addInstance(key, binding)"
+                @restore="dashboard.toggleHidden($event)"
+                @undo="dashboard.undo()"
+                @reset="dashboard.reset()"
+                @save="dashboard.save()"
+                @cancel="dashboard.cancel()"
+            />
+            <!-- <<< MYRA v2.5 [A] END -->
+
             <!-- Stats Row -->
-            <DashboardGrid :widgets="statWidgets" :page-props="props" />
+            <DashboardGrid
+                :widgets="statWidgets"
+                :page-props="props"
+                :layout="editorLayout"
+                :editing="editing"
+                @reorder="onReorder"
+                @resize="(key: string, colSpan: ColSpan) => dashboard.resize(key, colSpan)"
+                @rename="(key: string, title: string | null) => dashboard.rename(key, title)"
+                @hide="dashboard.toggleHidden($event)"
+                @remove="dashboard.removeInstance($event)"
+            />
 
             <!-- Charts Row: report-bound widgets, rendered by the lazy chart registry -->
-            <DashboardGrid :widgets="chartWidgets" :page-props="props" :results="chartResults" />
+            <DashboardGrid
+                :widgets="chartWidgets"
+                :page-props="props"
+                :results="chartResults"
+                :layout="editorLayout"
+                :editing="editing"
+                @reorder="onReorder"
+                @resize="(key: string, colSpan: ColSpan) => dashboard.resize(key, colSpan)"
+                @rename="(key: string, title: string | null) => dashboard.rename(key, title)"
+                @hide="dashboard.toggleHidden($event)"
+                @remove="dashboard.removeInstance($event)"
+            />
+
+            <!-- >>> MYRA v2.5 [A] START -->
+            <!-- Catalogue-added tiles. Empty unless the user added one. -->
+            <DashboardGrid
+                v-if="dashboard.instances.value.length > 0"
+                :widgets="dashboard.instances.value"
+                :page-props="props"
+                :results="instanceResults.results.value"
+                :loading="instanceResults.loading.value"
+                :layout="editorLayout"
+                :editing="editing"
+                @reorder="onReorder"
+                @resize="(key: string, colSpan: ColSpan) => dashboard.resize(key, colSpan)"
+                @rename="(key: string, title: string | null) => dashboard.rename(key, title)"
+                @hide="dashboard.toggleHidden($event)"
+                @remove="dashboard.removeInstance($event)"
+            />
+            <!-- <<< MYRA v2.5 [A] END -->
 
             <!-- Activity + Recent Users -->
             <div class="grid grid-cols-1 gap-6 lg:grid-cols-7">

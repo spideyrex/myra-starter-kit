@@ -54,6 +54,17 @@ class AppServiceProvider extends ServiceProvider
 
         Gate::policy(\App\Models\TableView::class, \App\Policies\TableViewPolicy::class);
         Gate::policy(\App\Models\ReportSchedule::class, \App\Policies\ReportSchedulePolicy::class);
+        // >>> MYRA v2.5 [A] START
+        Gate::policy(\App\Models\DashboardLayout::class, \App\Policies\DashboardLayoutPolicy::class);
+
+        // Fail-soft: a bad catalogue entry must never take down a route or an
+        // artisan command. With the config array empty this is a no-op.
+        try {
+            \App\Admin\Dashboard\WidgetCatalogue::seed();
+        } catch (\Throwable $e) {
+            report($e);
+        }
+        // <<< MYRA v2.5 [A] END
 
         Event::listen(Login::class, LogSuccessfulLogin::class);
         Event::listen(Failed::class, LogFailedLogin::class);

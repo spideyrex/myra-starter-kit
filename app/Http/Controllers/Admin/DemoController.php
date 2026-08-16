@@ -150,6 +150,104 @@ class DemoController extends Controller
     }
     // <<< MYRA v2.4 [A] END
 
+    // >>> MYRA v2.5 [A] START
+    /**
+     * Self-contained dashboard editor. Nothing here touches dashboard_layouts:
+     * the catalogue is registered under the `demo` source for this request only
+     * and the "saved" layout is in memory. The tampered payload is resolved by
+     * the REAL WidgetInstance::resolveAll(), so the drop is genuine.
+     */
+    public function dashboardEditor(Request $request)
+    {
+        \App\Admin\Dashboard\WidgetCatalogue::forget('demo');
+
+        foreach ($this->demoCatalogue() as $widget) {
+            \App\Admin\Dashboard\WidgetCatalogue::add($widget, 'demo');
+        }
+
+        $saved = [
+            'version' => 1,
+            'entries' => [
+                ['key' => 'demo_signups', 'order' => 1, 'colSpan' => 1, 'rowSpan' => 1, 'hidden' => false],
+                ['key' => 'demo_active', 'order' => 0, 'colSpan' => 1, 'rowSpan' => 1, 'hidden' => false],
+                ['key' => 'demo_trend', 'order' => 2, 'colSpan' => ['sm' => 2, 'lg' => 2], 'rowSpan' => 1, 'hidden' => false],
+            ],
+            'instances' => [
+                ['key' => 'catalogue.trend#aa11bb', 'catalogue' => 'catalogue.trend', 'title' => 'Signups by month',
+                    'chartType' => 'area', 'colSpan' => ['sm' => 2, 'lg' => 2], 'order' => 3,
+                    'binding' => ['dimension' => 'created_at', 'measures' => ['signups'], 'limit' => 12]],
+                ['key' => 'catalogue.trend#cc22dd', 'catalogue' => 'catalogue.trend', 'title' => 'Signups by status',
+                    'chartType' => 'doughnut', 'colSpan' => ['sm' => 2, 'lg' => 2], 'order' => 4,
+                    'binding' => ['dimension' => 'status', 'measures' => ['signups'], 'limit' => 6]],
+            ],
+        ];
+
+        $tamperedSubmitted = [
+            ['key' => 'nope#000000', 'catalogue' => 'nope', 'binding' => []],
+            ['key' => 'catalogue.trend#ee33ff', 'catalogue' => 'catalogue.trend',
+                'binding' => ['dimension' => 'password', 'measures' => ['signups']]],
+            ['key' => 'catalogue.trend#ff44aa', 'catalogue' => 'catalogue.trend',
+                'chartType' => 'raw', 'binding' => ['dimension' => 'status', 'measures' => ['signups']]],
+        ];
+
+        return Inertia::render('Admin/Demo/DashboardEditor', [
+            'catalogue' => \App\Admin\Dashboard\WidgetCatalogue::forUser($request->user()),
+            'saved' => [
+                'version' => 1,
+                'entries' => $saved['entries'],
+                'instances' => \App\Admin\Dashboard\WidgetInstance::resolveAll($saved['instances'], $request->user()),
+            ],
+            'tampered' => [
+                'submitted' => $tamperedSubmitted,
+                'resolved' => \App\Admin\Dashboard\WidgetInstance::resolveAll($tamperedSubmitted, $request->user()),
+            ],
+        ]);
+    }
+
+    /** @return array<int,\App\Admin\Dashboard\CatalogueWidget> */
+    private function demoCatalogue(): array
+    {
+        return [
+            \App\Admin\Dashboard\CatalogueWidget::stat('catalogue.count')
+                ->titleKey('dashboardLayout.demo.countTitle')
+                ->descriptionKey('dashboardLayout.demo.countDescription')
+                ->categoryKey('dashboardLayout.categories.metrics')
+                ->icon('Users')
+                ->dimensions(['status'])
+                ->measures(['signups', 'emails'])
+                ->defaults(['measures' => ['signups']])
+                ->defaultColSpan(1)
+                ->maxInstances(2)
+                ->tags(['stat', 'users']),
+
+            \App\Admin\Dashboard\CatalogueWidget::chart('catalogue.trend')
+                ->titleKey('dashboardLayout.demo.trendTitle')
+                ->descriptionKey('dashboardLayout.demo.trendDescription')
+                ->categoryKey('dashboardLayout.categories.charts')
+                ->icon('ChartArea')
+                ->dimensions(['created_at', 'status', 'role'])
+                ->measures(['signups', 'emails'])
+                ->chartTypes(['area', 'bar', 'doughnut', 'line'])
+                ->defaults(['dimension' => 'created_at', 'measures' => ['signups'], 'limit' => 12])
+                ->defaultColSpan(['sm' => 2, 'lg' => 2])
+                ->maxInstances(3)
+                ->tags(['chart', 'trend']),
+
+            \App\Admin\Dashboard\CatalogueWidget::table('catalogue.breakdown')
+                ->titleKey('dashboardLayout.demo.breakdownTitle')
+                ->descriptionKey('dashboardLayout.demo.breakdownDescription')
+                ->categoryKey('dashboardLayout.categories.tables')
+                ->icon('Table')
+                ->dimensions(['status', 'role'])
+                ->measures(['signups'])
+                ->defaults(['dimension' => 'status', 'measures' => ['signups'], 'limit' => 10])
+                ->defaultColSpan(['sm' => 2, 'lg' => 2])
+                ->maxInstances(1)
+                ->tags(['table']),
+        ];
+    }
+    // <<< MYRA v2.5 [A] END
+
     public function conditionalFields()
     {
         return Inertia::render('Admin/Demo/ConditionalFields');

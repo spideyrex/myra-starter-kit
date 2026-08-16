@@ -550,3 +550,116 @@ export function resolveWidgets(
         .sort((a, b) => ((a.schema.sort ?? 0) - (b.schema.sort ?? 0)) || (a.index - b.index))
         .map(({ schema }) => schema);
 }
+
+// >>> MYRA v2.5 [A] START
+
+export interface LayoutEntry {
+    key: string;
+    order: number;
+    colSpan?: ColSpan;
+    rowSpan?: number;
+    hidden?: boolean;
+}
+
+export interface DashboardLayoutPayload {
+    version: 1;
+    entries: LayoutEntry[];
+    /** SERVER-RESOLVED. Never read out of a locally-held saved blob. */
+    instances: WidgetSchema[];
+}
+
+/** Clamp a stored span so a hostile value can never emit a class outside the grid. */
+function clampSpan(colSpan: ColSpan): ColSpan {
+    if (typeof colSpan === 'number') return clamp(colSpan, GRID_COLUMNS.lg);
+
+    const out: { sm?: number; lg?: number; xl?: number } = {};
+    if (colSpan?.sm !== undefined) out.sm = clamp(colSpan.sm, GRID_COLUMNS.sm);
+    if (colSpan?.lg !== undefined) out.lg = clamp(colSpan.lg, GRID_COLUMNS.lg);
+    if (colSpan?.xl !== undefined) out.xl = clamp(colSpan.xl, GRID_COLUMNS.lg);
+
+    return out;
+}
+
+function entryMap(layout: DashboardLayoutPayload): Map<string, LayoutEntry> {
+    const map = new Map<string, LayoutEntry>();
+
+    for (const entry of layout.entries ?? []) {
+        if (entry && typeof entry.key === 'string') map.set(entry.key, entry);
+    }
+
+    return map;
+}
+
+/**
+ * Presentation overlay. Runs AFTER resolveWidgets(), so permission and
+ * visibility have already decided membership — this can only reorder, resize or
+ * hide what survived. An entry naming an unknown key is dropped; a widget with
+ * no entry keeps its declared position, appended after the entry-ordered ones so
+ * a newly shipped widget appears rather than vanishes. Total by construction:
+ * any throw returns `schemas` unchanged.
+ */
+export function applyLayout(
+    schemas: WidgetSchema[],
+    layout: DashboardLayoutPayload | null | undefined,
+): WidgetSchema[] {
+    if (!layout) return schemas;
+
+    try {
+        const entries = entryMap(layout);
+        const ordered: Array<{ schema: WidgetSchema; order: number; index: number }> = [];
+        const trailing: WidgetSchema[] = [];
+
+        schemas.forEach((schema, index) => {
+            const entry = entries.get(schema.key);
+
+            if (!entry) {
+                trailing.push(schema);
+
+                return;
+            }
+
+            if (entry.hidden === true) return;
+
+            const next: WidgetSchema = { ...schema };
+            if (entry.colSpan !== undefined) next.colSpan = clampSpan(entry.colSpan);
+            if (entry.rowSpan !== undefined) next.rowSpan = clamp(entry.rowSpan, 4);
+
+            ordered.push({ schema: next, order: Number(entry.order) || 0, index });
+        });
+
+        ordered.sort((a, b) => (a.order - b.order) || (a.index - b.index));
+
+        return [...ordered.map(o => o.schema), ...trailing];
+    } catch {
+        return schemas;
+    }
+}
+
+/** Widgets an overlay hides. The inverse membership of applyLayout(). */
+export function hiddenByLayout(
+    schemas: WidgetSchema[],
+    layout: DashboardLayoutPayload | null | undefined,
+): WidgetSchema[] {
+    if (!layout) return [];
+
+    try {
+        const entries = entryMap(layout);
+
+        return schemas.filter(schema => entries.get(schema.key)?.hidden === true);
+    } catch {
+        return [];
+    }
+}
+
+/** Inverse of applyLayout — what the editor PUTs. NEVER includes instances. */
+export function toLayoutEntries(schemas: WidgetSchema[]): LayoutEntry[] {
+    return schemas.map((schema, index) => ({
+        key: schema.key,
+        order: clamp(index + 1, 255) - 1,
+        colSpan: clampSpan(schema.colSpan ?? 1),
+        rowSpan: clamp(schema.rowSpan ?? 1, 4),
+        hidden: false,
+    }));
+}
+
+// <<< MYRA v2.5 [A] END

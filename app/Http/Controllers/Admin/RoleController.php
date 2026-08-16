@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Models\Role;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Validation\Rule;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -23,7 +25,19 @@ class RoleController extends Controller
             ->when(! $isSuper, fn ($q) => $q
                 ->where('name', '!=', config('shield.super_admin_role', 'super-admin'))
                 ->where('visible', true))
+            // >>> MYRA v2.7 [C] START
+            // Highest priority first; ties broken by id so the order is the same
+            // one the dashboard resolver walks.
+            ->orderByDesc('priority')
+            ->orderBy('id')
+            // <<< MYRA v2.7 [C] END
             ->get();
+
+        // >>> MYRA v2.7 [C] START
+        $rolesWithDashboard = Schema::hasTable('role_dashboards')
+            ? array_map('intval', DB::table('role_dashboards')->distinct()->pluck('role_id')->all())
+            : [];
+        // <<< MYRA v2.7 [C] END
 
         $allPermissions = Permission::all();
 
@@ -53,6 +67,10 @@ class RoleController extends Controller
             'visible' => $role->visible,
             'is_locked' => $role->isLocked(),
             'is_privileged' => $role->isPrivileged(),
+            // >>> MYRA v2.7 [C] START
+            'priority' => (int) ($role->priority ?? 0),
+            'has_dashboard' => in_array((int) $role->id, $rolesWithDashboard, true),
+            // <<< MYRA v2.7 [C] END
             'created_at' => $role->created_at->toDateTimeString(),
         ]);
 
@@ -64,8 +82,38 @@ class RoleController extends Controller
             'totalUsersWithRoles' => $totalUsersWithRoles,
             'totalPermissions' => $allPermissions->count(),
             'isSuperAdmin' => $isSuper,
+            // >>> MYRA v2.7 [C] START
+            'canManageRoleDashboards' => $request->user()?->can('dashboard.manage-roles') ?? false,
+            // <<< MYRA v2.7 [C] END
         ]);
     }
+
+    // >>> MYRA v2.7 [C] START
+    /**
+     * Assign priority from an ordered id list, highest first. Gaps of 10 so a
+     * later insertion does not force a renumber.
+     */
+    public function reorder(Request $request): RedirectResponse
+    {
+        abort_unless($this->isSuperAdmin($request), 403);
+
+        $data = $request->validate([
+            'ids' => ['required', 'array', 'min:1'],
+            'ids.*' => ['integer', 'exists:roles,id'],
+        ]);
+
+        $ids = array_values(array_unique(array_map('intval', $data['ids'])));
+        $count = count($ids);
+
+        DB::transaction(function () use ($ids, $count) {
+            foreach ($ids as $index => $id) {
+                Role::whereKey($id)->update(['priority' => ($count - $index) * 10]);
+            }
+        });
+
+        return back()->with('success', 'Role priority updated.');
+    }
+    // <<< MYRA v2.7 [C] END
 
     public function toggleActive(Request $request, Role $role): RedirectResponse
     {

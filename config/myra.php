@@ -49,6 +49,25 @@ return [
     'plugin_config' => [],
     // <<< MYRA v2.4 [A] END
 
+    // >>> MYRA v2.6 [A] START
+    /*
+    |--------------------------------------------------------------------------
+    | shadcn block catalogue
+    |--------------------------------------------------------------------------
+    |
+    | Read-only reference pages built from the vendored blocks in
+    | resources/js/blocks/. With `enabled` false every route 404s and the
+    | catalogue is unreachable; nothing else in the admin changes either way,
+    | because a block is never imported outside the preview page.
+    |
+    */
+
+    'blocks' => [
+        'enabled' => env('MYRA_BLOCKS', true),
+        'viewport' => ['full', '1024', '768', '375'],
+    ],
+    // <<< MYRA v2.6 [A] END
+
     // >>> MYRA v2.5 [A] START
     /*
     |--------------------------------------------------------------------------

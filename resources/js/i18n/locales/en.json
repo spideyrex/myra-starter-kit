@@ -965,6 +965,287 @@
         "viewAsChart": "View as chart",
         "viewAsTable": "View as table"
     },
+    "blocks": {
+        "title": "shadcn Blocks",
+        "description": "Every shadcn-vue registry block, vendored verbatim and previewed in isolation.",
+        "search": "Search blocks",
+        "allCategories": "All",
+        "resultCount": "{n} blocks shown",
+        "noResults": "No block matches that search.",
+        "view": "Open block",
+        "categories": {
+            "sidebar": "Sidebar",
+            "dashboard": "Dashboard",
+            "login": "Login",
+            "signup": "Sign up",
+            "otp": "One-time code",
+            "products": "Products",
+            "chart": "Charts",
+            "other": "Other"
+        },
+        "preview": {
+            "tab": "Preview",
+            "frameTitle": "Live preview of {name}",
+            "openInNewTab": "Open preview in a new tab",
+            "viewport": "Viewport",
+            "viewportFull": "Full width",
+            "viewportPx": "{px} px",
+            "viewportAnnounced": "Viewport: {size}",
+            "dark": "Dark mode"
+        },
+        "source": {
+            "tab": "Code",
+            "copy": "Copy",
+            "copied": "Copied",
+            "file": "Source of {path}"
+        },
+        "dependencies": {
+            "tab": "Dependencies",
+            "registry": "Registry components",
+            "npm": "npm packages",
+            "none": "None"
+        },
+        "unavailable": {
+            "title": "Preview unavailable",
+            "body": "This block needs dependencies this install does not ship ({deps}). Its source is vendored in full and shown below.",
+            "badge": "Source only"
+        },
+        "gaps": {
+            "title": "Known gaps",
+            "calendar": "No Vue calendar block exists upstream, so none is vendored.",
+            "charts": "Chart blocks are vendored as source only: they need the unovis charting packages and the chart registry component, neither of which is installed here."
+        },
+        "entries": {
+            "sidebar-01": {
+                "title": "Sidebar 01",
+                "description": "A simple sidebar with navigation grouped by section."
+            },
+            "sidebar-02": {
+                "title": "Sidebar 02",
+                "description": "A sidebar with collapsible sections."
+            },
+            "sidebar-03": {
+                "title": "Sidebar 03",
+                "description": "A sidebar with submenus."
+            },
+            "sidebar-04": {
+                "title": "Sidebar 04",
+                "description": "A floating sidebar with submenus."
+            },
+            "sidebar-05": {
+                "title": "Sidebar 05",
+                "description": "A sidebar with collapsible submenus."
+            },
+            "sidebar-06": {
+                "title": "Sidebar 06",
+                "description": "A sidebar with submenus as dropdowns."
+            },
+            "sidebar-07": {
+                "title": "Sidebar 07",
+                "description": "A sidebar that collapses to icons"
+            },
+            "sidebar-08": {
+                "title": "Sidebar 08",
+                "description": "An inset sidebar with secondary navigation."
+            },
+            "sidebar-09": {
+                "title": "Sidebar 09",
+                "description": "Collapsible nested sidebars."
+            },
+            "sidebar-10": {
+                "title": "Sidebar 10",
+                "description": "A sidebar in a popover."
+            },
+            "sidebar-11": {
+                "title": "Sidebar 11",
+                "description": "A sidebar with a collapsible file tree."
+            },
+            "sidebar-12": {
+                "title": "Sidebar 12",
+                "description": "A sidebar with a calendar."
+            },
+            "sidebar-13": {
+                "title": "Sidebar 13",
+                "description": "A sidebar in a dialog."
+            },
+            "sidebar-14": {
+                "title": "Sidebar 14",
+                "description": "A sidebar on the right."
+            },
+            "sidebar-15": {
+                "title": "Sidebar 15",
+                "description": "A left and right sidebar."
+            },
+            "sidebar-16": {
+                "title": "Sidebar 16",
+                "description": "A sidebar with a sticky site header."
+            },
+            "sidebar-demo": {
+                "title": "Sidebar Demo",
+                "description": "The sidebar primitive on its own, with no page chrome."
+            },
+            "dashboard-01": {
+                "title": "Dashboard 01",
+                "description": "A dashboard with sidebar, charts and data table."
+            },
+            "login-01": {
+                "title": "Login 01",
+                "description": "A simple login form."
+            },
+            "login-02": {
+                "title": "Login 02",
+                "description": "A two column login page with a cover image."
+            },
+            "login-03": {
+                "title": "Login 03",
+                "description": "A login page with a muted background color."
+            },
+            "login-04": {
+                "title": "Login 04",
+                "description": "A login page with form and image."
+            },
+            "login-05": {
+                "title": "Login 05",
+                "description": "A simple email-only login page."
+            },
+            "signup-01": {
+                "title": "Signup 01",
+                "description": "A simple signup form."
+            },
+            "signup-02": {
+                "title": "Signup 02",
+                "description": "A two column signup page with a cover image."
+            },
+            "signup-03": {
+                "title": "Signup 03",
+                "description": "A signup page with a muted background color."
+            },
+            "signup-04": {
+                "title": "Signup 04",
+                "description": "A signup page with form and image."
+            },
+            "signup-05": {
+                "title": "Signup 05",
+                "description": "A simple signup form with social providers."
+            },
+            "otp-01": {
+                "title": "Otp 01",
+                "description": "A simple OTP verification form."
+            },
+            "otp-02": {
+                "title": "Otp 02",
+                "description": "A two column OTP page with a cover image."
+            },
+            "otp-03": {
+                "title": "Otp 03",
+                "description": "An OTP page with a muted background color."
+            },
+            "otp-04": {
+                "title": "Otp 04",
+                "description": "An OTP page with form and image."
+            },
+            "otp-05": {
+                "title": "Otp 05",
+                "description": "A simple OTP form with social providers."
+            },
+            "products-01": {
+                "title": "Products 01",
+                "description": "A products table with filters, pagination and row actions."
+            },
+            "ChartAreaAxes": {
+                "title": "Chart Area Axes",
+                "description": "An area chart with visible axes."
+            },
+            "ChartAreaGradient": {
+                "title": "Chart Area Gradient",
+                "description": "An area chart with a gradient fill."
+            },
+            "ChartAreaIcons": {
+                "title": "Chart Area Icons",
+                "description": "An area chart with icons in the legend."
+            },
+            "ChartAreaInteractive": {
+                "title": "Chart Area Interactive",
+                "description": "An interactive area chart with a range selector."
+            },
+            "ChartBarDefault": {
+                "title": "Chart Bar Default",
+                "description": "A bar chart in its default configuration."
+            },
+            "ChartBarHorizontal": {
+                "title": "Chart Bar Horizontal",
+                "description": "A horizontal bar chart."
+            },
+            "ChartBarInteractive": {
+                "title": "Chart Bar Interactive",
+                "description": "An interactive bar chart with a series toggle."
+            },
+            "ChartBarMultiple": {
+                "title": "Chart Bar Multiple",
+                "description": "A bar chart with multiple series."
+            },
+            "ChartLineDefault": {
+                "title": "Chart Line Default",
+                "description": "A line chart in its default configuration."
+            },
+            "ChartLineInteractive": {
+                "title": "Chart Line Interactive",
+                "description": "An interactive line chart with a series toggle."
+            },
+            "ChartLineLinear": {
+                "title": "Chart Line Linear",
+                "description": "A line chart with linear interpolation."
+            },
+            "ChartLineStep": {
+                "title": "Chart Line Step",
+                "description": "A line chart with stepped interpolation."
+            },
+            "ChartPieDonut": {
+                "title": "Chart Pie Donut",
+                "description": "A donut chart."
+            },
+            "ChartPieDonutText": {
+                "title": "Chart Pie Donut Text",
+                "description": "A donut chart with a total in the centre."
+            },
+            "ChartPieSimple": {
+                "title": "Chart Pie Simple",
+                "description": "A simple pie chart."
+            },
+            "ChartPieStacked": {
+                "title": "Chart Pie Stacked",
+                "description": "A pie chart with stacked sections."
+            },
+            "ChartTooltipDefault": {
+                "title": "Chart Tooltip Default",
+                "description": "A chart tooltip in its default configuration."
+            },
+            "ChartTooltipIcons": {
+                "title": "Chart Tooltip Icons",
+                "description": "A chart tooltip with series icons."
+            },
+            "ChartTooltipIndicatorLine": {
+                "title": "Chart Tooltip Indicator Line",
+                "description": "A chart tooltip with a line indicator."
+            },
+            "ChartTooltipIndicatorNone": {
+                "title": "Chart Tooltip Indicator None",
+                "description": "A chart tooltip with no indicator."
+            },
+            "ChartTooltipLabelCustom": {
+                "title": "Chart Tooltip Label Custom",
+                "description": "A chart tooltip with a custom label."
+            },
+            "ChartTooltipLabelFormatter": {
+                "title": "Chart Tooltip Label Formatter",
+                "description": "A chart tooltip with a formatted label."
+            },
+            "ChartTooltipLabelNone": {
+                "title": "Chart Tooltip Label None",
+                "description": "A chart tooltip with the label hidden."
+            }
+        }
+    },
     "transfer": {
         "export": {
             "button": "Export",

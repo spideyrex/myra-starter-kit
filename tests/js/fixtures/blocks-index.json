@@ -1,0 +1,1304 @@
+{
+    "blocks": [
+        {
+            "available": true,
+            "category": "sidebar",
+            "descriptionKey": "blocks.entries.sidebar-01.description",
+            "entryFile": "sidebar-01/Page.vue",
+            "key": "sidebar-01",
+            "npmDependencies": [],
+            "registryDependencies": [
+                "breadcrumb",
+                "dropdown-menu",
+                "label",
+                "separator",
+                "sidebar"
+            ],
+            "since": "2.6.0",
+            "tags": [
+                "dashboard",
+                "sidebar"
+            ],
+            "titleKey": "blocks.entries.sidebar-01.title",
+            "unavailableReason": null,
+            "viewport": "full"
+        },
+        {
+            "available": true,
+            "category": "sidebar",
+            "descriptionKey": "blocks.entries.sidebar-02.description",
+            "entryFile": "sidebar-02/Page.vue",
+            "key": "sidebar-02",
+            "npmDependencies": [],
+            "registryDependencies": [
+                "breadcrumb",
+                "collapsible",
+                "dropdown-menu",
+                "label",
+                "separator",
+                "sidebar"
+            ],
+            "since": "2.6.0",
+            "tags": [
+                "dashboard",
+                "sidebar"
+            ],
+            "titleKey": "blocks.entries.sidebar-02.title",
+            "unavailableReason": null,
+            "viewport": "full"
+        },
+        {
+            "available": true,
+            "category": "sidebar",
+            "descriptionKey": "blocks.entries.sidebar-03.description",
+            "entryFile": "sidebar-03/Page.vue",
+            "key": "sidebar-03",
+            "npmDependencies": [],
+            "registryDependencies": [
+                "breadcrumb",
+                "separator",
+                "sidebar"
+            ],
+            "since": "2.6.0",
+            "tags": [
+                "dashboard",
+                "sidebar"
+            ],
+            "titleKey": "blocks.entries.sidebar-03.title",
+            "unavailableReason": null,
+            "viewport": "full"
+        },
+        {
+            "available": true,
+            "category": "sidebar",
+            "descriptionKey": "blocks.entries.sidebar-04.description",
+            "entryFile": "sidebar-04/Page.vue",
+            "key": "sidebar-04",
+            "npmDependencies": [],
+            "registryDependencies": [
+                "breadcrumb",
+                "separator",
+                "sidebar"
+            ],
+            "since": "2.6.0",
+            "tags": [
+                "dashboard",
+                "sidebar"
+            ],
+            "titleKey": "blocks.entries.sidebar-04.title",
+            "unavailableReason": null,
+            "viewport": "full"
+        },
+        {
+            "available": true,
+            "category": "sidebar",
+            "descriptionKey": "blocks.entries.sidebar-05.description",
+            "entryFile": "sidebar-05/Page.vue",
+            "key": "sidebar-05",
+            "npmDependencies": [],
+            "registryDependencies": [
+                "breadcrumb",
+                "collapsible",
+                "label",
+                "separator",
+                "sidebar"
+            ],
+            "since": "2.6.0",
+            "tags": [
+                "dashboard",
+                "sidebar"
+            ],
+            "titleKey": "blocks.entries.sidebar-05.title",
+            "unavailableReason": null,
+            "viewport": "full"
+        },
+        {
+            "available": true,
+            "category": "sidebar",
+            "descriptionKey": "blocks.entries.sidebar-06.description",
+            "entryFile": "sidebar-06/Page.vue",
+            "key": "sidebar-06",
+            "npmDependencies": [],
+            "registryDependencies": [
+                "breadcrumb",
+                "button",
+                "card",
+                "dropdown-menu",
+                "separator",
+                "sidebar"
+            ],
+            "since": "2.6.0",
+            "tags": [
+                "dashboard",
+                "sidebar"
+            ],
+            "titleKey": "blocks.entries.sidebar-06.title",
+            "unavailableReason": null,
+            "viewport": "full"
+        },
+        {
+            "available": true,
+            "category": "sidebar",
+            "descriptionKey": "blocks.entries.sidebar-07.description",
+            "entryFile": "sidebar-07/Page.vue",
+            "key": "sidebar-07",
+            "npmDependencies": [],
+            "registryDependencies": [
+                "avatar",
+                "breadcrumb",
+                "collapsible",
+                "dropdown-menu",
+                "separator",
+                "sidebar"
+            ],
+            "since": "2.6.0",
+            "tags": [
+                "dashboard",
+                "sidebar"
+            ],
+            "titleKey": "blocks.entries.sidebar-07.title",
+            "unavailableReason": null,
+            "viewport": "full"
+        },
+        {
+            "available": true,
+            "category": "sidebar",
+            "descriptionKey": "blocks.entries.sidebar-08.description",
+            "entryFile": "sidebar-08/Page.vue",
+            "key": "sidebar-08",
+            "npmDependencies": [],
+            "registryDependencies": [
+                "avatar",
+                "breadcrumb",
+                "collapsible",
+                "dropdown-menu",
+                "separator",
+                "sidebar"
+            ],
+            "since": "2.6.0",
+            "tags": [
+                "dashboard",
+                "sidebar"
+            ],
+            "titleKey": "blocks.entries.sidebar-08.title",
+            "unavailableReason": null,
+            "viewport": "full"
+        },
+        {
+            "available": true,
+            "category": "sidebar",
+            "descriptionKey": "blocks.entries.sidebar-09.description",
+            "entryFile": "sidebar-09/Page.vue",
+            "key": "sidebar-09",
+            "npmDependencies": [],
+            "registryDependencies": [
+                "avatar",
+                "breadcrumb",
+                "dropdown-menu",
+                "label",
+                "separator",
+                "sidebar",
+                "switch"
+            ],
+            "since": "2.6.0",
+            "tags": [
+                "dashboard",
+                "sidebar"
+            ],
+            "titleKey": "blocks.entries.sidebar-09.title",
+            "unavailableReason": null,
+            "viewport": "full"
+        },
+        {
+            "available": true,
+            "category": "sidebar",
+            "descriptionKey": "blocks.entries.sidebar-10.description",
+            "entryFile": "sidebar-10/Page.vue",
+            "key": "sidebar-10",
+            "npmDependencies": [],
+            "registryDependencies": [
+                "breadcrumb",
+                "button",
+                "collapsible",
+                "dropdown-menu",
+                "popover",
+                "separator",
+                "sidebar"
+            ],
+            "since": "2.6.0",
+            "tags": [
+                "dashboard",
+                "sidebar"
+            ],
+            "titleKey": "blocks.entries.sidebar-10.title",
+            "unavailableReason": null,
+            "viewport": "full"
+        },
+        {
+            "available": true,
+            "category": "sidebar",
+            "descriptionKey": "blocks.entries.sidebar-11.description",
+            "entryFile": "sidebar-11/Page.vue",
+            "key": "sidebar-11",
+            "npmDependencies": [],
+            "registryDependencies": [
+                "breadcrumb",
+                "collapsible",
+                "separator",
+                "sidebar"
+            ],
+            "since": "2.6.0",
+            "tags": [
+                "dashboard",
+                "sidebar"
+            ],
+            "titleKey": "blocks.entries.sidebar-11.title",
+            "unavailableReason": null,
+            "viewport": "full"
+        },
+        {
+            "available": true,
+            "category": "sidebar",
+            "descriptionKey": "blocks.entries.sidebar-12.description",
+            "entryFile": "sidebar-12/Page.vue",
+            "key": "sidebar-12",
+            "npmDependencies": [],
+            "registryDependencies": [
+                "avatar",
+                "breadcrumb",
+                "calendar",
+                "collapsible",
+                "dropdown-menu",
+                "separator",
+                "sidebar"
+            ],
+            "since": "2.6.0",
+            "tags": [
+                "dashboard",
+                "sidebar"
+            ],
+            "titleKey": "blocks.entries.sidebar-12.title",
+            "unavailableReason": null,
+            "viewport": "full"
+        },
+        {
+            "available": true,
+            "category": "sidebar",
+            "descriptionKey": "blocks.entries.sidebar-13.description",
+            "entryFile": "sidebar-13/Page.vue",
+            "key": "sidebar-13",
+            "npmDependencies": [],
+            "registryDependencies": [
+                "breadcrumb",
+                "button",
+                "dialog",
+                "sidebar"
+            ],
+            "since": "2.6.0",
+            "tags": [
+                "dashboard",
+                "sidebar"
+            ],
+            "titleKey": "blocks.entries.sidebar-13.title",
+            "unavailableReason": null,
+            "viewport": "full"
+        },
+        {
+            "available": true,
+            "category": "sidebar",
+            "descriptionKey": "blocks.entries.sidebar-14.description",
+            "entryFile": "sidebar-14/Page.vue",
+            "key": "sidebar-14",
+            "npmDependencies": [],
+            "registryDependencies": [
+                "breadcrumb",
+                "sidebar"
+            ],
+            "since": "2.6.0",
+            "tags": [
+                "dashboard",
+                "sidebar"
+            ],
+            "titleKey": "blocks.entries.sidebar-14.title",
+            "unavailableReason": null,
+            "viewport": "full"
+        },
+        {
+            "available": true,
+            "category": "sidebar",
+            "descriptionKey": "blocks.entries.sidebar-15.description",
+            "entryFile": "sidebar-15/Page.vue",
+            "key": "sidebar-15",
+            "npmDependencies": [],
+            "registryDependencies": [
+                "avatar",
+                "breadcrumb",
+                "calendar",
+                "collapsible",
+                "dropdown-menu",
+                "separator",
+                "sidebar"
+            ],
+            "since": "2.6.0",
+            "tags": [
+                "dashboard",
+                "sidebar"
+            ],
+            "titleKey": "blocks.entries.sidebar-15.title",
+            "unavailableReason": null,
+            "viewport": "full"
+        },
+        {
+            "available": true,
+            "category": "sidebar",
+            "descriptionKey": "blocks.entries.sidebar-16.description",
+            "entryFile": "sidebar-16/Page.vue",
+            "key": "sidebar-16",
+            "npmDependencies": [],
+            "registryDependencies": [
+                "avatar",
+                "breadcrumb",
+                "button",
+                "collapsible",
+                "dropdown-menu",
+                "label",
+                "separator",
+                "sidebar"
+            ],
+            "since": "2.6.0",
+            "tags": [
+                "dashboard",
+                "sidebar"
+            ],
+            "titleKey": "blocks.entries.sidebar-16.title",
+            "unavailableReason": null,
+            "viewport": "full"
+        },
+        {
+            "available": true,
+            "category": "sidebar",
+            "descriptionKey": "blocks.entries.sidebar-demo.description",
+            "entryFile": "sidebar-demo/Page.vue",
+            "key": "sidebar-demo",
+            "npmDependencies": [],
+            "registryDependencies": [
+                "sidebar"
+            ],
+            "since": "2.6.0",
+            "tags": [
+                "sidebar"
+            ],
+            "titleKey": "blocks.entries.sidebar-demo.title",
+            "unavailableReason": null,
+            "viewport": "full"
+        },
+        {
+            "available": false,
+            "category": "dashboard",
+            "descriptionKey": "blocks.entries.dashboard-01.description",
+            "entryFile": "dashboard-01/Page.vue",
+            "key": "dashboard-01",
+            "npmDependencies": [
+                "@dnd-kit/abstract",
+                "@tabler/icons-vue",
+                "@unovis/vue",
+                "dnd-kit-vue"
+            ],
+            "registryDependencies": [
+                "avatar",
+                "badge",
+                "button",
+                "card",
+                "chart",
+                "checkbox",
+                "dropdown-menu",
+                "label",
+                "select",
+                "separator",
+                "sidebar",
+                "table",
+                "tabs"
+            ],
+            "since": "2.6.0",
+            "tags": [
+                "dashboard"
+            ],
+            "titleKey": "blocks.entries.dashboard-01.title",
+            "unavailableReason": "npm: @dnd-kit/abstract, @tabler/icons-vue, @unovis/vue, dnd-kit-vue · registry: chart",
+            "viewport": "full"
+        },
+        {
+            "available": true,
+            "category": "login",
+            "descriptionKey": "blocks.entries.login-01.description",
+            "entryFile": "login-01/Page.vue",
+            "key": "login-01",
+            "npmDependencies": [],
+            "registryDependencies": [
+                "button",
+                "card",
+                "field",
+                "input"
+            ],
+            "since": "2.6.0",
+            "tags": [
+                "authentication",
+                "login"
+            ],
+            "titleKey": "blocks.entries.login-01.title",
+            "unavailableReason": null,
+            "viewport": "full"
+        },
+        {
+            "available": true,
+            "category": "login",
+            "descriptionKey": "blocks.entries.login-02.description",
+            "entryFile": "login-02/Page.vue",
+            "key": "login-02",
+            "npmDependencies": [],
+            "registryDependencies": [
+                "button",
+                "field",
+                "input"
+            ],
+            "since": "2.6.0",
+            "tags": [
+                "authentication",
+                "login"
+            ],
+            "titleKey": "blocks.entries.login-02.title",
+            "unavailableReason": null,
+            "viewport": "full"
+        },
+        {
+            "available": true,
+            "category": "login",
+            "descriptionKey": "blocks.entries.login-03.description",
+            "entryFile": "login-03/Page.vue",
+            "key": "login-03",
+            "npmDependencies": [],
+            "registryDependencies": [
+                "button",
+                "card",
+                "field",
+                "input"
+            ],
+            "since": "2.6.0",
+            "tags": [
+                "authentication",
+                "login"
+            ],
+            "titleKey": "blocks.entries.login-03.title",
+            "unavailableReason": null,
+            "viewport": "full"
+        },
+        {
+            "available": true,
+            "category": "login",
+            "descriptionKey": "blocks.entries.login-04.description",
+            "entryFile": "login-04/Page.vue",
+            "key": "login-04",
+            "npmDependencies": [],
+            "registryDependencies": [
+                "button",
+                "card",
+                "field",
+                "input"
+            ],
+            "since": "2.6.0",
+            "tags": [
+                "authentication",
+                "login"
+            ],
+            "titleKey": "blocks.entries.login-04.title",
+            "unavailableReason": null,
+            "viewport": "full"
+        },
+        {
+            "available": true,
+            "category": "login",
+            "descriptionKey": "blocks.entries.login-05.description",
+            "entryFile": "login-05/Page.vue",
+            "key": "login-05",
+            "npmDependencies": [],
+            "registryDependencies": [
+                "button",
+                "field",
+                "input"
+            ],
+            "since": "2.6.0",
+            "tags": [
+                "authentication",
+                "login"
+            ],
+            "titleKey": "blocks.entries.login-05.title",
+            "unavailableReason": null,
+            "viewport": "full"
+        },
+        {
+            "available": true,
+            "category": "signup",
+            "descriptionKey": "blocks.entries.signup-01.description",
+            "entryFile": "signup-01/Page.vue",
+            "key": "signup-01",
+            "npmDependencies": [],
+            "registryDependencies": [
+                "button",
+                "card",
+                "field",
+                "input"
+            ],
+            "since": "2.6.0",
+            "tags": [
+                "authentication",
+                "signup"
+            ],
+            "titleKey": "blocks.entries.signup-01.title",
+            "unavailableReason": null,
+            "viewport": "full"
+        },
+        {
+            "available": true,
+            "category": "signup",
+            "descriptionKey": "blocks.entries.signup-02.description",
+            "entryFile": "signup-02/Page.vue",
+            "key": "signup-02",
+            "npmDependencies": [],
+            "registryDependencies": [
+                "button",
+                "field",
+                "input"
+            ],
+            "since": "2.6.0",
+            "tags": [
+                "authentication",
+                "signup"
+            ],
+            "titleKey": "blocks.entries.signup-02.title",
+            "unavailableReason": null,
+            "viewport": "full"
+        },
+        {
+            "available": true,
+            "category": "signup",
+            "descriptionKey": "blocks.entries.signup-03.description",
+            "entryFile": "signup-03/Page.vue",
+            "key": "signup-03",
+            "npmDependencies": [],
+            "registryDependencies": [
+                "button",
+                "card",
+                "field",
+                "input"
+            ],
+            "since": "2.6.0",
+            "tags": [
+                "authentication",
+                "signup"
+            ],
+            "titleKey": "blocks.entries.signup-03.title",
+            "unavailableReason": null,
+            "viewport": "full"
+        },
+        {
+            "available": true,
+            "category": "signup",
+            "descriptionKey": "blocks.entries.signup-04.description",
+            "entryFile": "signup-04/Page.vue",
+            "key": "signup-04",
+            "npmDependencies": [],
+            "registryDependencies": [
+                "button",
+                "card",
+                "field",
+                "input"
+            ],
+            "since": "2.6.0",
+            "tags": [
+                "authentication",
+                "signup"
+            ],
+            "titleKey": "blocks.entries.signup-04.title",
+            "unavailableReason": null,
+            "viewport": "full"
+        },
+        {
+            "available": true,
+            "category": "signup",
+            "descriptionKey": "blocks.entries.signup-05.description",
+            "entryFile": "signup-05/Page.vue",
+            "key": "signup-05",
+            "npmDependencies": [],
+            "registryDependencies": [
+                "button",
+                "field",
+                "input"
+            ],
+            "since": "2.6.0",
+            "tags": [
+                "authentication",
+                "signup"
+            ],
+            "titleKey": "blocks.entries.signup-05.title",
+            "unavailableReason": null,
+            "viewport": "full"
+        },
+        {
+            "available": false,
+            "category": "otp",
+            "descriptionKey": "blocks.entries.otp-01.description",
+            "entryFile": "otp-01/Page.vue",
+            "key": "otp-01",
+            "npmDependencies": [],
+            "registryDependencies": [
+                "button",
+                "card",
+                "field",
+                "input-otp"
+            ],
+            "since": "2.6.0",
+            "tags": [
+                "authentication",
+                "otp"
+            ],
+            "titleKey": "blocks.entries.otp-01.title",
+            "unavailableReason": "registry: input-otp",
+            "viewport": "full"
+        },
+        {
+            "available": false,
+            "category": "otp",
+            "descriptionKey": "blocks.entries.otp-02.description",
+            "entryFile": "otp-02/Page.vue",
+            "key": "otp-02",
+            "npmDependencies": [],
+            "registryDependencies": [
+                "button",
+                "field",
+                "input-otp"
+            ],
+            "since": "2.6.0",
+            "tags": [
+                "authentication",
+                "otp"
+            ],
+            "titleKey": "blocks.entries.otp-02.title",
+            "unavailableReason": "registry: input-otp",
+            "viewport": "full"
+        },
+        {
+            "available": false,
+            "category": "otp",
+            "descriptionKey": "blocks.entries.otp-03.description",
+            "entryFile": "otp-03/Page.vue",
+            "key": "otp-03",
+            "npmDependencies": [],
+            "registryDependencies": [
+                "button",
+                "card",
+                "field",
+                "input-otp"
+            ],
+            "since": "2.6.0",
+            "tags": [
+                "authentication",
+                "otp"
+            ],
+            "titleKey": "blocks.entries.otp-03.title",
+            "unavailableReason": "registry: input-otp",
+            "viewport": "full"
+        },
+        {
+            "available": false,
+            "category": "otp",
+            "descriptionKey": "blocks.entries.otp-04.description",
+            "entryFile": "otp-04/Page.vue",
+            "key": "otp-04",
+            "npmDependencies": [],
+            "registryDependencies": [
+                "button",
+                "card",
+                "field",
+                "input-otp"
+            ],
+            "since": "2.6.0",
+            "tags": [
+                "authentication",
+                "otp"
+            ],
+            "titleKey": "blocks.entries.otp-04.title",
+            "unavailableReason": "registry: input-otp",
+            "viewport": "full"
+        },
+        {
+            "available": false,
+            "category": "otp",
+            "descriptionKey": "blocks.entries.otp-05.description",
+            "entryFile": "otp-05/Page.vue",
+            "key": "otp-05",
+            "npmDependencies": [],
+            "registryDependencies": [
+                "button",
+                "field",
+                "input-otp"
+            ],
+            "since": "2.6.0",
+            "tags": [
+                "authentication",
+                "otp"
+            ],
+            "titleKey": "blocks.entries.otp-05.title",
+            "unavailableReason": "registry: input-otp",
+            "viewport": "full"
+        },
+        {
+            "available": true,
+            "category": "products",
+            "descriptionKey": "blocks.entries.products-01.description",
+            "entryFile": "products-01/Page.vue",
+            "key": "products-01",
+            "npmDependencies": [],
+            "registryDependencies": [
+                "badge",
+                "button",
+                "checkbox",
+                "dropdown-menu",
+                "pagination",
+                "select",
+                "table",
+                "tabs"
+            ],
+            "since": "2.6.0",
+            "tags": [
+                "products"
+            ],
+            "titleKey": "blocks.entries.products-01.title",
+            "unavailableReason": null,
+            "viewport": "full"
+        },
+        {
+            "available": false,
+            "category": "chart",
+            "descriptionKey": "blocks.entries.ChartAreaAxes.description",
+            "entryFile": "ChartAreaAxes/Page.vue",
+            "key": "ChartAreaAxes",
+            "npmDependencies": [
+                "@unovis/vue"
+            ],
+            "registryDependencies": [
+                "card",
+                "chart"
+            ],
+            "since": "2.6.0",
+            "tags": [
+                "chart",
+                "chart-area"
+            ],
+            "titleKey": "blocks.entries.ChartAreaAxes.title",
+            "unavailableReason": "npm: @unovis/vue · registry: chart",
+            "viewport": "768"
+        },
+        {
+            "available": false,
+            "category": "chart",
+            "descriptionKey": "blocks.entries.ChartAreaGradient.description",
+            "entryFile": "ChartAreaGradient/Page.vue",
+            "key": "ChartAreaGradient",
+            "npmDependencies": [
+                "@unovis/vue"
+            ],
+            "registryDependencies": [
+                "card",
+                "chart"
+            ],
+            "since": "2.6.0",
+            "tags": [
+                "chart",
+                "chart-area"
+            ],
+            "titleKey": "blocks.entries.ChartAreaGradient.title",
+            "unavailableReason": "npm: @unovis/vue · registry: chart",
+            "viewport": "768"
+        },
+        {
+            "available": false,
+            "category": "chart",
+            "descriptionKey": "blocks.entries.ChartAreaIcons.description",
+            "entryFile": "ChartAreaIcons/Page.vue",
+            "key": "ChartAreaIcons",
+            "npmDependencies": [
+                "@unovis/vue"
+            ],
+            "registryDependencies": [
+                "card",
+                "chart"
+            ],
+            "since": "2.6.0",
+            "tags": [
+                "chart",
+                "chart-area"
+            ],
+            "titleKey": "blocks.entries.ChartAreaIcons.title",
+            "unavailableReason": "npm: @unovis/vue · registry: chart",
+            "viewport": "768"
+        },
+        {
+            "available": false,
+            "category": "chart",
+            "descriptionKey": "blocks.entries.ChartAreaInteractive.description",
+            "entryFile": "ChartAreaInteractive/Page.vue",
+            "key": "ChartAreaInteractive",
+            "npmDependencies": [
+                "@unovis/vue"
+            ],
+            "registryDependencies": [
+                "card",
+                "chart",
+                "select"
+            ],
+            "since": "2.6.0",
+            "tags": [
+                "chart",
+                "chart-area"
+            ],
+            "titleKey": "blocks.entries.ChartAreaInteractive.title",
+            "unavailableReason": "npm: @unovis/vue · registry: chart",
+            "viewport": "768"
+        },
+        {
+            "available": false,
+            "category": "chart",
+            "descriptionKey": "blocks.entries.ChartBarDefault.description",
+            "entryFile": "ChartBarDefault/Page.vue",
+            "key": "ChartBarDefault",
+            "npmDependencies": [
+                "@unovis/vue"
+            ],
+            "registryDependencies": [
+                "card",
+                "chart"
+            ],
+            "since": "2.6.0",
+            "tags": [
+                "chart",
+                "chart-bar"
+            ],
+            "titleKey": "blocks.entries.ChartBarDefault.title",
+            "unavailableReason": "npm: @unovis/vue · registry: chart",
+            "viewport": "768"
+        },
+        {
+            "available": false,
+            "category": "chart",
+            "descriptionKey": "blocks.entries.ChartBarHorizontal.description",
+            "entryFile": "ChartBarHorizontal/Page.vue",
+            "key": "ChartBarHorizontal",
+            "npmDependencies": [
+                "@unovis/ts",
+                "@unovis/vue"
+            ],
+            "registryDependencies": [
+                "card",
+                "chart"
+            ],
+            "since": "2.6.0",
+            "tags": [
+                "chart",
+                "chart-bar"
+            ],
+            "titleKey": "blocks.entries.ChartBarHorizontal.title",
+            "unavailableReason": "npm: @unovis/ts, @unovis/vue · registry: chart",
+            "viewport": "768"
+        },
+        {
+            "available": false,
+            "category": "chart",
+            "descriptionKey": "blocks.entries.ChartBarInteractive.description",
+            "entryFile": "ChartBarInteractive/Page.vue",
+            "key": "ChartBarInteractive",
+            "npmDependencies": [
+                "@unovis/vue"
+            ],
+            "registryDependencies": [
+                "card",
+                "chart"
+            ],
+            "since": "2.6.0",
+            "tags": [
+                "chart",
+                "chart-bar"
+            ],
+            "titleKey": "blocks.entries.ChartBarInteractive.title",
+            "unavailableReason": "npm: @unovis/vue · registry: chart",
+            "viewport": "768"
+        },
+        {
+            "available": false,
+            "category": "chart",
+            "descriptionKey": "blocks.entries.ChartBarMultiple.description",
+            "entryFile": "ChartBarMultiple/Page.vue",
+            "key": "ChartBarMultiple",
+            "npmDependencies": [
+                "@unovis/vue"
+            ],
+            "registryDependencies": [
+                "card",
+                "chart"
+            ],
+            "since": "2.6.0",
+            "tags": [
+                "chart",
+                "chart-bar"
+            ],
+            "titleKey": "blocks.entries.ChartBarMultiple.title",
+            "unavailableReason": "npm: @unovis/vue · registry: chart",
+            "viewport": "768"
+        },
+        {
+            "available": false,
+            "category": "chart",
+            "descriptionKey": "blocks.entries.ChartLineDefault.description",
+            "entryFile": "ChartLineDefault/Page.vue",
+            "key": "ChartLineDefault",
+            "npmDependencies": [
+                "@unovis/ts",
+                "@unovis/vue"
+            ],
+            "registryDependencies": [
+                "card",
+                "chart"
+            ],
+            "since": "2.6.0",
+            "tags": [
+                "chart",
+                "chart-line"
+            ],
+            "titleKey": "blocks.entries.ChartLineDefault.title",
+            "unavailableReason": "npm: @unovis/ts, @unovis/vue · registry: chart",
+            "viewport": "768"
+        },
+        {
+            "available": false,
+            "category": "chart",
+            "descriptionKey": "blocks.entries.ChartLineInteractive.description",
+            "entryFile": "ChartLineInteractive/Page.vue",
+            "key": "ChartLineInteractive",
+            "npmDependencies": [
+                "@unovis/vue"
+            ],
+            "registryDependencies": [
+                "card",
+                "chart"
+            ],
+            "since": "2.6.0",
+            "tags": [
+                "chart",
+                "chart-line"
+            ],
+            "titleKey": "blocks.entries.ChartLineInteractive.title",
+            "unavailableReason": "npm: @unovis/vue · registry: chart",
+            "viewport": "768"
+        },
+        {
+            "available": false,
+            "category": "chart",
+            "descriptionKey": "blocks.entries.ChartLineLinear.description",
+            "entryFile": "ChartLineLinear/Page.vue",
+            "key": "ChartLineLinear",
+            "npmDependencies": [
+                "@unovis/ts",
+                "@unovis/vue"
+            ],
+            "registryDependencies": [
+                "card",
+                "chart"
+            ],
+            "since": "2.6.0",
+            "tags": [
+                "chart",
+                "chart-line"
+            ],
+            "titleKey": "blocks.entries.ChartLineLinear.title",
+            "unavailableReason": "npm: @unovis/ts, @unovis/vue · registry: chart",
+            "viewport": "768"
+        },
+        {
+            "available": false,
+            "category": "chart",
+            "descriptionKey": "blocks.entries.ChartLineStep.description",
+            "entryFile": "ChartLineStep/Page.vue",
+            "key": "ChartLineStep",
+            "npmDependencies": [
+                "@unovis/ts",
+                "@unovis/vue"
+            ],
+            "registryDependencies": [
+                "card",
+                "chart"
+            ],
+            "since": "2.6.0",
+            "tags": [
+                "chart",
+                "chart-line"
+            ],
+            "titleKey": "blocks.entries.ChartLineStep.title",
+            "unavailableReason": "npm: @unovis/ts, @unovis/vue · registry: chart",
+            "viewport": "768"
+        },
+        {
+            "available": false,
+            "category": "chart",
+            "descriptionKey": "blocks.entries.ChartPieDonut.description",
+            "entryFile": "ChartPieDonut/Page.vue",
+            "key": "ChartPieDonut",
+            "npmDependencies": [
+                "@unovis/ts",
+                "@unovis/vue"
+            ],
+            "registryDependencies": [
+                "card",
+                "chart"
+            ],
+            "since": "2.6.0",
+            "tags": [
+                "chart",
+                "chart-pie"
+            ],
+            "titleKey": "blocks.entries.ChartPieDonut.title",
+            "unavailableReason": "npm: @unovis/ts, @unovis/vue · registry: chart",
+            "viewport": "768"
+        },
+        {
+            "available": false,
+            "category": "chart",
+            "descriptionKey": "blocks.entries.ChartPieDonutText.description",
+            "entryFile": "ChartPieDonutText/Page.vue",
+            "key": "ChartPieDonutText",
+            "npmDependencies": [
+                "@unovis/ts",
+                "@unovis/vue"
+            ],
+            "registryDependencies": [
+                "card",
+                "chart"
+            ],
+            "since": "2.6.0",
+            "tags": [
+                "chart",
+                "chart-pie"
+            ],
+            "titleKey": "blocks.entries.ChartPieDonutText.title",
+            "unavailableReason": "npm: @unovis/ts, @unovis/vue · registry: chart",
+            "viewport": "768"
+        },
+        {
+            "available": false,
+            "category": "chart",
+            "descriptionKey": "blocks.entries.ChartPieSimple.description",
+            "entryFile": "ChartPieSimple/Page.vue",
+            "key": "ChartPieSimple",
+            "npmDependencies": [
+                "@unovis/ts",
+                "@unovis/vue"
+            ],
+            "registryDependencies": [
+                "card",
+                "chart"
+            ],
+            "since": "2.6.0",
+            "tags": [
+                "chart",
+                "chart-pie"
+            ],
+            "titleKey": "blocks.entries.ChartPieSimple.title",
+            "unavailableReason": "npm: @unovis/ts, @unovis/vue · registry: chart",
+            "viewport": "768"
+        },
+        {
+            "available": false,
+            "category": "chart",
+            "descriptionKey": "blocks.entries.ChartPieStacked.description",
+            "entryFile": "ChartPieStacked/Page.vue",
+            "key": "ChartPieStacked",
+            "npmDependencies": [
+                "@unovis/ts",
+                "@unovis/vue"
+            ],
+            "registryDependencies": [
+                "card",
+                "chart"
+            ],
+            "since": "2.6.0",
+            "tags": [
+                "chart",
+                "chart-pie"
+            ],
+            "titleKey": "blocks.entries.ChartPieStacked.title",
+            "unavailableReason": "npm: @unovis/ts, @unovis/vue · registry: chart",
+            "viewport": "768"
+        },
+        {
+            "available": false,
+            "category": "chart",
+            "descriptionKey": "blocks.entries.ChartTooltipDefault.description",
+            "entryFile": "ChartTooltipDefault/Page.vue",
+            "key": "ChartTooltipDefault",
+            "npmDependencies": [
+                "@unovis/vue"
+            ],
+            "registryDependencies": [
+                "card",
+                "chart"
+            ],
+            "since": "2.6.0",
+            "tags": [
+                "chart",
+                "chart-tooltip"
+            ],
+            "titleKey": "blocks.entries.ChartTooltipDefault.title",
+            "unavailableReason": "npm: @unovis/vue · registry: chart",
+            "viewport": "768"
+        },
+        {
+            "available": false,
+            "category": "chart",
+            "descriptionKey": "blocks.entries.ChartTooltipIcons.description",
+            "entryFile": "ChartTooltipIcons/Page.vue",
+            "key": "ChartTooltipIcons",
+            "npmDependencies": [
+                "@unovis/vue"
+            ],
+            "registryDependencies": [
+                "card",
+                "chart"
+            ],
+            "since": "2.6.0",
+            "tags": [
+                "chart",
+                "chart-tooltip"
+            ],
+            "titleKey": "blocks.entries.ChartTooltipIcons.title",
+            "unavailableReason": "npm: @unovis/vue · registry: chart",
+            "viewport": "768"
+        },
+        {
+            "available": false,
+            "category": "chart",
+            "descriptionKey": "blocks.entries.ChartTooltipIndicatorLine.description",
+            "entryFile": "ChartTooltipIndicatorLine/Page.vue",
+            "key": "ChartTooltipIndicatorLine",
+            "npmDependencies": [
+                "@unovis/vue"
+            ],
+            "registryDependencies": [
+                "card",
+                "chart"
+            ],
+            "since": "2.6.0",
+            "tags": [
+                "chart",
+                "chart-tooltip"
+            ],
+            "titleKey": "blocks.entries.ChartTooltipIndicatorLine.title",
+            "unavailableReason": "npm: @unovis/vue · registry: chart",
+            "viewport": "768"
+        },
+        {
+            "available": false,
+            "category": "chart",
+            "descriptionKey": "blocks.entries.ChartTooltipIndicatorNone.description",
+            "entryFile": "ChartTooltipIndicatorNone/Page.vue",
+            "key": "ChartTooltipIndicatorNone",
+            "npmDependencies": [
+                "@unovis/vue"
+            ],
+            "registryDependencies": [
+                "card",
+                "chart"
+            ],
+            "since": "2.6.0",
+            "tags": [
+                "chart",
+                "chart-tooltip"
+            ],
+            "titleKey": "blocks.entries.ChartTooltipIndicatorNone.title",
+            "unavailableReason": "npm: @unovis/vue · registry: chart",
+            "viewport": "768"
+        },
+        {
+            "available": false,
+            "category": "chart",
+            "descriptionKey": "blocks.entries.ChartTooltipLabelCustom.description",
+            "entryFile": "ChartTooltipLabelCustom/Page.vue",
+            "key": "ChartTooltipLabelCustom",
+            "npmDependencies": [
+                "@unovis/vue"
+            ],
+            "registryDependencies": [
+                "card",
+                "chart"
+            ],
+            "since": "2.6.0",
+            "tags": [
+                "chart",
+                "chart-tooltip"
+            ],
+            "titleKey": "blocks.entries.ChartTooltipLabelCustom.title",
+            "unavailableReason": "npm: @unovis/vue · registry: chart",
+            "viewport": "768"
+        },
+        {
+            "available": false,
+            "category": "chart",
+            "descriptionKey": "blocks.entries.ChartTooltipLabelFormatter.description",
+            "entryFile": "ChartTooltipLabelFormatter/Page.vue",
+            "key": "ChartTooltipLabelFormatter",
+            "npmDependencies": [
+                "@unovis/vue"
+            ],
+            "registryDependencies": [
+                "card",
+                "chart"
+            ],
+            "since": "2.6.0",
+            "tags": [
+                "chart",
+                "chart-tooltip"
+            ],
+            "titleKey": "blocks.entries.ChartTooltipLabelFormatter.title",
+            "unavailableReason": "npm: @unovis/vue · registry: chart",
+            "viewport": "768"
+        },
+        {
+            "available": false,
+            "category": "chart",
+            "descriptionKey": "blocks.entries.ChartTooltipLabelNone.description",
+            "entryFile": "ChartTooltipLabelNone/Page.vue",
+            "key": "ChartTooltipLabelNone",
+            "npmDependencies": [
+                "@unovis/vue"
+            ],
+            "registryDependencies": [
+                "card",
+                "chart"
+            ],
+            "since": "2.6.0",
+            "tags": [
+                "chart",
+                "chart-tooltip"
+            ],
+            "titleKey": "blocks.entries.ChartTooltipLabelNone.title",
+            "unavailableReason": "npm: @unovis/vue · registry: chart",
+            "viewport": "768"
+        }
+    ],
+    "categories": [
+        "sidebar",
+        "dashboard",
+        "login",
+        "signup",
+        "otp",
+        "products",
+        "chart"
+    ]
+}

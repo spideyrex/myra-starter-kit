@@ -1,0 +1,18 @@
+{
+  "api": "https://shadcn-vue.com/api",
+  "raw": "https://raw.githubusercontent.com/unovue/shadcn-vue",
+  "ref": "dev",
+  "rawPrefix": "apps/v4",
+  "outDir": "resources/js/blocks",
+  "quarantineDir": "resources/js/blocks/_unavailable",
+  "manifest": "scripts/shadcn/blocks-manifest.json",
+  "indexFile": "resources/js/blocks/index.ts",
+  "fixture": "tests/js/fixtures/blocks-index.json",
+  "uiDir": "resources/js/components/ui",
+  "libDir": "resources/js/lib",
+  "categoryOrder": ["sidebar", "dashboard", "login", "signup", "otp", "products", "chart"],
+  "gaps": {
+    "calendar": "https://shadcn-vue.com/api/category/calendar returns an empty block list: no Vue calendar block exists upstream.",
+    "chart": "The block API serves chart blocks with empty file contents; source is recovered from the pinned GitHub ref, but @unovis/vue and the chart registry component are absent from this install."
+  }
+}

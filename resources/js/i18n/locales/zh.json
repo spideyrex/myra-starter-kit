@@ -965,6 +965,287 @@
         "viewAsChart": "以图表查看",
         "viewAsTable": "以表格查看"
     },
+    "blocks": {
+        "title": "shadcn 区块",
+        "description": "shadcn-vue 注册表中的每个区块，原样引入并在隔离环境中预览。",
+        "search": "搜索区块",
+        "allCategories": "全部",
+        "resultCount": "显示 {n} 个区块",
+        "noResults": "没有匹配的区块。",
+        "view": "打开区块",
+        "categories": {
+            "sidebar": "侧边栏",
+            "dashboard": "仪表板",
+            "login": "登录",
+            "signup": "注册",
+            "otp": "一次性验证码",
+            "products": "产品",
+            "chart": "图表",
+            "other": "其他"
+        },
+        "preview": {
+            "tab": "预览",
+            "frameTitle": "{name} 的实时预览",
+            "openInNewTab": "在新标签页中打开预览",
+            "viewport": "视口",
+            "viewportFull": "全宽",
+            "viewportPx": "{px} 像素",
+            "viewportAnnounced": "视口：{size}",
+            "dark": "深色模式"
+        },
+        "source": {
+            "tab": "代码",
+            "copy": "复制",
+            "copied": "已复制",
+            "file": "{path} 的源码"
+        },
+        "dependencies": {
+            "tab": "依赖",
+            "registry": "注册表组件",
+            "npm": "npm 包",
+            "none": "无"
+        },
+        "unavailable": {
+            "title": "预览不可用",
+            "body": "该区块需要本安装未提供的依赖（{deps}）。其源码已完整引入并显示在下方。",
+            "badge": "仅源码"
+        },
+        "gaps": {
+            "title": "已知缺口",
+            "calendar": "上游没有 Vue 版日历区块，因此未引入。",
+            "charts": "图表区块仅引入源码：它们需要 unovis 图表包与 chart 注册表组件，本项目均未安装。"
+        },
+        "entries": {
+            "sidebar-01": {
+                "title": "Sidebar 01",
+                "description": "导航按区块分组的简洁侧边栏。"
+            },
+            "sidebar-02": {
+                "title": "Sidebar 02",
+                "description": "带可折叠分区的侧边栏。"
+            },
+            "sidebar-03": {
+                "title": "Sidebar 03",
+                "description": "带子菜单的侧边栏。"
+            },
+            "sidebar-04": {
+                "title": "Sidebar 04",
+                "description": "带子菜单的浮动侧边栏。"
+            },
+            "sidebar-05": {
+                "title": "Sidebar 05",
+                "description": "带可折叠子菜单的侧边栏。"
+            },
+            "sidebar-06": {
+                "title": "Sidebar 06",
+                "description": "子菜单以下拉形式呈现的侧边栏。"
+            },
+            "sidebar-07": {
+                "title": "Sidebar 07",
+                "description": "可折叠为图标的侧边栏。"
+            },
+            "sidebar-08": {
+                "title": "Sidebar 08",
+                "description": "带次级导航的内嵌侧边栏。"
+            },
+            "sidebar-09": {
+                "title": "Sidebar 09",
+                "description": "可折叠的嵌套侧边栏。"
+            },
+            "sidebar-10": {
+                "title": "Sidebar 10",
+                "description": "位于弹出层中的侧边栏。"
+            },
+            "sidebar-11": {
+                "title": "Sidebar 11",
+                "description": "带可折叠文件树的侧边栏。"
+            },
+            "sidebar-12": {
+                "title": "Sidebar 12",
+                "description": "带日历的侧边栏。"
+            },
+            "sidebar-13": {
+                "title": "Sidebar 13",
+                "description": "位于对话框中的侧边栏。"
+            },
+            "sidebar-14": {
+                "title": "Sidebar 14",
+                "description": "位于右侧的侧边栏。"
+            },
+            "sidebar-15": {
+                "title": "Sidebar 15",
+                "description": "左右双侧边栏。"
+            },
+            "sidebar-16": {
+                "title": "Sidebar 16",
+                "description": "带吸顶站点页眉的侧边栏。"
+            },
+            "sidebar-demo": {
+                "title": "Sidebar Demo",
+                "description": "不含页面外框的侧边栏原语。"
+            },
+            "dashboard-01": {
+                "title": "Dashboard 01",
+                "description": "含侧边栏、图表与数据表的仪表板。"
+            },
+            "login-01": {
+                "title": "Login 01",
+                "description": "简洁登录表单。"
+            },
+            "login-02": {
+                "title": "Login 02",
+                "description": "带封面图的双栏登录页。"
+            },
+            "login-03": {
+                "title": "Login 03",
+                "description": "使用柔和背景色的登录页。"
+            },
+            "login-04": {
+                "title": "Login 04",
+                "description": "含表单与图片的登录页。"
+            },
+            "login-05": {
+                "title": "Login 05",
+                "description": "仅使用邮箱的简洁登录页。"
+            },
+            "signup-01": {
+                "title": "Signup 01",
+                "description": "简洁注册表单。"
+            },
+            "signup-02": {
+                "title": "Signup 02",
+                "description": "带封面图的双栏注册页。"
+            },
+            "signup-03": {
+                "title": "Signup 03",
+                "description": "使用柔和背景色的注册页。"
+            },
+            "signup-04": {
+                "title": "Signup 04",
+                "description": "含表单与图片的注册页。"
+            },
+            "signup-05": {
+                "title": "Signup 05",
+                "description": "含社交登录方式的简洁注册表单。"
+            },
+            "otp-01": {
+                "title": "Otp 01",
+                "description": "简洁 OTP 验证表单。"
+            },
+            "otp-02": {
+                "title": "Otp 02",
+                "description": "带封面图的双栏 OTP 页面。"
+            },
+            "otp-03": {
+                "title": "Otp 03",
+                "description": "使用柔和背景色的 OTP 页面。"
+            },
+            "otp-04": {
+                "title": "Otp 04",
+                "description": "含表单与图片的 OTP 页面。"
+            },
+            "otp-05": {
+                "title": "Otp 05",
+                "description": "含社交登录方式的简洁 OTP 表单。"
+            },
+            "products-01": {
+                "title": "Products 01",
+                "description": "含筛选、分页与行操作的产品表格。"
+            },
+            "ChartAreaAxes": {
+                "title": "Chart Area Axes",
+                "description": "带可见坐标轴的面积图。"
+            },
+            "ChartAreaGradient": {
+                "title": "Chart Area Gradient",
+                "description": "带渐变填充的面积图。"
+            },
+            "ChartAreaIcons": {
+                "title": "Chart Area Icons",
+                "description": "图例中带图标的面积图。"
+            },
+            "ChartAreaInteractive": {
+                "title": "Chart Area Interactive",
+                "description": "带范围选择器的交互式面积图。"
+            },
+            "ChartBarDefault": {
+                "title": "Chart Bar Default",
+                "description": "默认配置的柱状图。"
+            },
+            "ChartBarHorizontal": {
+                "title": "Chart Bar Horizontal",
+                "description": "横向柱状图。"
+            },
+            "ChartBarInteractive": {
+                "title": "Chart Bar Interactive",
+                "description": "带系列切换的交互式柱状图。"
+            },
+            "ChartBarMultiple": {
+                "title": "Chart Bar Multiple",
+                "description": "含多个系列的柱状图。"
+            },
+            "ChartLineDefault": {
+                "title": "Chart Line Default",
+                "description": "默认配置的折线图。"
+            },
+            "ChartLineInteractive": {
+                "title": "Chart Line Interactive",
+                "description": "带系列切换的交互式折线图。"
+            },
+            "ChartLineLinear": {
+                "title": "Chart Line Linear",
+                "description": "采用线性插值的折线图。"
+            },
+            "ChartLineStep": {
+                "title": "Chart Line Step",
+                "description": "采用阶梯插值的折线图。"
+            },
+            "ChartPieDonut": {
+                "title": "Chart Pie Donut",
+                "description": "环形图。"
+            },
+            "ChartPieDonutText": {
+                "title": "Chart Pie Donut Text",
+                "description": "中心显示总计的环形图。"
+            },
+            "ChartPieSimple": {
+                "title": "Chart Pie Simple",
+                "description": "简洁饼图。"
+            },
+            "ChartPieStacked": {
+                "title": "Chart Pie Stacked",
+                "description": "带堆叠扇区的饼图。"
+            },
+            "ChartTooltipDefault": {
+                "title": "Chart Tooltip Default",
+                "description": "默认配置的图表提示框。"
+            },
+            "ChartTooltipIcons": {
+                "title": "Chart Tooltip Icons",
+                "description": "带系列图标的图表提示框。"
+            },
+            "ChartTooltipIndicatorLine": {
+                "title": "Chart Tooltip Indicator Line",
+                "description": "带线条指示器的图表提示框。"
+            },
+            "ChartTooltipIndicatorNone": {
+                "title": "Chart Tooltip Indicator None",
+                "description": "不含指示器的图表提示框。"
+            },
+            "ChartTooltipLabelCustom": {
+                "title": "Chart Tooltip Label Custom",
+                "description": "带自定义标签的图表提示框。"
+            },
+            "ChartTooltipLabelFormatter": {
+                "title": "Chart Tooltip Label Formatter",
+                "description": "带格式化标签的图表提示框。"
+            },
+            "ChartTooltipLabelNone": {
+                "title": "Chart Tooltip Label None",
+                "description": "隐藏标签的图表提示框。"
+            }
+        }
+    },
     "transfer": {
         "export": {
             "button": "导出",

@@ -965,6 +965,287 @@
         "viewAsChart": "Lihat sebagai carta",
         "viewAsTable": "Lihat sebagai jadual"
     },
+    "blocks": {
+        "title": "Blok shadcn",
+        "description": "Setiap blok registri shadcn-vue, dibawa masuk secara verbatim dan dipratonton secara berasingan.",
+        "search": "Cari blok",
+        "allCategories": "Semua",
+        "resultCount": "{n} blok dipaparkan",
+        "noResults": "Tiada blok sepadan dengan carian itu.",
+        "view": "Buka blok",
+        "categories": {
+            "sidebar": "Bar sisi",
+            "dashboard": "Papan pemuka",
+            "login": "Log masuk",
+            "signup": "Pendaftaran",
+            "otp": "Kod sekali guna",
+            "products": "Produk",
+            "chart": "Carta",
+            "other": "Lain-lain"
+        },
+        "preview": {
+            "tab": "Pratonton",
+            "frameTitle": "Pratonton langsung {name}",
+            "openInNewTab": "Buka pratonton dalam tab baharu",
+            "viewport": "Port pandang",
+            "viewportFull": "Lebar penuh",
+            "viewportPx": "{px} px",
+            "viewportAnnounced": "Port pandang: {size}",
+            "dark": "Mod gelap"
+        },
+        "source": {
+            "tab": "Kod",
+            "copy": "Salin",
+            "copied": "Disalin",
+            "file": "Sumber {path}"
+        },
+        "dependencies": {
+            "tab": "Kebergantungan",
+            "registry": "Komponen registri",
+            "npm": "Pakej npm",
+            "none": "Tiada"
+        },
+        "unavailable": {
+            "title": "Pratonton tidak tersedia",
+            "body": "Blok ini memerlukan kebergantungan yang tidak disertakan dalam pemasangan ini ({deps}). Sumbernya lengkap dan dipaparkan di bawah.",
+            "badge": "Sumber sahaja"
+        },
+        "gaps": {
+            "title": "Jurang diketahui",
+            "calendar": "Tiada blok kalendar Vue di hulu, jadi tiada yang dibawa masuk.",
+            "charts": "Blok carta dibawa masuk sebagai sumber sahaja: ia memerlukan pakej carta unovis dan komponen registri carta, yang kedua-duanya tidak dipasang di sini."
+        },
+        "entries": {
+            "sidebar-01": {
+                "title": "Sidebar 01",
+                "description": "Bar sisi ringkas dengan navigasi dikumpulkan mengikut bahagian."
+            },
+            "sidebar-02": {
+                "title": "Sidebar 02",
+                "description": "Bar sisi dengan bahagian boleh dikuncupkan."
+            },
+            "sidebar-03": {
+                "title": "Sidebar 03",
+                "description": "Bar sisi dengan submenu."
+            },
+            "sidebar-04": {
+                "title": "Sidebar 04",
+                "description": "Bar sisi terapung dengan submenu."
+            },
+            "sidebar-05": {
+                "title": "Sidebar 05",
+                "description": "Bar sisi dengan submenu boleh dikuncupkan."
+            },
+            "sidebar-06": {
+                "title": "Sidebar 06",
+                "description": "Bar sisi dengan submenu sebagai menu lungsur."
+            },
+            "sidebar-07": {
+                "title": "Sidebar 07",
+                "description": "Bar sisi yang menguncup menjadi ikon."
+            },
+            "sidebar-08": {
+                "title": "Sidebar 08",
+                "description": "Bar sisi terbenam dengan navigasi sekunder."
+            },
+            "sidebar-09": {
+                "title": "Sidebar 09",
+                "description": "Bar sisi bersarang yang boleh dikuncupkan."
+            },
+            "sidebar-10": {
+                "title": "Sidebar 10",
+                "description": "Bar sisi di dalam popover."
+            },
+            "sidebar-11": {
+                "title": "Sidebar 11",
+                "description": "Bar sisi dengan pepohon fail boleh dikuncupkan."
+            },
+            "sidebar-12": {
+                "title": "Sidebar 12",
+                "description": "Bar sisi dengan kalendar."
+            },
+            "sidebar-13": {
+                "title": "Sidebar 13",
+                "description": "Bar sisi di dalam dialog."
+            },
+            "sidebar-14": {
+                "title": "Sidebar 14",
+                "description": "Bar sisi di sebelah kanan."
+            },
+            "sidebar-15": {
+                "title": "Sidebar 15",
+                "description": "Bar sisi kiri dan kanan."
+            },
+            "sidebar-16": {
+                "title": "Sidebar 16",
+                "description": "Bar sisi dengan pengepala tapak melekat."
+            },
+            "sidebar-demo": {
+                "title": "Sidebar Demo",
+                "description": "Primitif bar sisi bersendirian, tanpa kelengkapan halaman."
+            },
+            "dashboard-01": {
+                "title": "Dashboard 01",
+                "description": "Papan pemuka dengan bar sisi, carta dan jadual data."
+            },
+            "login-01": {
+                "title": "Login 01",
+                "description": "Borang log masuk ringkas."
+            },
+            "login-02": {
+                "title": "Login 02",
+                "description": "Halaman log masuk dua lajur dengan imej muka depan."
+            },
+            "login-03": {
+                "title": "Login 03",
+                "description": "Halaman log masuk dengan warna latar lembut."
+            },
+            "login-04": {
+                "title": "Login 04",
+                "description": "Halaman log masuk dengan borang dan imej."
+            },
+            "login-05": {
+                "title": "Login 05",
+                "description": "Halaman log masuk ringkas e-mel sahaja."
+            },
+            "signup-01": {
+                "title": "Signup 01",
+                "description": "Borang pendaftaran ringkas."
+            },
+            "signup-02": {
+                "title": "Signup 02",
+                "description": "Halaman pendaftaran dua lajur dengan imej muka depan."
+            },
+            "signup-03": {
+                "title": "Signup 03",
+                "description": "Halaman pendaftaran dengan warna latar lembut."
+            },
+            "signup-04": {
+                "title": "Signup 04",
+                "description": "Halaman pendaftaran dengan borang dan imej."
+            },
+            "signup-05": {
+                "title": "Signup 05",
+                "description": "Borang pendaftaran ringkas dengan pembekal sosial."
+            },
+            "otp-01": {
+                "title": "Otp 01",
+                "description": "Borang pengesahan OTP ringkas."
+            },
+            "otp-02": {
+                "title": "Otp 02",
+                "description": "Halaman OTP dua lajur dengan imej muka depan."
+            },
+            "otp-03": {
+                "title": "Otp 03",
+                "description": "Halaman OTP dengan warna latar lembut."
+            },
+            "otp-04": {
+                "title": "Otp 04",
+                "description": "Halaman OTP dengan borang dan imej."
+            },
+            "otp-05": {
+                "title": "Otp 05",
+                "description": "Borang OTP ringkas dengan pembekal sosial."
+            },
+            "products-01": {
+                "title": "Products 01",
+                "description": "Jadual produk dengan penapis, penomboran dan tindakan baris."
+            },
+            "ChartAreaAxes": {
+                "title": "Chart Area Axes",
+                "description": "Carta kawasan dengan paksi kelihatan."
+            },
+            "ChartAreaGradient": {
+                "title": "Chart Area Gradient",
+                "description": "Carta kawasan dengan isian kecerunan."
+            },
+            "ChartAreaIcons": {
+                "title": "Chart Area Icons",
+                "description": "Carta kawasan dengan ikon pada legenda."
+            },
+            "ChartAreaInteractive": {
+                "title": "Chart Area Interactive",
+                "description": "Carta kawasan interaktif dengan pemilih julat."
+            },
+            "ChartBarDefault": {
+                "title": "Chart Bar Default",
+                "description": "Carta bar dengan tetapan lalai."
+            },
+            "ChartBarHorizontal": {
+                "title": "Chart Bar Horizontal",
+                "description": "Carta bar mendatar."
+            },
+            "ChartBarInteractive": {
+                "title": "Chart Bar Interactive",
+                "description": "Carta bar interaktif dengan togol siri."
+            },
+            "ChartBarMultiple": {
+                "title": "Chart Bar Multiple",
+                "description": "Carta bar dengan berbilang siri."
+            },
+            "ChartLineDefault": {
+                "title": "Chart Line Default",
+                "description": "Carta garis dengan tetapan lalai."
+            },
+            "ChartLineInteractive": {
+                "title": "Chart Line Interactive",
+                "description": "Carta garis interaktif dengan togol siri."
+            },
+            "ChartLineLinear": {
+                "title": "Chart Line Linear",
+                "description": "Carta garis dengan interpolasi linear."
+            },
+            "ChartLineStep": {
+                "title": "Chart Line Step",
+                "description": "Carta garis dengan interpolasi berperingkat."
+            },
+            "ChartPieDonut": {
+                "title": "Chart Pie Donut",
+                "description": "Carta donat."
+            },
+            "ChartPieDonutText": {
+                "title": "Chart Pie Donut Text",
+                "description": "Carta donat dengan jumlah di tengah."
+            },
+            "ChartPieSimple": {
+                "title": "Chart Pie Simple",
+                "description": "Carta pai ringkas."
+            },
+            "ChartPieStacked": {
+                "title": "Chart Pie Stacked",
+                "description": "Carta pai dengan bahagian bertindan."
+            },
+            "ChartTooltipDefault": {
+                "title": "Chart Tooltip Default",
+                "description": "Tip alat carta dengan tetapan lalai."
+            },
+            "ChartTooltipIcons": {
+                "title": "Chart Tooltip Icons",
+                "description": "Tip alat carta dengan ikon siri."
+            },
+            "ChartTooltipIndicatorLine": {
+                "title": "Chart Tooltip Indicator Line",
+                "description": "Tip alat carta dengan penunjuk garis."
+            },
+            "ChartTooltipIndicatorNone": {
+                "title": "Chart Tooltip Indicator None",
+                "description": "Tip alat carta tanpa penunjuk."
+            },
+            "ChartTooltipLabelCustom": {
+                "title": "Chart Tooltip Label Custom",
+                "description": "Tip alat carta dengan label tersuai."
+            },
+            "ChartTooltipLabelFormatter": {
+                "title": "Chart Tooltip Label Formatter",
+                "description": "Tip alat carta dengan label berformat."
+            },
+            "ChartTooltipLabelNone": {
+                "title": "Chart Tooltip Label None",
+                "description": "Tip alat carta dengan label disembunyikan."
+            }
+        }
+    },
     "transfer": {
         "export": {
             "button": "Eksport",

@@ -257,3 +257,26 @@ export interface NavItem {
     permission?: string;
     children?: NavItem[];
 }
+
+// >>> MYRA v2.6 [A] START
+export interface BlockSchema {
+    key: string;
+    titleKey: string;
+    descriptionKey: string;
+    category: string;
+    entryFile: string;
+    available: boolean;
+    unavailableReason: string | null;
+    registryDependencies: string[];
+    npmDependencies: string[];
+    tags: string[];
+    since: string;
+    viewport: string;
+}
+
+export interface BlockSourceFile {
+    path: string;
+    language: string;
+    content: string;
+}
+// <<< MYRA v2.6 [A] END

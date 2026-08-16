@@ -253,6 +253,19 @@ Route::middleware(['auth', 'verified', 'active', '2fa'])->prefix('admin')->name(
     Route::post('/table-views/{tableView}/default', [TableViewController::class, 'makeDefault'])->name('table-views.default');
     // <<< MYRA v2.2 [B] END
 
+    // >>> MYRA v2.5 [A] START
+    // Per-user dashboard layouts. The stored blob is a request, never a schema:
+    // every instance is re-resolved server-side on read AND rejected on write.
+    Route::get('/dashboard-catalogue', [\App\Http\Controllers\Admin\DashboardLayoutController::class, 'catalogue'])
+        ->middleware('permission:dashboard.customise')->name('dashboard-catalogue.index');
+    Route::put('/dashboard-layouts/{dashboard}', [\App\Http\Controllers\Admin\DashboardLayoutController::class, 'update'])
+        ->middleware(['permission:dashboard.customise', 'throttle:30,1'])
+        ->name('dashboard-layouts.update');
+    Route::delete('/dashboard-layouts/{dashboard}', [\App\Http\Controllers\Admin\DashboardLayoutController::class, 'destroy'])
+        ->middleware(['permission:dashboard.customise', 'throttle:30,1'])
+        ->name('dashboard-layouts.destroy');
+    // <<< MYRA v2.5 [A] END
+
     // Global Search
     // >>> MYRA v2.2 [D] START
     Route::get('/search', [SearchController::class, 'index'])
@@ -326,6 +339,9 @@ Route::middleware(['auth', 'verified', 'active', '2fa'])->prefix('admin')->name(
     // >>> MYRA v2.4 [A] START
     Route::get('/demo/plugins', [DemoController::class, 'plugins'])->name('demo.plugins');
     // <<< MYRA v2.4 [A] END
+    // >>> MYRA v2.5 [A] START
+    Route::get('/demo/dashboard-editor', [DemoController::class, 'dashboardEditor'])->name('demo.dashboard-editor');
+    // <<< MYRA v2.5 [A] END
     Route::get('/demo/code-editor', [DemoController::class, 'codeEditor'])->name('demo.code-editor');
     Route::get('/demo/advanced-filters', [DemoController::class, 'advancedFilters'])->name('demo.advanced-filters');
     Route::get('/demo/wizard', [DemoController::class, 'wizardDemo'])->name('demo.wizard');

@@ -49,6 +49,30 @@ return [
     'plugin_config' => [],
     // <<< MYRA v2.4 [A] END
 
+    // >>> MYRA v2.5 [A] START
+    /*
+    |--------------------------------------------------------------------------
+    | Dashboard layouts
+    |--------------------------------------------------------------------------
+    |
+    | Editing is OFF until an operator turns it on. With it false the editor bar
+    | never renders, the routes still exist but the ability is unheld by default
+    | on every role except admin/super-admin, and a saved row is still HONOURED —
+    | turning the flag off must not silently discard a layout a user already
+    | saved. `catalogue` ships EMPTY: with it empty the sheet shows an empty
+    | state and nothing on the dashboard changes.
+    |
+    */
+
+    'dashboard' => [
+        'editable'      => env('MYRA_DASHBOARD_EDITABLE', false),
+        'keys'          => ['admin.dashboard' => 'dashboardLayout.keys.main'],
+        'max_entries'   => 48,
+        'max_instances' => 12,
+        'catalogue'     => [],
+    ],
+    // <<< MYRA v2.5 [A] END
+
     /*
     |--------------------------------------------------------------------------
     | Component registry

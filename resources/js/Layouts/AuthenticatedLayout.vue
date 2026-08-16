@@ -71,6 +71,10 @@ import { useGlobalSearch } from '@/composables/useGlobalSearch';
 import { useEcho } from '@/composables/useEcho';
 import { useFirebaseMessaging } from '@/composables/useFirebaseMessaging';
 import { useThemeColors } from '@/composables/useThemeColors';
+// >>> MYRA v2.6 [C] START
+import { useBrand } from '@/composables/useBrand';
+import BrandMark from '@/components/brand/BrandMark.vue';
+// <<< MYRA v2.6 [C] END
 import {
     LayoutDashboard,
     Users,
@@ -99,7 +103,11 @@ import {
     AlertTriangle,
     FlaskConical,
     LayoutGrid,
+    LayoutTemplate,
     BarChart3,
+    // >>> MYRA v2.6 [C] START
+    Palette,
+    // <<< MYRA v2.6 [C] END
 } from 'lucide-vue-next';
 
 defineProps<{
@@ -111,7 +119,10 @@ const user = computed(() => page.props.auth.user);
 const isImpersonating = computed(() => page.props.impersonating);
 const impersonatorName = computed(() => page.props.impersonatorName);
 const { can } = usePermissions();
-const logoPosition = computed(() => page.props.siteSettings?.logo_position || 'header');
+// >>> MYRA v2.6 [C] START
+const { brand } = useBrand();
+const logoPosition = computed(() => brand.value.logo_position || 'header');
+// <<< MYRA v2.6 [C] END
 
 useFlashToasts();
 useEcho();
@@ -206,11 +217,19 @@ const coreNavGroups = computed(() => [
         label: t('navGroups.system'),
         items: [
             { title: t('nav.generalSettings'), href: route('admin.settings.index'), icon: Settings, permission: 'settings.view' },
+            // >>> MYRA v2.6 [C] START
+            ...((route as any)().has('admin.brand.index')
+                ? [{ title: t('brand.title'), href: route('admin.brand.index'), icon: Palette, permission: 'brand.view' }]
+                : []),
+            // <<< MYRA v2.6 [C] END
             { title: t('nav.activityLog'), href: route('admin.activity-logs.index'), icon: Activity, permission: 'activity-log.view' },
             { title: t('nav.backups'), href: route('admin.backups.index'), icon: Database, permission: 'backups.view' },
             { title: t('nav.systemHealth'), href: route('admin.system-health.index'), icon: HeartPulse, permission: 'system-health.view' },
             { title: t('nav.apiTokens'), href: route('admin.api-tokens.index'), icon: Key, permission: 'api-tokens.view' },
             { title: t('nav.notifications'), href: route('admin.notifications.index'), icon: Bell, permission: 'notifications.view' },
+            // >>> MYRA v2.6 [D] START
+            { title: t('landing.title'), href: route('admin.landing.index'), icon: LayoutTemplate, permission: 'settings.edit' },
+            // <<< MYRA v2.6 [D] END
         ],
     },
     {
@@ -316,20 +335,13 @@ function runRegistered(command: Command) {
             <SidebarHeader>
                 <SidebarMenu>
                     <SidebarMenuItem>
+                        <!-- >>> MYRA v2.6 [C] START -->
                         <SidebarMenuButton v-if="logoPosition === 'sidebar'" size="lg" as-child class="hover:bg-transparent hover:text-sidebar-foreground active:bg-transparent">
                             <Link :href="route('dashboard')">
-                                <div v-if="page.props.siteSettings?.logo_url" class="flex aspect-square size-8 items-center justify-center rounded-lg overflow-hidden">
-                                    <img :src="page.props.siteSettings.logo_url" alt="Logo" class="size-full object-contain" />
-                                </div>
-                                <div v-else class="flex aspect-square size-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-                                    <LayoutDashboard class="size-4" />
-                                </div>
-                                <div class="grid flex-1 text-left text-sm leading-tight">
-                                    <span class="truncate font-semibold">{{ page.props.siteSettings?.site_name || 'Admin' }}</span>
-                                    <span class="truncate text-xs text-muted-foreground">Dashboard</span>
-                                </div>
+                                <BrandMark :subtitle="t('nav.dashboard')" />
                             </Link>
                         </SidebarMenuButton>
+                        <!-- <<< MYRA v2.6 [C] END -->
                     </SidebarMenuItem>
                 </SidebarMenu>
             </SidebarHeader>
@@ -450,7 +462,9 @@ function runRegistered(command: Command) {
 
         <SidebarInset>
             <!-- Impersonation Banner -->
-            <div v-if="isImpersonating" class="flex flex-wrap items-center justify-center gap-2 bg-blue-900 px-4 py-2 text-xs font-medium text-white sm:gap-3 sm:text-sm">
+            <!-- >>> MYRA v2.6 [C] START — brand token, not a literal blue -->
+            <div v-if="isImpersonating" class="flex flex-wrap items-center justify-center gap-2 bg-primary px-4 py-2 text-xs font-medium text-primary-foreground sm:gap-3 sm:text-sm">
+            <!-- <<< MYRA v2.6 [C] END -->
                 <AlertTriangle class="size-4 shrink-0" />
                 <span>Impersonating <strong>{{ user.name }}</strong></span>
                 <Button size="sm" variant="secondary" class="h-7 text-xs" @click="stopImpersonating">
@@ -460,15 +474,11 @@ function runRegistered(command: Command) {
 
             <header class="sticky top-0 z-10 relative flex h-14 shrink-0 items-center border-b bg-background px-3 sm:h-16 sm:px-4">
                 <SidebarTrigger class="-ml-1 md:hidden" />
+                <!-- >>> MYRA v2.6 [C] START -->
                 <Link v-if="logoPosition === 'header'" :href="route('dashboard')" class="absolute left-1/2 -translate-x-1/2 flex items-center gap-2">
-                    <div v-if="page.props.siteSettings?.logo_url" class="flex size-8 items-center justify-center rounded-lg overflow-hidden">
-                        <img :src="page.props.siteSettings.logo_url" alt="Logo" class="size-full object-contain" />
-                    </div>
-                    <div v-else class="flex size-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-                        <LayoutDashboard class="size-4" />
-                    </div>
-                    <span class="hidden font-semibold text-sm sm:inline">{{ page.props.siteSettings?.site_name || 'Admin' }}</span>
+                    <BrandMark size="sm" />
                 </Link>
+                <!-- <<< MYRA v2.6 [C] END -->
                 <div class="ml-auto flex items-center gap-2">
                     <TeamSwitcher v-if="(page.props.teams as any)?.length > 0" />
                     <LanguageSwitcher />

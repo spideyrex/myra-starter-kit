@@ -257,3 +257,99 @@ export interface NavItem {
     permission?: string;
     children?: NavItem[];
 }
+
+// >>> MYRA v2.6 [A] START
+export interface BlockSchema {
+    key: string;
+    titleKey: string;
+    descriptionKey: string;
+    category: string;
+    entryFile: string;
+    available: boolean;
+    unavailableReason: string | null;
+    registryDependencies: string[];
+    npmDependencies: string[];
+    tags: string[];
+    since: string;
+    viewport: string;
+}
+
+export interface BlockSourceFile {
+    path: string;
+    language: string;
+    content: string;
+}
+// <<< MYRA v2.6 [A] END
+
+// >>> MYRA v2.6 [B] START
+export interface ExampleEntry {
+    key: string;
+    titleKey: string;
+    descriptionKey: string;
+    shell: string;
+    origin: 'fetched' | 'authored';
+    sourceRef: string | null;
+    available: boolean;
+    unavailableReason: string | null;
+    registryDependencies: string[];
+    npmDependencies: string[];
+    dataFiles: string[];
+    surfaces: string[];
+    tags: string[];
+    since: string;
+    fileCount: number;
+}
+
+export interface ExampleSourceFile {
+    path: string;
+    language: string;
+    content: string;
+}
+// <<< MYRA v2.6 [B] END
+// >>> MYRA v2.6 [C] START
+export interface BrandPaletteTokens {
+    primary: string;
+    accent: string | null;
+    sidebar_background: string | null;
+    sidebar_foreground: string | null;
+    sidebar_accent: string | null;
+    preset: string;
+}
+
+export interface BrandTokens {
+    enabled: boolean;
+    name: string;
+    short_name: string;
+    tagline: string;
+    description: string;
+    logo_url: string | null;
+    logo_dark_url: string | null;
+    mark_url: string | null;
+    favicon_url: string | null;
+    og_image_url: string | null;
+    logo_position: string;
+    initial: string;
+    palette: BrandPaletteTokens;
+    typography: { sans: string; mono: string };
+    radius: string;
+    dark_default: boolean;
+    hash: string;
+}
+
+export interface BrandContrast {
+    ratio: number;
+    foreground: string;
+}
+// <<< MYRA v2.6 [C] END
+// >>> MYRA v2.6 [D] START
+/** The client half of App\Homepage\HomepageTemplate. Strings are i18n keys. */
+export interface TemplateSchema {
+    key: string;
+    component: string;
+    titleKey: string;
+    descriptionKey: string;
+    thumbnail: string | null;
+    supports: string[];
+    since: string;
+}
+// <<< MYRA v2.6 [D] END

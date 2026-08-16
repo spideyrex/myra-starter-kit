@@ -1,0 +1,1815 @@
+{
+  "generatedAt": "2026-08-16T11:56:29.521Z",
+  "source": "https://shadcn-vue.com/api",
+  "ref": "dev",
+  "blocks": {
+    "sidebar-01": {
+      "category": "sidebar",
+      "description": "A simple sidebar with navigation grouped by section.",
+      "registryDependencies": [
+        "breadcrumb",
+        "dropdown-menu",
+        "label",
+        "separator",
+        "sidebar"
+      ],
+      "npmDependencies": [],
+      "missingRegistryComponents": [],
+      "available": true,
+      "unavailableReason": null,
+      "entryFile": "sidebar-01/Page.vue",
+      "tags": [
+        "dashboard",
+        "sidebar"
+      ],
+      "viewport": "full",
+      "files": [
+        {
+          "path": "resources/js/blocks/sidebar-01/Page.vue",
+          "sha256": "c9ea0fa598e4d9fe18de006e06b07ac14c2c417dc17633dd6556b845d227dd8d"
+        },
+        {
+          "path": "resources/js/blocks/sidebar-01/components/AppSidebar.vue",
+          "sha256": "ff2de0ec8ec4450c17db8aaf76d8c77f1bc4d858ecde77eef45e422ea28ca5f7"
+        },
+        {
+          "path": "resources/js/blocks/sidebar-01/components/SearchForm.vue",
+          "sha256": "de7781a55f2e0bc8bc100802d149f04d0f4f89b45358bdbf9f36ad7483423249"
+        },
+        {
+          "path": "resources/js/blocks/sidebar-01/components/VersionSwitcher.vue",
+          "sha256": "6b717f7073d27dfd5281bca978ee4b6994769092c2422c751fdfc8fe3ca70139"
+        }
+      ]
+    },
+    "sidebar-02": {
+      "category": "sidebar",
+      "description": "A sidebar with collapsible sections.",
+      "registryDependencies": [
+        "breadcrumb",
+        "collapsible",
+        "dropdown-menu",
+        "label",
+        "separator",
+        "sidebar"
+      ],
+      "npmDependencies": [],
+      "missingRegistryComponents": [],
+      "available": true,
+      "unavailableReason": null,
+      "entryFile": "sidebar-02/Page.vue",
+      "tags": [
+        "dashboard",
+        "sidebar"
+      ],
+      "viewport": "full",
+      "files": [
+        {
+          "path": "resources/js/blocks/sidebar-02/Page.vue",
+          "sha256": "4567cfaeeacd7a2e0fd44cfbb432708fea15a6f4d085b12d43d9200776ab0ad4"
+        },
+        {
+          "path": "resources/js/blocks/sidebar-02/components/AppSidebar.vue",
+          "sha256": "24b9d1d91a32d2dc28bede778de7d2e75d30193fe7722c975ea7459fef728e93"
+        },
+        {
+          "path": "resources/js/blocks/sidebar-02/components/SearchForm.vue",
+          "sha256": "67fa09288bceded12480d9a2106fd085976dde8a512986de05f6b8332e8101f0"
+        },
+        {
+          "path": "resources/js/blocks/sidebar-02/components/VersionSwitcher.vue",
+          "sha256": "7df81dff1aefbaebda8e6917dcab3ac6bb82b8ec07d5af74586d163af8d38d76"
+        }
+      ]
+    },
+    "sidebar-03": {
+      "category": "sidebar",
+      "description": "A sidebar with submenus.",
+      "registryDependencies": [
+        "breadcrumb",
+        "separator",
+        "sidebar"
+      ],
+      "npmDependencies": [],
+      "missingRegistryComponents": [],
+      "available": true,
+      "unavailableReason": null,
+      "entryFile": "sidebar-03/Page.vue",
+      "tags": [
+        "dashboard",
+        "sidebar"
+      ],
+      "viewport": "full",
+      "files": [
+        {
+          "path": "resources/js/blocks/sidebar-03/Page.vue",
+          "sha256": "aaf2a696641cf2f763b9cddab4c8df44e592308955961d901fcc4c909e2077d9"
+        },
+        {
+          "path": "resources/js/blocks/sidebar-03/components/AppSidebar.vue",
+          "sha256": "5fa0c389d20bf70b2f22cf14a3d14e8819b7a3ab24f9fb8587fc7dee4857f02a"
+        }
+      ]
+    },
+    "sidebar-04": {
+      "category": "sidebar",
+      "description": "A floating sidebar with submenus.",
+      "registryDependencies": [
+        "breadcrumb",
+        "separator",
+        "sidebar"
+      ],
+      "npmDependencies": [],
+      "missingRegistryComponents": [],
+      "available": true,
+      "unavailableReason": null,
+      "entryFile": "sidebar-04/Page.vue",
+      "tags": [
+        "dashboard",
+        "sidebar"
+      ],
+      "viewport": "full",
+      "files": [
+        {
+          "path": "resources/js/blocks/sidebar-04/Page.vue",
+          "sha256": "ed8f5d61bbf3092e16ffbbf188dfbffb3044352aeb590a23721c614733a0f90e"
+        },
+        {
+          "path": "resources/js/blocks/sidebar-04/components/AppSidebar.vue",
+          "sha256": "cacb5692f1ee59eed6fe83e1bcbf3d0006f7edf9dd8950a155d2d9e685bffe54"
+        }
+      ]
+    },
+    "sidebar-05": {
+      "category": "sidebar",
+      "description": "A sidebar with collapsible submenus.",
+      "registryDependencies": [
+        "breadcrumb",
+        "collapsible",
+        "label",
+        "separator",
+        "sidebar"
+      ],
+      "npmDependencies": [],
+      "missingRegistryComponents": [],
+      "available": true,
+      "unavailableReason": null,
+      "entryFile": "sidebar-05/Page.vue",
+      "tags": [
+        "dashboard",
+        "sidebar"
+      ],
+      "viewport": "full",
+      "files": [
+        {
+          "path": "resources/js/blocks/sidebar-05/Page.vue",
+          "sha256": "8d0220b9f4fdfb5c7f117683f9ad8fefc733a379497a87a6e22f37784c12de77"
+        },
+        {
+          "path": "resources/js/blocks/sidebar-05/components/AppSidebar.vue",
+          "sha256": "5a8bf8a5ac150a9286814ca5a027196e16b2402679aebf82e2e35ca30b68fb12"
+        },
+        {
+          "path": "resources/js/blocks/sidebar-05/components/SearchForm.vue",
+          "sha256": "67fa09288bceded12480d9a2106fd085976dde8a512986de05f6b8332e8101f0"
+        }
+      ]
+    },
+    "sidebar-06": {
+      "category": "sidebar",
+      "description": "A sidebar with submenus as dropdowns.",
+      "registryDependencies": [
+        "breadcrumb",
+        "button",
+        "card",
+        "dropdown-menu",
+        "separator",
+        "sidebar"
+      ],
+      "npmDependencies": [],
+      "missingRegistryComponents": [],
+      "available": true,
+      "unavailableReason": null,
+      "entryFile": "sidebar-06/Page.vue",
+      "tags": [
+        "dashboard",
+        "sidebar"
+      ],
+      "viewport": "full",
+      "files": [
+        {
+          "path": "resources/js/blocks/sidebar-06/Page.vue",
+          "sha256": "879b0ee34444cd66dd5bf7f73a4b37e2c113770cccb1cb0c23156d8008ce0b95"
+        },
+        {
+          "path": "resources/js/blocks/sidebar-06/components/AppSidebar.vue",
+          "sha256": "0255f2661a9e9155af549ab6c536bc3c618081d7b2a00354b96ecc44f95f5cbc"
+        },
+        {
+          "path": "resources/js/blocks/sidebar-06/components/NavMain.vue",
+          "sha256": "fe2f3a4a0885dad2b08213570c0ef6f4ea8cb03c81b4741e78cea7196b0be182"
+        },
+        {
+          "path": "resources/js/blocks/sidebar-06/components/SidebarOptInForm.vue",
+          "sha256": "cde85585097ec0c73d8e69d15e3a7287e56726bbdaadbdc89ecd5c5f6583e889"
+        }
+      ]
+    },
+    "sidebar-07": {
+      "category": "sidebar",
+      "description": "A sidebar that collapses to icons",
+      "registryDependencies": [
+        "avatar",
+        "breadcrumb",
+        "collapsible",
+        "dropdown-menu",
+        "separator",
+        "sidebar"
+      ],
+      "npmDependencies": [],
+      "missingRegistryComponents": [],
+      "available": true,
+      "unavailableReason": null,
+      "entryFile": "sidebar-07/Page.vue",
+      "tags": [
+        "dashboard",
+        "sidebar"
+      ],
+      "viewport": "full",
+      "files": [
+        {
+          "path": "resources/js/blocks/sidebar-07/Page.vue",
+          "sha256": "e235477c2bdea69a2c476774375dd0e6e9151cdfa372be0d3074bef2c9ac2857"
+        },
+        {
+          "path": "resources/js/blocks/sidebar-07/components/AppSidebar.vue",
+          "sha256": "93ccc593529600be939cb8eb29fe24e6dfd1db35aa97b67407ef480037032e9b"
+        },
+        {
+          "path": "resources/js/blocks/sidebar-07/components/NavMain.vue",
+          "sha256": "55717d7b3aa6cfda355087593ec8bc4e1a40e5617dd8e491e12046b019a57a79"
+        },
+        {
+          "path": "resources/js/blocks/sidebar-07/components/NavProjects.vue",
+          "sha256": "06ec63a96c89fe383b72168a2afa15ebdc2447e36fff37c374d3cfc721e1790f"
+        },
+        {
+          "path": "resources/js/blocks/sidebar-07/components/NavUser.vue",
+          "sha256": "968601176c1199a0d0536a1f5865a1c788a37a5cf44c367a3dc7cefa20859a73"
+        },
+        {
+          "path": "resources/js/blocks/sidebar-07/components/TeamSwitcher.vue",
+          "sha256": "3e07e5e8ccdca9e3544cc54ac5e1282934a228b6b2c6637ec90967d51b7598a5"
+        }
+      ]
+    },
+    "sidebar-08": {
+      "category": "sidebar",
+      "description": "An inset sidebar with secondary navigation.",
+      "registryDependencies": [
+        "avatar",
+        "breadcrumb",
+        "collapsible",
+        "dropdown-menu",
+        "separator",
+        "sidebar"
+      ],
+      "npmDependencies": [],
+      "missingRegistryComponents": [],
+      "available": true,
+      "unavailableReason": null,
+      "entryFile": "sidebar-08/Page.vue",
+      "tags": [
+        "dashboard",
+        "sidebar"
+      ],
+      "viewport": "full",
+      "files": [
+        {
+          "path": "resources/js/blocks/sidebar-08/Page.vue",
+          "sha256": "1f44840274029f0a775cd021b66e4604c6bd20ab332e03e48df0d812cf5a5f77"
+        },
+        {
+          "path": "resources/js/blocks/sidebar-08/components/AppSidebar.vue",
+          "sha256": "bb3c6798289c2e4945debddab6f3e1e8bfaf335855387f877163c85b74bf8627"
+        },
+        {
+          "path": "resources/js/blocks/sidebar-08/components/NavMain.vue",
+          "sha256": "0e62227969e2146f13cd7b13993d8ec26f50a9d7368fafbf15963720aab66e38"
+        },
+        {
+          "path": "resources/js/blocks/sidebar-08/components/NavProjects.vue",
+          "sha256": "939a069d75f68dbc5ef3890224eaae5486b340db9bfa1cb137d0e8b98ce3ad8a"
+        },
+        {
+          "path": "resources/js/blocks/sidebar-08/components/NavSecondary.vue",
+          "sha256": "23adefc9c9e4601960ca65baea961cd357072711a50a3b877ef5a8e7f265c37e"
+        },
+        {
+          "path": "resources/js/blocks/sidebar-08/components/NavUser.vue",
+          "sha256": "968601176c1199a0d0536a1f5865a1c788a37a5cf44c367a3dc7cefa20859a73"
+        }
+      ]
+    },
+    "sidebar-09": {
+      "category": "sidebar",
+      "description": "Collapsible nested sidebars.",
+      "registryDependencies": [
+        "avatar",
+        "breadcrumb",
+        "dropdown-menu",
+        "label",
+        "separator",
+        "sidebar",
+        "switch"
+      ],
+      "npmDependencies": [],
+      "missingRegistryComponents": [],
+      "available": true,
+      "unavailableReason": null,
+      "entryFile": "sidebar-09/Page.vue",
+      "tags": [
+        "dashboard",
+        "sidebar"
+      ],
+      "viewport": "full",
+      "files": [
+        {
+          "path": "resources/js/blocks/sidebar-09/Page.vue",
+          "sha256": "bb34e0a19fb2351d1384853e73f3d123ca349c158a9c0f43e9527390dca79cb2"
+        },
+        {
+          "path": "resources/js/blocks/sidebar-09/components/AppSidebar.vue",
+          "sha256": "ebd0742039445925a62da0664282725842c1fa6a66ced267c4f75f1563233d28"
+        },
+        {
+          "path": "resources/js/blocks/sidebar-09/components/NavUser.vue",
+          "sha256": "0ebbec688d9071c8149513ef749b1ef5ed3409af3585482fc602e8a632da84d1"
+        }
+      ]
+    },
+    "sidebar-10": {
+      "category": "sidebar",
+      "description": "A sidebar in a popover.",
+      "registryDependencies": [
+        "breadcrumb",
+        "button",
+        "collapsible",
+        "dropdown-menu",
+        "popover",
+        "separator",
+        "sidebar"
+      ],
+      "npmDependencies": [],
+      "missingRegistryComponents": [],
+      "available": true,
+      "unavailableReason": null,
+      "entryFile": "sidebar-10/Page.vue",
+      "tags": [
+        "dashboard",
+        "sidebar"
+      ],
+      "viewport": "full",
+      "files": [
+        {
+          "path": "resources/js/blocks/sidebar-10/Page.vue",
+          "sha256": "ad87d05a092cc13565be5a029de5e63db62a6a3e0004991580551f6c86050c78"
+        },
+        {
+          "path": "resources/js/blocks/sidebar-10/components/AppSidebar.vue",
+          "sha256": "6d9d31180cbaebaf32c5ebf0041e7c132135d52dfc18bfd4d4b2012ee9571103"
+        },
+        {
+          "path": "resources/js/blocks/sidebar-10/components/NavActions.vue",
+          "sha256": "fec19893b2d663bc4ef24463b386dfdf85230ed58fac0af0e2cbb9c058e8d5bb"
+        },
+        {
+          "path": "resources/js/blocks/sidebar-10/components/NavFavorites.vue",
+          "sha256": "d868bb08635beff8add8ec22b66fe9467702c2e18d211b41e9a843633ec32ea6"
+        },
+        {
+          "path": "resources/js/blocks/sidebar-10/components/NavMain.vue",
+          "sha256": "bf83e98bea562e4019b3422620ee782f255a15192f7dca9a264aeaff987ff2be"
+        },
+        {
+          "path": "resources/js/blocks/sidebar-10/components/NavSecondary.vue",
+          "sha256": "2a5e8b1c67d005dfe105efd22694eb9079b4c9b0aa142fb48c4bd524ca5b9d32"
+        },
+        {
+          "path": "resources/js/blocks/sidebar-10/components/NavWorkspaces.vue",
+          "sha256": "56219eeba9a79d9029bb0d56e0aa32f4d0a1df220d32e2992eb19f51b7159923"
+        },
+        {
+          "path": "resources/js/blocks/sidebar-10/components/TeamSwitcher.vue",
+          "sha256": "9496a27060fbf3b21633fd39f58d37a3c13ffd0badcc33ba6ec516400a5a099a"
+        }
+      ]
+    },
+    "sidebar-11": {
+      "category": "sidebar",
+      "description": "A sidebar with a collapsible file tree.",
+      "registryDependencies": [
+        "breadcrumb",
+        "collapsible",
+        "separator",
+        "sidebar"
+      ],
+      "npmDependencies": [],
+      "missingRegistryComponents": [],
+      "available": true,
+      "unavailableReason": null,
+      "entryFile": "sidebar-11/Page.vue",
+      "tags": [
+        "dashboard",
+        "sidebar"
+      ],
+      "viewport": "full",
+      "files": [
+        {
+          "path": "resources/js/blocks/sidebar-11/Page.vue",
+          "sha256": "224312db8305e97aa16367b2d03d11388bc796ad4fac7f41174ad67903e3bbb0"
+        },
+        {
+          "path": "resources/js/blocks/sidebar-11/components/AppSidebar.vue",
+          "sha256": "38fb6413434b6499524984b6768228f701420350c89e790a0c669c84abaae87a"
+        },
+        {
+          "path": "resources/js/blocks/sidebar-11/components/Tree.vue",
+          "sha256": "d4940e97b278257f43c12cc63ef09e82ed82d8e010999bc4d9a24a4acafefb00"
+        }
+      ]
+    },
+    "sidebar-12": {
+      "category": "sidebar",
+      "description": "A sidebar with a calendar.",
+      "registryDependencies": [
+        "avatar",
+        "breadcrumb",
+        "calendar",
+        "collapsible",
+        "dropdown-menu",
+        "separator",
+        "sidebar"
+      ],
+      "npmDependencies": [],
+      "missingRegistryComponents": [],
+      "available": true,
+      "unavailableReason": null,
+      "entryFile": "sidebar-12/Page.vue",
+      "tags": [
+        "dashboard",
+        "sidebar"
+      ],
+      "viewport": "full",
+      "files": [
+        {
+          "path": "resources/js/blocks/sidebar-12/Page.vue",
+          "sha256": "45a03214db53cb5201e0baa09bc0f98c49498e521a4afcf3c64700de40097873"
+        },
+        {
+          "path": "resources/js/blocks/sidebar-12/components/AppSidebar.vue",
+          "sha256": "7801460677bbc6b4371bc909bba9f6631e7ed64c148a58b18feb9e9022d0af24"
+        },
+        {
+          "path": "resources/js/blocks/sidebar-12/components/Calendars.vue",
+          "sha256": "c5e53f12de86f67dc0c5acf675542f58034a1ba6ded072c46066b25281bae7b8"
+        },
+        {
+          "path": "resources/js/blocks/sidebar-12/components/DatePicker.vue",
+          "sha256": "7aa86a342751e61379d1e42ae40f58a3787793098aa44f50970784ecba91d718"
+        },
+        {
+          "path": "resources/js/blocks/sidebar-12/components/NavUser.vue",
+          "sha256": "18deb0e3f61acb6f47493160686af434a06e0ad6c39519414e6b2df44038b7c5"
+        }
+      ]
+    },
+    "sidebar-13": {
+      "category": "sidebar",
+      "description": "A sidebar in a dialog.",
+      "registryDependencies": [
+        "breadcrumb",
+        "button",
+        "dialog",
+        "sidebar"
+      ],
+      "npmDependencies": [],
+      "missingRegistryComponents": [],
+      "available": true,
+      "unavailableReason": null,
+      "entryFile": "sidebar-13/Page.vue",
+      "tags": [
+        "dashboard",
+        "sidebar"
+      ],
+      "viewport": "full",
+      "files": [
+        {
+          "path": "resources/js/blocks/sidebar-13/Page.vue",
+          "sha256": "4e18daab18d81f93162bcdb6a1e3777610a12bb8bbb344cc6ac3b25f57dfe0ad"
+        },
+        {
+          "path": "resources/js/blocks/sidebar-13/components/SettingsDialog.vue",
+          "sha256": "b96a2c863057006d432e53ef2bcf96d0458f422e9f248d5f3126275e05a6f780"
+        }
+      ]
+    },
+    "sidebar-14": {
+      "category": "sidebar",
+      "description": "A sidebar on the right.",
+      "registryDependencies": [
+        "breadcrumb",
+        "sidebar"
+      ],
+      "npmDependencies": [],
+      "missingRegistryComponents": [],
+      "available": true,
+      "unavailableReason": null,
+      "entryFile": "sidebar-14/Page.vue",
+      "tags": [
+        "dashboard",
+        "sidebar"
+      ],
+      "viewport": "full",
+      "files": [
+        {
+          "path": "resources/js/blocks/sidebar-14/Page.vue",
+          "sha256": "e86828250a3bc5e8b5a493cf49d0ae12a98a1eb3fb1fd936af74897caec4c0c2"
+        },
+        {
+          "path": "resources/js/blocks/sidebar-14/components/AppSidebar.vue",
+          "sha256": "0f1c13aa105035173abf21d82b1df2d5125204547e7068639ef519ea02766e0d"
+        }
+      ]
+    },
+    "sidebar-15": {
+      "category": "sidebar",
+      "description": "A left and right sidebar.",
+      "registryDependencies": [
+        "avatar",
+        "breadcrumb",
+        "calendar",
+        "collapsible",
+        "dropdown-menu",
+        "separator",
+        "sidebar"
+      ],
+      "npmDependencies": [],
+      "missingRegistryComponents": [],
+      "available": true,
+      "unavailableReason": null,
+      "entryFile": "sidebar-15/Page.vue",
+      "tags": [
+        "dashboard",
+        "sidebar"
+      ],
+      "viewport": "full",
+      "files": [
+        {
+          "path": "resources/js/blocks/sidebar-15/Page.vue",
+          "sha256": "6c293b36d3e0fce3ba2a870c9a012e4dd77445ec8298e60e75eadf031e7fa80a"
+        },
+        {
+          "path": "resources/js/blocks/sidebar-15/components/AppSidebar.vue",
+          "sha256": "0f1c13aa105035173abf21d82b1df2d5125204547e7068639ef519ea02766e0d"
+        },
+        {
+          "path": "resources/js/blocks/sidebar-15/components/Calendars.vue",
+          "sha256": "c81ded0e64eabec7958829608bf103fc9dd3f1b042484a0874f0bdb6ece2fdbd"
+        },
+        {
+          "path": "resources/js/blocks/sidebar-15/components/DatePicker.vue",
+          "sha256": "7aa86a342751e61379d1e42ae40f58a3787793098aa44f50970784ecba91d718"
+        },
+        {
+          "path": "resources/js/blocks/sidebar-15/components/NavFavorites.vue",
+          "sha256": "d868bb08635beff8add8ec22b66fe9467702c2e18d211b41e9a843633ec32ea6"
+        },
+        {
+          "path": "resources/js/blocks/sidebar-15/components/NavMain.vue",
+          "sha256": "bf83e98bea562e4019b3422620ee782f255a15192f7dca9a264aeaff987ff2be"
+        },
+        {
+          "path": "resources/js/blocks/sidebar-15/components/NavSecondary.vue",
+          "sha256": "2a5e8b1c67d005dfe105efd22694eb9079b4c9b0aa142fb48c4bd524ca5b9d32"
+        },
+        {
+          "path": "resources/js/blocks/sidebar-15/components/NavUser.vue",
+          "sha256": "18deb0e3f61acb6f47493160686af434a06e0ad6c39519414e6b2df44038b7c5"
+        },
+        {
+          "path": "resources/js/blocks/sidebar-15/components/NavWorkspaces.vue",
+          "sha256": "56219eeba9a79d9029bb0d56e0aa32f4d0a1df220d32e2992eb19f51b7159923"
+        },
+        {
+          "path": "resources/js/blocks/sidebar-15/components/SidebarLeft.vue",
+          "sha256": "6d9d31180cbaebaf32c5ebf0041e7c132135d52dfc18bfd4d4b2012ee9571103"
+        },
+        {
+          "path": "resources/js/blocks/sidebar-15/components/SidebarRight.vue",
+          "sha256": "c0e4efc755fa3a92c1095dc69d77586008e7065cc14f943f05196c59ce346ed9"
+        },
+        {
+          "path": "resources/js/blocks/sidebar-15/components/TeamSwitcher.vue",
+          "sha256": "a28577d24dd80afbda83906b4aae0b09cf5320c9fc28f7bad38bf0051923caa6"
+        }
+      ]
+    },
+    "sidebar-16": {
+      "category": "sidebar",
+      "description": "A sidebar with a sticky site header.",
+      "registryDependencies": [
+        "avatar",
+        "breadcrumb",
+        "button",
+        "collapsible",
+        "dropdown-menu",
+        "label",
+        "separator",
+        "sidebar"
+      ],
+      "npmDependencies": [],
+      "missingRegistryComponents": [],
+      "available": true,
+      "unavailableReason": null,
+      "entryFile": "sidebar-16/Page.vue",
+      "tags": [
+        "dashboard",
+        "sidebar"
+      ],
+      "viewport": "full",
+      "files": [
+        {
+          "path": "resources/js/blocks/sidebar-16/Page.vue",
+          "sha256": "b899bf475fb7d61fa1cb2fd503710ba1a240abca909c9452a4f8df33c40c1d01"
+        },
+        {
+          "path": "resources/js/blocks/sidebar-16/components/AppSidebar.vue",
+          "sha256": "a3eed2bc0050ebb50685c9605f0e449ee7367b0d58f393444f7488a6b8834f20"
+        },
+        {
+          "path": "resources/js/blocks/sidebar-16/components/NavMain.vue",
+          "sha256": "2cd29e6b1d3292dbc37a733eff328d40539b59e7435dd495f31e72a9a639743a"
+        },
+        {
+          "path": "resources/js/blocks/sidebar-16/components/NavProjects.vue",
+          "sha256": "727a224e03560d7da596b9f515aa0667ed263cad470b17d3444c066959e032d4"
+        },
+        {
+          "path": "resources/js/blocks/sidebar-16/components/NavSecondary.vue",
+          "sha256": "0bdbe79957fb409e594c687adc26918b02e4a9f8e13369f45545e03b40b060aa"
+        },
+        {
+          "path": "resources/js/blocks/sidebar-16/components/NavUser.vue",
+          "sha256": "18deb0e3f61acb6f47493160686af434a06e0ad6c39519414e6b2df44038b7c5"
+        },
+        {
+          "path": "resources/js/blocks/sidebar-16/components/SearchForm.vue",
+          "sha256": "507c3bc749e89d43ba82f2134887e7b9c58e002f844eb9b6d2713f930dd35532"
+        },
+        {
+          "path": "resources/js/blocks/sidebar-16/components/SiteHeader.vue",
+          "sha256": "05f94b459e4efe114228294bcfa7191a1541aebe94cf270a5f685070cea756a9"
+        }
+      ]
+    },
+    "sidebar-demo": {
+      "category": "sidebar",
+      "description": null,
+      "registryDependencies": [
+        "sidebar"
+      ],
+      "npmDependencies": [],
+      "missingRegistryComponents": [],
+      "available": true,
+      "unavailableReason": null,
+      "entryFile": "sidebar-demo/Page.vue",
+      "tags": [
+        "sidebar"
+      ],
+      "viewport": "full",
+      "files": [
+        {
+          "path": "resources/js/blocks/sidebar-demo/Page.vue",
+          "sha256": "4ee022548bc37405b06dc5fd2c1e88095a4464e3d998444ad4024c95c5e49967"
+        }
+      ]
+    },
+    "dashboard-01": {
+      "category": "dashboard",
+      "description": "A dashboard with sidebar, charts and data table.",
+      "registryDependencies": [
+        "avatar",
+        "badge",
+        "button",
+        "card",
+        "chart",
+        "checkbox",
+        "dropdown-menu",
+        "label",
+        "select",
+        "separator",
+        "sidebar",
+        "table",
+        "tabs"
+      ],
+      "npmDependencies": [
+        "@dnd-kit/abstract",
+        "@tabler/icons-vue",
+        "dnd-kit-vue"
+      ],
+      "missingRegistryComponents": [],
+      "available": false,
+      "unavailableReason": "npm: @dnd-kit/abstract, @tabler/icons-vue, dnd-kit-vue",
+      "entryFile": "dashboard-01/Page.vue",
+      "tags": [
+        "dashboard"
+      ],
+      "viewport": "full",
+      "files": [
+        {
+          "path": "resources/js/blocks/_unavailable/dashboard-01/Page.vue.txt",
+          "sha256": "36fcd739b689577d838d04b21b8cc2372c81a48e213583549474695a105c55cb"
+        },
+        {
+          "path": "resources/js/blocks/_unavailable/dashboard-01/components/AppSidebar.vue.txt",
+          "sha256": "74073970bed82a6967c01332ec8f895e120c55b563a406bcfe61f799e11d5bee"
+        },
+        {
+          "path": "resources/js/blocks/_unavailable/dashboard-01/components/ChartAreaInteractive.vue.txt",
+          "sha256": "970273de99c686f0955d64fb62d783e7055c28fb55d35e28fc68ec521ce382bc"
+        },
+        {
+          "path": "resources/js/blocks/_unavailable/dashboard-01/components/DataTable.vue.txt",
+          "sha256": "c27f202f78d6119bbc8c97c64524e94068cf085c6b6fc4a78629e2c056c6ce06"
+        },
+        {
+          "path": "resources/js/blocks/_unavailable/dashboard-01/components/DragHandle.vue.txt",
+          "sha256": "778daa8739096d36eee1d88b9425019c85ea017be451133e328825a7608656a1"
+        },
+        {
+          "path": "resources/js/blocks/_unavailable/dashboard-01/components/DraggableRow.vue.txt",
+          "sha256": "ea1128fb647e1c1f770d1777d1398654fba456a60268e9f23c3ce184151c26e9"
+        },
+        {
+          "path": "resources/js/blocks/_unavailable/dashboard-01/components/NavDocuments.vue.txt",
+          "sha256": "e3eb950817a0a2d957f21d0b7100a0f1134db40c26d3bf51038ff94da196c37c"
+        },
+        {
+          "path": "resources/js/blocks/_unavailable/dashboard-01/components/NavMain.vue.txt",
+          "sha256": "a9ca91cb538084b47be2f6c350924e23d63a615a0aab6464906962e5074a0f69"
+        },
+        {
+          "path": "resources/js/blocks/_unavailable/dashboard-01/components/NavSecondary.vue.txt",
+          "sha256": "434b11609bf60b07a39970eeafd470bab1754207fc1f7110b8d6d3d8bc3693e9"
+        },
+        {
+          "path": "resources/js/blocks/_unavailable/dashboard-01/components/NavUser.vue.txt",
+          "sha256": "e46c9a623862e47ccc05d370809396e0b2e723f325906801ddcf196efba68bb6"
+        },
+        {
+          "path": "resources/js/blocks/_unavailable/dashboard-01/components/SectionCards.vue.txt",
+          "sha256": "982944dfdd3d96140b00c3cf39ca22ac072a895b00c42e3d6d3c46f89f44b1d1"
+        },
+        {
+          "path": "resources/js/blocks/_unavailable/dashboard-01/components/SiteHeader.vue.txt",
+          "sha256": "70f32a491ddf107293395fc731287862d678d2d1c30badea65c25eeb5bdd11f8"
+        },
+        {
+          "path": "resources/js/blocks/_unavailable/dashboard-01/components/features.ts.txt",
+          "sha256": "f128fcc8d2d6abb220d6e65f33e0bcdb33ad49aa9538eb62eeaae13232272923"
+        }
+      ]
+    },
+    "login-01": {
+      "category": "login",
+      "description": "A simple login form.",
+      "registryDependencies": [
+        "button",
+        "card",
+        "field",
+        "input"
+      ],
+      "npmDependencies": [],
+      "missingRegistryComponents": [],
+      "available": true,
+      "unavailableReason": null,
+      "entryFile": "login-01/Page.vue",
+      "tags": [
+        "authentication",
+        "login"
+      ],
+      "viewport": "full",
+      "files": [
+        {
+          "path": "resources/js/blocks/login-01/Page.vue",
+          "sha256": "938b2e112860b1e1ac434cab4d3734511c896e48add9b7ff74b41ca6eb82c5d9"
+        },
+        {
+          "path": "resources/js/blocks/login-01/components/LoginForm.vue",
+          "sha256": "a18447873a0818eb3fec0a81e4e3fa6ef6b7a74c5d8332b53885de5e51dd6526"
+        }
+      ]
+    },
+    "login-02": {
+      "category": "login",
+      "description": "A two column login page with a cover image.",
+      "registryDependencies": [
+        "button",
+        "field",
+        "input"
+      ],
+      "npmDependencies": [],
+      "missingRegistryComponents": [],
+      "available": true,
+      "unavailableReason": null,
+      "entryFile": "login-02/Page.vue",
+      "tags": [
+        "authentication",
+        "login"
+      ],
+      "viewport": "full",
+      "files": [
+        {
+          "path": "resources/js/blocks/login-02/Page.vue",
+          "sha256": "54ce049f66f077ffab0a3b9231ce030ecd41c094fd772ca9051873a012a30a34"
+        },
+        {
+          "path": "resources/js/blocks/login-02/components/LoginForm.vue",
+          "sha256": "1ad436d8c85bdaf1fae253ca4851af4064661211b9e16e09e080c96a4fe9e5a1"
+        }
+      ]
+    },
+    "login-03": {
+      "category": "login",
+      "description": "A login page with a muted background color.",
+      "registryDependencies": [
+        "button",
+        "card",
+        "field",
+        "input"
+      ],
+      "npmDependencies": [],
+      "missingRegistryComponents": [],
+      "available": true,
+      "unavailableReason": null,
+      "entryFile": "login-03/Page.vue",
+      "tags": [
+        "authentication",
+        "login"
+      ],
+      "viewport": "full",
+      "files": [
+        {
+          "path": "resources/js/blocks/login-03/Page.vue",
+          "sha256": "8ef2a5a26652274f725f997639986e12feabe445f09d06af146c5144e85d64ef"
+        },
+        {
+          "path": "resources/js/blocks/login-03/components/LoginForm.vue",
+          "sha256": "af138df2bb339d0562c68cde6f614a3b947292c52750d0077ced3c0d366ed322"
+        }
+      ]
+    },
+    "login-04": {
+      "category": "login",
+      "description": "A login page with form and image.",
+      "registryDependencies": [
+        "button",
+        "card",
+        "field",
+        "input"
+      ],
+      "npmDependencies": [],
+      "missingRegistryComponents": [],
+      "available": true,
+      "unavailableReason": null,
+      "entryFile": "login-04/Page.vue",
+      "tags": [
+        "authentication",
+        "login"
+      ],
+      "viewport": "full",
+      "files": [
+        {
+          "path": "resources/js/blocks/login-04/Page.vue",
+          "sha256": "2b7b771ee1e9b5ce22f9310810af57267a46b7e6083cd4481dd5057cdfc1e67f"
+        },
+        {
+          "path": "resources/js/blocks/login-04/components/LoginForm.vue",
+          "sha256": "27dafbd6dbd2fa3848d111cf04b98540a4c0e999af1d1d23729f08db1847aa93"
+        }
+      ]
+    },
+    "login-05": {
+      "category": "login",
+      "description": "A simple email-only login page.",
+      "registryDependencies": [
+        "button",
+        "field",
+        "input"
+      ],
+      "npmDependencies": [],
+      "missingRegistryComponents": [],
+      "available": true,
+      "unavailableReason": null,
+      "entryFile": "login-05/Page.vue",
+      "tags": [
+        "authentication",
+        "login"
+      ],
+      "viewport": "full",
+      "files": [
+        {
+          "path": "resources/js/blocks/login-05/Page.vue",
+          "sha256": "446f614e6c5179e666ec2f2e17b13d4217f4c05afc9b134b1f34447541b1d0c3"
+        },
+        {
+          "path": "resources/js/blocks/login-05/components/LoginForm.vue",
+          "sha256": "97889801ed3c5881486dca3f4fb59899cf8a885a85906bd76704cfa6bc0880b8"
+        }
+      ]
+    },
+    "signup-01": {
+      "category": "signup",
+      "description": "A simple signup form.",
+      "registryDependencies": [
+        "button",
+        "card",
+        "field",
+        "input"
+      ],
+      "npmDependencies": [],
+      "missingRegistryComponents": [],
+      "available": true,
+      "unavailableReason": null,
+      "entryFile": "signup-01/Page.vue",
+      "tags": [
+        "authentication",
+        "signup"
+      ],
+      "viewport": "full",
+      "files": [
+        {
+          "path": "resources/js/blocks/signup-01/Page.vue",
+          "sha256": "17cf38ce161039e112495797d7bc571e3e0cfe5af3a5e084e0f19afa1cb2e21d"
+        },
+        {
+          "path": "resources/js/blocks/signup-01/components/SignupForm.vue",
+          "sha256": "0afc04776c7d0f6791ce16cdd8e484e0ba0525cb551d5923875855ff9c5847d3"
+        }
+      ]
+    },
+    "signup-02": {
+      "category": "signup",
+      "description": "A two column signup page with a cover image.",
+      "registryDependencies": [
+        "button",
+        "field",
+        "input"
+      ],
+      "npmDependencies": [],
+      "missingRegistryComponents": [],
+      "available": true,
+      "unavailableReason": null,
+      "entryFile": "signup-02/Page.vue",
+      "tags": [
+        "authentication",
+        "signup"
+      ],
+      "viewport": "full",
+      "files": [
+        {
+          "path": "resources/js/blocks/signup-02/Page.vue",
+          "sha256": "cf2f3eb8c5f3955a558975f45c40db97da55e6d9f872b32ce5d5519003d40497"
+        },
+        {
+          "path": "resources/js/blocks/signup-02/components/SignupForm.vue",
+          "sha256": "ed07bfc19352753192ab13e93bf915fca2a466ff72d5653ba67163670d0d8f11"
+        }
+      ]
+    },
+    "signup-03": {
+      "category": "signup",
+      "description": "A signup page with a muted background color.",
+      "registryDependencies": [
+        "button",
+        "card",
+        "field",
+        "input"
+      ],
+      "npmDependencies": [],
+      "missingRegistryComponents": [],
+      "available": true,
+      "unavailableReason": null,
+      "entryFile": "signup-03/Page.vue",
+      "tags": [
+        "authentication",
+        "signup"
+      ],
+      "viewport": "full",
+      "files": [
+        {
+          "path": "resources/js/blocks/signup-03/Page.vue",
+          "sha256": "e9d5fc051905c07b8b7b3742ee7d3d37f4c13cff02a6d104da69f13daf4901fc"
+        },
+        {
+          "path": "resources/js/blocks/signup-03/components/SignupForm.vue",
+          "sha256": "fe5a9ab67019911fcde4beac58f40b20cc2d1b2df11ede821d066e31c9f4dd88"
+        }
+      ]
+    },
+    "signup-04": {
+      "category": "signup",
+      "description": "A signup page with form and image.",
+      "registryDependencies": [
+        "button",
+        "card",
+        "field",
+        "input"
+      ],
+      "npmDependencies": [],
+      "missingRegistryComponents": [],
+      "available": true,
+      "unavailableReason": null,
+      "entryFile": "signup-04/Page.vue",
+      "tags": [
+        "authentication",
+        "signup"
+      ],
+      "viewport": "full",
+      "files": [
+        {
+          "path": "resources/js/blocks/signup-04/Page.vue",
+          "sha256": "8657c97a5086029fe02c9519a273ecef869e489f1096f4db1ed3db22b27c44ff"
+        },
+        {
+          "path": "resources/js/blocks/signup-04/components/SignupForm.vue",
+          "sha256": "17c9421dce20e7ae5310e3c4e2fe3a37c3c284a26918402aa195c714268d2dbb"
+        }
+      ]
+    },
+    "signup-05": {
+      "category": "signup",
+      "description": "A simple signup form with social providers.",
+      "registryDependencies": [
+        "button",
+        "field",
+        "input"
+      ],
+      "npmDependencies": [],
+      "missingRegistryComponents": [],
+      "available": true,
+      "unavailableReason": null,
+      "entryFile": "signup-05/Page.vue",
+      "tags": [
+        "authentication",
+        "signup"
+      ],
+      "viewport": "full",
+      "files": [
+        {
+          "path": "resources/js/blocks/signup-05/Page.vue",
+          "sha256": "8932cdd5d9004870d5083265e6ddd4d23918be1819a73f4311914183fa09e3c4"
+        },
+        {
+          "path": "resources/js/blocks/signup-05/components/SignupForm.vue",
+          "sha256": "24bf7dbcf1353415b1150f9d924e27d0c56f2847a4bd1976677beb69b00bae9b"
+        }
+      ]
+    },
+    "otp-01": {
+      "category": "otp",
+      "description": "A simple OTP verification form.",
+      "registryDependencies": [
+        "button",
+        "card",
+        "field",
+        "input-otp"
+      ],
+      "npmDependencies": [],
+      "missingRegistryComponents": [],
+      "available": true,
+      "unavailableReason": null,
+      "entryFile": "otp-01/Page.vue",
+      "tags": [
+        "authentication",
+        "otp"
+      ],
+      "viewport": "full",
+      "files": [
+        {
+          "path": "resources/js/blocks/otp-01/Page.vue",
+          "sha256": "fd9c7b713088a39f5d0ecb913984761df3465164452335b205384e3c8ea3adb4"
+        },
+        {
+          "path": "resources/js/blocks/otp-01/components/OTPForm.vue",
+          "sha256": "d7d572f094a1154d36ccbebbe4c2fbe409b154b0f366c696e53455f5663faafc"
+        }
+      ]
+    },
+    "otp-02": {
+      "category": "otp",
+      "description": "A two column OTP page with a cover image.",
+      "registryDependencies": [
+        "button",
+        "field",
+        "input-otp"
+      ],
+      "npmDependencies": [],
+      "missingRegistryComponents": [],
+      "available": true,
+      "unavailableReason": null,
+      "entryFile": "otp-02/Page.vue",
+      "tags": [
+        "authentication",
+        "otp"
+      ],
+      "viewport": "full",
+      "files": [
+        {
+          "path": "resources/js/blocks/otp-02/Page.vue",
+          "sha256": "11613dc306b3e5a70d7f552ff30c53826a7a730c7a1b77181b124a9eef124b95"
+        },
+        {
+          "path": "resources/js/blocks/otp-02/components/OTPForm.vue",
+          "sha256": "abca972d67ebbedf20e4162d3b5fbfb20af9cc96a081e0fc74852db049289f1b"
+        }
+      ]
+    },
+    "otp-03": {
+      "category": "otp",
+      "description": "An OTP page with a muted background color.",
+      "registryDependencies": [
+        "button",
+        "card",
+        "field",
+        "input-otp"
+      ],
+      "npmDependencies": [],
+      "missingRegistryComponents": [],
+      "available": true,
+      "unavailableReason": null,
+      "entryFile": "otp-03/Page.vue",
+      "tags": [
+        "authentication",
+        "otp"
+      ],
+      "viewport": "full",
+      "files": [
+        {
+          "path": "resources/js/blocks/otp-03/Page.vue",
+          "sha256": "13bce85ca2dc67908f11b049b1f3d803b7f6191ad238c808460c83fa13945934"
+        },
+        {
+          "path": "resources/js/blocks/otp-03/components/OTPForm.vue",
+          "sha256": "2c31cace9ad19c8f4a993eb2d03d96e50e2d637659b5e1f6d09242c45df1d003"
+        }
+      ]
+    },
+    "otp-04": {
+      "category": "otp",
+      "description": "An OTP page with form and image.",
+      "registryDependencies": [
+        "button",
+        "card",
+        "field",
+        "input-otp"
+      ],
+      "npmDependencies": [],
+      "missingRegistryComponents": [],
+      "available": true,
+      "unavailableReason": null,
+      "entryFile": "otp-04/Page.vue",
+      "tags": [
+        "authentication",
+        "otp"
+      ],
+      "viewport": "full",
+      "files": [
+        {
+          "path": "resources/js/blocks/otp-04/Page.vue",
+          "sha256": "4ba75aafad136a6951284c1b1f1090645f7866c410541a8ee8de00dd1fc813c1"
+        },
+        {
+          "path": "resources/js/blocks/otp-04/components/OTPForm.vue",
+          "sha256": "94363f98868a06a0a01710245a660dbee6a200fc00caebea9f837d981227954a"
+        }
+      ]
+    },
+    "otp-05": {
+      "category": "otp",
+      "description": "A simple OTP form with social providers.",
+      "registryDependencies": [
+        "button",
+        "field",
+        "input-otp"
+      ],
+      "npmDependencies": [],
+      "missingRegistryComponents": [],
+      "available": true,
+      "unavailableReason": null,
+      "entryFile": "otp-05/Page.vue",
+      "tags": [
+        "authentication",
+        "otp"
+      ],
+      "viewport": "full",
+      "files": [
+        {
+          "path": "resources/js/blocks/otp-05/Page.vue",
+          "sha256": "3ffd5ccc84c38d3f31f9689a6c87b6fe0742574a11ca80c93552d85b50c488c4"
+        },
+        {
+          "path": "resources/js/blocks/otp-05/components/OTPForm.vue",
+          "sha256": "2ba611ed404f9a870829aeb8b104250d74a4d9473913fcb86f889420c81583b0"
+        }
+      ]
+    },
+    "products-01": {
+      "category": "products",
+      "description": null,
+      "registryDependencies": [
+        "badge",
+        "button",
+        "checkbox",
+        "dropdown-menu",
+        "pagination",
+        "select",
+        "table",
+        "tabs"
+      ],
+      "npmDependencies": [],
+      "missingRegistryComponents": [],
+      "available": true,
+      "unavailableReason": null,
+      "entryFile": "products-01/Page.vue",
+      "tags": [
+        "products"
+      ],
+      "viewport": "full",
+      "files": [
+        {
+          "path": "resources/js/blocks/products-01/Page.vue",
+          "sha256": "f2add9ada0e4c05f7a5e7ab4e93ab9c74bd314418a61bd7f67f3ccf597db1211"
+        },
+        {
+          "path": "resources/js/blocks/products-01/components/ProductsTable.vue",
+          "sha256": "e3f50a440e52387e3fabe87a656a74af8a10de0f78ccc2fae3eec5485634debe"
+        }
+      ]
+    },
+    "ChartAreaAxes": {
+      "category": "chart",
+      "description": "An area chart with axes",
+      "registryDependencies": [
+        "card",
+        "chart"
+      ],
+      "npmDependencies": [],
+      "missingRegistryComponents": [],
+      "available": true,
+      "unavailableReason": null,
+      "entryFile": "ChartAreaAxes/Page.vue",
+      "tags": [
+        "chart",
+        "chart-area"
+      ],
+      "viewport": "768",
+      "files": [
+        {
+          "path": "resources/js/blocks/ChartAreaAxes/Page.vue",
+          "sha256": "8cf96657bb7da7b0d72fc630d5b0b5467c81f7f9eef686cde57f26837e5e24fc"
+        }
+      ]
+    },
+    "ChartAreaGradient": {
+      "category": "chart",
+      "description": "An area chart with axes",
+      "registryDependencies": [
+        "card",
+        "chart"
+      ],
+      "npmDependencies": [],
+      "missingRegistryComponents": [],
+      "available": true,
+      "unavailableReason": null,
+      "entryFile": "ChartAreaGradient/Page.vue",
+      "tags": [
+        "chart",
+        "chart-area"
+      ],
+      "viewport": "768",
+      "files": [
+        {
+          "path": "resources/js/blocks/ChartAreaGradient/Page.vue",
+          "sha256": "c5e183de0810dd98131f49a725d4913896b61f73279f261568a836ba68a62a5e"
+        }
+      ]
+    },
+    "ChartAreaIcons": {
+      "category": "chart",
+      "description": "An area chart with axes",
+      "registryDependencies": [
+        "card",
+        "chart"
+      ],
+      "npmDependencies": [],
+      "missingRegistryComponents": [],
+      "available": true,
+      "unavailableReason": null,
+      "entryFile": "ChartAreaIcons/Page.vue",
+      "tags": [
+        "chart",
+        "chart-area"
+      ],
+      "viewport": "768",
+      "files": [
+        {
+          "path": "resources/js/blocks/ChartAreaIcons/Page.vue",
+          "sha256": "1c2dd34d0613f4bf0019aa52f24e5e8298ab1ef6a09aa761c03f73ab995eba6a"
+        }
+      ]
+    },
+    "ChartAreaInteractive": {
+      "category": "chart",
+      "description": "An interactive area chart",
+      "registryDependencies": [
+        "card",
+        "chart",
+        "select"
+      ],
+      "npmDependencies": [],
+      "missingRegistryComponents": [],
+      "available": true,
+      "unavailableReason": null,
+      "entryFile": "ChartAreaInteractive/Page.vue",
+      "tags": [
+        "chart",
+        "chart-area"
+      ],
+      "viewport": "768",
+      "files": [
+        {
+          "path": "resources/js/blocks/ChartAreaInteractive/Page.vue",
+          "sha256": "282d1ec899d9c35fd53314d911fc164cf064188892e13fc0fa3de3ad05a186ee"
+        }
+      ]
+    },
+    "ChartBarDefault": {
+      "category": "chart",
+      "description": "A line chart",
+      "registryDependencies": [
+        "card",
+        "chart"
+      ],
+      "npmDependencies": [],
+      "missingRegistryComponents": [],
+      "available": true,
+      "unavailableReason": null,
+      "entryFile": "ChartBarDefault/Page.vue",
+      "tags": [
+        "chart",
+        "chart-bar"
+      ],
+      "viewport": "768",
+      "files": [
+        {
+          "path": "resources/js/blocks/ChartBarDefault/Page.vue",
+          "sha256": "1fc077b010f862246f29f910ca4a592779e62cb8a64d4a5539d07e2eede3dd05"
+        }
+      ]
+    },
+    "ChartBarHorizontal": {
+      "category": "chart",
+      "description": "A line chart",
+      "registryDependencies": [
+        "card",
+        "chart"
+      ],
+      "npmDependencies": [],
+      "missingRegistryComponents": [],
+      "available": true,
+      "unavailableReason": null,
+      "entryFile": "ChartBarHorizontal/Page.vue",
+      "tags": [
+        "chart",
+        "chart-bar"
+      ],
+      "viewport": "768",
+      "files": [
+        {
+          "path": "resources/js/blocks/ChartBarHorizontal/Page.vue",
+          "sha256": "39bf0309cc575896c29dd58e80a5b0ee81651d2ae8f66758741284fbac06cbcd"
+        }
+      ]
+    },
+    "ChartBarInteractive": {
+      "category": "chart",
+      "description": "An interactive line chart",
+      "registryDependencies": [
+        "card",
+        "chart"
+      ],
+      "npmDependencies": [],
+      "missingRegistryComponents": [],
+      "available": true,
+      "unavailableReason": null,
+      "entryFile": "ChartBarInteractive/Page.vue",
+      "tags": [
+        "chart",
+        "chart-bar"
+      ],
+      "viewport": "768",
+      "files": [
+        {
+          "path": "resources/js/blocks/ChartBarInteractive/Page.vue",
+          "sha256": "33da2d9a2201bc236c33e6ec05286748888b8e0e6df394bfac0c2f5b824a5856"
+        }
+      ]
+    },
+    "ChartBarMultiple": {
+      "category": "chart",
+      "description": "A line chart",
+      "registryDependencies": [
+        "card",
+        "chart"
+      ],
+      "npmDependencies": [],
+      "missingRegistryComponents": [],
+      "available": true,
+      "unavailableReason": null,
+      "entryFile": "ChartBarMultiple/Page.vue",
+      "tags": [
+        "chart",
+        "chart-bar"
+      ],
+      "viewport": "768",
+      "files": [
+        {
+          "path": "resources/js/blocks/ChartBarMultiple/Page.vue",
+          "sha256": "72fbdce279789e20b93b20c07a761b75ce8aaaadaba8e42b2b0e15c94d43bff0"
+        }
+      ]
+    },
+    "ChartLineDefault": {
+      "category": "chart",
+      "description": "A line chart",
+      "registryDependencies": [
+        "card",
+        "chart"
+      ],
+      "npmDependencies": [],
+      "missingRegistryComponents": [],
+      "available": true,
+      "unavailableReason": null,
+      "entryFile": "ChartLineDefault/Page.vue",
+      "tags": [
+        "chart",
+        "chart-line"
+      ],
+      "viewport": "768",
+      "files": [
+        {
+          "path": "resources/js/blocks/ChartLineDefault/Page.vue",
+          "sha256": "dd5949633251c43a04432e3e1fde8f12ee17419cbd2430a266d78b8ce9210d6f"
+        }
+      ]
+    },
+    "ChartLineInteractive": {
+      "category": "chart",
+      "description": "An interactive line chart",
+      "registryDependencies": [
+        "card",
+        "chart"
+      ],
+      "npmDependencies": [],
+      "missingRegistryComponents": [],
+      "available": true,
+      "unavailableReason": null,
+      "entryFile": "ChartLineInteractive/Page.vue",
+      "tags": [
+        "chart",
+        "chart-line"
+      ],
+      "viewport": "768",
+      "files": [
+        {
+          "path": "resources/js/blocks/ChartLineInteractive/Page.vue",
+          "sha256": "8f3225cbe0a49e5e536cd53b0847f121687a9f11c02464acd06bc5f6a7cd204b"
+        }
+      ]
+    },
+    "ChartLineLinear": {
+      "category": "chart",
+      "description": "A line chart",
+      "registryDependencies": [
+        "card",
+        "chart"
+      ],
+      "npmDependencies": [],
+      "missingRegistryComponents": [],
+      "available": true,
+      "unavailableReason": null,
+      "entryFile": "ChartLineLinear/Page.vue",
+      "tags": [
+        "chart",
+        "chart-line"
+      ],
+      "viewport": "768",
+      "files": [
+        {
+          "path": "resources/js/blocks/ChartLineLinear/Page.vue",
+          "sha256": "66958d1a2d4da092f8e308aa8671c37e88a05e84d6b1d2c3c2fee69d0c886bd2"
+        }
+      ]
+    },
+    "ChartLineStep": {
+      "category": "chart",
+      "description": "A line chart",
+      "registryDependencies": [
+        "card",
+        "chart"
+      ],
+      "npmDependencies": [],
+      "missingRegistryComponents": [],
+      "available": true,
+      "unavailableReason": null,
+      "entryFile": "ChartLineStep/Page.vue",
+      "tags": [
+        "chart",
+        "chart-line"
+      ],
+      "viewport": "768",
+      "files": [
+        {
+          "path": "resources/js/blocks/ChartLineStep/Page.vue",
+          "sha256": "375c29966a8631a69115eec6da198acfd86ac77b2cfe04bfb015a06111651643"
+        }
+      ]
+    },
+    "ChartPieDonut": {
+      "category": "chart",
+      "description": "A simple pie chart",
+      "registryDependencies": [
+        "card",
+        "chart"
+      ],
+      "npmDependencies": [],
+      "missingRegistryComponents": [],
+      "available": true,
+      "unavailableReason": null,
+      "entryFile": "ChartPieDonut/Page.vue",
+      "tags": [
+        "chart",
+        "chart-pie"
+      ],
+      "viewport": "768",
+      "files": [
+        {
+          "path": "resources/js/blocks/ChartPieDonut/Page.vue",
+          "sha256": "5f0e5b1147085bb3d58c8484e75b9fc77529603257c579f2d5c89124d2f0a272"
+        }
+      ]
+    },
+    "ChartPieDonutText": {
+      "category": "chart",
+      "description": "A simple pie chart",
+      "registryDependencies": [
+        "card",
+        "chart"
+      ],
+      "npmDependencies": [],
+      "missingRegistryComponents": [],
+      "available": true,
+      "unavailableReason": null,
+      "entryFile": "ChartPieDonutText/Page.vue",
+      "tags": [
+        "chart",
+        "chart-pie"
+      ],
+      "viewport": "768",
+      "files": [
+        {
+          "path": "resources/js/blocks/ChartPieDonutText/Page.vue",
+          "sha256": "4d8e0d8aa781cc952b1fe3e56bca42d05a599c70499a2b6daf30e919bccd654f"
+        }
+      ]
+    },
+    "ChartPieSimple": {
+      "category": "chart",
+      "description": "A simple pie chart",
+      "registryDependencies": [
+        "card",
+        "chart"
+      ],
+      "npmDependencies": [],
+      "missingRegistryComponents": [],
+      "available": true,
+      "unavailableReason": null,
+      "entryFile": "ChartPieSimple/Page.vue",
+      "tags": [
+        "chart",
+        "chart-pie"
+      ],
+      "viewport": "768",
+      "files": [
+        {
+          "path": "resources/js/blocks/ChartPieSimple/Page.vue",
+          "sha256": "d018a8119b30ef5ca16a1ef1c32f5b5f89a18dcf3ce602015f4a7c9854b46b44"
+        }
+      ]
+    },
+    "ChartPieStacked": {
+      "category": "chart",
+      "description": "A pie chart with stacked sections",
+      "registryDependencies": [
+        "card",
+        "chart"
+      ],
+      "npmDependencies": [],
+      "missingRegistryComponents": [],
+      "available": true,
+      "unavailableReason": null,
+      "entryFile": "ChartPieStacked/Page.vue",
+      "tags": [
+        "chart",
+        "chart-pie"
+      ],
+      "viewport": "768",
+      "files": [
+        {
+          "path": "resources/js/blocks/ChartPieStacked/Page.vue",
+          "sha256": "313ec59ee2158fed5d2ca7a4e421ad8c780e28eb59c7a894f473dc34935a1dc1"
+        }
+      ]
+    },
+    "ChartTooltipDefault": {
+      "category": "chart",
+      "description": "A line chart",
+      "registryDependencies": [
+        "card",
+        "chart"
+      ],
+      "npmDependencies": [],
+      "missingRegistryComponents": [],
+      "available": true,
+      "unavailableReason": null,
+      "entryFile": "ChartTooltipDefault/Page.vue",
+      "tags": [
+        "chart",
+        "chart-tooltip"
+      ],
+      "viewport": "768",
+      "files": [
+        {
+          "path": "resources/js/blocks/ChartTooltipDefault/Page.vue",
+          "sha256": "e9b164167d875fb953d285060a2c4074514eae31c39281c5fff78f8f6d66906d"
+        }
+      ]
+    },
+    "ChartTooltipIcons": {
+      "category": "chart",
+      "description": "A line chart",
+      "registryDependencies": [
+        "card",
+        "chart"
+      ],
+      "npmDependencies": [],
+      "missingRegistryComponents": [],
+      "available": true,
+      "unavailableReason": null,
+      "entryFile": "ChartTooltipIcons/Page.vue",
+      "tags": [
+        "chart",
+        "chart-tooltip"
+      ],
+      "viewport": "768",
+      "files": [
+        {
+          "path": "resources/js/blocks/ChartTooltipIcons/Page.vue",
+          "sha256": "b1264e966db28cf1328b72ac7f6e904a2b8822022b11f84d087e255fc73c67bb"
+        }
+      ]
+    },
+    "ChartTooltipIndicatorLine": {
+      "category": "chart",
+      "description": "A line chart",
+      "registryDependencies": [
+        "card",
+        "chart"
+      ],
+      "npmDependencies": [],
+      "missingRegistryComponents": [],
+      "available": true,
+      "unavailableReason": null,
+      "entryFile": "ChartTooltipIndicatorLine/Page.vue",
+      "tags": [
+        "chart",
+        "chart-tooltip"
+      ],
+      "viewport": "768",
+      "files": [
+        {
+          "path": "resources/js/blocks/ChartTooltipIndicatorLine/Page.vue",
+          "sha256": "a08a58f38f64ba3056ded03c3f1699b76c86d91151ec140014a53df8b0387010"
+        }
+      ]
+    },
+    "ChartTooltipIndicatorNone": {
+      "category": "chart",
+      "description": "A line chart",
+      "registryDependencies": [
+        "card",
+        "chart"
+      ],
+      "npmDependencies": [],
+      "missingRegistryComponents": [],
+      "available": true,
+      "unavailableReason": null,
+      "entryFile": "ChartTooltipIndicatorNone/Page.vue",
+      "tags": [
+        "chart",
+        "chart-tooltip"
+      ],
+      "viewport": "768",
+      "files": [
+        {
+          "path": "resources/js/blocks/ChartTooltipIndicatorNone/Page.vue",
+          "sha256": "76a6faeb1018cea707cf4b349ad8f188ed5a1b7ff87edcbdbc101c762226c417"
+        }
+      ]
+    },
+    "ChartTooltipLabelCustom": {
+      "category": "chart",
+      "description": "A line chart",
+      "registryDependencies": [
+        "card",
+        "chart"
+      ],
+      "npmDependencies": [],
+      "missingRegistryComponents": [],
+      "available": true,
+      "unavailableReason": null,
+      "entryFile": "ChartTooltipLabelCustom/Page.vue",
+      "tags": [
+        "chart",
+        "chart-tooltip"
+      ],
+      "viewport": "768",
+      "files": [
+        {
+          "path": "resources/js/blocks/ChartTooltipLabelCustom/Page.vue",
+          "sha256": "e628a43d194f8f25730b5ed419b3fd0efdd639ce8866f7a4fe28ae736c6dda47"
+        }
+      ]
+    },
+    "ChartTooltipLabelFormatter": {
+      "category": "chart",
+      "description": "A line chart",
+      "registryDependencies": [
+        "card",
+        "chart"
+      ],
+      "npmDependencies": [],
+      "missingRegistryComponents": [],
+      "available": true,
+      "unavailableReason": null,
+      "entryFile": "ChartTooltipLabelFormatter/Page.vue",
+      "tags": [
+        "chart",
+        "chart-tooltip"
+      ],
+      "viewport": "768",
+      "files": [
+        {
+          "path": "resources/js/blocks/ChartTooltipLabelFormatter/Page.vue",
+          "sha256": "3a9a2e86d9a8315a117b7498897a28bece33fefad8cfd5ddf7d14fa8e3c1e8dd"
+        }
+      ]
+    },
+    "ChartTooltipLabelNone": {
+      "category": "chart",
+      "description": "A line chart",
+      "registryDependencies": [
+        "card",
+        "chart"
+      ],
+      "npmDependencies": [],
+      "missingRegistryComponents": [],
+      "available": true,
+      "unavailableReason": null,
+      "entryFile": "ChartTooltipLabelNone/Page.vue",
+      "tags": [
+        "chart",
+        "chart-tooltip"
+      ],
+      "viewport": "768",
+      "files": [
+        {
+          "path": "resources/js/blocks/ChartTooltipLabelNone/Page.vue",
+          "sha256": "09bce6dcff2edf0c2deb117905eb00ab320aaef183b3d4cc9b4fab1024f7806c"
+        }
+      ]
+    }
+  }
+}

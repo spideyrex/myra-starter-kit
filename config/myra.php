@@ -7,7 +7,7 @@ return [
     | Framework version
     |--------------------------------------------------------------------------
     */
-    'version' => '2.5.1',
+    'version' => '2.6.0',
 
     /*
     |--------------------------------------------------------------------------
@@ -48,6 +48,25 @@ return [
     /** Per-install plugin configuration, read via YourPlugin::config('key'). */
     'plugin_config' => [],
     // <<< MYRA v2.4 [A] END
+
+    // >>> MYRA v2.6 [A] START
+    /*
+    |--------------------------------------------------------------------------
+    | shadcn block catalogue
+    |--------------------------------------------------------------------------
+    |
+    | Read-only reference pages built from the vendored blocks in
+    | resources/js/blocks/. With `enabled` false every route 404s and the
+    | catalogue is unreachable; nothing else in the admin changes either way,
+    | because a block is never imported outside the preview page.
+    |
+    */
+
+    'blocks' => [
+        'enabled' => env('MYRA_BLOCKS', true),
+        'viewport' => ['full', '1024', '768', '375'],
+    ],
+    // <<< MYRA v2.6 [A] END
 
     // >>> MYRA v2.5 [A] START
     /*
@@ -367,6 +386,24 @@ return [
     ],
     // <<< MYRA v2.5 [B] END
 
+    // >>> MYRA v2.6 [B] START
+    /*
+    |--------------------------------------------------------------------------
+    | shadcn examples
+    |--------------------------------------------------------------------------
+    |
+    | The example catalogue is a reference surface behind `examples.view`. With
+    | this false every route 404s and the catalogue is unreachable; the vendored
+    | source stays on disk either way, because it is never imported by anything
+    | outside resources/js/Pages/Admin/Examples/Preview.vue.
+    |
+    */
+
+    'examples' => [
+        'enabled' => env('MYRA_EXAMPLES', true),
+    ],
+    // <<< MYRA v2.6 [B] END
+
     // >>> MYRA v2.3 [C] START
     /*
     |--------------------------------------------------------------------------
@@ -399,6 +436,25 @@ return [
     ],
     // <<< MYRA v2.5 [C] END
 
+    // >>> MYRA v2.6 [C] START
+    /*
+    |--------------------------------------------------------------------------
+    | Brand manager
+    |--------------------------------------------------------------------------
+    |
+    | `probe_ttl` bounds how long a FOREIGN write (tinker, a seeder, a second
+    | web node with its own cache) can stay invisible. App-path writes are
+    | invalidated instantly by BrandCacheSubscriber; the probe is only the
+    | safety net. 0 disables it — the event path still works.
+    |
+    */
+    'brand' => [
+        'probe_ttl' => env('MYRA_BRAND_PROBE_TTL', 60),
+        'cache_ttl' => 3600,
+        'min_contrast' => 4.5,
+    ],
+    // <<< MYRA v2.6 [C] END
+
     // >>> MYRA v2.3 [D] START
     /*
     |--------------------------------------------------------------------------
@@ -416,6 +472,31 @@ return [
         'pdf_ttl_minutes'   => 60,
     ],
     // <<< MYRA v2.3 [D] END
+
+    // >>> MYRA v2.6 [D] START
+    /*
+    |--------------------------------------------------------------------------
+    | Landing page templates
+    |--------------------------------------------------------------------------
+    |
+    | Arrangement and chrome only — every template renders the same
+    | HomepageSettings payload. An unregistered key always degrades to
+    | 'classic', so the public homepage cannot 500 on a stale setting.
+    |
+    */
+
+    'landing' => [
+        'templates' => [
+            \App\Homepage\Templates\ClassicTemplate::class,
+            \App\Homepage\Templates\SpotlightTemplate::class,
+            \App\Homepage\Templates\EditorialTemplate::class,
+            \App\Homepage\Templates\SaasTemplate::class,
+            \App\Homepage\Templates\MinimalTemplate::class,
+            \App\Homepage\Templates\DocsTemplate::class,
+            // myra:landing — make:myra-landing inserts templates above this line.
+        ],
+    ],
+    // <<< MYRA v2.6 [D] END
 
     // >>> MYRA v2.5 [D] START
     /*

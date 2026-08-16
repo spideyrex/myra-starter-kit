@@ -113,12 +113,19 @@ final class PdfReportWriter implements ReportDocumentRenderer
         $payload = $res->toArray();
         $this->assertRenderable($payload);
 
+        // >>> MYRA v2.6 [C] START
+        $brand = app(\App\Brand\BrandManager::class);
+        $meta = $brand->pdfMeta();
+        $fallbackName = $meta['author'];
+        // <<< MYRA v2.6 [C] END
+
         $title = $this->label($this->definitionTitleKey($d), $d->key());
         $doc = PdfDocument::make('A4', 'portrait')
-            ->meta($title, (string) (auth()->user()?->name ?? config('app.name')))
-            ->runningHeader($title, $this->periodSentence($payload))
+            ->producer($meta['producer'])
+            ->meta($title, (string) (auth()->user()?->name ?? $fallbackName))
+            ->runningHeader($title, $this->periodSentence($payload), PdfImage::brandLogo())
             ->runningFooter(__('reportDelivery.pdf.generatedBy', [
-                'name' => (string) (auth()->user()?->name ?? config('app.name')),
+                'name' => (string) (auth()->user()?->name ?? $fallbackName),
                 'at' => now()->toDayDateTimeString(),
             ]));
 
@@ -135,7 +142,10 @@ final class PdfReportWriter implements ReportDocumentRenderer
         $doc->kpiRow($this->kpis($payload));
 
         $doc->chart(
-            ChartVector::fromResult($res, $this->printableChartType((string) ($payload['state']['chart'] ?? 'bar')), ''),
+            ChartVector::fromResult($res, $this->printableChartType((string) ($payload['state']['chart'] ?? 'bar')), '')
+                // >>> MYRA v2.6 [C] START — null palette keeps today's constants
+                ->withPalette($brand->current()->enabled ? $brand->current()->palette : null),
+                // <<< MYRA v2.6 [C] END
             190.0,
         );
 
@@ -209,7 +219,8 @@ final class PdfReportWriter implements ReportDocumentRenderer
         }
 
         $out[__('reportDelivery.pdf.filters')] = $this->filterSentence($r) ?: __('reportDelivery.pdf.noFilters');
-        $out[__('reportDelivery.pdf.actor')] = (string) (auth()->user()?->name ?? config('app.name'));
+        $out[__('reportDelivery.pdf.actor')] = (string) (auth()->user()?->name
+            ?? app(\App\Brand\BrandManager::class)->pdfMeta()['author']);
 
         return $out;
     }

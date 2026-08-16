@@ -128,6 +128,322 @@
             }
         }
     },
+    "examples": {
+        "title": "shadcn 示例",
+        "description": "shadcn 官方示例应用，作为参考页面内置于此：完整源码、实时预览，以及每个示例所需的确切依赖清单。",
+        "search": "搜索示例",
+        "allTags": "全部",
+        "noResults": "没有符合该搜索条件的示例。",
+        "resultCount": "{n} 个示例",
+        "view": "打开示例",
+        "back": "返回示例列表",
+        "entries": {
+            "authentication": {
+                "title": "身份验证",
+                "description": "左右分屏的登录页：左侧为推荐语面板，右侧为邮箱与第三方登录。"
+            },
+            "cards": {
+                "title": "卡片",
+                "description": "卡片画廊——shadcn 提供的每种卡片组合的密集网格，从分析到支付。"
+            },
+            "dashboard": {
+                "title": "仪表板",
+                "description": "dashboard-01 应用：可折叠侧边栏、分区卡片、交互式面积图与可拖拽排序的数据表。"
+            },
+            "playground": {
+                "title": "调试台",
+                "description": "模型调试台：预设选择器、提示词编辑区，以及旁边的温度、top-P 与长度控件。"
+            },
+            "tasks": {
+                "title": "任务",
+                "description": "基于无头表格的任务追踪器：分面筛选、列显隐、行选择与分页。"
+            },
+            "mail": {
+                "title": "邮件",
+                "description": "三栏邮件客户端，栏宽可调，消息列表可搜索，并带有回复编辑区。"
+            },
+            "music": {
+                "title": "音乐",
+                "description": "音乐库：可浏览的专辑轮播、每张封面上的右键菜单，以及播客的空状态。"
+            },
+            "forms": {
+                "title": "表单",
+                "description": "五个设置面板全部通过表单原语接线，标签、提示与错误信息自动关联。"
+            }
+        },
+        "origin": {
+            "fetched": "官方内置",
+            "authored": "本地编写"
+        },
+        "surfaces": {
+            "form": "表单",
+            "split": "分屏",
+            "grid": "网格",
+            "detail": "详情",
+            "list": "列表",
+            "compose": "撰写",
+            "chart": "图表"
+        },
+        "preview": {
+            "tab": "预览",
+            "frameTitle": "{name} 示例的实时预览",
+            "openInNewTab": "在新标签页中打开预览"
+        },
+        "source": {
+            "tab": "代码",
+            "copy": "复制文件",
+            "copied": "已复制",
+            "file": "本示例包含的文件",
+            "empty": "该示例没有源文件。"
+        },
+        "dependencies": {
+            "tab": "依赖",
+            "registry": "注册表组件",
+            "npm": "npm 包",
+            "pinned": "内置自上游提交 {sha}。"
+        },
+        "unavailable": {
+            "title": "预览不可用",
+            "body": "该示例仅作参考保留——源码完整且未经修改，但无法在此挂载，因为它需要 {deps}，而本安装并未提供。"
+        },
+        "gaps": {
+            "note": "上游并未提供这些示例的页面外壳，因此每个外壳都在此处编写；上游源码所需而本安装未提供的部分一律原样保留并标记为不可用，绝不为迁就而改写。"
+        },
+        "shells": {
+            "authentication": {
+                "login": "登录",
+                "brand": "Acme Inc",
+                "quote": "这个组件库为我节省了无数工时，让我比以往任何时候都更快地向客户交付精美的产品。",
+                "quoteAuthor": "Sofia Davis",
+                "title": "创建账户",
+                "subtitle": "在下方输入您的邮箱以创建账户",
+                "terms": "点击继续即表示您同意我们的服务条款与隐私政策。"
+            },
+            "playground": {
+                "title": "调试台",
+                "preset": "加载预设",
+                "mode": "模式",
+                "modes": {
+                    "complete": "补全",
+                    "insert": "插入",
+                    "edit": "编辑"
+                },
+                "model": "模型",
+                "promptLabel": "提示词",
+                "promptPlaceholder": "为一家冰淇淋店写一句标语",
+                "submit": "提交",
+                "history": "历史记录",
+                "modeHint": "切回补全模式即可撰写提示词。"
+            }
+        },
+        "mail": {
+            "account": "账户",
+            "unread": "未读",
+            "search": "搜索邮件",
+            "resultCount": "{n} 封邮件",
+            "send": "发送",
+            "noMessage": "未选择邮件。",
+            "replyLabel": "回复",
+            "replyPlaceholder": "回复 {name}……",
+            "panes": {
+                "folders": "邮件文件夹",
+                "list": "邮件列表",
+                "message": "邮件正文"
+            },
+            "folders": {
+                "inbox": "收件箱",
+                "drafts": "草稿",
+                "sent": "已发送",
+                "junk": "垃圾邮件",
+                "trash": "回收站",
+                "archive": "归档",
+                "social": "社交",
+                "updates": "更新",
+                "forums": "论坛",
+                "shopping": "购物"
+            },
+            "scope": {
+                "all": "全部邮件",
+                "unread": "未读"
+            },
+            "actions": {
+                "archive": "归档",
+                "trash": "移至回收站",
+                "forward": "转发"
+            }
+        },
+        "music": {
+            "sidebarLabel": "音乐库",
+            "addMusic": "添加音乐",
+            "artworkAlt": "{artist} 的专辑《{title}》封面",
+            "openMenu": "《{title}》的操作",
+            "groups": {
+                "discover": "发现",
+                "library": "音乐库",
+                "playlists": "播放列表"
+            },
+            "nav": {
+                "listenNow": "立即收听",
+                "browse": "浏览",
+                "radio": "电台",
+                "playlists": "播放列表",
+                "songs": "歌曲",
+                "madeForYou": "为你打造",
+                "artists": "艺人"
+            },
+            "playlists": {
+                "recently-added": "最近添加",
+                "recently-played": "最近播放",
+                "top-songs": "热门歌曲",
+                "top-albums": "热门专辑",
+                "top-artists": "热门艺人",
+                "logic-discography": "Logic 全碟",
+                "bedtime-beats": "睡前节拍",
+                "feeling-happy": "心情愉快",
+                "im-sad": "低落时刻"
+            },
+            "menu": {
+                "addToLibrary": "添加到音乐库",
+                "addToPlaylist": "添加到播放列表",
+                "play": "下一首播放",
+                "like": "喜欢",
+                "share": "分享"
+            },
+            "tabs": {
+                "music": "音乐",
+                "podcasts": "播客",
+                "live": "直播"
+            },
+            "listenNow": {
+                "title": "立即收听",
+                "description": "为你精选，每日更新。"
+            },
+            "madeForYou": {
+                "title": "为你打造",
+                "description": "你的专属播放列表，每日更新。"
+            },
+            "podcasts": {
+                "title": "最新单集",
+                "description": "你喜爱的播客，每日更新。"
+            },
+            "empty": {
+                "title": "尚未添加单集",
+                "body": "你还没有添加任何播客，请在下方添加。",
+                "action": "添加播客"
+            },
+            "carousel": {
+                "previous": "上一批专辑",
+                "next": "下一批专辑"
+            }
+        },
+        "forms": {
+            "title": "设置",
+            "description": "管理你的账户设置并设定邮件偏好。",
+            "navLabel": "设置分区",
+            "saved": "偏好设置已保存。",
+            "panes": {
+                "profile": {
+                    "title": "个人资料",
+                    "description": "这是其他人在站点上看到你的方式。"
+                },
+                "account": {
+                    "title": "账户",
+                    "description": "更新账户设置。设定首选语言与出生日期。"
+                },
+                "appearance": {
+                    "title": "外观",
+                    "description": "自定义应用外观，在日间与夜间主题之间切换。"
+                },
+                "notifications": {
+                    "title": "通知",
+                    "description": "配置接收通知的方式。"
+                },
+                "display": {
+                    "title": "显示",
+                    "description": "开启或关闭条目，控制应用中显示的内容。"
+                }
+            },
+            "profile": {
+                "username": "用户名",
+                "usernameHelp": "这是你的公开显示名称，每 30 天只能修改一次。",
+                "email": "邮箱",
+                "emailHelp": "已验证的地址可用于登录并接收通知。",
+                "bio": "简介",
+                "bioHelp": "你可以提及其他用户和组织，以建立到他们的链接。",
+                "language": "语言",
+                "languageHelp": "这是仪表板将使用的语言。",
+                "submit": "更新资料"
+            },
+            "account": {
+                "name": "姓名",
+                "nameHelp": "这是将出现在你的收据与发票上的姓名。",
+                "dob": "出生日期",
+                "dobHelp": "你的出生日期用于计算年龄。",
+                "language": "语言",
+                "languageHelp": "这是仪表板将使用的语言。",
+                "submit": "更新账户"
+            },
+            "appearance": {
+                "font": "字体",
+                "fontHelp": "设定你希望在仪表板中使用的字体。",
+                "theme": "主题",
+                "themeHelp": "选择仪表板的主题。",
+                "submit": "更新偏好"
+            },
+            "notifications": {
+                "mode": "通知我关于",
+                "emailLegend": "邮件通知",
+                "communication": {
+                    "label": "沟通邮件",
+                    "help": "接收关于账户活动的邮件。"
+                },
+                "marketing": {
+                    "label": "营销邮件",
+                    "help": "接收关于新产品、新功能等的邮件。"
+                },
+                "security": {
+                    "label": "安全邮件",
+                    "help": "接收关于账户安全的邮件。"
+                },
+                "submit": "更新通知"
+            },
+            "display": {
+                "sidebar": "侧边栏",
+                "sidebarHelp": "选择你希望在侧边栏中显示的条目。",
+                "submit": "更新显示"
+            },
+            "languages": {
+                "en": "英语",
+                "ms": "马来语",
+                "zh": "中文",
+                "fr": "法语",
+                "de": "德语",
+                "es": "西班牙语"
+            },
+            "fonts": {
+                "inter": "Inter",
+                "manrope": "Manrope",
+                "system": "系统字体"
+            },
+            "themes": {
+                "light": "浅色",
+                "dark": "深色"
+            },
+            "notifyModes": {
+                "all": "所有新消息",
+                "mentions": "私信与提及",
+                "none": "不通知"
+            },
+            "displayItems": {
+                "recents": "最近",
+                "home": "主页",
+                "applications": "应用程序",
+                "desktop": "桌面",
+                "downloads": "下载",
+                "documents": "文档"
+            }
+        }
+    },
     "status": {
         "active": "活跃",
         "inactive": "不活跃",
@@ -148,7 +464,118 @@
         "email": "邮箱",
         "password": "密码",
         "rememberMe": "记住我",
-        "alreadyRegistered": "已注册？"
+        "alreadyRegistered": "已注册？",
+        "defaultTagline": "最好的后台体验始于坚实的基础。",
+        "loginTitle": "登录",
+        "loginSubtitle": "输入您的凭据以访问账户",
+        "registerTitle": "创建账户",
+        "registerSubtitle": "填写您的信息以开始使用",
+        "name": "姓名",
+        "confirmPasswordLabel": "确认密码",
+        "forgotPasswordLink": "忘记密码？",
+        "noAccount": "还没有账户？",
+        "signUp": "注册",
+        "haveAccount": "已有账户？",
+        "strength": {
+            "weak": "弱",
+            "fair": "一般",
+            "good": "良好",
+            "strong": "强",
+            "veryStrong": "非常强"
+        }
+    },
+    "brand": {
+        "title": "品牌",
+        "description": "名称、标志、颜色与排版的唯一真实来源，供所有界面使用。",
+        "save": "保存品牌",
+        "enable": {
+            "label": "启用品牌管理器",
+            "help": "默认关闭。关闭时每个界面都完全保持 2.6 之前的行为。"
+        },
+        "tabs": {
+            "identity": "标识",
+            "colour": "颜色",
+            "typography": "排版",
+            "assets": "资源",
+            "preview": "预览"
+        },
+        "fields": {
+            "name": "名称",
+            "shortName": "简称",
+            "tagline": "标语",
+            "description": "描述",
+            "primary": "主色",
+            "accent": "强调色",
+            "preset": "调色板预设",
+            "fontSans": "无衬线字体",
+            "fontMono": "等宽字体",
+            "radius": "圆角半径",
+            "darkDefault": "默认深色",
+            "logoPosition": "标志位置",
+            "sidebarBackground": "侧栏背景",
+            "sidebarForeground": "侧栏前景",
+            "sidebarAccent": "侧栏强调色"
+        },
+        "logoPositions": {
+            "sidebar": "侧栏",
+            "header": "页眉"
+        },
+        "assets": {
+            "logo": "标志",
+            "logoDark": "标志（深色）",
+            "mark": "方形标记",
+            "favicon": "网站图标",
+            "ogImage": "社交分享图",
+            "upload": "上传",
+            "remove": "移除",
+            "rejectedSvg": "拒绝 SVG：它是可携带脚本的标记，而资源磁盘是同源的。",
+            "icoAccepted": "接受 PNG、JPEG、WebP 和 ICO。文件类型由字节读取，而非文件名。"
+        },
+        "preview": {
+            "surfaces": {
+                "admin": "后台外壳",
+                "login": "登录",
+                "public": "公开站点",
+                "email": "邮件",
+                "pdf": "PDF 导出",
+                "install": "安装 / PWA"
+            }
+        },
+        "contrast": {
+            "ok": "对比度 {ratio}:1 — 通过 AA。",
+            "warning": "对比度 {ratio}:1 低于 {minimum}:1 的最低要求。"
+        },
+        "reset": {
+            "label": "重置为默认",
+            "confirm": "重置所有品牌值并关闭品牌管理器？"
+        },
+        "errors": {
+            "home": "返回首页",
+            "403": {
+                "title": "禁止访问",
+                "body": "您没有权限查看此页面。"
+            },
+            "404": {
+                "title": "页面未找到",
+                "body": "您查找的页面不存在或已被移动。"
+            },
+            "419": {
+                "title": "页面已过期",
+                "body": "您的会话已超时。请刷新页面后重试。"
+            },
+            "500": {
+                "title": "出错了",
+                "body": "发生了意外错误。团队已收到通知。"
+            },
+            "503": {
+                "title": "维护中",
+                "body": "我们正在进行维护，稍后即将恢复。"
+            }
+        },
+        "settingsLink": {
+            "label": "品牌管理器",
+            "help": "面向所有界面的名称、标志、图标、调色板与排版。"
+        }
     },
     "validation": {
         "required": "{field} 为必填项",
@@ -193,6 +620,102 @@
             "uploadFailed": "图片上传失败",
             "boldSample": "粗体文字",
             "italicSample": "斜体文字"
+        }
+    },
+    "landing": {
+        "title": "落地页",
+        "description": "选择公开首页所使用的模板，以及各版块的排列顺序。",
+        "nav": {
+            "label": "主导航",
+            "skipToContent": "跳到主要内容",
+            "dashboard": "仪表板",
+            "login": "登录",
+            "openMenu": "打开菜单",
+            "closeMenu": "关闭菜单"
+        },
+        "footer": {
+            "rights": "© {year} {name}。保留所有权利。"
+        },
+        "pricing": {
+            "popular": "最受欢迎"
+        },
+        "docs": {
+            "onThisPage": "本页内容"
+        },
+        "faq": {
+            "title": "常见问题",
+            "items": {
+                "billing": {
+                    "question": "如何计费？",
+                    "answer": "套餐按月计费，可随时更换等级，下一期账单将按比例结算。"
+                },
+                "trial": {
+                    "question": "有免费试用吗？",
+                    "answer": "每个套餐都包含试用期。试用结束前无需绑定银行卡。"
+                },
+                "support": {
+                    "question": "包含哪些支持？",
+                    "answer": "所有套餐均包含邮件支持。更高等级还提供共享频道与响应时间承诺。"
+                },
+                "cancel": {
+                    "question": "可以随时取消吗？",
+                    "answer": "可以。取消后将不再续订，数据在周期结束前仍可导出。"
+                }
+            }
+        },
+        "templates": {
+            "classic": {
+                "title": "经典",
+                "description": "原始布局：居中主视觉、三列功能区、用户评价、价格表与结尾行动号召。"
+            },
+            "spotlight": {
+                "title": "聚光",
+                "description": "品牌渐变背景上的居中主视觉，去掉价格表，只保留一个行动号召。"
+            },
+            "editorial": {
+                "title": "杂志",
+                "description": "左右分栏主视觉与双列、以文章为主的节奏，适合内容较多的发布页。"
+            },
+            "saas": {
+                "title": "SaaS",
+                "description": "价格优先，其后是功能与评价，以常见问题折叠面板收尾。"
+            },
+            "minimal": {
+                "title": "极简",
+                "description": "单窄栏、无图像、无价格表。阅读与加载都最快的一版。"
+            },
+            "docs": {
+                "title": "文档",
+                "description": "内容旁附带固定的版块导航栏，适合首页兼作文档的产品。"
+            }
+        },
+        "sections": {
+            "label": "版块",
+            "hero": "主视觉",
+            "features": "功能",
+            "testimonials": "用户评价",
+            "pricing": "价格",
+            "cta": "行动号召"
+        },
+        "sectionOrder": {
+            "label": "版块顺序",
+            "help": "版块按此顺序自上而下渲染。模板只会渲染它支持的版块。",
+            "moveUp": "将 {section} 上移",
+            "moveDown": "将 {section} 下移",
+            "reordered": "{section} 已移至第 {position} 位，共 {total} 项。"
+        },
+        "unsupported": {
+            "label": "此模板不渲染该版块",
+            "help": "所选模板不渲染该版块，因此它的位置不会产生影响。",
+            "disabled": "该版块已在首页设置中关闭。"
+        },
+        "preview": {
+            "label": "预览",
+            "openInNewTab": "在新标签页预览"
+        },
+        "picker": {
+            "label": "模板",
+            "help": "只改变排列与外观 — 每个模板渲染的首页内容完全相同。"
         }
     },
     "tenancy": {
@@ -602,7 +1125,8 @@
             "layout": "布局",
             "platform": "平台",
             "content": "内容",
-            "gallery": "展示库"
+            "gallery": "展示库",
+            "charts": "图表"
         },
         "playground": {
             "title": "组件试验场",
@@ -840,6 +1364,157 @@
                 "title": "离线外壳",
                 "description": "应用外壳在无网络时仍可使用。仅缓存静态资源，绝不缓存您的数据。",
                 "badge": "PWA"
+            },
+            "emptyAndItem": {
+                "title": "Empty 与 Item",
+                "description": "带媒体、操作与分隔线的 Item 列表原语，列表清空后自动降级为 Empty 空状态。",
+                "badge": "新增"
+            },
+            "chartPrimitives": {
+                "title": "图表原语",
+                "description": "基于 Unovis 的 ChartContainer，使用主题化的系列色标，并在每张图旁附上屏幕阅读器数据表。",
+                "badge": "新增"
+            },
+            "otpAndCombobox": {
+                "title": "OTP 与组合框",
+                "description": "六格一次性验证码输入与可搜索组合框，均以键盘优先并带有标签。",
+                "badge": "新增"
+            },
+            "conversation": {
+                "title": "会话",
+                "description": "气泡、消息页眉页脚、自动滚动的消息滚动器与文件附件。",
+                "badge": "新增"
+            },
+            "questionnaire": {
+                "title": "问卷",
+                "description": "每次一题，带键盘快捷键、进度播报，校验由原语本身接线完成。",
+                "badge": "新增"
+            },
+            "mapMarkers": {
+                "title": "地图标记",
+                "description": "带弹出框的 MapLibre 标记，并配以 Marker 列表，画布绝不是唯一的信息通道。",
+                "badge": "新增"
+            },
+            "landingTemplates": {
+                "title": "落地页模板",
+                "description": "所有已注册的公开首页模板，列出各自渲染的版块并提供实时预览链接。",
+                "badge": "新增"
+            }
+        },
+        "references": {
+            "label": "参考",
+            "blocks": "区块",
+            "examples": "示例",
+            "brand": "品牌",
+            "landing": "落地页"
+        },
+        "componentDemos": {
+            "emptyAndItem": {
+                "listTitle": "项目列表",
+                "listDescription": "删除所有行即可看到 Empty 空状态接管。",
+                "restore": "恢复列表",
+                "remove": "删除 {name}",
+                "emptyTitle": "没有剩余项目",
+                "emptyDescription": "所有行都已删除。恢复列表即可找回。",
+                "variantsTitle": "变体",
+                "variantsDescription": "Item 提供 outline 与 muted 变体及两种尺寸；Empty 有无媒体皆可使用。",
+                "bareEmptyTitle": "暂无内容",
+                "bareEmptyDescription": "没有媒体也没有操作的 Empty 状态，依然是一个地标，而不是空白框。",
+                "status": {
+                    "active": "进行中",
+                    "paused": "已暂停",
+                    "archived": "已归档"
+                },
+                "variant": {
+                    "outline": "Outline 项",
+                    "muted": "Muted 项，小尺寸"
+                }
+            },
+            "chartPrimitives": {
+                "barTitle": "按设备划分的会话",
+                "barDescription": "由 ChartContainer 与主题图表色标驱动的分组柱状图。",
+                "lineTitle": "会话总数",
+                "lineDescription": "同一批数据以单条折线呈现。",
+                "channelTitle": "按渠道划分的访客",
+                "channelDescription": "一个系列、一种颜色，并以表格重复同样的数字。",
+                "month": "月份",
+                "channel": "渠道",
+                "total": "本期合计：{total} 次会话。",
+                "series": {
+                    "desktop": "桌面端",
+                    "mobile": "移动端",
+                    "visitors": "访客",
+                    "total": "合计"
+                }
+            },
+            "otpAndCombobox": {
+                "otpTitle": "一次性验证码",
+                "otpDescription": "六个格子，支持整段粘贴，配有真实标签与关联提示。",
+                "otpLabel": "验证码",
+                "otpHint": "请输入发送到您邮箱的六位数字。整段粘贴同样有效。",
+                "verify": "验证",
+                "verified": "验证码已接受。",
+                "entered": "已输入 {n} / 6 位。",
+                "comboTitle": "可搜索组合框",
+                "comboDescription": "输入以筛选，方向键移动，回车选择。",
+                "comboLabel": "时区",
+                "comboPlaceholder": "选择时区",
+                "comboSearch": "搜索时区",
+                "comboEmpty": "没有匹配该搜索的时区。",
+                "comboSelected": "已选择 {zone}。",
+                "comboNone": "尚未选择时区。"
+            },
+            "conversation": {
+                "you": "我",
+                "threadTitle": "会话线程",
+                "threadDescription": "一个实时区域，会播报新消息并滚动到最新一条。",
+                "scrollToLatest": "滚动到最新消息",
+                "draftLabel": "消息",
+                "draftPlaceholder": "写一条回复",
+                "send": "发送",
+                "attachmentsTitle": "附件",
+                "attachmentsDescription": "Attachment 渲染带媒体、标题与大小的文件卡片。"
+            },
+            "questionnaire": {
+                "title": "入门调查",
+                "description": "每次一题。字母快捷键可选择选项；进度会以礼貌方式播报。",
+                "freeTextPlaceholder": "用一句话告诉我们",
+                "required": "继续之前需要先作答。",
+                "previous": "上一题",
+                "next": "下一题",
+                "submit": "完成",
+                "submitted": "谢谢 — 您的答案已记录。",
+                "choices": {
+                    "engineer": "工程师",
+                    "designer": "设计师",
+                    "operator": "运营",
+                    "solo": "只有我",
+                    "small": "2 至 20 人",
+                    "large": "超过 20 人"
+                },
+                "items": {
+                    "role": {
+                        "title": "哪一项最符合您的角色？",
+                        "description": "这只会改变我们优先展示哪些示例。"
+                    },
+                    "size": {
+                        "title": "您的团队有多大？",
+                        "description": "用于为共享视图挑选合理的默认值。"
+                    },
+                    "goal": {
+                        "title": "您希望先交付什么？",
+                        "description": "一句话就够了。"
+                    }
+                }
+            },
+            "mapMarkers": {
+                "mapTitle": "覆盖地图",
+                "mapDescription": "MapLibre 标记；选中其一会同步更新旁边的列表。",
+                "listTitle": "地点",
+                "listDescription": "同样的标记以可聚焦的行呈现，地图绝不是唯一的入口。",
+                "separator": "当前选择",
+                "selected": "已选择 {name}。",
+                "none": "尚未选择地点。"
             }
         }
     },
@@ -964,6 +1639,287 @@
         },
         "viewAsChart": "以图表查看",
         "viewAsTable": "以表格查看"
+    },
+    "blocks": {
+        "title": "shadcn 区块",
+        "description": "shadcn-vue 注册表中的每个区块，原样引入并在隔离环境中预览。",
+        "search": "搜索区块",
+        "allCategories": "全部",
+        "resultCount": "显示 {n} 个区块",
+        "noResults": "没有匹配的区块。",
+        "view": "打开区块",
+        "categories": {
+            "sidebar": "侧边栏",
+            "dashboard": "仪表板",
+            "login": "登录",
+            "signup": "注册",
+            "otp": "一次性验证码",
+            "products": "产品",
+            "chart": "图表",
+            "other": "其他"
+        },
+        "preview": {
+            "tab": "预览",
+            "frameTitle": "{name} 的实时预览",
+            "openInNewTab": "在新标签页中打开预览",
+            "viewport": "视口",
+            "viewportFull": "全宽",
+            "viewportPx": "{px} 像素",
+            "viewportAnnounced": "视口：{size}",
+            "dark": "深色模式"
+        },
+        "source": {
+            "tab": "代码",
+            "copy": "复制",
+            "copied": "已复制",
+            "file": "{path} 的源码"
+        },
+        "dependencies": {
+            "tab": "依赖",
+            "registry": "注册表组件",
+            "npm": "npm 包",
+            "none": "无"
+        },
+        "unavailable": {
+            "title": "预览不可用",
+            "body": "该区块需要本安装未提供的依赖（{deps}）。其源码已完整引入并显示在下方。",
+            "badge": "仅源码"
+        },
+        "gaps": {
+            "title": "已知缺口",
+            "calendar": "上游没有 Vue 版日历区块，因此未引入。",
+            "sourceOnly": "依赖本安装未提供的区块会标记为“仅源码”：其预览被暂停，但引入的源码完整并全文显示。"
+        },
+        "entries": {
+            "sidebar-01": {
+                "title": "Sidebar 01",
+                "description": "导航按区块分组的简洁侧边栏。"
+            },
+            "sidebar-02": {
+                "title": "Sidebar 02",
+                "description": "带可折叠分区的侧边栏。"
+            },
+            "sidebar-03": {
+                "title": "Sidebar 03",
+                "description": "带子菜单的侧边栏。"
+            },
+            "sidebar-04": {
+                "title": "Sidebar 04",
+                "description": "带子菜单的浮动侧边栏。"
+            },
+            "sidebar-05": {
+                "title": "Sidebar 05",
+                "description": "带可折叠子菜单的侧边栏。"
+            },
+            "sidebar-06": {
+                "title": "Sidebar 06",
+                "description": "子菜单以下拉形式呈现的侧边栏。"
+            },
+            "sidebar-07": {
+                "title": "Sidebar 07",
+                "description": "可折叠为图标的侧边栏。"
+            },
+            "sidebar-08": {
+                "title": "Sidebar 08",
+                "description": "带次级导航的内嵌侧边栏。"
+            },
+            "sidebar-09": {
+                "title": "Sidebar 09",
+                "description": "可折叠的嵌套侧边栏。"
+            },
+            "sidebar-10": {
+                "title": "Sidebar 10",
+                "description": "位于弹出层中的侧边栏。"
+            },
+            "sidebar-11": {
+                "title": "Sidebar 11",
+                "description": "带可折叠文件树的侧边栏。"
+            },
+            "sidebar-12": {
+                "title": "Sidebar 12",
+                "description": "带日历的侧边栏。"
+            },
+            "sidebar-13": {
+                "title": "Sidebar 13",
+                "description": "位于对话框中的侧边栏。"
+            },
+            "sidebar-14": {
+                "title": "Sidebar 14",
+                "description": "位于右侧的侧边栏。"
+            },
+            "sidebar-15": {
+                "title": "Sidebar 15",
+                "description": "左右双侧边栏。"
+            },
+            "sidebar-16": {
+                "title": "Sidebar 16",
+                "description": "带吸顶站点页眉的侧边栏。"
+            },
+            "sidebar-demo": {
+                "title": "Sidebar Demo",
+                "description": "不含页面外框的侧边栏原语。"
+            },
+            "dashboard-01": {
+                "title": "Dashboard 01",
+                "description": "含侧边栏、图表与数据表的仪表板。"
+            },
+            "login-01": {
+                "title": "Login 01",
+                "description": "简洁登录表单。"
+            },
+            "login-02": {
+                "title": "Login 02",
+                "description": "带封面图的双栏登录页。"
+            },
+            "login-03": {
+                "title": "Login 03",
+                "description": "使用柔和背景色的登录页。"
+            },
+            "login-04": {
+                "title": "Login 04",
+                "description": "含表单与图片的登录页。"
+            },
+            "login-05": {
+                "title": "Login 05",
+                "description": "仅使用邮箱的简洁登录页。"
+            },
+            "signup-01": {
+                "title": "Signup 01",
+                "description": "简洁注册表单。"
+            },
+            "signup-02": {
+                "title": "Signup 02",
+                "description": "带封面图的双栏注册页。"
+            },
+            "signup-03": {
+                "title": "Signup 03",
+                "description": "使用柔和背景色的注册页。"
+            },
+            "signup-04": {
+                "title": "Signup 04",
+                "description": "含表单与图片的注册页。"
+            },
+            "signup-05": {
+                "title": "Signup 05",
+                "description": "含社交登录方式的简洁注册表单。"
+            },
+            "otp-01": {
+                "title": "Otp 01",
+                "description": "简洁 OTP 验证表单。"
+            },
+            "otp-02": {
+                "title": "Otp 02",
+                "description": "带封面图的双栏 OTP 页面。"
+            },
+            "otp-03": {
+                "title": "Otp 03",
+                "description": "使用柔和背景色的 OTP 页面。"
+            },
+            "otp-04": {
+                "title": "Otp 04",
+                "description": "含表单与图片的 OTP 页面。"
+            },
+            "otp-05": {
+                "title": "Otp 05",
+                "description": "含社交登录方式的简洁 OTP 表单。"
+            },
+            "products-01": {
+                "title": "Products 01",
+                "description": "含筛选、分页与行操作的产品表格。"
+            },
+            "ChartAreaAxes": {
+                "title": "Chart Area Axes",
+                "description": "带可见坐标轴的面积图。"
+            },
+            "ChartAreaGradient": {
+                "title": "Chart Area Gradient",
+                "description": "带渐变填充的面积图。"
+            },
+            "ChartAreaIcons": {
+                "title": "Chart Area Icons",
+                "description": "图例中带图标的面积图。"
+            },
+            "ChartAreaInteractive": {
+                "title": "Chart Area Interactive",
+                "description": "带范围选择器的交互式面积图。"
+            },
+            "ChartBarDefault": {
+                "title": "Chart Bar Default",
+                "description": "默认配置的柱状图。"
+            },
+            "ChartBarHorizontal": {
+                "title": "Chart Bar Horizontal",
+                "description": "横向柱状图。"
+            },
+            "ChartBarInteractive": {
+                "title": "Chart Bar Interactive",
+                "description": "带系列切换的交互式柱状图。"
+            },
+            "ChartBarMultiple": {
+                "title": "Chart Bar Multiple",
+                "description": "含多个系列的柱状图。"
+            },
+            "ChartLineDefault": {
+                "title": "Chart Line Default",
+                "description": "默认配置的折线图。"
+            },
+            "ChartLineInteractive": {
+                "title": "Chart Line Interactive",
+                "description": "带系列切换的交互式折线图。"
+            },
+            "ChartLineLinear": {
+                "title": "Chart Line Linear",
+                "description": "采用线性插值的折线图。"
+            },
+            "ChartLineStep": {
+                "title": "Chart Line Step",
+                "description": "采用阶梯插值的折线图。"
+            },
+            "ChartPieDonut": {
+                "title": "Chart Pie Donut",
+                "description": "环形图。"
+            },
+            "ChartPieDonutText": {
+                "title": "Chart Pie Donut Text",
+                "description": "中心显示总计的环形图。"
+            },
+            "ChartPieSimple": {
+                "title": "Chart Pie Simple",
+                "description": "简洁饼图。"
+            },
+            "ChartPieStacked": {
+                "title": "Chart Pie Stacked",
+                "description": "带堆叠扇区的饼图。"
+            },
+            "ChartTooltipDefault": {
+                "title": "Chart Tooltip Default",
+                "description": "默认配置的图表提示框。"
+            },
+            "ChartTooltipIcons": {
+                "title": "Chart Tooltip Icons",
+                "description": "带系列图标的图表提示框。"
+            },
+            "ChartTooltipIndicatorLine": {
+                "title": "Chart Tooltip Indicator Line",
+                "description": "带线条指示器的图表提示框。"
+            },
+            "ChartTooltipIndicatorNone": {
+                "title": "Chart Tooltip Indicator None",
+                "description": "不含指示器的图表提示框。"
+            },
+            "ChartTooltipLabelCustom": {
+                "title": "Chart Tooltip Label Custom",
+                "description": "带自定义标签的图表提示框。"
+            },
+            "ChartTooltipLabelFormatter": {
+                "title": "Chart Tooltip Label Formatter",
+                "description": "带格式化标签的图表提示框。"
+            },
+            "ChartTooltipLabelNone": {
+                "title": "Chart Tooltip Label None",
+                "description": "隐藏标签的图表提示框。"
+            }
+        }
     },
     "transfer": {
         "export": {

@@ -7,7 +7,15 @@ import { ZiggyVue } from '../../vendor/tightenco/ziggy';
 import { vCan } from '@/directives/v-can';
 import i18n from '@/i18n';
 
-const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
+// >>> MYRA v2.6 [C] START
+// The brand is server-resolved and embedded by app.blade.php, so the document
+// title and the Inertia progress bar are branded before the first render.
+import { readBrandMeta } from '@/composables/useBrand';
+
+const brand = readBrandMeta();
+const appName = brand?.name || import.meta.env.VITE_APP_NAME || 'Laravel';
+const progressColor = brand?.palette?.primary || '#4B5563';
+// <<< MYRA v2.6 [C] END
 
 createInertiaApp({
     title: (title) => `${title} - ${appName}`,
@@ -27,6 +35,6 @@ createInertiaApp({
         app.mount(el);
     },
     progress: {
-        color: '#4B5563',
+        color: progressColor,
     },
 });

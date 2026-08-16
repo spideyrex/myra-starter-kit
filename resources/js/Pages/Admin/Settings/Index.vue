@@ -27,6 +27,17 @@ const props = defineProps<{
     ai: Record<string, any>;
 }>();
 
+// >>> MYRA v2.6 [C] START — guarded so an isolated worktree without the route
+// still renders the Appearance tab.
+const hasBrandPage = (() => {
+    try {
+        return (route as any)().has('admin.brand.index') === true;
+    } catch {
+        return false;
+    }
+})();
+// <<< MYRA v2.6 [C] END
+
 const generalForm = useForm({ ...props.general });
 const seoForm = useForm({ ...props.seo });
 const socialForm = useForm({ ...props.social });
@@ -497,6 +508,18 @@ async function saveHomepage() {
             </TabsContent>
 
             <TabsContent value="appearance">
+                <!-- >>> MYRA v2.6 [C] START -->
+                <div v-if="hasBrandPage" class="mb-4 flex flex-wrap items-center justify-between gap-3 rounded-lg border p-4">
+                    <div class="min-w-0">
+                        <p class="font-medium">{{ $t('brand.settingsLink.label') }}</p>
+                        <p class="text-sm text-muted-foreground">{{ $t('brand.settingsLink.help') }}</p>
+                    </div>
+                    <Button as-child variant="outline" size="sm">
+                        <a :href="route('admin.brand.index')">{{ $t('brand.title') }}</a>
+                    </Button>
+                </div>
+                <!-- <<< MYRA v2.6 [C] END -->
+
                 <Card>
                     <CardHeader>
                         <CardTitle>Appearance Settings</CardTitle>

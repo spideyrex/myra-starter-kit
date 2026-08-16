@@ -13,6 +13,16 @@ class HandleInertiaRequests extends Middleware
 {
     protected $rootView = 'app';
 
+    // >>> MYRA v2.6 [C] START
+    /** The only general/appearance keys the public `siteSettings` prop may carry. */
+    private const PUBLIC_SITE_KEYS = [
+        'site_name', 'site_description', 'login_tagline', 'registration_enabled',
+        'logo_path', 'favicon_path', 'logo_url', 'favicon_url',
+        'primary_color', 'theme', 'logo_position',
+        'sidebar_background', 'sidebar_foreground', 'sidebar_accent',
+    ];
+    // <<< MYRA v2.6 [C] END
+
     public function version(Request $request): ?string
     {
         return parent::version($request);
@@ -75,6 +85,10 @@ class HandleInertiaRequests extends Middleware
             // partial reloads; with nothing registered it serialises as [].
             'myraNav' => fn () => \App\Admin\Navigation\NavRegistry::forUser($request->user()),
             // <<< MYRA v2.4 [B] END
+            // >>> MYRA v2.6 [C] START
+            'brand' => fn () => app(\App\Brand\BrandManager::class)->toInertiaProp(),
+            // <<< MYRA v2.6 [C] END
+            /** @deprecated v2.6 — use the `brand` prop. Kept for back-compat. */
             'siteSettings' => fn () => cache()->remember('site_settings_shared', 3600, function () {
                 $rows = DB::table('settings')->whereIn('group', ['general', 'appearance'])->get();
                 $settings = [];
@@ -90,7 +104,11 @@ class HandleInertiaRequests extends Middleware
                     $settings['favicon_url'] = Storage::disk('public')->url($settings['favicon_path']);
                 }
 
-                return $settings;
+                // >>> MYRA v2.6 [C] START
+                // Whitelisted: admin_email, site_url and timezone used to ship to
+                // every unauthenticated guest on /login and the marketing pages.
+                return array_intersect_key($settings, array_flip(self::PUBLIC_SITE_KEYS));
+                // <<< MYRA v2.6 [C] END
             }),
             'aiEnabled' => fn () => cache()->remember('ai_enabled', 3600, function () {
                 try {
@@ -107,8 +125,14 @@ class HandleInertiaRequests extends Middleware
             'buildId' => fn () => cache()->remember('myra_build_id', 3600, function () {
                 try {
                     $manifest = public_path('build/manifest.json');
+                    $assets = is_file($manifest) ? (md5_file($manifest) ?: 'dev') : 'dev';
 
-                    return substr(is_file($manifest) ? (md5_file($manifest) ?: 'dev') : 'dev', 0, 8);
+                    // >>> MYRA v2.6 [C] START
+                    // Folding the brand hash in is what lets a settings-only change
+                    // rotate the service-worker shell cache. Without it a changed
+                    // manifest and favicon stay pinned behind __MYRA_BUILD__.
+                    return substr(md5($assets.'|'.app(\App\Brand\BrandManager::class)->hash()), 0, 8);
+                    // <<< MYRA v2.6 [C] END
                 } catch (\Throwable) {
                     return 'dev';
                 }

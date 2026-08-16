@@ -3,7 +3,6 @@
 namespace App\Mail;
 
 use Illuminate\Bus\Queueable;
-use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
@@ -16,7 +15,7 @@ use Illuminate\Queue\SerializesModels;
  * and hands this to an on-demand mailer, which Mailer::sendMailable() would
  * otherwise re-queue under the undefined name "ondemand".
  */
-final class ScheduledReportMail extends Mailable
+final class ScheduledReportMail extends BrandedMailable
 {
     use Queueable, SerializesModels;
 
@@ -39,7 +38,9 @@ final class ScheduledReportMail extends Mailable
 
     public function content(): Content
     {
-        return new Content(htmlString: $this->bodyHtml);
+        // >>> MYRA v2.6 [C] START
+        return $this->brandView($this->bodyHtml, ['subjectLine' => $this->subjectLine]);
+        // <<< MYRA v2.6 [C] END
     }
 
     /** @return array<int, \Illuminate\Mail\Mailables\Attachment> */

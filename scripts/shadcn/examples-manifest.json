@@ -1,0 +1,566 @@
+{
+    "generatedAt": "2026-08-16T11:06:33.102Z",
+    "source": "https://raw.githubusercontent.com/unovue/shadcn-vue/81ededbf6c4c230272ed613649bd525cd9de7ed2/apps/v4/components/examples",
+    "sha": "81ededbf6c4c230272ed613649bd525cd9de7ed2",
+    "examples": {
+        "authentication": {
+            "origin": "fetched",
+            "sourceSha": "81ededbf6c4c230272ed613649bd525cd9de7ed2",
+            "description": null,
+            "registryDependencies": [
+                "button",
+                "field",
+                "input",
+                "spinner"
+            ],
+            "npmDependencies": [
+                "lucide-vue-next",
+                "vue",
+                "vue-i18n"
+            ],
+            "available": true,
+            "unavailableReason": null,
+            "shell": "authentication/Page.vue",
+            "files": [
+                {
+                    "path": "Page.vue",
+                    "sha256": "172304764d5efc9a0e70bfd24e5673cebfc2df9b18f3655242a3e5a7e8514741"
+                },
+                {
+                    "path": "components/Icons.ts",
+                    "sha256": "5fe165013592ef79969598f30d8d35e867d71e98de47977e8695cc939e8d4220"
+                },
+                {
+                    "path": "components/UserAuthForm.vue",
+                    "sha256": "ee5ea01502cddb580f328e77f525883e893c9ee6aa20a00e83da0d22720394ed"
+                }
+            ]
+        },
+        "cards": {
+            "origin": "fetched",
+            "sourceSha": "81ededbf6c4c230272ed613649bd525cd9de7ed2",
+            "description": null,
+            "registryDependencies": [
+                "alert-dialog",
+                "badge",
+                "breadcrumb",
+                "button",
+                "button-group",
+                "card",
+                "checkbox",
+                "dropdown-menu",
+                "empty",
+                "field",
+                "input",
+                "input-group",
+                "item",
+                "progress",
+                "radio-group",
+                "select",
+                "separator",
+                "sidebar",
+                "switch",
+                "textarea"
+            ],
+            "npmDependencies": [
+                "@hugeicons/core-free-icons",
+                "@hugeicons/vue",
+                "vue"
+            ],
+            "available": false,
+            "unavailableReason": "requires @/components/demo/MessageScrollerDemo.vue, @/components/examples/cards/AccountAccess.vue, @/components/examples/cards/AnalyticsCard.vue, @/components/examples/cards/ClaimableBalance.vue, @/components/examples/cards/ContributionHistory.vue, @/components/examples/cards/DividendIncome.vue, @/components/examples/cards/EmptyDistributeTrack.vue, @/components/examples/cards/NewMilestone.vue, @/components/examples/cards/NotificationSettings.vue, @/components/examples/cards/Payments.vue, @/components/examples/cards/PayoutThreshold.vue, @/components/examples/cards/PowerUsage.vue, @/components/examples/cards/QrConnect.vue, @/components/examples/cards/SavingsTargets.vue, @/components/examples/cards/SidebarNav.vue, @/components/examples/cards/UiElements.vue, @/components/ui/empty, @/components/ui/item, @hugeicons/core-free-icons, @hugeicons/vue",
+            "shell": null,
+            "files": [
+                {
+                    "path": "AccountAccess.vue.txt",
+                    "sha256": "ade4b82fbac2a633cf67e548d906bbd62a6a6c686426565fcee5eaaeb27d35eb"
+                },
+                {
+                    "path": "AnalyticsCard.vue.txt",
+                    "sha256": "238c75f57b28721c17e25a9dfc086e6fc290e9096ef33d21f04fbd439260b32a"
+                },
+                {
+                    "path": "CardsDemo.vue.txt",
+                    "sha256": "df01a17e1143c8bacda081bd8d278c3df51173c62345028635a839273a2ba163"
+                },
+                {
+                    "path": "ClaimableBalance.vue.txt",
+                    "sha256": "effee2508c4e538b155e68077494a92b87bd75f6d2a52504d4dd3ea358de1062"
+                },
+                {
+                    "path": "ContributionHistory.vue.txt",
+                    "sha256": "6f55aceaeab7bc2eea0a40462ecfa1d08184c87be996fd9214c8153ce50d545f"
+                },
+                {
+                    "path": "DividendIncome.vue.txt",
+                    "sha256": "c8c3cf15daea76edebd00d7c8429bae5b66c735b5931e974e2abc702e382e181"
+                },
+                {
+                    "path": "EmptyDistributeTrack.vue.txt",
+                    "sha256": "6097ea844a9df57c95cc7ea114a9944c28354951e96400934ba6b9a73da53b53"
+                },
+                {
+                    "path": "NewMilestone.vue.txt",
+                    "sha256": "4447968ed352d55edad608e76718c4071fdeca000ef2042cb871393823623a54"
+                },
+                {
+                    "path": "NotificationSettings.vue.txt",
+                    "sha256": "e17341e5e115edde1dd86ec8d55047a5170b6f4c30509ed7890992cf3e4bf8dd"
+                },
+                {
+                    "path": "Payments.vue.txt",
+                    "sha256": "3decca0cd231cc35095249021e02ee0bdef237b5d08f843a0b9f45e01175c2c1"
+                },
+                {
+                    "path": "PayoutThreshold.vue.txt",
+                    "sha256": "579e0226c9b72cd50ea1e85bb4a508cc927956975fcf557bb02a712256463e45"
+                },
+                {
+                    "path": "PowerUsage.vue.txt",
+                    "sha256": "355503b9321c4bc6283e73384281179d883b68f2d3e94b363670258db3aaea48"
+                },
+                {
+                    "path": "QrConnect.vue.txt",
+                    "sha256": "5b86987621232510d3e6bea2b4739930a3a1d26cf6081bfa1abf3ec8f57bc996"
+                },
+                {
+                    "path": "SavingsTargets.vue.txt",
+                    "sha256": "9a4d5c9837209a98000ab603f46aa9b6d81cf1aa5dd290ae2d0a5f20aaa3f4ca"
+                },
+                {
+                    "path": "SidebarNav.vue.txt",
+                    "sha256": "f4c312443109038f4d5f2349b6550aec0856006a8b654ce4a0dbb8281263f2ac"
+                },
+                {
+                    "path": "UiElements.vue.txt",
+                    "sha256": "23fb9e33b0ee4114b9f12b07dc8d5f566d517c5012753c9432741c32b84efae3"
+                }
+            ]
+        },
+        "dashboard": {
+            "origin": "fetched",
+            "sourceSha": "81ededbf6c4c230272ed613649bd525cd9de7ed2",
+            "description": null,
+            "registryDependencies": [
+                "avatar",
+                "badge",
+                "button",
+                "card",
+                "chart",
+                "checkbox",
+                "dropdown-menu",
+                "input",
+                "label",
+                "select",
+                "sidebar",
+                "table",
+                "tabs",
+                "toggle-group"
+            ],
+            "npmDependencies": [
+                "@dnd-kit/abstract",
+                "@tabler/icons-vue",
+                "@tanstack/vue-table",
+                "@unovis/vue",
+                "dnd-kit-vue",
+                "vue",
+                "vue-sonner",
+                "zod"
+            ],
+            "available": false,
+            "unavailableReason": "requires @/components/ui/chart, @dnd-kit/abstract, @tabler/icons-vue, @tanstack/vue-table@^9 (v9-only API against the pinned ^8.21.3), @unovis/vue, dnd-kit-vue",
+            "shell": null,
+            "files": [
+                {
+                    "path": "components/AppSidebar.vue.txt",
+                    "sha256": "0d8541984763187c248a1d274eb2d122860a505bbf51fcdc33e8f5d31855edde"
+                },
+                {
+                    "path": "components/ChartAreaInteractive.vue.txt",
+                    "sha256": "238752ed8140aaa254993ba62d8ca4088cf114f96b61b290af22fe6c8ecb1e5c"
+                },
+                {
+                    "path": "components/DataTable.vue.txt",
+                    "sha256": "ea0b3ba07ce6a6dcad16150bdc5bdbdd6f5ebae71376492aaaa6a02a6a729327"
+                },
+                {
+                    "path": "components/DragHandle.vue.txt",
+                    "sha256": "9b4dae53bf33a91ace3e9222bf779ffaf313697aea16ea9e1854ffe84dad5d17"
+                },
+                {
+                    "path": "components/DraggableRow.vue.txt",
+                    "sha256": "2db52b367e3f31a14a32a2be2af1d6841eb3637e69ae4ca0f1be4382c26dbe0f"
+                },
+                {
+                    "path": "components/NavDocuments.vue.txt",
+                    "sha256": "1f9b4d35a730f302fdc46c8c1e2f6a1eda51435dd09a566d78c599c9bc419a49"
+                },
+                {
+                    "path": "components/NavMain.vue.txt",
+                    "sha256": "210e4f0bd8110ae3ad7ec4f7cba66b8129b26d211ccf84786b2bffee671cc31c"
+                },
+                {
+                    "path": "components/NavSecondary.vue.txt",
+                    "sha256": "1c897ae979184ab8b278007cb4cd1056d2c30e7db456a5c424d9fb182f497392"
+                },
+                {
+                    "path": "components/NavUser.vue.txt",
+                    "sha256": "eec383fcb8300fa11a23f2f554ec1209af5720d0029b55508d5f2aca7f55c598"
+                },
+                {
+                    "path": "components/SectionCards.vue.txt",
+                    "sha256": "38cc27c0c138dbbd19beb0108328649f9759986e7de28a405f18992456fc508a"
+                },
+                {
+                    "path": "components/SiteHeader.vue.txt",
+                    "sha256": "3c8098871a1d2669f1395051be638a91af0cc325856080d5951dec9a7cbf4cc1"
+                },
+                {
+                    "path": "components/features.ts.txt",
+                    "sha256": "164cc13174d252e2a2b637389f2c3d354db3e70a0fe386158df2d5282ff43ece"
+                },
+                {
+                    "path": "data.json.txt",
+                    "sha256": "a8dcfbe6d014ab33adb4be2ccc221313d0bbf5d1d69a06bc08527b66148e849a"
+                }
+            ]
+        },
+        "playground": {
+            "origin": "fetched",
+            "sourceSha": "81ededbf6c4c230272ed613649bd525cd9de7ed2",
+            "description": null,
+            "registryDependencies": [
+                "alert-dialog",
+                "button",
+                "dialog",
+                "dropdown-menu",
+                "hover-card",
+                "input",
+                "label",
+                "native-select",
+                "popover",
+                "separator",
+                "slider",
+                "switch",
+                "tabs",
+                "textarea",
+                "use-toast"
+            ],
+            "npmDependencies": [
+                "lucide-vue-next",
+                "reka-ui",
+                "vue",
+                "vue-i18n"
+            ],
+            "available": true,
+            "unavailableReason": null,
+            "shell": "playground/Page.vue",
+            "files": [
+                {
+                    "path": "Page.vue",
+                    "sha256": "3695dae146bdb37f830f123f57c379c14d5816b5cde461e221c33988a5e96cd2"
+                },
+                {
+                    "path": "components/CodeViewer.vue",
+                    "sha256": "407cbd24a7fea5589cbf379def1e772924eb304a61fb044fa5696d8e8325b1fc"
+                },
+                {
+                    "path": "components/MaxLengthSelector.vue",
+                    "sha256": "f4385dde04b53d03cca9516a2f9ffabfd5e35b5f7becda32e3658a374f53a5ae"
+                },
+                {
+                    "path": "components/ModelSelector.vue",
+                    "sha256": "30d2baf090827da6db1ef3b76cc6fc1f0bd772e53b9556cc4e8de4141f6aa537"
+                },
+                {
+                    "path": "components/PresetActions.vue",
+                    "sha256": "bfb24080b4c210171676b1c5b3fab9a1aeb83656956046d3158c065c5dba88eb"
+                },
+                {
+                    "path": "components/PresetSave.vue",
+                    "sha256": "3b183c2e37953518cf68d1ab0c42eb49a890c4d31b6432626694b4cef21babdf"
+                },
+                {
+                    "path": "components/PresetSelector.vue",
+                    "sha256": "fae3aea627b57458f585bbec66bd44d894c4afc93e2c8cdccbba2b173ace66fd"
+                },
+                {
+                    "path": "components/PresetShare.vue",
+                    "sha256": "71dc89e5ead6b16f2582a898965085c23503bb2515a66357c9d74e810119c8f1"
+                },
+                {
+                    "path": "components/TemperatureSelector.vue",
+                    "sha256": "5194a1663ad75572bfc8b99bf4c8a4de288987b86c0e59ec81879d37cf6c9e72"
+                },
+                {
+                    "path": "components/TopPSelector.vue",
+                    "sha256": "c6af795adc98912d6b311ea63a65e97b1cdc3ecfb5748a12f4e65ef1661b5900"
+                },
+                {
+                    "path": "data/models.ts",
+                    "sha256": "2756ad569f1729ba9ca2be8e6ba906d38d4abc27c1267fcdf30b6f4096bbb6cf"
+                },
+                {
+                    "path": "data/presets.ts",
+                    "sha256": "f5fc0e6b447c07e18f1e8198d29b4e3dea687f9f2e78f96499d9157305dee95a"
+                }
+            ]
+        },
+        "tasks": {
+            "origin": "fetched",
+            "sourceSha": "81ededbf6c4c230272ed613649bd525cd9de7ed2",
+            "description": null,
+            "registryDependencies": [
+                "avatar",
+                "badge",
+                "button",
+                "checkbox",
+                "command",
+                "dropdown-menu",
+                "input",
+                "popover",
+                "select",
+                "separator",
+                "table"
+            ],
+            "npmDependencies": [
+                "@tanstack/vue-table",
+                "lucide-vue-next",
+                "vue",
+                "zod"
+            ],
+            "available": false,
+            "unavailableReason": "requires @tanstack/vue-table@^9 (v9-only API against the pinned ^8.21.3)",
+            "shell": null,
+            "files": [
+                {
+                    "path": "components/DataTable.vue.txt",
+                    "sha256": "1732876c47a9297040881d395ac5cab415320158287031d529e3193062450ccc"
+                },
+                {
+                    "path": "components/DataTableColumnHeader.vue.txt",
+                    "sha256": "aad9e2f2bd7e7c5367782f8d77408fcdda1cd02e0f99d986c013715e00183aab"
+                },
+                {
+                    "path": "components/DataTableFacetedFilter.vue.txt",
+                    "sha256": "b8e58e6b55eca3d807b602ec3383900a20b154cf5249767d76c7249c13634a83"
+                },
+                {
+                    "path": "components/DataTablePagination.vue.txt",
+                    "sha256": "26467d4b9462f610415d408027f2d3e7005aa43c65b4a479fc3626c727f9b845"
+                },
+                {
+                    "path": "components/DataTableRowActions.vue.txt",
+                    "sha256": "99fa1cf70ff5065f77792bf13fb0b95cecefc9b520b0581760fc117f4bb4f240"
+                },
+                {
+                    "path": "components/DataTableToolbar.vue.txt",
+                    "sha256": "2d40ab829c87ff2cb02aa139641391683c2eb3d0dc3e531a56dec8d6357617d8"
+                },
+                {
+                    "path": "components/DataTableViewOptions.vue.txt",
+                    "sha256": "06f08bade8897f2dd6052aca502ecda83e94089593c7811e3d0cffc099859f01"
+                },
+                {
+                    "path": "components/UserNav.vue.txt",
+                    "sha256": "6e49847fd1e570c03784934541acc49651315122fe205e485f557677e12492cd"
+                },
+                {
+                    "path": "components/columns.ts.txt",
+                    "sha256": "6f963a051efecabee9ed617f77abd8d90a9b696ca39d5173a6037e28421de13b"
+                },
+                {
+                    "path": "components/features.ts.txt",
+                    "sha256": "7ab04142342d02125a6929070d761f7ffb0d6f0772caae31bee5505331d0eb64"
+                },
+                {
+                    "path": "data/data.ts.txt",
+                    "sha256": "6d9374e04084d2556fe96edb39fc98c045077a41ba20e6c845934a98de8557b8"
+                },
+                {
+                    "path": "data/schema.ts.txt",
+                    "sha256": "45516169f8d1d5b85bda0ec2acbc99fc72a41fd5a4ee35311122123f098ed47a"
+                },
+                {
+                    "path": "data/tasks.json.txt",
+                    "sha256": "be2c3e75c05a5f7572b8eaef8d7731a3537d79ea04ef2d11b679f3a4c0ffaa0b"
+                }
+            ]
+        },
+        "mail": {
+            "origin": "authored",
+            "sourceSha": null,
+            "description": null,
+            "registryDependencies": [
+                "avatar",
+                "badge",
+                "button",
+                "input",
+                "label",
+                "native-select",
+                "resizable",
+                "scroll-area",
+                "separator",
+                "tabs",
+                "textarea",
+                "tooltip"
+            ],
+            "npmDependencies": [
+                "lucide-vue-next",
+                "vue",
+                "vue-i18n"
+            ],
+            "available": true,
+            "unavailableReason": null,
+            "shell": "mail/Page.vue",
+            "files": [
+                {
+                    "path": "Page.vue",
+                    "sha256": "cddbda0336fb3d7b3427f3e26f018ac0ed233694a78bce30fe20d1ae6f02f5f5"
+                },
+                {
+                    "path": "components/AccountSwitcher.vue",
+                    "sha256": "f1ceab59cb892950a18c80a9340aba2aa7780c020d65d1d5d0b69afac8f395ad"
+                },
+                {
+                    "path": "components/MailDisplay.vue",
+                    "sha256": "f8b95922fb421de3fdaef80f6425572ef1296655d4acb36eb0c062b93a7c0498"
+                },
+                {
+                    "path": "components/MailList.vue",
+                    "sha256": "5e4f1cd8590bdd7a02909e7f5e2468edd3309b58e16fda9b78c70f676a7ac76f"
+                },
+                {
+                    "path": "components/MailNav.vue",
+                    "sha256": "feda5bc6a4cdbddf43a82b202834d6231dfb7477eb1149a3efc632466902d758"
+                },
+                {
+                    "path": "data/accounts.json",
+                    "sha256": "3433be16018eadf3a056e10135027cd99cad47b5fbbaba54e35cad1bdea80c18"
+                },
+                {
+                    "path": "data/mails.json",
+                    "sha256": "73d8237c6417b2f595c2ba561aeeaba02d3c393acf1c4e7adb7451fa59cbf5ab"
+                },
+                {
+                    "path": "data/types.ts",
+                    "sha256": "65ff4eedb2c07bbc3c3c13aed895d15c153044c7c51d230a7fe697d975f60a35"
+                }
+            ]
+        },
+        "music": {
+            "origin": "authored",
+            "sourceSha": null,
+            "description": null,
+            "registryDependencies": [
+                "aspect-ratio",
+                "button",
+                "carousel",
+                "context-menu",
+                "scroll-area",
+                "separator",
+                "tabs"
+            ],
+            "npmDependencies": [
+                "lucide-vue-next",
+                "vue",
+                "vue-i18n"
+            ],
+            "available": true,
+            "unavailableReason": null,
+            "shell": "music/Page.vue",
+            "files": [
+                {
+                    "path": "Page.vue",
+                    "sha256": "d6df1fd15b964dd60b59df273a2b2a0bc68e1c537b48e77bae74d83e785c1c34"
+                },
+                {
+                    "path": "components/AlbumArtwork.vue",
+                    "sha256": "8975581d2a0c3f144c672158bbbfe4d931bcb7c91dd85b3445bb34a2775cfc20"
+                },
+                {
+                    "path": "components/MusicSidebar.vue",
+                    "sha256": "8165979351b577f25db09c32597c13b973e453a72a282b951f5397dd744afa62"
+                },
+                {
+                    "path": "components/PodcastEmptyPlaceholder.vue",
+                    "sha256": "12c290b9ea996aef027f1bb6ebb2d203595cf62bb742ec523ccef324b42c24a8"
+                },
+                {
+                    "path": "data/albums.json",
+                    "sha256": "f326ce11ac4a013cb2e12ab1592cb0ea5d7e30ecea94b58673e1340751508101"
+                }
+            ]
+        },
+        "forms": {
+            "origin": "authored",
+            "sourceSha": null,
+            "description": null,
+            "registryDependencies": [
+                "button",
+                "checkbox",
+                "form",
+                "input",
+                "label",
+                "native-select",
+                "radio-group",
+                "separator",
+                "switch",
+                "textarea"
+            ],
+            "npmDependencies": [
+                "@vee-validate/zod",
+                "vee-validate",
+                "vue",
+                "vue-i18n",
+                "vue-sonner",
+                "zod"
+            ],
+            "available": true,
+            "unavailableReason": null,
+            "shell": "forms/Page.vue",
+            "files": [
+                {
+                    "path": "Page.vue",
+                    "sha256": "c5b9521414b57fd957726ca572ebf47c42dc6e178a4fce79cfd3e19b8104754e"
+                },
+                {
+                    "path": "components/AccountForm.vue",
+                    "sha256": "f5a0f0f9b7d94b35ae9d7470b4f456eb824a42363d8060fa0d9fc1d0da6de8f6"
+                },
+                {
+                    "path": "components/AppearanceForm.vue",
+                    "sha256": "8d9de006f725ec28f882fd010ee0c335f7b5f15f6e44b883f075c47c9b34e437"
+                },
+                {
+                    "path": "components/DisplayForm.vue",
+                    "sha256": "39e7ebde8b13ad22f4a2324644e7906b61d261e1e254d37331e7bc1b30ae957b"
+                },
+                {
+                    "path": "components/FormNativeSelect.vue",
+                    "sha256": "5018a631b46ae4b250594d335b48bf4d3140c01ed503b0ced330016df2a81b36"
+                },
+                {
+                    "path": "components/FormsSidebarNav.vue",
+                    "sha256": "e88cf1af5c2138bc453c54a2387f2231da7ef0509cd6c4bea6143ec45a4fc109"
+                },
+                {
+                    "path": "components/NotificationsForm.vue",
+                    "sha256": "e06bd6e8b68d056b46bea9a0789c5f10e300855b6eaee3bb9d839fa67b15b775"
+                },
+                {
+                    "path": "components/ProfileForm.vue",
+                    "sha256": "f1f634e85be4ab73e23b3608ee11d176e18b7f2b3b4df428626d5bb291472c91"
+                },
+                {
+                    "path": "composables/useFocusFirstError.ts",
+                    "sha256": "79dac14440eebda880a79931641fe9f8d1cc52e9b7806dfb4a4d110c039b6669"
+                },
+                {
+                    "path": "data/options.ts",
+                    "sha256": "8a170006f21df24ac256c8147258e1cb9fedaf482b3c4c329329b8d21b63cd62"
+                }
+            ]
+        }
+    }
+}

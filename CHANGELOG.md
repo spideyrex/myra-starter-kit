@@ -2,6 +2,421 @@
 
 All notable changes to the Myra Starter Kit are documented here.
 
+## v2.6.0 — 2026-08 — "shadcn parity, brand, templates"
+
+Every new subsystem ships behind a flag. Blocks and Examples are **reference pages** — they
+cannot alter the production admin shell.
+
+### shadcn Blocks
+
+### Added
+- **Block catalogue** at `admin/blocks` (`blocks.view`): index with search and a
+  category rail, a detail page with Preview / Code / Dependencies tabs, and a
+  bare same-origin preview page. Gated by `myra.blocks.enabled`.
+- **57 vendored blocks** under `resources/js/blocks/`, fetched — never retyped —
+  by `node scripts/shadcn/fetch-blocks.mjs` from the shadcn-vue API, with the
+  chart sources recovered from the pinned GitHub ref because the block API
+  serves them empty. 56 render live; `dashboard-01` is quarantined as inert
+  `.vue.txt` with its source shown in full.
+- `scripts/shadcn/{fetch-blocks,reclassify,pipeline,rewrite,verify,a11y-scan,resolve-scan,sync-i18n}.mjs`,
+  `_sources.json` and the committed `blocks-manifest.json`.
+- **A resolution gate for vendored templates.** `resolve-scan.mjs` reports any
+  PascalCase tag a block renders that its `<script setup>` never binds. Two
+  blocks shipped `<Plus />` with no import: Vue resolved nothing, warned and
+  dropped the icon, and nothing caught it — blocks are outside `tsconfig`, and
+  the template compiles to a runtime `resolveComponent()` that `vite build`
+  emits happily. `tests/js/blockResolution.spec.ts` now fails on it.
+- `App\Admin\Blocks\{BlockEntry,BlockRegistry}` and
+  `App\Http\Controllers\Admin\BlockController`, mirroring the demo registry.
+- i18n namespace `blocks` in en/ms/zh, one entry per manifest id.
+
+### Isolation
+- Blocks live outside `resources/js/Pages/**`, so `app.ts`'s page glob can never
+  route one. `BlockFrame.vue` is the only file that loads them, via
+  `import.meta.glob`, and every preview renders inside a same-origin iframe:
+  a sidebar block mounts its own `SidebarProvider`, binds Cmd+B and persists a
+  `sidebar_state` cookie, which inline mounting would hand to the live admin.
+- **The cookie is shielded in the frame, not in the response.** The iframe shares
+  the admin's cookie jar, so `SidebarProvider`'s `document.cookie` write at
+  `path=/` would re-collapse the real sidebar. `BlockFrame.vue` drops writes to
+  that one name for as long as it is mounted; reads and every other cookie are
+  untouched. The response itself now touches no cookie at all —
+  `withoutCookie()` does not suppress a cookie, it QUEUES a past-dated one, so
+  the previous behaviour deleted the admin's own sidebar preference every time a
+  preview was opened. Covered by `tests/js/blockFrameCookie.spec.ts` and
+  `BlockRegistryTest::test_the_preview_response_leaves_the_sidebar_state_cookie_alone`.
+
+### Availability is re-decided, never remembered
+`pipeline.mjs` owns the post-condition: for every vendored file it resolves each
+import specifier against **this** install's `package.json` and
+`resources/js/components/ui`, down to the individual imported symbol, and a
+block ships live only if nothing is missing. `fetch-blocks.mjs` feeds it bytes
+from the network; `reclassify.mjs` feeds it the bytes already in the repo, so
+the verdict can be replayed offline after an install changes:
+
+    node scripts/shadcn/reclassify.mjs   # re-decide, no network, no upstream drift
+    node scripts/shadcn/sync-i18n.mjs
+    node scripts/shadcn/verify.mjs
+
+Rebasing onto `main@78f675c` (which installs the `chart` and `input-otp`
+registry components and adds `@unovis/ts`, `@unovis/vue` and `vue-input-otp`)
+and re-running `reclassify.mjs` released 28 blocks that the first pass had
+quarantined: the 5 `otp-*` blocks and all 23 `Chart*` blocks. Only
+`dashboard-01` is still source-only, for `@dnd-kit/abstract`, `dnd-kit-vue` and
+`@tabler/icons-vue`.
+
+### Deviations from the bundle spec, and why
+- **`@lucide/vue` is rewritten to `lucide-vue-next`.** The spec lists
+  `@lucide/vue` as installed; it is not in `package.json`. All 61 icon names the
+  blocks use exist in `lucide-vue-next@0.575`, so the rewrite preserves
+  rendering and keeps the zero-new-dependency rule. Without it, 29 blocks —
+  including every sidebar — would have been quarantined.
+- **A missing registry component quarantines a block instead of failing the
+  script.** The spec assumed all 66 registry components were installed. This is
+  now a one-block gap rather than a 29-block one, but the mechanism stays: it is
+  what lets the catalogue survive an install that does not ship everything. An
+  unrewritten `@/` alias is still a hard failure.
+- **The post-condition also checks imported SYMBOLS**, not just directories: an
+  installed component whose API predates a block would break `vite build` just
+  as an absent one would. Nothing failed this check.
+- **`tsconfig.json` excludes `resources/js/blocks`.** Vendored upstream source
+  is not ours to type-fix, and `npm run build` must not be hostage to it. Vue's
+  SFC type resolution is unaffected (a single tsconfig is always used for path
+  mapping, include/exclude notwithstanding). `vite build` still bundles every
+  live block through `BlockFrame.vue`'s glob, so a broken import is caught.
+- **The a11y baseline is a static AST scan, not a jsdom mount.** Mounted with
+  the standard stubs, a block renders almost no real DOM, so the five rules
+  would assert nothing. The scan parses the real SFC template AST instead; the
+  waiver file at `tests/js/fixtures/block-a11y-waivers.json` bounds the upstream
+  debt and fails when a waiver goes stale. R4 scans the native form controls and
+  the registry wrappers that render exactly one of them; the composite `<Select>`
+  is not one of them — its focusable element is `<SelectTrigger>`, which is
+  where upstream names it.
+
+### Known gaps
+- **Calendar blocks**: none exist upstream for Vue; recorded in
+  `blocks.gaps.calendar`.
+- **Source-only blocks**: the index states the rule (`blocks.gaps.sourceOnly`)
+  rather than naming a block, and renders the line only while the payload
+  actually contains a source-only entry, so the copy cannot outlive the gap.
+
+### Seams for the other bundles
+- Bundle A adds no `DemoRegistry` entry and no navigation item — both are owned
+  elsewhere. Discovery is Bundle D's cross-link strip on the demo index, which
+  guards on `route().has('admin.blocks.index')`.
+- `resources/js/components/ui/empty` is **no longer added by this bundle**: it
+  arrived on `main` in `78f675c`, and after the rebase Bundle A does not touch
+  `resources/js/components/ui` at all. There is nothing for another bundle to
+  conflict with.
+
+### shadcn Examples
+
+The eight shadcn example applications ship as reference pages at `admin/examples`,
+behind the new `examples.view` ability.
+
+#### Added
+
+- `app/Admin/Examples/{ExampleEntry,ExampleRegistry}.php` — a declaration registry
+  in the shape of `DemoEntry`/`DemoRegistry`: i18n keys never copy, permission
+  filtering by non-disclosure, and a client schema free of Laravel calls.
+- `app/Http/Controllers/Admin/ExampleController.php` and `routes/myra/examples.php`
+  — index / show / preview / source, each calling `Gate::authorize('examples.view')`
+  in addition to the route middleware.
+- `resources/js/Pages/Admin/Examples/{Index,Show,Preview}.vue` and
+  `resources/js/components/admin/examples/{ExampleFrame,ExampleSourceTabs}.vue`.
+- `scripts/shadcn/{fetch-examples,rewrite-examples,verify-examples}.mjs`,
+  `_sources-examples.json` and the committed `examples-manifest.json`.
+- `resources/js/examples/**` — the vendored and authored example trees, plus the
+  generated `index.ts`.
+- i18n namespace `examples` in en/ms/zh, inserted after `clusters`.
+- `config/myra.php` key `examples.enabled` (`MYRA_EXAMPLES`, default true) and
+  `config/shield.php` module `examples => [view]`.
+
+#### Acquisition
+
+`authentication`, `cards`, `dashboard`, `playground` and `tasks` are fetched
+verbatim from `unovue/shadcn-vue@dev`, pinned to commit
+`81ededbf6c4c230272ed613649bd525cd9de7ed2`, and rewritten by an ordered,
+data-driven rule table. `mail`, `music` and `forms` exist in no Vue registry and
+no Vue repository, so they are authored here — with page shells for every
+example, because upstream `apps/v4/pages/` carries no example routes.
+
+Two rules in `rewrite-examples.mjs` go beyond the block table, and both are
+forced by the zero-new-dependency rule:
+
+- `@lucide/vue` is rewritten to `lucide-vue-next`, the package Myra ships.
+- Upstream `apps/v4` is a Nuxt app, so `ref`/`computed`/… are auto-imported by
+  someone else's build. The rewrite injects the explicit `import … from 'vue'`
+  rather than leaving a file that only type-checks under Nuxt.
+
+#### Quarantine
+
+`cards`, `dashboard` and `tasks` are kept for reference only. Their source is on
+disk byte-for-byte under `resources/js/examples/_unavailable/`, every file
+suffixed `.txt` so `vue-tsc` never checks it, Vite never bundles it and the
+preview glob never matches it. The catalogue still lists them, still shows the
+complete source, and says exactly what each one needs:
+
+| example   | needs |
+| --------- | ----- |
+| cards     | `ui/empty`, `ui/item`, `@hugeicons/vue` |
+| dashboard | `ui/chart`, `@unovis/vue`, `@tabler/icons-vue`, `dnd-kit-vue`, `@tanstack/vue-table@^9` |
+| tasks     | `@tanstack/vue-table@^9` (the v9 `useTable`/`tableFeatures` API against the pinned `^8.21.3`) |
+
+Nothing was edited to fit and no package was added.
+
+#### Isolation
+
+Examples live in `resources/js/examples/`, never in `Pages/**` (so Inertia
+physically cannot route one) and never in `components/ui/**` (so none can shadow
+a registry primitive). `Pages/Admin/Examples/Preview.vue` is the only file
+permitted to reach that tree, via a dynamic `import.meta.glob`, and previews
+render in a same-origin iframe. The preview page mounts no `SidebarProvider` and
+its response sets no cookie of its own, so the live sidebar's collapsed state is
+neither read nor written by a preview.
+
+#### Accessibility
+
+`mail`, `music` and `forms` are authored here, so they carry zero waivers:
+labelled resizable panes with keyboard-operable handles, message lists that are
+real `<ul role="list">` of real buttons with `aria-current`, meaningful album alt
+text, and every form field wired through `FormField`/`FormItem`/`FormLabel`/
+`FormControl`/`FormMessage` so `aria-describedby` and `aria-invalid` come from
+the primitive. A failed submit moves focus to the first invalid control.
+
+#### Seams for the other v2.6 bundles
+
+- No navigation entry is added: `NavRegistry` is nobody's to edit this release,
+  so `admin/examples` is reached by URL until bundle D's Demo Index cross-link
+  strip lands (it already guards on `route().has('admin.examples.index')`).
+- Nothing here imports `App\Brand` or `@/components/brand`.
+
+### Brand manager
+
+One server-side source of truth for brand name, logo, favicon, palette,
+typography and appearance, delivered as server-rendered critical CSS so every
+surface — including ones with no Vue at all — is branded before first paint.
+
+**Ships dark.** `brand.enabled` defaults to `false` and the migration seeds every
+value from the existing `general`/`appearance` rows, so an upgraded install is a
+no-op until an operator flips one switch.
+
+#### Added
+
+- `App\Brand\*` — `Brand`, `BrandPalette`, `BrandTypography`, `Color` (a
+  string-for-string PHP port of `useThemeColors.ts`), `BrandManager`,
+  `BrandAssetPipeline`, `BrandCacheSubscriber`, `Facades\Brand`.
+- Settings group `brand` (migration `2026_08_25_000001_create_brand_settings`),
+  additive, `updateOrInsert` style, seeded from today's rows.
+- `SeoSettings::$og_image_path` and `$robots_txt` — whitelisted by
+  `SettingController` since v2.0 and silently discarded by its
+  `property_exists()` guard until now.
+- Admin page `admin/brand` (`brand.view` / `brand.update`), separate from the
+  already 7-tab Settings page. Identity / Colour / Typography / Assets / Preview.
+- Public routes: `GET /brand/manifest.webmanifest` (brand-derived, `ETag` = brand
+  hash), `GET /brand/icon-{192,512}.png`, `GET /brand/favicon.svg` (a generated
+  branded SVG, so the stock Laravel icon is never served). The manifest lives
+  under `/brand/` because `public/manifest.webmanifest` is a committed static
+  file and every real web server serves an existing file before it reaches PHP —
+  a route on the bare URL would be dead in production. The bare URL stays
+  registered as a legacy alias, and `brand:publish` keeps the static file
+  branded for the service-worker precache.
+- `App\Rules\SafeImage` — magic-byte sniff, SVG **rejected**, `.ico` **accepted**,
+  the client extension ignored entirely. Applied to the brand slots *and* to the
+  existing Appearance tab, which previously accepted SVG onto the public disk.
+- `resources/views/emails/**` + `App\Mail\BrandedMailable`. The logo is
+  CID-embedded, never linked.
+- `resources/js/composables/useBrand.ts`, `components/brand/BrandMark.vue`,
+  `components/brand/BrandPreview.vue`, `Layouts/BrandedErrorLayout.vue`.
+- Commands `brand:clear`, `brand:publish [--prune]`, `brand:fixture`.
+- i18n namespace `brand` in en/ms/zh, plus PHP `lang/{en,ms,zh}/brand.php`.
+
+#### Changed
+
+- `resources/views/app.blade.php` — the inline `DB::table('settings')` favicon
+  query that ran on **every page load** is gone. The title, icon set, OG/Twitter
+  meta, theme-color, `<style id="myra-brand">` and the pre-paint dark-class
+  script are all server-emitted now.
+- The two `fonts.bunny.net` links are gone. Fonts are a whitelist of
+  self-hosted/system stacks, because production CSP is `font-src 'self' data:`
+  and a CDN family works in dev and silently fails in production. Drop a woff2
+  into `public/fonts/` to activate a family; a missing file degrades to the
+  system tail rather than 404ing.
+- `HandleInertiaRequests` — new `brand` prop; `siteSettings` is now key-whitelisted,
+  so `admin_email`, `site_url` and `timezone` no longer ship to unauthenticated
+  guests; `buildId` folds in the brand hash, so a settings-only change finally
+  rotates the service-worker shell cache.
+- `useThemeColors.ts` — every export kept; `applyTheme()` yields to the
+  server-emitted tokens; **the leaked `MutationObserver` is disconnected on scope
+  dispose** (one leaked per calling component before).
+- `GuestLayout` / `PublicLayout` / `AuthenticatedLayout` — the hardcoded letter
+  "A", the `alt="Logo"`, the `.charAt(0)` and the literal `bg-blue-900`
+  impersonation banner are all replaced by one rule: `BrandMark`.
+- All five error pages share `BrandedErrorLayout`; 503 finally renders
+  `MaintenanceSettings::$message`.
+- PDF — `PdfDocument::producer()`, brand-derived temp-file prefix,
+  `ChartVector::palette()` (a null palette is today's constants byte for byte),
+  optional running-header logo via `PdfImage`.
+- `EmailService` — brand tokens merged into `replaceVariables()` (caller keys
+  still win, `{{app_name}}` now always resolves) and the "Laravel" default
+  From-name replaced by the brand name.
+- 2FA QR issuer is the brand name.
+- `Pages/Home.vue` — the public homepage's duplicated `site_name`/`logo_url`
+  fallback and its two `.charAt(0)` marks are replaced by `BrandMark`/`useBrand`,
+  so the landing page follows the brand like every other surface.
+
+#### Brand ownership rules
+
+- **The Brand page is authoritative once enabled.** An Appearance-tab save may
+  only *first-seed* a brand slot that is still empty, and only for a field that
+  save actually submitted. It can never overwrite `logo_path`, `favicon_path`,
+  `primary`, `preset` or the sidebar colours an operator deliberately set.
+- **The palette preset is load-bearing.** `BrandPalette::PRESET_TOKENS` carries
+  the ten legacy tables from `useThemeColors.ts`; picking a preset sets the
+  primary and emits exactly what v2.5 emitted. Typing your own `primary`
+  overrides the preset — `BrandPalette::usesPresetPalette()` is the switch.
+- **Derivatives are keyed on asset identity**, not the brand hash: an SEO or
+  general-settings edit no longer moves the whole `brand/derived/{stamp}/`
+  prefix and orphan every rendered icon.
+- The icon set (`favicon-16/32`, `apple-touch-180`, `icon-192/512`,
+  `icon-maskable-512`) is rendered **once**, from the mark when there is one and
+  the favicon otherwise — `BrandAssetPipeline::deriveAll()`. Both slots write the
+  same six keys to the same paths, so deriving both made the last writer win.
+- `BrandManager`'s per-instance memo is keyed on the resolved version, so a
+  long-lived `queue:work` / Horizon / Octane process — which never calls
+  `forget()` — picks up a brand change within one probe window instead of
+  serving a brand frozen at boot for the life of the worker.
+
+#### Invalidation
+
+`BrandCacheSubscriber` listens for `SettingsSaved` on Brand/General/Appearance/
+Seo/Homepage settings and forgets everything instantly. Foreign writers (tinker,
+a seeder, a second web node) are covered by a **bounded probe** —
+`myra.brand.probe_ttl`, default 60s, `0` disables it. Worst-case staleness for a
+foreign write is one probe window, not 3600 seconds.
+
+#### Tests
+
+- `tests/Unit/Brand/ColorParityTest` ⇄ `tests/js/brandColorParity.spec.ts` —
+  256 colours swept through the **real** TypeScript functions into a fixture the
+  PHP port must reproduce string-for-string. Neither side can drift alone.
+- `tests/Feature/Brand/BrandSurfaceTest` — asserts on REAL emitted output: the
+  rendered HTML, a **really-generated** PDF's bytes (`/Producer (Acme Corp)`),
+  and a **really-sent** MIME message (brand name + `Content-ID:` CID logo).
+- `BrandDisabledIsNoOpTest`, `BrandCacheInvalidationTest`, `BrandFallbackTest`,
+  `BrandUploadSecurityTest`, `BrandManifestRouteTest`, `BrandContrastTest`,
+  `SiteSettingsLeakTest`, `BrandAdminTest`, `NoHardcodedBrandLiteralTest`,
+  `BrandFixtureTest`.
+- `tests/Feature/Brand/BrandIntentTest` — the ownership rules above, exercised
+  through the real controllers: an Appearance save cannot clobber a brand, the
+  preset really moves the emitted tokens, the icon set is derived once from the
+  mark, and an unrelated SEO edit does not move the derivative prefix.
+- JS: `brandMark.spec.ts`, `useThemeColors.observer.spec.ts`,
+  `brandTokens.apply.spec.ts`, `brandedErrorLayout.a11y.spec.ts`.
+
+#### Seams for the other bundles
+
+- Nothing outside `app/Brand`, `resources/js/composables/useBrand.ts` and
+  `resources/js/components/brand/**` may be hard-imported by A, B or D. Resolve
+  optionally: `usePage().props.brand ?? null` on the client,
+  `app()->bound(BrandManager::class)` on the server, `route().has('admin.brand.index')`
+  for links.
+- `public/fonts/` ships a README and no binaries. Until a woff2 is dropped in,
+  no `@font-face` is emitted.
+
+### Page templates & new components
+
+#### Added
+
+### Landing-page templates
+- `App\Homepage\HomepageTemplate` and `App\Homepage\TemplateRegistry` — a declaration-ordered
+  registry in the shape of `DemoRegistry`/`NavRegistry`. `resolve()` degrades an unknown,
+  renamed, empty or traversal-shaped key to `classic`, so the public homepage can never 500
+  because of a stored setting.
+- Six templates, registered in `config/myra.php` under `myra.landing.templates`:
+  `classic`, `spotlight`, `editorial`, `saas`, `minimal`, `docs`.
+- `resources/js/Pages/Home.vue` is now a ~45-line dispatcher over
+  `import.meta.glob('./Public/Templates/*.vue')`, memoised per key. Today's markup lives in
+  `Public/Templates/Classic.vue` and the shared sections under `_shared/`.
+- Shared sections, authored once and consumed by all six: `SiteNavbar`, `SiteFooter`,
+  `HeroSection`, `FeatureGrid`, `TestimonialWall`, `PricingTable`, `CtaBand`, `OrderedSections`.
+  Templates differ in chrome and arrangement only — never in content.
+- `admin/landing` (`App\Http\Controllers\Admin\LandingController`, `permission:settings.edit`):
+  a template picker, a keyboard-operable section-order control, and a preview link.
+  `resources/js/components/admin/TemplatePicker.vue` is a real `ui/radio-group`.
+- Draft preview: `/?template={key}` is honoured only for a `settings.edit` holder and is
+  never persisted.
+- Generator: `php artisan make:myra-landing {Name}` scaffolds the page, the registry class and
+  en/ms/zh keys, and registers the class at the `// myra:landing` marker. The key is
+  `Str::lower($name)` — the same value `Home.vue` derives from the `.vue` filename — and
+  `--print` is a true dry run, like `make:myra-resource`.
+- The sidebar's **System** group gains a Landing page entry behind `settings.edit`, so the
+  chooser is reachable without going through the demo gallery.
+
+### v2.6 component demos
+Seven new pages under `resources/js/Pages/Admin/Demo/`, served by the new
+`App\Http\Controllers\Admin\ComponentDemoController` from static arrays — no random data
+generator, so two requests return byte-identical props and the committed fixtures stay valid:
+
+| Page | Route | Components |
+| --- | --- | --- |
+| `EmptyAndItem.vue` | `admin.demo.empty-and-item` | `empty`, `item` |
+| `ChartPrimitives.vue` | `admin.demo.chart-primitives` | `chart` (Unovis) |
+| `OtpAndCombobox.vue` | `admin.demo.otp-and-combobox` | `input-otp`, `combobox` |
+| `Conversation.vue` | `admin.demo.conversation` | `bubble`, `message`, `message-scroller`, `attachment` |
+| `QuestionnaireDemo.vue` | `admin.demo.questionnaire` | `questionnaire` |
+| `MapMarkers.vue` | `admin.demo.map-markers` | `marker` (+ the existing `map`) |
+| `LandingTemplates.vue` | `admin.demo.landing-templates` | template gallery |
+
+- The eleven registry components above were installed with
+  `npx shadcn-vue@latest add …` — none was hand-written.
+- The Demo index gains a "Reference" strip linking to the blocks, examples, brand and landing
+  catalogues, rendered only for routes Ziggy actually knows (`@/lib/routeExists`), so it never
+  breaks in an isolated worktree.
+
+### Migration
+- `2026_08_26_000001_add_template_to_homepage_settings.php` — additive `updateOrInsert` rows for
+  `homepage.template`, `homepage.section_order` and `homepage.template_options`, with a matching
+  `down()`.
+
+#### Accessibility
+- Every template exposes a skip link as its first focusable element, one `<nav aria-label>`,
+  one `<main id="content">` and one `<h1>`.
+- The section-order control is Up/Down buttons with accessible names and an `aria-live="polite"`
+  announcement — never drag-only.
+- `TemplatePicker` is a `radiogroup` with `label[for]` and `aria-describedby` per option;
+  thumbnails are `alt=""` because the label carries the name.
+- All seven demo pages clear the R1–R5 baseline with **zero** waivers
+  (`tests/js/helpers/a11yBaseline.ts`). The chart demo ships an `sr-only` data table per chart;
+  the conversation thread is a `role="log"` live region over a `ul[role=list]`; the map demo
+  ships a focusable marker list beside the canvas.
+
+#### Tests
+- PHP: `tests/Feature/Homepage/{TemplateRegistryTest,HomepageTemplateRenderTest,LandingControllerTest}.php`,
+  `tests/Feature/Demo/{NewComponentDemoTest,ComponentDemoFixtureTest}.php`,
+  `tests/Feature/Generators/LandingTemplateGeneratorTest.php`.
+- JS: `tests/js/{homepageTemplates,templatePicker.a11y,sectionOrder.a11y,newComponentDemos.a11y}.spec.ts`
+  (+40 tests; the suite runs 541 → 581).
+- Fixtures `tests/js/fixtures/{homepage-settings,component-demos}.json` are written from the
+  REAL server payload by the PHP tests above and mounted by the vitest specs.
+  `tests/js/fixtures/demo-registry.json` was regenerated for the seven new entries.
+
+#### Notes for the merge
+- **Rebased onto `main@78f675c`**, which already installs the eleven registry components and
+  already carries `@unovis/ts`, `@unovis/vue`, `@lucide/vue` and `vue-input-otp`. This bundle
+  therefore touches neither `package.json` nor `package-lock.json`, and it no longer carries
+  its own copies of `ui/button` or `ui/message-scroller` — main's registry output stands.
+- Template thumbnails are committed as SVG wireframes under `public/images/templates/`
+  rather than WebP, so they are text-diffable and theme-neutral.
+- `HomepageSettings::$template_options` deliberately carries **no** `@var` docblock: spatie's
+  `PropertyReflector` recurses into a nested array generic, reaches `mixed`, and throws
+  `CouldNotResolveDocblockType` before the settings group can hydrate.
+- `TemplateRegistry::forget()` seeds first and leaves `$seeded` set. Unlike `DemoRegistry`,
+  this registry seeds inside `has()`/`get()`, so clearing the flag would rebuild the rows the
+  call had just withdrawn. `flush()` is the way back.
+- Verified on this branch: `npm run build` clean, `npm run test:js` 581 passed,
+  `php artisan test` 739 passed.
+
 ## v2.5.1 — 2026-08
 
 Carried follow-ups. No feature changes.

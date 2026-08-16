@@ -128,6 +128,322 @@
             }
         }
     },
+    "examples": {
+        "title": "shadcn examples",
+        "description": "The shadcn example applications, vendored as reference pages: full source, live preview and the exact dependency list each one needs.",
+        "search": "Search examples",
+        "allTags": "All",
+        "noResults": "No example matches that search.",
+        "resultCount": "{n} examples",
+        "view": "Open example",
+        "back": "Back to examples",
+        "entries": {
+            "authentication": {
+                "title": "Authentication",
+                "description": "A split-screen sign-in page: testimonial panel on the left, email and provider sign-in on the right."
+            },
+            "cards": {
+                "title": "Cards",
+                "description": "The card gallery — a dense grid of every card composition shadcn ships, from analytics to payments."
+            },
+            "dashboard": {
+                "title": "Dashboard",
+                "description": "The dashboard-01 application: collapsible sidebar, section cards, an interactive area chart and a drag-to-reorder data table."
+            },
+            "playground": {
+                "title": "Playground",
+                "description": "A model playground: preset picker, prompt composer and the temperature, top-P and length controls beside it."
+            },
+            "tasks": {
+                "title": "Tasks",
+                "description": "A task tracker built on the headless table: faceted filters, column visibility, row selection and pagination."
+            },
+            "mail": {
+                "title": "Mail",
+                "description": "A three-pane mail client with resizable panes, a searchable message list and a reply composer."
+            },
+            "music": {
+                "title": "Music",
+                "description": "A music library: browsable album carousel, context menus on every cover and an empty state for podcasts."
+            },
+            "forms": {
+                "title": "Forms",
+                "description": "Five settings panes wired through the form primitive, so every label, hint and error is associated for you."
+            }
+        },
+        "origin": {
+            "fetched": "Vendored",
+            "authored": "Authored"
+        },
+        "surfaces": {
+            "form": "Form",
+            "split": "Split screen",
+            "grid": "Grid",
+            "detail": "Detail",
+            "list": "List",
+            "compose": "Compose",
+            "chart": "Chart"
+        },
+        "preview": {
+            "tab": "Preview",
+            "frameTitle": "Live preview of the {name} example",
+            "openInNewTab": "Open preview in a new tab"
+        },
+        "source": {
+            "tab": "Code",
+            "copy": "Copy file",
+            "copied": "Copied",
+            "file": "Files in this example",
+            "empty": "This example ships no source files."
+        },
+        "dependencies": {
+            "tab": "Dependencies",
+            "registry": "Registry components",
+            "npm": "npm packages",
+            "pinned": "Vendored from upstream commit {sha}."
+        },
+        "unavailable": {
+            "title": "Preview unavailable",
+            "body": "This example is kept for reference only — its source is complete and unmodified, but it cannot be mounted here because it needs {deps}, which this install does not ship."
+        },
+        "gaps": {
+            "note": "Upstream ships no page shells for these examples, so each shell is authored here; anything the upstream source needs that this install does not ship is preserved verbatim and marked unavailable rather than edited to fit."
+        },
+        "shells": {
+            "authentication": {
+                "login": "Login",
+                "brand": "Acme Inc",
+                "quote": "This library has saved me countless hours of work and helped me ship beautiful products to my customers faster than ever before.",
+                "quoteAuthor": "Sofia Davis",
+                "title": "Create an account",
+                "subtitle": "Enter your email below to create your account",
+                "terms": "By clicking continue, you agree to our Terms of Service and Privacy Policy."
+            },
+            "playground": {
+                "title": "Playground",
+                "preset": "Load a preset",
+                "mode": "Mode",
+                "modes": {
+                    "complete": "Complete",
+                    "insert": "Insert",
+                    "edit": "Edit"
+                },
+                "model": "Model",
+                "promptLabel": "Prompt",
+                "promptPlaceholder": "Write a tagline for an ice cream shop",
+                "submit": "Submit",
+                "history": "History",
+                "modeHint": "Switch back to Complete to compose a prompt."
+            }
+        },
+        "mail": {
+            "account": "Account",
+            "unread": "Unread",
+            "search": "Search mail",
+            "resultCount": "{n} messages",
+            "send": "Send",
+            "noMessage": "No message selected.",
+            "replyLabel": "Reply",
+            "replyPlaceholder": "Reply to {name}...",
+            "panes": {
+                "folders": "Mail folders",
+                "list": "Message list",
+                "message": "Message"
+            },
+            "folders": {
+                "inbox": "Inbox",
+                "drafts": "Drafts",
+                "sent": "Sent",
+                "junk": "Junk",
+                "trash": "Trash",
+                "archive": "Archive",
+                "social": "Social",
+                "updates": "Updates",
+                "forums": "Forums",
+                "shopping": "Shopping"
+            },
+            "scope": {
+                "all": "All mail",
+                "unread": "Unread"
+            },
+            "actions": {
+                "archive": "Archive",
+                "trash": "Move to trash",
+                "forward": "Forward"
+            }
+        },
+        "music": {
+            "sidebarLabel": "Music library",
+            "addMusic": "Add music",
+            "artworkAlt": "Cover art for {title} by {artist}",
+            "openMenu": "Actions for {title}",
+            "groups": {
+                "discover": "Discover",
+                "library": "Library",
+                "playlists": "Playlists"
+            },
+            "nav": {
+                "listenNow": "Listen Now",
+                "browse": "Browse",
+                "radio": "Radio",
+                "playlists": "Playlists",
+                "songs": "Songs",
+                "madeForYou": "Made for You",
+                "artists": "Artists"
+            },
+            "playlists": {
+                "recently-added": "Recently Added",
+                "recently-played": "Recently Played",
+                "top-songs": "Top Songs",
+                "top-albums": "Top Albums",
+                "top-artists": "Top Artists",
+                "logic-discography": "Logic Discography",
+                "bedtime-beats": "Bedtime Beats",
+                "feeling-happy": "Feeling Happy",
+                "im-sad": "Feeling Blue"
+            },
+            "menu": {
+                "addToLibrary": "Add to Library",
+                "addToPlaylist": "Add to Playlist",
+                "play": "Play Next",
+                "like": "Like",
+                "share": "Share"
+            },
+            "tabs": {
+                "music": "Music",
+                "podcasts": "Podcasts",
+                "live": "Live"
+            },
+            "listenNow": {
+                "title": "Listen Now",
+                "description": "Top picks for you. Updated daily."
+            },
+            "madeForYou": {
+                "title": "Made for You",
+                "description": "Your personal playlists. Updated daily."
+            },
+            "podcasts": {
+                "title": "New Episodes",
+                "description": "Your favorite podcasts. Updated daily."
+            },
+            "empty": {
+                "title": "No episodes added",
+                "body": "You have not added any podcasts. Add one below.",
+                "action": "Add podcast"
+            },
+            "carousel": {
+                "previous": "Previous albums",
+                "next": "Next albums"
+            }
+        },
+        "forms": {
+            "title": "Settings",
+            "description": "Manage your account settings and set e-mail preferences.",
+            "navLabel": "Settings sections",
+            "saved": "Your preferences were saved.",
+            "panes": {
+                "profile": {
+                    "title": "Profile",
+                    "description": "This is how others will see you on the site."
+                },
+                "account": {
+                    "title": "Account",
+                    "description": "Update your account settings. Set your preferred language and date of birth."
+                },
+                "appearance": {
+                    "title": "Appearance",
+                    "description": "Customise the appearance of the app. Switch between day and night themes."
+                },
+                "notifications": {
+                    "title": "Notifications",
+                    "description": "Configure how you receive notifications."
+                },
+                "display": {
+                    "title": "Display",
+                    "description": "Turn items on or off to control what is displayed in the app."
+                }
+            },
+            "profile": {
+                "username": "Username",
+                "usernameHelp": "This is your public display name. It can only be changed once every 30 days.",
+                "email": "Email",
+                "emailHelp": "Verified addresses can be used to sign in and receive notifications.",
+                "bio": "Bio",
+                "bioHelp": "You can mention other users and organisations to link to them.",
+                "language": "Language",
+                "languageHelp": "This is the language that will be used in the dashboard.",
+                "submit": "Update profile"
+            },
+            "account": {
+                "name": "Name",
+                "nameHelp": "This is the name that will appear on your receipts and invoices.",
+                "dob": "Date of birth",
+                "dobHelp": "Your date of birth is used to calculate your age.",
+                "language": "Language",
+                "languageHelp": "This is the language that will be used in the dashboard.",
+                "submit": "Update account"
+            },
+            "appearance": {
+                "font": "Font",
+                "fontHelp": "Set the font you want to use in the dashboard.",
+                "theme": "Theme",
+                "themeHelp": "Select the theme for the dashboard.",
+                "submit": "Update preferences"
+            },
+            "notifications": {
+                "mode": "Notify me about",
+                "emailLegend": "Email notifications",
+                "communication": {
+                    "label": "Communication emails",
+                    "help": "Receive emails about your account activity."
+                },
+                "marketing": {
+                    "label": "Marketing emails",
+                    "help": "Receive emails about new products, features and more."
+                },
+                "security": {
+                    "label": "Security emails",
+                    "help": "Receive emails about your account security."
+                },
+                "submit": "Update notifications"
+            },
+            "display": {
+                "sidebar": "Sidebar",
+                "sidebarHelp": "Select the items you want to display in the sidebar.",
+                "submit": "Update display"
+            },
+            "languages": {
+                "en": "English",
+                "ms": "Bahasa Melayu",
+                "zh": "Chinese",
+                "fr": "French",
+                "de": "German",
+                "es": "Spanish"
+            },
+            "fonts": {
+                "inter": "Inter",
+                "manrope": "Manrope",
+                "system": "System"
+            },
+            "themes": {
+                "light": "Light",
+                "dark": "Dark"
+            },
+            "notifyModes": {
+                "all": "All new messages",
+                "mentions": "Direct messages and mentions",
+                "none": "Nothing"
+            },
+            "displayItems": {
+                "recents": "Recents",
+                "home": "Home",
+                "applications": "Applications",
+                "desktop": "Desktop",
+                "downloads": "Downloads",
+                "documents": "Documents"
+            }
+        }
+    },
     "status": {
         "active": "Active",
         "inactive": "Inactive",
@@ -148,7 +464,118 @@
         "email": "Email",
         "password": "Password",
         "rememberMe": "Remember me",
-        "alreadyRegistered": "Already registered?"
+        "alreadyRegistered": "Already registered?",
+        "defaultTagline": "The best admin experience starts with a great foundation.",
+        "loginTitle": "Log in",
+        "loginSubtitle": "Enter your credentials to access your account",
+        "registerTitle": "Create an account",
+        "registerSubtitle": "Enter your details to get started",
+        "name": "Name",
+        "confirmPasswordLabel": "Confirm Password",
+        "forgotPasswordLink": "Forgot password?",
+        "noAccount": "Don't have an account?",
+        "signUp": "Sign up",
+        "haveAccount": "Already have an account?",
+        "strength": {
+            "weak": "Weak",
+            "fair": "Fair",
+            "good": "Good",
+            "strong": "Strong",
+            "veryStrong": "Very Strong"
+        }
+    },
+    "brand": {
+        "title": "Brand",
+        "description": "One source of truth for the name, logo, colour and typography every surface uses.",
+        "save": "Save brand",
+        "enable": {
+            "label": "Enable brand manager",
+            "help": "Off by default. While it is off every surface keeps its pre-2.6 behaviour exactly."
+        },
+        "tabs": {
+            "identity": "Identity",
+            "colour": "Colour",
+            "typography": "Typography",
+            "assets": "Assets",
+            "preview": "Preview"
+        },
+        "fields": {
+            "name": "Name",
+            "shortName": "Short name",
+            "tagline": "Tagline",
+            "description": "Description",
+            "primary": "Primary colour",
+            "accent": "Accent colour",
+            "preset": "Palette preset",
+            "fontSans": "Sans family",
+            "fontMono": "Mono family",
+            "radius": "Corner radius",
+            "darkDefault": "Dark by default",
+            "logoPosition": "Logo position",
+            "sidebarBackground": "Sidebar background",
+            "sidebarForeground": "Sidebar foreground",
+            "sidebarAccent": "Sidebar accent"
+        },
+        "logoPositions": {
+            "sidebar": "Sidebar",
+            "header": "Header"
+        },
+        "assets": {
+            "logo": "Logo",
+            "logoDark": "Logo (dark)",
+            "mark": "Square mark",
+            "favicon": "Favicon",
+            "ogImage": "Social share image",
+            "upload": "Upload",
+            "remove": "Remove",
+            "rejectedSvg": "SVG is refused: it is script-bearing markup and the asset disk is same-origin.",
+            "icoAccepted": "PNG, JPEG, WebP and ICO are accepted. The file type is read from its bytes, not its name."
+        },
+        "preview": {
+            "surfaces": {
+                "admin": "Admin shell",
+                "login": "Login",
+                "public": "Public site",
+                "email": "Email",
+                "pdf": "PDF export",
+                "install": "Install / PWA"
+            }
+        },
+        "contrast": {
+            "ok": "Contrast {ratio}:1 — passes AA.",
+            "warning": "Contrast {ratio}:1 is below the {minimum}:1 minimum."
+        },
+        "reset": {
+            "label": "Reset to defaults",
+            "confirm": "Reset every brand value and switch the brand manager off?"
+        },
+        "errors": {
+            "home": "Back to home",
+            "403": {
+                "title": "Forbidden",
+                "body": "You do not have permission to view this page."
+            },
+            "404": {
+                "title": "Page not found",
+                "body": "The page you are looking for does not exist or has been moved."
+            },
+            "419": {
+                "title": "Page expired",
+                "body": "Your session timed out. Refresh the page and try again."
+            },
+            "500": {
+                "title": "Something went wrong",
+                "body": "An unexpected error occurred. The team has been notified."
+            },
+            "503": {
+                "title": "Under maintenance",
+                "body": "We are performing maintenance. We will be back shortly."
+            }
+        },
+        "settingsLink": {
+            "label": "Brand manager",
+            "help": "Name, logo, favicon, palette and typography for every surface."
+        }
     },
     "validation": {
         "required": "{field} is required",
@@ -193,6 +620,102 @@
             "uploadFailed": "Image upload failed",
             "boldSample": "bold text",
             "italicSample": "italic text"
+        }
+    },
+    "landing": {
+        "title": "Landing page",
+        "description": "Choose the template the public homepage renders with, and the order of its sections.",
+        "nav": {
+            "label": "Main",
+            "skipToContent": "Skip to content",
+            "dashboard": "Dashboard",
+            "login": "Log in",
+            "openMenu": "Open menu",
+            "closeMenu": "Close menu"
+        },
+        "footer": {
+            "rights": "© {year} {name}. All rights reserved."
+        },
+        "pricing": {
+            "popular": "Most popular"
+        },
+        "docs": {
+            "onThisPage": "On this page"
+        },
+        "faq": {
+            "title": "Frequently asked questions",
+            "items": {
+                "billing": {
+                    "question": "How does billing work?",
+                    "answer": "Plans are billed monthly and you can change tier at any time; the next invoice is prorated."
+                },
+                "trial": {
+                    "question": "Is there a free trial?",
+                    "answer": "Every plan starts with a trial period. No card is required until the trial ends."
+                },
+                "support": {
+                    "question": "What support is included?",
+                    "answer": "Email support is included on every plan. Higher tiers add a shared channel and a response-time target."
+                },
+                "cancel": {
+                    "question": "Can I cancel at any time?",
+                    "answer": "Yes. Cancelling stops the next renewal and your data stays exportable until the period ends."
+                }
+            }
+        },
+        "templates": {
+            "classic": {
+                "title": "Classic",
+                "description": "The original layout: centred hero, three-column features, testimonials, pricing and a closing call to action."
+            },
+            "spotlight": {
+                "title": "Spotlight",
+                "description": "A centred hero over a brand gradient, with the pricing wall dropped in favour of a single call to action."
+            },
+            "editorial": {
+                "title": "Editorial",
+                "description": "A split hero and a two-column, article-led rhythm for content-heavy launches."
+            },
+            "saas": {
+                "title": "SaaS",
+                "description": "Pricing first, then features and testimonials, closing with a frequently-asked-questions accordion."
+            },
+            "minimal": {
+                "title": "Minimal",
+                "description": "One narrow column, no imagery, no pricing table. The fastest page to read and to load."
+            },
+            "docs": {
+                "title": "Docs",
+                "description": "A sticky section rail beside the content, for products whose homepage doubles as documentation."
+            }
+        },
+        "sections": {
+            "label": "Sections",
+            "hero": "Hero",
+            "features": "Features",
+            "testimonials": "Testimonials",
+            "pricing": "Pricing",
+            "cta": "Call to action"
+        },
+        "sectionOrder": {
+            "label": "Section order",
+            "help": "Sections render top to bottom in this order. A template only renders the sections it supports.",
+            "moveUp": "Move {section} up",
+            "moveDown": "Move {section} down",
+            "reordered": "{section} moved to position {position} of {total}."
+        },
+        "unsupported": {
+            "label": "Not rendered by this template",
+            "help": "The selected template does not render this section, so its position has no effect.",
+            "disabled": "This section is turned off in the homepage settings."
+        },
+        "preview": {
+            "label": "Preview",
+            "openInNewTab": "Preview in a new tab"
+        },
+        "picker": {
+            "label": "Template",
+            "help": "Arrangement and chrome only — every template renders the same homepage content."
         }
     },
     "tenancy": {
@@ -602,7 +1125,8 @@
             "layout": "Layout",
             "platform": "Platform",
             "content": "Content",
-            "gallery": "Gallery"
+            "gallery": "Gallery",
+            "charts": "Charts"
         },
         "playground": {
             "title": "Component playground",
@@ -840,6 +1364,157 @@
                 "title": "Offline shell",
                 "description": "The installable app shell keeps working without a connection. Only static assets are cached, never your data.",
                 "badge": "PWA"
+            },
+            "emptyAndItem": {
+                "title": "Empty and Item",
+                "description": "The Item list primitive with media, actions and separators, degrading to the Empty state when the list runs out.",
+                "badge": "New"
+            },
+            "chartPrimitives": {
+                "title": "Chart primitives",
+                "description": "ChartContainer over Unovis with themed series tokens, and an screen-reader data table beside every chart.",
+                "badge": "New"
+            },
+            "otpAndCombobox": {
+                "title": "OTP and combobox",
+                "description": "A six-slot one-time-code input and a searchable combobox, both keyboard-first and labelled.",
+                "badge": "New"
+            },
+            "conversation": {
+                "title": "Conversation",
+                "description": "Bubbles, message headers and footers, an autoscrolling message scroller and file attachments.",
+                "badge": "New"
+            },
+            "questionnaire": {
+                "title": "Questionnaire",
+                "description": "One question at a time, with keyboard shortcuts, progress announcement and validation wired by the primitive.",
+                "badge": "New"
+            },
+            "mapMarkers": {
+                "title": "Map markers",
+                "description": "MapLibre markers with popups, alongside a Marker list so the canvas is never the only channel.",
+                "badge": "New"
+            },
+            "landingTemplates": {
+                "title": "Landing templates",
+                "description": "Every registered public homepage template, with the sections each one renders and a live preview link.",
+                "badge": "New"
+            }
+        },
+        "references": {
+            "label": "Reference",
+            "blocks": "Blocks",
+            "examples": "Examples",
+            "brand": "Brand",
+            "landing": "Landing page"
+        },
+        "componentDemos": {
+            "emptyAndItem": {
+                "listTitle": "Project list",
+                "listDescription": "Remove every row to see the Empty state take over.",
+                "restore": "Restore the list",
+                "remove": "Remove {name}",
+                "emptyTitle": "No projects left",
+                "emptyDescription": "Every row was removed. Restore the list to bring them back.",
+                "variantsTitle": "Variants",
+                "variantsDescription": "Item ships outline and muted variants and two sizes; Empty works with or without media.",
+                "bareEmptyTitle": "Nothing to show",
+                "bareEmptyDescription": "An Empty state with no media and no action is still a landmark, not a blank box.",
+                "status": {
+                    "active": "Active",
+                    "paused": "Paused",
+                    "archived": "Archived"
+                },
+                "variant": {
+                    "outline": "Outline item",
+                    "muted": "Muted item, small size"
+                }
+            },
+            "chartPrimitives": {
+                "barTitle": "Sessions by device",
+                "barDescription": "A grouped bar chart driven by ChartContainer and the theme's chart tokens.",
+                "lineTitle": "Total sessions",
+                "lineDescription": "The same rows as a single line series.",
+                "channelTitle": "Visitors by channel",
+                "channelDescription": "One series, one colour, and the numbers repeated as a table.",
+                "month": "Month",
+                "channel": "Channel",
+                "total": "Total across the period: {total} sessions.",
+                "series": {
+                    "desktop": "Desktop",
+                    "mobile": "Mobile",
+                    "visitors": "Visitors",
+                    "total": "Total"
+                }
+            },
+            "otpAndCombobox": {
+                "otpTitle": "One-time code",
+                "otpDescription": "Six slots, paste-aware, with a real label and a described hint.",
+                "otpLabel": "Verification code",
+                "otpHint": "Enter the six digits sent to your email. Pasting the whole code works too.",
+                "verify": "Verify",
+                "verified": "Code accepted.",
+                "entered": "{n} of 6 digits entered.",
+                "comboTitle": "Searchable combobox",
+                "comboDescription": "Type to filter, arrow keys to move, Enter to pick.",
+                "comboLabel": "Timezone",
+                "comboPlaceholder": "Select a timezone",
+                "comboSearch": "Search timezones",
+                "comboEmpty": "No timezone matches that search.",
+                "comboSelected": "Selected {zone}.",
+                "comboNone": "No timezone selected yet."
+            },
+            "conversation": {
+                "you": "You",
+                "threadTitle": "Thread",
+                "threadDescription": "A live region that announces new messages and scrolls to the latest one.",
+                "scrollToLatest": "Scroll to the latest message",
+                "draftLabel": "Message",
+                "draftPlaceholder": "Write a reply",
+                "send": "Send",
+                "attachmentsTitle": "Attachments",
+                "attachmentsDescription": "Attachment renders a file card with media, title and size."
+            },
+            "questionnaire": {
+                "title": "Onboarding survey",
+                "description": "One question at a time. Letter shortcuts pick a choice; progress is announced politely.",
+                "freeTextPlaceholder": "Tell us in a sentence",
+                "required": "An answer is required before continuing.",
+                "previous": "Back",
+                "next": "Next",
+                "submit": "Finish",
+                "submitted": "Thanks — your answers were recorded.",
+                "choices": {
+                    "engineer": "Engineer",
+                    "designer": "Designer",
+                    "operator": "Operations",
+                    "solo": "Just me",
+                    "small": "2 to 20 people",
+                    "large": "More than 20 people"
+                },
+                "items": {
+                    "role": {
+                        "title": "What best describes your role?",
+                        "description": "This only changes which examples we show first."
+                    },
+                    "size": {
+                        "title": "How big is your team?",
+                        "description": "Used to pick sensible defaults for shared views."
+                    },
+                    "goal": {
+                        "title": "What are you hoping to ship first?",
+                        "description": "A sentence is plenty."
+                    }
+                }
+            },
+            "mapMarkers": {
+                "mapTitle": "Coverage map",
+                "mapDescription": "MapLibre markers; selecting one updates the list beside it.",
+                "listTitle": "Locations",
+                "listDescription": "The same markers as focusable rows, so the map is never the only way in.",
+                "separator": "Selection",
+                "selected": "Selected {name}.",
+                "none": "No location selected yet."
             }
         }
     },
@@ -964,6 +1639,287 @@
         },
         "viewAsChart": "View as chart",
         "viewAsTable": "View as table"
+    },
+    "blocks": {
+        "title": "shadcn Blocks",
+        "description": "Every shadcn-vue registry block, vendored verbatim and previewed in isolation.",
+        "search": "Search blocks",
+        "allCategories": "All",
+        "resultCount": "{n} blocks shown",
+        "noResults": "No block matches that search.",
+        "view": "Open block",
+        "categories": {
+            "sidebar": "Sidebar",
+            "dashboard": "Dashboard",
+            "login": "Login",
+            "signup": "Sign up",
+            "otp": "One-time code",
+            "products": "Products",
+            "chart": "Charts",
+            "other": "Other"
+        },
+        "preview": {
+            "tab": "Preview",
+            "frameTitle": "Live preview of {name}",
+            "openInNewTab": "Open preview in a new tab",
+            "viewport": "Viewport",
+            "viewportFull": "Full width",
+            "viewportPx": "{px} px",
+            "viewportAnnounced": "Viewport: {size}",
+            "dark": "Dark mode"
+        },
+        "source": {
+            "tab": "Code",
+            "copy": "Copy",
+            "copied": "Copied",
+            "file": "Source of {path}"
+        },
+        "dependencies": {
+            "tab": "Dependencies",
+            "registry": "Registry components",
+            "npm": "npm packages",
+            "none": "None"
+        },
+        "unavailable": {
+            "title": "Preview unavailable",
+            "body": "This block needs dependencies this install does not ship ({deps}). Its source is vendored in full and shown below.",
+            "badge": "Source only"
+        },
+        "gaps": {
+            "title": "Known gaps",
+            "calendar": "No Vue calendar block exists upstream, so none is vendored.",
+            "sourceOnly": "A block whose dependencies this install does not ship is marked “Source only”: its preview is withheld, but the vendored source is complete and shown in full."
+        },
+        "entries": {
+            "sidebar-01": {
+                "title": "Sidebar 01",
+                "description": "A simple sidebar with navigation grouped by section."
+            },
+            "sidebar-02": {
+                "title": "Sidebar 02",
+                "description": "A sidebar with collapsible sections."
+            },
+            "sidebar-03": {
+                "title": "Sidebar 03",
+                "description": "A sidebar with submenus."
+            },
+            "sidebar-04": {
+                "title": "Sidebar 04",
+                "description": "A floating sidebar with submenus."
+            },
+            "sidebar-05": {
+                "title": "Sidebar 05",
+                "description": "A sidebar with collapsible submenus."
+            },
+            "sidebar-06": {
+                "title": "Sidebar 06",
+                "description": "A sidebar with submenus as dropdowns."
+            },
+            "sidebar-07": {
+                "title": "Sidebar 07",
+                "description": "A sidebar that collapses to icons"
+            },
+            "sidebar-08": {
+                "title": "Sidebar 08",
+                "description": "An inset sidebar with secondary navigation."
+            },
+            "sidebar-09": {
+                "title": "Sidebar 09",
+                "description": "Collapsible nested sidebars."
+            },
+            "sidebar-10": {
+                "title": "Sidebar 10",
+                "description": "A sidebar in a popover."
+            },
+            "sidebar-11": {
+                "title": "Sidebar 11",
+                "description": "A sidebar with a collapsible file tree."
+            },
+            "sidebar-12": {
+                "title": "Sidebar 12",
+                "description": "A sidebar with a calendar."
+            },
+            "sidebar-13": {
+                "title": "Sidebar 13",
+                "description": "A sidebar in a dialog."
+            },
+            "sidebar-14": {
+                "title": "Sidebar 14",
+                "description": "A sidebar on the right."
+            },
+            "sidebar-15": {
+                "title": "Sidebar 15",
+                "description": "A left and right sidebar."
+            },
+            "sidebar-16": {
+                "title": "Sidebar 16",
+                "description": "A sidebar with a sticky site header."
+            },
+            "sidebar-demo": {
+                "title": "Sidebar Demo",
+                "description": "The sidebar primitive on its own, with no page chrome."
+            },
+            "dashboard-01": {
+                "title": "Dashboard 01",
+                "description": "A dashboard with sidebar, charts and data table."
+            },
+            "login-01": {
+                "title": "Login 01",
+                "description": "A simple login form."
+            },
+            "login-02": {
+                "title": "Login 02",
+                "description": "A two column login page with a cover image."
+            },
+            "login-03": {
+                "title": "Login 03",
+                "description": "A login page with a muted background color."
+            },
+            "login-04": {
+                "title": "Login 04",
+                "description": "A login page with form and image."
+            },
+            "login-05": {
+                "title": "Login 05",
+                "description": "A simple email-only login page."
+            },
+            "signup-01": {
+                "title": "Signup 01",
+                "description": "A simple signup form."
+            },
+            "signup-02": {
+                "title": "Signup 02",
+                "description": "A two column signup page with a cover image."
+            },
+            "signup-03": {
+                "title": "Signup 03",
+                "description": "A signup page with a muted background color."
+            },
+            "signup-04": {
+                "title": "Signup 04",
+                "description": "A signup page with form and image."
+            },
+            "signup-05": {
+                "title": "Signup 05",
+                "description": "A simple signup form with social providers."
+            },
+            "otp-01": {
+                "title": "Otp 01",
+                "description": "A simple OTP verification form."
+            },
+            "otp-02": {
+                "title": "Otp 02",
+                "description": "A two column OTP page with a cover image."
+            },
+            "otp-03": {
+                "title": "Otp 03",
+                "description": "An OTP page with a muted background color."
+            },
+            "otp-04": {
+                "title": "Otp 04",
+                "description": "An OTP page with form and image."
+            },
+            "otp-05": {
+                "title": "Otp 05",
+                "description": "A simple OTP form with social providers."
+            },
+            "products-01": {
+                "title": "Products 01",
+                "description": "A products table with filters, pagination and row actions."
+            },
+            "ChartAreaAxes": {
+                "title": "Chart Area Axes",
+                "description": "An area chart with visible axes."
+            },
+            "ChartAreaGradient": {
+                "title": "Chart Area Gradient",
+                "description": "An area chart with a gradient fill."
+            },
+            "ChartAreaIcons": {
+                "title": "Chart Area Icons",
+                "description": "An area chart with icons in the legend."
+            },
+            "ChartAreaInteractive": {
+                "title": "Chart Area Interactive",
+                "description": "An interactive area chart with a range selector."
+            },
+            "ChartBarDefault": {
+                "title": "Chart Bar Default",
+                "description": "A bar chart in its default configuration."
+            },
+            "ChartBarHorizontal": {
+                "title": "Chart Bar Horizontal",
+                "description": "A horizontal bar chart."
+            },
+            "ChartBarInteractive": {
+                "title": "Chart Bar Interactive",
+                "description": "An interactive bar chart with a series toggle."
+            },
+            "ChartBarMultiple": {
+                "title": "Chart Bar Multiple",
+                "description": "A bar chart with multiple series."
+            },
+            "ChartLineDefault": {
+                "title": "Chart Line Default",
+                "description": "A line chart in its default configuration."
+            },
+            "ChartLineInteractive": {
+                "title": "Chart Line Interactive",
+                "description": "An interactive line chart with a series toggle."
+            },
+            "ChartLineLinear": {
+                "title": "Chart Line Linear",
+                "description": "A line chart with linear interpolation."
+            },
+            "ChartLineStep": {
+                "title": "Chart Line Step",
+                "description": "A line chart with stepped interpolation."
+            },
+            "ChartPieDonut": {
+                "title": "Chart Pie Donut",
+                "description": "A donut chart."
+            },
+            "ChartPieDonutText": {
+                "title": "Chart Pie Donut Text",
+                "description": "A donut chart with a total in the centre."
+            },
+            "ChartPieSimple": {
+                "title": "Chart Pie Simple",
+                "description": "A simple pie chart."
+            },
+            "ChartPieStacked": {
+                "title": "Chart Pie Stacked",
+                "description": "A pie chart with stacked sections."
+            },
+            "ChartTooltipDefault": {
+                "title": "Chart Tooltip Default",
+                "description": "A chart tooltip in its default configuration."
+            },
+            "ChartTooltipIcons": {
+                "title": "Chart Tooltip Icons",
+                "description": "A chart tooltip with series icons."
+            },
+            "ChartTooltipIndicatorLine": {
+                "title": "Chart Tooltip Indicator Line",
+                "description": "A chart tooltip with a line indicator."
+            },
+            "ChartTooltipIndicatorNone": {
+                "title": "Chart Tooltip Indicator None",
+                "description": "A chart tooltip with no indicator."
+            },
+            "ChartTooltipLabelCustom": {
+                "title": "Chart Tooltip Label Custom",
+                "description": "A chart tooltip with a custom label."
+            },
+            "ChartTooltipLabelFormatter": {
+                "title": "Chart Tooltip Label Formatter",
+                "description": "A chart tooltip with a formatted label."
+            },
+            "ChartTooltipLabelNone": {
+                "title": "Chart Tooltip Label None",
+                "description": "A chart tooltip with the label hidden."
+            }
+        }
     },
     "transfer": {
         "export": {

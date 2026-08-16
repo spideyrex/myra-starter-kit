@@ -5,31 +5,47 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
-        <title inertia>{{ config('app.name', 'Laravel') }}</title>
+        {{-- >>> MYRA v2.6 [C] START --}}
+        @php($myraBrand = \App\Brand\Facades\Brand::current())
+        <title inertia>{{ $myraBrand->enabled ? $myraBrand->name : config('app.name', 'Laravel') }}</title>
 
-        @php
-            $faviconPath = \DB::table('settings')->where('group', 'appearance')->where('name', 'favicon_path')->value('payload');
-            $faviconPath = $faviconPath ? json_decode($faviconPath, true) : null;
-        @endphp
-        @if($faviconPath)
-            <link rel="icon" href="{{ Storage::disk('public')->url($faviconPath) }}">
-        @endif
+        <meta name="brand" content="{{ json_encode($myraBrand->toArray()) }}">
+
+        {!! \App\Brand\Facades\Brand::iconLinks() !!}
+
+        @foreach(\App\Brand\Facades\Brand::metaTags() as $tag)
+            <meta {{ $tag['attr'] }}="{{ $tag['key'] }}" content="{{ $tag['content'] }}">
+        @endforeach
+        {{-- <<< MYRA v2.6 [C] END --}}
 
         {{-- >>> MYRA v2.5 [D] START --}}
         @if(config('myra.pwa.enabled') === true)
-            <link rel="manifest" href="/manifest.webmanifest">
-            <meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
-            <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#09090b">
+            {{-- >>> MYRA v2.6 [C] — the branded document; the bare URL is shadowed
+                 by public/manifest.webmanifest in every real deployment. --}}
+            <link rel="manifest" href="{{ route('brand.manifest') }}">
+            {{-- >>> MYRA v2.6 [C] START --}}
+            <meta name="theme-color" media="(prefers-color-scheme: light)" content="{{ $myraBrand->palette->hex('background') }}">
+            <meta name="theme-color" media="(prefers-color-scheme: dark)" content="{{ $myraBrand->palette->hex('background-dark') }}">
+            {{-- <<< MYRA v2.6 [C] END --}}
         @endif
         {{-- <<< MYRA v2.5 [D] END --}}
 
-        <!-- Fonts -->
-        <link rel="preconnect" href="https://fonts.bunny.net">
-        <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
+        {{-- >>> MYRA v2.6 [C] START — self-hosted only: production CSP is font-src 'self' data: --}}
+        @foreach($myraBrand->typography->preloads() as $font)
+            <link rel="preload" as="font" type="font/woff2" href="{{ $font['href'] }}" crossorigin>
+        @endforeach
+
+        {!! \App\Brand\Facades\Brand::bootScriptTag() !!}
+        {{-- <<< MYRA v2.6 [C] END --}}
 
         <!-- Scripts -->
         @routes
         @vite(['resources/js/app.ts'])
+
+        {{-- >>> MYRA v2.6 [C] START — after @vite so the brand tokens win the cascade --}}
+        {!! \App\Brand\Facades\Brand::styleTag() !!}
+        {{-- <<< MYRA v2.6 [C] END --}}
+
         @inertiaHead
     </head>
     <body class="font-sans antialiased">

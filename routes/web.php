@@ -40,10 +40,18 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', [HomepageController::class, 'index'])->name('home');
 
+// >>> MYRA v2.6 [D] START
+require __DIR__.'/myra/landing.php';
+// <<< MYRA v2.6 [D] END
+
 // Public pages & blog
 Route::get('/pages/{slug}', [PublicPageController::class, 'show'])->name('pages.show');
 Route::get('/blog', [PublicArticleController::class, 'index'])->name('articles.index');
 Route::get('/blog/{slug}', [PublicArticleController::class, 'show'])->name('articles.show');
+
+// >>> MYRA v2.6 [C] START
+require __DIR__.'/myra/brand.php';
+// <<< MYRA v2.6 [C] END
 
 Route::get('/dashboard', [DashboardController::class, 'index'])
     ->middleware(['auth', 'verified', 'active', '2fa'])
@@ -411,4 +419,12 @@ Route::middleware(['auth', 'verified', 'active', '2fa'])->prefix('admin')->name(
     // myra:routes — make:myra-* commands insert generated routes above this line. Do not remove.
 });
 
+// >>> MYRA v2.6 [A] START
+require __DIR__.'/myra/blocks.php';
+// <<< MYRA v2.6 [A] END
+
 require __DIR__.'/auth.php';
+
+// >>> MYRA v2.6 [B] START
+require __DIR__.'/myra/examples.php';
+// <<< MYRA v2.6 [B] END

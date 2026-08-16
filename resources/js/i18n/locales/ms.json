@@ -128,6 +128,322 @@
             }
         }
     },
+    "examples": {
+        "title": "Contoh shadcn",
+        "description": "Aplikasi contoh shadcn, dibawa masuk sebagai halaman rujukan: kod sumber penuh, pratonton langsung dan senarai kebergantungan tepat bagi setiap satu.",
+        "search": "Cari contoh",
+        "allTags": "Semua",
+        "noResults": "Tiada contoh sepadan dengan carian itu.",
+        "resultCount": "{n} contoh",
+        "view": "Buka contoh",
+        "back": "Kembali ke contoh",
+        "entries": {
+            "authentication": {
+                "title": "Pengesahan",
+                "description": "Halaman log masuk skrin terbelah: panel testimoni di kiri, log masuk e-mel dan pembekal di kanan."
+            },
+            "cards": {
+                "title": "Kad",
+                "description": "Galeri kad — grid padat setiap gubahan kad yang dihantar shadcn, daripada analitik hingga pembayaran."
+            },
+            "dashboard": {
+                "title": "Papan pemuka",
+                "description": "Aplikasi dashboard-01: bar sisi boleh kuncup, kad seksyen, carta kawasan interaktif dan jadual data seret-susun."
+            },
+            "playground": {
+                "title": "Taman permainan",
+                "description": "Taman permainan model: pemilih pratetap, penggubah gesaan serta kawalan suhu, top-P dan panjang di sebelahnya."
+            },
+            "tasks": {
+                "title": "Tugasan",
+                "description": "Penjejak tugasan atas jadual tanpa kepala: penapis berfaset, keterlihatan lajur, pemilihan baris dan penomboran."
+            },
+            "mail": {
+                "title": "Mel",
+                "description": "Klien mel tiga panel dengan panel boleh ubah saiz, senarai mesej boleh cari dan penggubah balasan."
+            },
+            "music": {
+                "title": "Muzik",
+                "description": "Pustaka muzik: karusel album boleh layar, menu konteks pada setiap kulit dan keadaan kosong untuk podcast."
+            },
+            "forms": {
+                "title": "Borang",
+                "description": "Lima panel tetapan disambung melalui primitif borang, jadi setiap label, petunjuk dan ralat dikaitkan untuk anda."
+            }
+        },
+        "origin": {
+            "fetched": "Dibawa masuk",
+            "authored": "Ditulis sendiri"
+        },
+        "surfaces": {
+            "form": "Borang",
+            "split": "Skrin terbelah",
+            "grid": "Grid",
+            "detail": "Perincian",
+            "list": "Senarai",
+            "compose": "Gubah",
+            "chart": "Carta"
+        },
+        "preview": {
+            "tab": "Pratonton",
+            "frameTitle": "Pratonton langsung contoh {name}",
+            "openInNewTab": "Buka pratonton dalam tab baharu"
+        },
+        "source": {
+            "tab": "Kod",
+            "copy": "Salin fail",
+            "copied": "Disalin",
+            "file": "Fail dalam contoh ini",
+            "empty": "Contoh ini tidak menghantar sebarang fail sumber."
+        },
+        "dependencies": {
+            "tab": "Kebergantungan",
+            "registry": "Komponen registri",
+            "npm": "Pakej npm",
+            "pinned": "Dibawa masuk daripada komit huluan {sha}."
+        },
+        "unavailable": {
+            "title": "Pratonton tidak tersedia",
+            "body": "Contoh ini disimpan sebagai rujukan sahaja — sumbernya lengkap dan tidak diubah, tetapi ia tidak boleh dilekapkan di sini kerana ia memerlukan {deps}, yang tidak dihantar oleh pemasangan ini."
+        },
+        "gaps": {
+            "note": "Huluan tidak menghantar cangkerang halaman untuk contoh ini, jadi setiap cangkerang ditulis di sini; apa-apa yang diperlukan sumber huluan tetapi tidak dihantar pemasangan ini dikekalkan seadanya dan ditanda tidak tersedia, bukan diubah suai."
+        },
+        "shells": {
+            "authentication": {
+                "login": "Log masuk",
+                "brand": "Acme Inc",
+                "quote": "Pustaka ini telah menjimatkan berjam-jam kerja saya dan membantu saya menghantar produk yang cantik kepada pelanggan lebih pantas daripada sebelum ini.",
+                "quoteAuthor": "Sofia Davis",
+                "title": "Buka akaun",
+                "subtitle": "Masukkan e-mel anda di bawah untuk membuka akaun",
+                "terms": "Dengan mengklik teruskan, anda bersetuju dengan Terma Perkhidmatan dan Dasar Privasi kami."
+            },
+            "playground": {
+                "title": "Taman permainan",
+                "preset": "Muatkan pratetap",
+                "mode": "Mod",
+                "modes": {
+                    "complete": "Lengkap",
+                    "insert": "Sisip",
+                    "edit": "Sunting"
+                },
+                "model": "Model",
+                "promptLabel": "Gesaan",
+                "promptPlaceholder": "Tulis slogan untuk kedai aiskrim",
+                "submit": "Hantar",
+                "history": "Sejarah",
+                "modeHint": "Kembali ke Lengkap untuk menggubah gesaan."
+            }
+        },
+        "mail": {
+            "account": "Akaun",
+            "unread": "Belum dibaca",
+            "search": "Cari mel",
+            "resultCount": "{n} mesej",
+            "send": "Hantar",
+            "noMessage": "Tiada mesej dipilih.",
+            "replyLabel": "Balas",
+            "replyPlaceholder": "Balas kepada {name}...",
+            "panes": {
+                "folders": "Folder mel",
+                "list": "Senarai mesej",
+                "message": "Mesej"
+            },
+            "folders": {
+                "inbox": "Peti masuk",
+                "drafts": "Draf",
+                "sent": "Dihantar",
+                "junk": "Sampah",
+                "trash": "Tong sampah",
+                "archive": "Arkib",
+                "social": "Sosial",
+                "updates": "Kemas kini",
+                "forums": "Forum",
+                "shopping": "Beli-belah"
+            },
+            "scope": {
+                "all": "Semua mel",
+                "unread": "Belum dibaca"
+            },
+            "actions": {
+                "archive": "Arkibkan",
+                "trash": "Pindah ke tong sampah",
+                "forward": "Kirim semula"
+            }
+        },
+        "music": {
+            "sidebarLabel": "Pustaka muzik",
+            "addMusic": "Tambah muzik",
+            "artworkAlt": "Kulit album {title} oleh {artist}",
+            "openMenu": "Tindakan untuk {title}",
+            "groups": {
+                "discover": "Terokai",
+                "library": "Pustaka",
+                "playlists": "Senarai main"
+            },
+            "nav": {
+                "listenNow": "Dengar sekarang",
+                "browse": "Layari",
+                "radio": "Radio",
+                "playlists": "Senarai main",
+                "songs": "Lagu",
+                "madeForYou": "Dibuat untuk anda",
+                "artists": "Artis"
+            },
+            "playlists": {
+                "recently-added": "Baru ditambah",
+                "recently-played": "Baru dimainkan",
+                "top-songs": "Lagu teratas",
+                "top-albums": "Album teratas",
+                "top-artists": "Artis teratas",
+                "logic-discography": "Diskografi Logic",
+                "bedtime-beats": "Rentak waktu tidur",
+                "feeling-happy": "Rasa gembira",
+                "im-sad": "Rasa sayu"
+            },
+            "menu": {
+                "addToLibrary": "Tambah ke pustaka",
+                "addToPlaylist": "Tambah ke senarai main",
+                "play": "Main seterusnya",
+                "like": "Suka",
+                "share": "Kongsi"
+            },
+            "tabs": {
+                "music": "Muzik",
+                "podcasts": "Podcast",
+                "live": "Langsung"
+            },
+            "listenNow": {
+                "title": "Dengar sekarang",
+                "description": "Pilihan teratas untuk anda. Dikemas kini setiap hari."
+            },
+            "madeForYou": {
+                "title": "Dibuat untuk anda",
+                "description": "Senarai main peribadi anda. Dikemas kini setiap hari."
+            },
+            "podcasts": {
+                "title": "Episod baharu",
+                "description": "Podcast kegemaran anda. Dikemas kini setiap hari."
+            },
+            "empty": {
+                "title": "Tiada episod ditambah",
+                "body": "Anda belum menambah sebarang podcast. Tambah satu di bawah.",
+                "action": "Tambah podcast"
+            },
+            "carousel": {
+                "previous": "Album sebelumnya",
+                "next": "Album seterusnya"
+            }
+        },
+        "forms": {
+            "title": "Tetapan",
+            "description": "Urus tetapan akaun anda dan tetapkan keutamaan e-mel.",
+            "navLabel": "Bahagian tetapan",
+            "saved": "Keutamaan anda telah disimpan.",
+            "panes": {
+                "profile": {
+                    "title": "Profil",
+                    "description": "Beginilah orang lain akan melihat anda di laman ini."
+                },
+                "account": {
+                    "title": "Akaun",
+                    "description": "Kemas kini tetapan akaun anda. Tetapkan bahasa pilihan dan tarikh lahir."
+                },
+                "appearance": {
+                    "title": "Rupa",
+                    "description": "Sesuaikan rupa aplikasi. Tukar antara tema siang dan malam."
+                },
+                "notifications": {
+                    "title": "Pemberitahuan",
+                    "description": "Konfigurasikan cara anda menerima pemberitahuan."
+                },
+                "display": {
+                    "title": "Paparan",
+                    "description": "Hidup atau matikan item untuk mengawal apa yang dipaparkan dalam aplikasi."
+                }
+            },
+            "profile": {
+                "username": "Nama pengguna",
+                "usernameHelp": "Ini nama paparan awam anda. Ia hanya boleh ditukar sekali setiap 30 hari.",
+                "email": "E-mel",
+                "emailHelp": "Alamat yang disahkan boleh digunakan untuk log masuk dan menerima pemberitahuan.",
+                "bio": "Bio",
+                "bioHelp": "Anda boleh menyebut pengguna dan organisasi lain untuk memautkannya.",
+                "language": "Bahasa",
+                "languageHelp": "Ini bahasa yang akan digunakan dalam papan pemuka.",
+                "submit": "Kemas kini profil"
+            },
+            "account": {
+                "name": "Nama",
+                "nameHelp": "Ini nama yang akan muncul pada resit dan invois anda.",
+                "dob": "Tarikh lahir",
+                "dobHelp": "Tarikh lahir anda digunakan untuk mengira umur anda.",
+                "language": "Bahasa",
+                "languageHelp": "Ini bahasa yang akan digunakan dalam papan pemuka.",
+                "submit": "Kemas kini akaun"
+            },
+            "appearance": {
+                "font": "Fon",
+                "fontHelp": "Tetapkan fon yang anda mahu gunakan dalam papan pemuka.",
+                "theme": "Tema",
+                "themeHelp": "Pilih tema untuk papan pemuka.",
+                "submit": "Kemas kini keutamaan"
+            },
+            "notifications": {
+                "mode": "Beritahu saya tentang",
+                "emailLegend": "Pemberitahuan e-mel",
+                "communication": {
+                    "label": "E-mel komunikasi",
+                    "help": "Terima e-mel tentang aktiviti akaun anda."
+                },
+                "marketing": {
+                    "label": "E-mel pemasaran",
+                    "help": "Terima e-mel tentang produk baharu, ciri dan lain-lain."
+                },
+                "security": {
+                    "label": "E-mel keselamatan",
+                    "help": "Terima e-mel tentang keselamatan akaun anda."
+                },
+                "submit": "Kemas kini pemberitahuan"
+            },
+            "display": {
+                "sidebar": "Bar sisi",
+                "sidebarHelp": "Pilih item yang anda mahu paparkan dalam bar sisi.",
+                "submit": "Kemas kini paparan"
+            },
+            "languages": {
+                "en": "Inggeris",
+                "ms": "Bahasa Melayu",
+                "zh": "Cina",
+                "fr": "Perancis",
+                "de": "Jerman",
+                "es": "Sepanyol"
+            },
+            "fonts": {
+                "inter": "Inter",
+                "manrope": "Manrope",
+                "system": "Sistem"
+            },
+            "themes": {
+                "light": "Cerah",
+                "dark": "Gelap"
+            },
+            "notifyModes": {
+                "all": "Semua mesej baharu",
+                "mentions": "Mesej terus dan sebutan",
+                "none": "Tiada"
+            },
+            "displayItems": {
+                "recents": "Terkini",
+                "home": "Laman utama",
+                "applications": "Aplikasi",
+                "desktop": "Desktop",
+                "downloads": "Muat turun",
+                "documents": "Dokumen"
+            }
+        }
+    },
     "status": {
         "active": "Aktif",
         "inactive": "Tidak Aktif",
@@ -148,7 +464,118 @@
         "email": "E-mel",
         "password": "Kata Laluan",
         "rememberMe": "Ingat saya",
-        "alreadyRegistered": "Sudah berdaftar?"
+        "alreadyRegistered": "Sudah berdaftar?",
+        "defaultTagline": "Pengalaman admin terbaik bermula dengan asas yang kukuh.",
+        "loginTitle": "Log Masuk",
+        "loginSubtitle": "Masukkan kelayakan anda untuk mengakses akaun anda",
+        "registerTitle": "Cipta akaun",
+        "registerSubtitle": "Masukkan butiran anda untuk bermula",
+        "name": "Nama",
+        "confirmPasswordLabel": "Sahkan Kata Laluan",
+        "forgotPasswordLink": "Lupa kata laluan?",
+        "noAccount": "Tiada akaun?",
+        "signUp": "Daftar",
+        "haveAccount": "Sudah ada akaun?",
+        "strength": {
+            "weak": "Lemah",
+            "fair": "Sederhana",
+            "good": "Baik",
+            "strong": "Kuat",
+            "veryStrong": "Sangat Kuat"
+        }
+    },
+    "brand": {
+        "title": "Jenama",
+        "description": "Satu sumber kebenaran untuk nama, logo, warna dan tipografi yang digunakan setiap permukaan.",
+        "save": "Simpan jenama",
+        "enable": {
+            "label": "Aktifkan pengurus jenama",
+            "help": "Dimatikan secara lalai. Semasa ia dimatikan setiap permukaan mengekalkan kelakuan pra-2.6 dengan tepat."
+        },
+        "tabs": {
+            "identity": "Identiti",
+            "colour": "Warna",
+            "typography": "Tipografi",
+            "assets": "Aset",
+            "preview": "Pratonton"
+        },
+        "fields": {
+            "name": "Nama",
+            "shortName": "Nama pendek",
+            "tagline": "Slogan",
+            "description": "Penerangan",
+            "primary": "Warna utama",
+            "accent": "Warna aksen",
+            "preset": "Pratetap palet",
+            "fontSans": "Keluarga sans",
+            "fontMono": "Keluarga mono",
+            "radius": "Jejari bucu",
+            "darkDefault": "Gelap secara lalai",
+            "logoPosition": "Kedudukan logo",
+            "sidebarBackground": "Latar bar sisi",
+            "sidebarForeground": "Teks bar sisi",
+            "sidebarAccent": "Aksen bar sisi"
+        },
+        "logoPositions": {
+            "sidebar": "Bar sisi",
+            "header": "Pengepala"
+        },
+        "assets": {
+            "logo": "Logo",
+            "logoDark": "Logo (gelap)",
+            "mark": "Tanda segi empat",
+            "favicon": "Favicon",
+            "ogImage": "Imej perkongsian sosial",
+            "upload": "Muat naik",
+            "remove": "Buang",
+            "rejectedSvg": "SVG ditolak: ia markah yang boleh membawa skrip dan cakera aset adalah asal-sama.",
+            "icoAccepted": "PNG, JPEG, WebP dan ICO diterima. Jenis fail dibaca daripada baitnya, bukan namanya."
+        },
+        "preview": {
+            "surfaces": {
+                "admin": "Cangkerang admin",
+                "login": "Log masuk",
+                "public": "Laman awam",
+                "email": "E-mel",
+                "pdf": "Eksport PDF",
+                "install": "Pasang / PWA"
+            }
+        },
+        "contrast": {
+            "ok": "Kontras {ratio}:1 — lulus AA.",
+            "warning": "Kontras {ratio}:1 di bawah minimum {minimum}:1."
+        },
+        "reset": {
+            "label": "Tetapkan semula",
+            "confirm": "Tetapkan semula setiap nilai jenama dan matikan pengurus jenama?"
+        },
+        "errors": {
+            "home": "Kembali ke laman utama",
+            "403": {
+                "title": "Dilarang",
+                "body": "Anda tidak mempunyai kebenaran untuk melihat halaman ini."
+            },
+            "404": {
+                "title": "Halaman tidak dijumpai",
+                "body": "Halaman yang anda cari tidak wujud atau telah dipindahkan."
+            },
+            "419": {
+                "title": "Halaman tamat tempoh",
+                "body": "Sesi anda tamat tempoh. Muat semula halaman dan cuba lagi."
+            },
+            "500": {
+                "title": "Sesuatu tidak kena",
+                "body": "Ralat tidak dijangka berlaku. Pasukan telah dimaklumkan."
+            },
+            "503": {
+                "title": "Dalam penyelenggaraan",
+                "body": "Kami sedang menjalankan penyelenggaraan. Kami akan kembali sebentar lagi."
+            }
+        },
+        "settingsLink": {
+            "label": "Pengurus jenama",
+            "help": "Nama, logo, favicon, palet dan tipografi untuk setiap permukaan."
+        }
     },
     "validation": {
         "required": "{field} diperlukan",
@@ -193,6 +620,102 @@
             "uploadFailed": "Muat naik imej gagal",
             "boldSample": "teks tebal",
             "italicSample": "teks condong"
+        }
+    },
+    "landing": {
+        "title": "Halaman utama",
+        "description": "Pilih templat untuk halaman utama awam, dan susunan bahagiannya.",
+        "nav": {
+            "label": "Utama",
+            "skipToContent": "Langkau ke kandungan",
+            "dashboard": "Papan pemuka",
+            "login": "Log masuk",
+            "openMenu": "Buka menu",
+            "closeMenu": "Tutup menu"
+        },
+        "footer": {
+            "rights": "© {year} {name}. Hak cipta terpelihara."
+        },
+        "pricing": {
+            "popular": "Paling popular"
+        },
+        "docs": {
+            "onThisPage": "Di halaman ini"
+        },
+        "faq": {
+            "title": "Soalan lazim",
+            "items": {
+                "billing": {
+                    "question": "Bagaimana pengebilan berfungsi?",
+                    "answer": "Pelan dibilkan setiap bulan dan anda boleh menukar peringkat bila-bila masa; invois berikutnya dikira secara berkadar."
+                },
+                "trial": {
+                    "question": "Adakah terdapat percubaan percuma?",
+                    "answer": "Setiap pelan bermula dengan tempoh percubaan. Kad tidak diperlukan sehingga percubaan tamat."
+                },
+                "support": {
+                    "question": "Sokongan apakah yang disertakan?",
+                    "answer": "Sokongan e-mel disertakan dalam setiap pelan. Peringkat lebih tinggi menambah saluran kongsi dan sasaran masa tindak balas."
+                },
+                "cancel": {
+                    "question": "Bolehkah saya batal bila-bila masa?",
+                    "answer": "Boleh. Pembatalan menghentikan pembaharuan seterusnya dan data anda kekal boleh dieksport sehingga tempoh tamat."
+                }
+            }
+        },
+        "templates": {
+            "classic": {
+                "title": "Klasik",
+                "description": "Susun atur asal: hero di tengah, ciri tiga lajur, testimoni, harga dan seruan tindakan penutup."
+            },
+            "spotlight": {
+                "title": "Sorotan",
+                "description": "Hero di tengah atas kecerunan jenama, tanpa jadual harga dan hanya satu seruan tindakan."
+            },
+            "editorial": {
+                "title": "Editorial",
+                "description": "Hero terbelah dan rentak dua lajur berasaskan artikel untuk pelancaran yang padat kandungan."
+            },
+            "saas": {
+                "title": "SaaS",
+                "description": "Harga dahulu, kemudian ciri dan testimoni, ditutup dengan akordion soalan lazim."
+            },
+            "minimal": {
+                "title": "Minimum",
+                "description": "Satu lajur sempit, tanpa imej, tanpa jadual harga. Halaman terpantas untuk dibaca dan dimuatkan."
+            },
+            "docs": {
+                "title": "Dokumentasi",
+                "description": "Rel bahagian melekat di sebelah kandungan, untuk produk yang halaman utamanya turut menjadi dokumentasi."
+            }
+        },
+        "sections": {
+            "label": "Bahagian",
+            "hero": "Hero",
+            "features": "Ciri",
+            "testimonials": "Testimoni",
+            "pricing": "Harga",
+            "cta": "Seruan tindakan"
+        },
+        "sectionOrder": {
+            "label": "Susunan bahagian",
+            "help": "Bahagian dipaparkan dari atas ke bawah mengikut susunan ini. Templat hanya memaparkan bahagian yang disokongnya.",
+            "moveUp": "Alihkan {section} ke atas",
+            "moveDown": "Alihkan {section} ke bawah",
+            "reordered": "{section} dialihkan ke kedudukan {position} daripada {total}."
+        },
+        "unsupported": {
+            "label": "Tidak dipaparkan oleh templat ini",
+            "help": "Templat yang dipilih tidak memaparkan bahagian ini, jadi kedudukannya tiada kesan.",
+            "disabled": "Bahagian ini dimatikan dalam tetapan halaman utama."
+        },
+        "preview": {
+            "label": "Pratonton",
+            "openInNewTab": "Pratonton dalam tab baharu"
+        },
+        "picker": {
+            "label": "Templat",
+            "help": "Susun atur dan hiasan sahaja — setiap templat memaparkan kandungan halaman utama yang sama."
         }
     },
     "tenancy": {
@@ -602,7 +1125,8 @@
             "layout": "Susun atur",
             "platform": "Platform",
             "content": "Kandungan",
-            "gallery": "Galeri"
+            "gallery": "Galeri",
+            "charts": "Carta"
         },
         "playground": {
             "title": "Taman komponen",
@@ -840,6 +1364,157 @@
                 "title": "Cengkerang luar talian",
                 "description": "Cengkerang aplikasi terus berfungsi tanpa sambungan. Hanya aset statik dicache, bukan data anda.",
                 "badge": "PWA"
+            },
+            "emptyAndItem": {
+                "title": "Empty dan Item",
+                "description": "Primitif senarai Item dengan media, tindakan dan pemisah, beralih ke keadaan Empty apabila senarai kehabisan.",
+                "badge": "Baharu"
+            },
+            "chartPrimitives": {
+                "title": "Primitif carta",
+                "description": "ChartContainer di atas Unovis dengan token siri bertema, dan jadual data pembaca skrin di sisi setiap carta.",
+                "badge": "Baharu"
+            },
+            "otpAndCombobox": {
+                "title": "OTP dan combobox",
+                "description": "Input kod sekali guna enam slot dan combobox boleh cari, kedua-duanya mesra papan kekunci dan berlabel.",
+                "badge": "Baharu"
+            },
+            "conversation": {
+                "title": "Perbualan",
+                "description": "Gelembung, pengepala dan pengaki mesej, penatal mesej automatik dan lampiran fail.",
+                "badge": "Baharu"
+            },
+            "questionnaire": {
+                "title": "Soal selidik",
+                "description": "Satu soalan pada satu masa, dengan pintasan papan kekunci, pengumuman kemajuan dan pengesahan daripada primitif.",
+                "badge": "Baharu"
+            },
+            "mapMarkers": {
+                "title": "Penanda peta",
+                "description": "Penanda MapLibre dengan pop timbul, bersama senarai Marker supaya kanvas bukan satu-satunya saluran.",
+                "badge": "Baharu"
+            },
+            "landingTemplates": {
+                "title": "Templat halaman utama",
+                "description": "Setiap templat halaman utama awam yang berdaftar, dengan bahagian yang dipaparkan dan pautan pratonton langsung.",
+                "badge": "Baharu"
+            }
+        },
+        "references": {
+            "label": "Rujukan",
+            "blocks": "Blok",
+            "examples": "Contoh",
+            "brand": "Jenama",
+            "landing": "Halaman utama"
+        },
+        "componentDemos": {
+            "emptyAndItem": {
+                "listTitle": "Senarai projek",
+                "listDescription": "Buang setiap baris untuk melihat keadaan Empty mengambil alih.",
+                "restore": "Pulihkan senarai",
+                "remove": "Buang {name}",
+                "emptyTitle": "Tiada projek tinggal",
+                "emptyDescription": "Semua baris telah dibuang. Pulihkan senarai untuk mengembalikannya.",
+                "variantsTitle": "Varian",
+                "variantsDescription": "Item menyediakan varian outline dan muted serta dua saiz; Empty berfungsi dengan atau tanpa media.",
+                "bareEmptyTitle": "Tiada apa untuk dipaparkan",
+                "bareEmptyDescription": "Keadaan Empty tanpa media dan tanpa tindakan tetap satu mercu tanda, bukan kotak kosong.",
+                "status": {
+                    "active": "Aktif",
+                    "paused": "Dijeda",
+                    "archived": "Diarkib"
+                },
+                "variant": {
+                    "outline": "Item outline",
+                    "muted": "Item muted, saiz kecil"
+                }
+            },
+            "chartPrimitives": {
+                "barTitle": "Sesi mengikut peranti",
+                "barDescription": "Carta bar berkumpulan dipacu oleh ChartContainer dan token carta tema.",
+                "lineTitle": "Jumlah sesi",
+                "lineDescription": "Baris yang sama sebagai satu siri garis.",
+                "channelTitle": "Pelawat mengikut saluran",
+                "channelDescription": "Satu siri, satu warna, dan nombor yang sama diulang sebagai jadual.",
+                "month": "Bulan",
+                "channel": "Saluran",
+                "total": "Jumlah sepanjang tempoh: {total} sesi.",
+                "series": {
+                    "desktop": "Desktop",
+                    "mobile": "Mudah alih",
+                    "visitors": "Pelawat",
+                    "total": "Jumlah"
+                }
+            },
+            "otpAndCombobox": {
+                "otpTitle": "Kod sekali guna",
+                "otpDescription": "Enam slot, menyokong tampal, dengan label sebenar dan petunjuk berkaitan.",
+                "otpLabel": "Kod pengesahan",
+                "otpHint": "Masukkan enam digit yang dihantar ke e-mel anda. Menampal keseluruhan kod juga berfungsi.",
+                "verify": "Sahkan",
+                "verified": "Kod diterima.",
+                "entered": "{n} daripada 6 digit dimasukkan.",
+                "comboTitle": "Combobox boleh cari",
+                "comboDescription": "Taip untuk menapis, kekunci anak panah untuk bergerak, Enter untuk memilih.",
+                "comboLabel": "Zon waktu",
+                "comboPlaceholder": "Pilih zon waktu",
+                "comboSearch": "Cari zon waktu",
+                "comboEmpty": "Tiada zon waktu sepadan dengan carian itu.",
+                "comboSelected": "Dipilih {zone}.",
+                "comboNone": "Belum ada zon waktu dipilih."
+            },
+            "conversation": {
+                "you": "Anda",
+                "threadTitle": "Bicara",
+                "threadDescription": "Kawasan langsung yang mengumumkan mesej baharu dan menatal ke yang terkini.",
+                "scrollToLatest": "Tatal ke mesej terkini",
+                "draftLabel": "Mesej",
+                "draftPlaceholder": "Tulis balasan",
+                "send": "Hantar",
+                "attachmentsTitle": "Lampiran",
+                "attachmentsDescription": "Attachment memaparkan kad fail dengan media, tajuk dan saiz."
+            },
+            "questionnaire": {
+                "title": "Tinjauan permulaan",
+                "description": "Satu soalan pada satu masa. Pintasan huruf memilih jawapan; kemajuan diumumkan secara sopan.",
+                "freeTextPlaceholder": "Beritahu kami dalam satu ayat",
+                "required": "Jawapan diperlukan sebelum meneruskan.",
+                "previous": "Kembali",
+                "next": "Seterusnya",
+                "submit": "Selesai",
+                "submitted": "Terima kasih — jawapan anda telah direkodkan.",
+                "choices": {
+                    "engineer": "Jurutera",
+                    "designer": "Pereka",
+                    "operator": "Operasi",
+                    "solo": "Saya sahaja",
+                    "small": "2 hingga 20 orang",
+                    "large": "Lebih 20 orang"
+                },
+                "items": {
+                    "role": {
+                        "title": "Apakah yang paling menggambarkan peranan anda?",
+                        "description": "Ini hanya mengubah contoh yang kami tunjukkan dahulu."
+                    },
+                    "size": {
+                        "title": "Berapa besar pasukan anda?",
+                        "description": "Digunakan untuk memilih nilai lalai yang munasabah bagi paparan kongsi."
+                    },
+                    "goal": {
+                        "title": "Apakah yang anda harap dihantar dahulu?",
+                        "description": "Satu ayat sudah memadai."
+                    }
+                }
+            },
+            "mapMarkers": {
+                "mapTitle": "Peta liputan",
+                "mapDescription": "Penanda MapLibre; memilih satu akan mengemas kini senarai di sebelahnya.",
+                "listTitle": "Lokasi",
+                "listDescription": "Penanda yang sama sebagai baris boleh fokus, supaya peta bukan satu-satunya jalan masuk.",
+                "separator": "Pilihan",
+                "selected": "Dipilih {name}.",
+                "none": "Belum ada lokasi dipilih."
             }
         }
     },
@@ -964,6 +1639,287 @@
         },
         "viewAsChart": "Lihat sebagai carta",
         "viewAsTable": "Lihat sebagai jadual"
+    },
+    "blocks": {
+        "title": "Blok shadcn",
+        "description": "Setiap blok registri shadcn-vue, dibawa masuk secara verbatim dan dipratonton secara berasingan.",
+        "search": "Cari blok",
+        "allCategories": "Semua",
+        "resultCount": "{n} blok dipaparkan",
+        "noResults": "Tiada blok sepadan dengan carian itu.",
+        "view": "Buka blok",
+        "categories": {
+            "sidebar": "Bar sisi",
+            "dashboard": "Papan pemuka",
+            "login": "Log masuk",
+            "signup": "Pendaftaran",
+            "otp": "Kod sekali guna",
+            "products": "Produk",
+            "chart": "Carta",
+            "other": "Lain-lain"
+        },
+        "preview": {
+            "tab": "Pratonton",
+            "frameTitle": "Pratonton langsung {name}",
+            "openInNewTab": "Buka pratonton dalam tab baharu",
+            "viewport": "Port pandang",
+            "viewportFull": "Lebar penuh",
+            "viewportPx": "{px} px",
+            "viewportAnnounced": "Port pandang: {size}",
+            "dark": "Mod gelap"
+        },
+        "source": {
+            "tab": "Kod",
+            "copy": "Salin",
+            "copied": "Disalin",
+            "file": "Sumber {path}"
+        },
+        "dependencies": {
+            "tab": "Kebergantungan",
+            "registry": "Komponen registri",
+            "npm": "Pakej npm",
+            "none": "Tiada"
+        },
+        "unavailable": {
+            "title": "Pratonton tidak tersedia",
+            "body": "Blok ini memerlukan kebergantungan yang tidak disertakan dalam pemasangan ini ({deps}). Sumbernya lengkap dan dipaparkan di bawah.",
+            "badge": "Sumber sahaja"
+        },
+        "gaps": {
+            "title": "Jurang diketahui",
+            "calendar": "Tiada blok kalendar Vue di hulu, jadi tiada yang dibawa masuk.",
+            "sourceOnly": "Blok yang memerlukan kebergantungan tidak disertakan dalam pemasangan ini ditanda “Sumber sahaja”: pratontonnya ditahan, tetapi sumber yang dibawa masuk adalah lengkap dan dipaparkan sepenuhnya."
+        },
+        "entries": {
+            "sidebar-01": {
+                "title": "Sidebar 01",
+                "description": "Bar sisi ringkas dengan navigasi dikumpulkan mengikut bahagian."
+            },
+            "sidebar-02": {
+                "title": "Sidebar 02",
+                "description": "Bar sisi dengan bahagian boleh dikuncupkan."
+            },
+            "sidebar-03": {
+                "title": "Sidebar 03",
+                "description": "Bar sisi dengan submenu."
+            },
+            "sidebar-04": {
+                "title": "Sidebar 04",
+                "description": "Bar sisi terapung dengan submenu."
+            },
+            "sidebar-05": {
+                "title": "Sidebar 05",
+                "description": "Bar sisi dengan submenu boleh dikuncupkan."
+            },
+            "sidebar-06": {
+                "title": "Sidebar 06",
+                "description": "Bar sisi dengan submenu sebagai menu lungsur."
+            },
+            "sidebar-07": {
+                "title": "Sidebar 07",
+                "description": "Bar sisi yang menguncup menjadi ikon."
+            },
+            "sidebar-08": {
+                "title": "Sidebar 08",
+                "description": "Bar sisi terbenam dengan navigasi sekunder."
+            },
+            "sidebar-09": {
+                "title": "Sidebar 09",
+                "description": "Bar sisi bersarang yang boleh dikuncupkan."
+            },
+            "sidebar-10": {
+                "title": "Sidebar 10",
+                "description": "Bar sisi di dalam popover."
+            },
+            "sidebar-11": {
+                "title": "Sidebar 11",
+                "description": "Bar sisi dengan pepohon fail boleh dikuncupkan."
+            },
+            "sidebar-12": {
+                "title": "Sidebar 12",
+                "description": "Bar sisi dengan kalendar."
+            },
+            "sidebar-13": {
+                "title": "Sidebar 13",
+                "description": "Bar sisi di dalam dialog."
+            },
+            "sidebar-14": {
+                "title": "Sidebar 14",
+                "description": "Bar sisi di sebelah kanan."
+            },
+            "sidebar-15": {
+                "title": "Sidebar 15",
+                "description": "Bar sisi kiri dan kanan."
+            },
+            "sidebar-16": {
+                "title": "Sidebar 16",
+                "description": "Bar sisi dengan pengepala tapak melekat."
+            },
+            "sidebar-demo": {
+                "title": "Sidebar Demo",
+                "description": "Primitif bar sisi bersendirian, tanpa kelengkapan halaman."
+            },
+            "dashboard-01": {
+                "title": "Dashboard 01",
+                "description": "Papan pemuka dengan bar sisi, carta dan jadual data."
+            },
+            "login-01": {
+                "title": "Login 01",
+                "description": "Borang log masuk ringkas."
+            },
+            "login-02": {
+                "title": "Login 02",
+                "description": "Halaman log masuk dua lajur dengan imej muka depan."
+            },
+            "login-03": {
+                "title": "Login 03",
+                "description": "Halaman log masuk dengan warna latar lembut."
+            },
+            "login-04": {
+                "title": "Login 04",
+                "description": "Halaman log masuk dengan borang dan imej."
+            },
+            "login-05": {
+                "title": "Login 05",
+                "description": "Halaman log masuk ringkas e-mel sahaja."
+            },
+            "signup-01": {
+                "title": "Signup 01",
+                "description": "Borang pendaftaran ringkas."
+            },
+            "signup-02": {
+                "title": "Signup 02",
+                "description": "Halaman pendaftaran dua lajur dengan imej muka depan."
+            },
+            "signup-03": {
+                "title": "Signup 03",
+                "description": "Halaman pendaftaran dengan warna latar lembut."
+            },
+            "signup-04": {
+                "title": "Signup 04",
+                "description": "Halaman pendaftaran dengan borang dan imej."
+            },
+            "signup-05": {
+                "title": "Signup 05",
+                "description": "Borang pendaftaran ringkas dengan pembekal sosial."
+            },
+            "otp-01": {
+                "title": "Otp 01",
+                "description": "Borang pengesahan OTP ringkas."
+            },
+            "otp-02": {
+                "title": "Otp 02",
+                "description": "Halaman OTP dua lajur dengan imej muka depan."
+            },
+            "otp-03": {
+                "title": "Otp 03",
+                "description": "Halaman OTP dengan warna latar lembut."
+            },
+            "otp-04": {
+                "title": "Otp 04",
+                "description": "Halaman OTP dengan borang dan imej."
+            },
+            "otp-05": {
+                "title": "Otp 05",
+                "description": "Borang OTP ringkas dengan pembekal sosial."
+            },
+            "products-01": {
+                "title": "Products 01",
+                "description": "Jadual produk dengan penapis, penomboran dan tindakan baris."
+            },
+            "ChartAreaAxes": {
+                "title": "Chart Area Axes",
+                "description": "Carta kawasan dengan paksi kelihatan."
+            },
+            "ChartAreaGradient": {
+                "title": "Chart Area Gradient",
+                "description": "Carta kawasan dengan isian kecerunan."
+            },
+            "ChartAreaIcons": {
+                "title": "Chart Area Icons",
+                "description": "Carta kawasan dengan ikon pada legenda."
+            },
+            "ChartAreaInteractive": {
+                "title": "Chart Area Interactive",
+                "description": "Carta kawasan interaktif dengan pemilih julat."
+            },
+            "ChartBarDefault": {
+                "title": "Chart Bar Default",
+                "description": "Carta bar dengan tetapan lalai."
+            },
+            "ChartBarHorizontal": {
+                "title": "Chart Bar Horizontal",
+                "description": "Carta bar mendatar."
+            },
+            "ChartBarInteractive": {
+                "title": "Chart Bar Interactive",
+                "description": "Carta bar interaktif dengan togol siri."
+            },
+            "ChartBarMultiple": {
+                "title": "Chart Bar Multiple",
+                "description": "Carta bar dengan berbilang siri."
+            },
+            "ChartLineDefault": {
+                "title": "Chart Line Default",
+                "description": "Carta garis dengan tetapan lalai."
+            },
+            "ChartLineInteractive": {
+                "title": "Chart Line Interactive",
+                "description": "Carta garis interaktif dengan togol siri."
+            },
+            "ChartLineLinear": {
+                "title": "Chart Line Linear",
+                "description": "Carta garis dengan interpolasi linear."
+            },
+            "ChartLineStep": {
+                "title": "Chart Line Step",
+                "description": "Carta garis dengan interpolasi berperingkat."
+            },
+            "ChartPieDonut": {
+                "title": "Chart Pie Donut",
+                "description": "Carta donat."
+            },
+            "ChartPieDonutText": {
+                "title": "Chart Pie Donut Text",
+                "description": "Carta donat dengan jumlah di tengah."
+            },
+            "ChartPieSimple": {
+                "title": "Chart Pie Simple",
+                "description": "Carta pai ringkas."
+            },
+            "ChartPieStacked": {
+                "title": "Chart Pie Stacked",
+                "description": "Carta pai dengan bahagian bertindan."
+            },
+            "ChartTooltipDefault": {
+                "title": "Chart Tooltip Default",
+                "description": "Tip alat carta dengan tetapan lalai."
+            },
+            "ChartTooltipIcons": {
+                "title": "Chart Tooltip Icons",
+                "description": "Tip alat carta dengan ikon siri."
+            },
+            "ChartTooltipIndicatorLine": {
+                "title": "Chart Tooltip Indicator Line",
+                "description": "Tip alat carta dengan penunjuk garis."
+            },
+            "ChartTooltipIndicatorNone": {
+                "title": "Chart Tooltip Indicator None",
+                "description": "Tip alat carta tanpa penunjuk."
+            },
+            "ChartTooltipLabelCustom": {
+                "title": "Chart Tooltip Label Custom",
+                "description": "Tip alat carta dengan label tersuai."
+            },
+            "ChartTooltipLabelFormatter": {
+                "title": "Chart Tooltip Label Formatter",
+                "description": "Tip alat carta dengan label berformat."
+            },
+            "ChartTooltipLabelNone": {
+                "title": "Chart Tooltip Label None",
+                "description": "Tip alat carta dengan label disembunyikan."
+            }
+        }
     },
     "transfer": {
         "export": {

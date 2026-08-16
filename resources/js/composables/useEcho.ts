@@ -1,37 +1,32 @@
-import { onMounted, onUnmounted } from 'vue';
+import { computed } from 'vue';
 import { usePage, router } from '@inertiajs/vue3';
 import type { PageProps } from '@/types';
 import { toast } from 'vue-sonner';
+import { useEchoChannel } from '@/composables/useEchoChannel';
 
-let echoChannel: any = null;
+/** Laravel's broadcast notification event, which `Echo.notification()` wraps. */
+const NOTIFICATION = '.Illuminate\\Notifications\\Events\\BroadcastNotificationCreated';
 
+/**
+ * Signature and observable behaviour are unchanged from v2.4.0; the plumbing is
+ * now `useEchoChannel`, so the channel is refcounted and actually left.
+ */
 export function useEcho() {
     const reverbKey = import.meta.env.VITE_REVERB_APP_KEY;
     if (!reverbKey) return;
 
     const page = usePage<PageProps>();
 
-    onMounted(async () => {
+    const channel = computed(() => {
         const userId = page.props.auth?.user?.id;
-        if (!userId) return;
-
-        try {
-            const { default: echo } = await import('@/echo');
-            echoChannel = echo.private(`App.Models.User.${userId}`);
-            echoChannel.notification((notification: any) => {
-                const message = notification.data?.message || notification.message || 'You have a new notification';
-                toast.info(message);
-                router.reload({ only: ['unreadNotificationsCount', 'recentNotifications'] });
-            });
-        } catch {
-            // Reverb not available — silently ignore
-        }
+        return userId ? `App.Models.User.${userId}` : null;
     });
 
-    onUnmounted(() => {
-        if (echoChannel) {
-            echoChannel.stopListening('.Illuminate\\Notifications\\Events\\BroadcastNotificationCreated');
-            echoChannel = null;
-        }
+    useEchoChannel(channel, {
+        [NOTIFICATION]: (notification: any) => {
+            const message = notification.data?.message || notification.message || 'You have a new notification';
+            toast.info(message);
+            router.reload({ only: ['unreadNotificationsCount', 'recentNotifications'] });
+        },
     });
 }

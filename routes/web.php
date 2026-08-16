@@ -292,6 +292,9 @@ Route::middleware(['auth', 'verified', 'active', '2fa'])->prefix('admin')->name(
     // >>> MYRA v2.3 [B] START
     Route::get('/demo/reports', [DemoController::class, 'reports'])->name('demo.reports');
     // <<< MYRA v2.3 [B] END
+    // >>> MYRA v2.5 [B] START
+    Route::get('/demo/live-widgets', [DemoController::class, 'liveWidgets'])->name('demo.live-widgets');
+    // <<< MYRA v2.5 [B] END
 
     // Advanced Feature Demos
     Route::get('/demo/inline-editing', [DemoController::class, 'inlineEditing'])->name('demo.inline-editing');

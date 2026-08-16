@@ -75,6 +75,9 @@ import { useThemeColors } from '@/composables/useThemeColors';
 import { useBrand } from '@/composables/useBrand';
 import BrandMark from '@/components/brand/BrandMark.vue';
 // <<< MYRA v2.6 [C] END
+// >>> MYRA v2.8 [B] START
+import { Wallpaper } from 'lucide-vue-next';
+// <<< MYRA v2.8 [B] END
 import {
     LayoutDashboard,
     Users,
@@ -235,6 +238,12 @@ const coreNavGroups = computed(() => [
                 ? [{ title: t('brand.title'), href: route('admin.brand.index'), icon: Palette, permission: 'brand.view' }]
                 : []),
             // <<< MYRA v2.6 [C] END
+            // >>> MYRA v2.8 [B] START
+            // Guarded: the editor's routes ship with the appearance bundle.
+            ...((route as any)().has('admin.appearance.index')
+                ? [{ title: t('appearanceAdmin.title'), href: route('admin.appearance.index'), icon: Wallpaper, permission: 'brand.view' }]
+                : []),
+            // <<< MYRA v2.8 [B] END
             { title: t('nav.activityLog'), href: route('admin.activity-logs.index'), icon: Activity, permission: 'activity-log.view' },
             { title: t('nav.backups'), href: route('admin.backups.index'), icon: Database, permission: 'backups.view' },
             { title: t('nav.systemHealth'), href: route('admin.system-health.index'), icon: HeartPulse, permission: 'system-health.view' },

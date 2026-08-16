@@ -465,3 +465,7 @@ Route::middleware(['auth', 'verified', 'active', '2fa', 'permission:demo.view'])
             ->name('demo.page-builder');
     });
 // <<< MYRA v2.7 [D] END
+
+// >>> MYRA v2.8 [B] START
+require __DIR__.'/myra/appearance.php';
+// <<< MYRA v2.8 [B] END

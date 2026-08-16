@@ -2823,5 +2823,110 @@
             "description": "The stored block shape, the degradation guarantees, how a package contributes a section type, the preview contract and the rollback procedure.",
             "link": "Read the page builder guide"
         }
+    },
+    "appearanceAdmin": {
+        "title": "Login appearance",
+        "description": "Choose the layout and the background behind the sign-in, register and password screens. Defaults leave today's layout exactly as it is.",
+        "save": "Save appearance",
+        "tabs": {
+            "layout": "Layout",
+            "background": "Background",
+            "media": "Image",
+            "preview": "Preview"
+        },
+        "fields": {
+            "layout": "Layout",
+            "flip": "Mirror the layout",
+            "showTagline": "Show the brand tagline",
+            "type": "Background",
+            "color": "Base colour",
+            "recipe": "Style",
+            "scrim": "Overlay"
+        },
+        "help": {
+            "flip": "Puts the decorative panel on the other side of the screen.",
+            "flipUnsupported": "This layout has no side panel to mirror.",
+            "showTagline": "Hides the tagline block without changing the layout.",
+            "type": "The base colour is always painted first, so the text stays readable even if an image never loads.",
+            "color": "Six digit hex, for example ffffff with a leading hash. The text colour is measured from it, never typed.",
+            "scrim": "A dark veil between the background and the text. Stronger means more readable.",
+            "scrimFloor": "An image background is never left unveiled; none is raised to light when the page renders."
+        },
+        "layouts": {
+            "split": {
+                "title": "Split",
+                "description": "Today's layout. A branded panel on one half, the form on the other."
+            },
+            "centered": {
+                "title": "Centered",
+                "description": "The form card centred on the surface, with the brand mark above it."
+            },
+            "cover": {
+                "title": "Cover",
+                "description": "A full-bleed background with the form card floating over it."
+            },
+            "card": {
+                "title": "Card",
+                "description": "The split lives inside the card, on a quiet page."
+            }
+        },
+        "backgrounds": {
+            "brand": "Brand",
+            "solid": "Solid colour",
+            "gradient": "Gradient",
+            "pattern": "Pattern",
+            "image": "Image",
+            "none": "None"
+        },
+        "backgroundHelp": {
+            "brand": "Today's look. Uses the brand colour and adds no extra styling.",
+            "solid": "One colour you choose. The text colour is computed from it.",
+            "gradient": "One of six built-in gradients, tinted by your brand colour.",
+            "pattern": "A subtle repeating pattern drawn in the foreground colour.",
+            "image": "An uploaded picture, always over a base colour and an overlay.",
+            "none": "No surface at all. The page keeps its plain background."
+        },
+        "recipes": {
+            "brand-fade": "Brand fade",
+            "brand-mesh": "Brand mesh",
+            "dusk": "Dusk",
+            "dawn": "Dawn",
+            "ink": "Ink",
+            "aurora": "Aurora",
+            "dots": "Dots",
+            "grid": "Grid",
+            "diagonal": "Diagonal",
+            "noise": "Noise"
+        },
+        "scrims": {
+            "none": "None",
+            "light": "Light",
+            "medium": "Medium",
+            "strong": "Strong"
+        },
+        "contrast": {
+            "title": "Low contrast",
+            "label": "Contrast {ratio} to 1",
+            "ok": "Text on this background meets the readability target.",
+            "warning": "Below the recommended {minimum} to 1.",
+            "advisory": "The measured contrast is {ratio} to 1, below the recommended {minimum} to 1. You can still save — the sign-in form itself always keeps its own readable card.",
+            "imageNote": "Measured against the base colour; the image sits above it under the overlay."
+        },
+        "media": {
+            "title": "Background image",
+            "help": "Uploads are checked by their real file signature, not their name. Scalable vector files are refused. The picture is stored publicly so the sign-in page can load it before anyone logs in.",
+            "current": "Current image",
+            "none": "No image uploaded",
+            "remove": "Remove image",
+            "removeConfirm": "Remove the background image? The layout falls back to its base colour.",
+            "formats": "PNG, JPEG or WebP, up to 4 MB and 4096 pixels on a side."
+        },
+        "preview": {
+            "openLogin": "Open the sign-in page",
+            "help": "Rendered from the same server resolution the sign-in page uses, so what you see here is what gets saved.",
+            "tagline": "Your brand tagline",
+            "light": "Light",
+            "dark": "Dark"
+        }
     }
 }

@@ -2823,5 +2823,110 @@
             "description": "Bentuk blok yang disimpan, jaminan penurunan taraf, cara pakej menyumbang jenis bahagian, kontrak pratonton dan prosedur pengembalian.",
             "link": "Baca panduan pembina halaman"
         }
+    },
+    "appearanceAdmin": {
+        "title": "Rupa halaman log masuk",
+        "description": "Pilih susun atur dan latar belakang di sebalik skrin log masuk, pendaftaran dan kata laluan. Nilai lalai mengekalkan susun atur hari ini seadanya.",
+        "save": "Simpan rupa",
+        "tabs": {
+            "layout": "Susun atur",
+            "background": "Latar belakang",
+            "media": "Imej",
+            "preview": "Pratonton"
+        },
+        "fields": {
+            "layout": "Susun atur",
+            "flip": "Cerminkan susun atur",
+            "showTagline": "Tunjukkan slogan jenama",
+            "type": "Latar belakang",
+            "color": "Warna asas",
+            "recipe": "Gaya",
+            "scrim": "Lapisan tindih"
+        },
+        "help": {
+            "flip": "Meletakkan panel hiasan di sebelah skrin yang satu lagi.",
+            "flipUnsupported": "Susun atur ini tiada panel sisi untuk dicerminkan.",
+            "showTagline": "Menyembunyikan blok slogan tanpa mengubah susun atur.",
+            "type": "Warna asas sentiasa dilukis dahulu, jadi teks kekal boleh dibaca walaupun imej tidak pernah dimuatkan.",
+            "color": "Heks enam digit, contohnya ffffff dengan tanda pagar di hadapan. Warna teks diukur daripadanya, bukan ditaip.",
+            "scrim": "Selaput gelap antara latar belakang dan teks. Lebih kuat bermakna lebih mudah dibaca.",
+            "scrimFloor": "Latar belakang imej tidak pernah dibiarkan tanpa selaput; tiada akan dinaikkan kepada ringan semasa halaman dipaparkan."
+        },
+        "layouts": {
+            "split": {
+                "title": "Belah dua",
+                "description": "Susun atur hari ini. Panel berjenama pada satu belah, borang pada belah lagi satu."
+            },
+            "centered": {
+                "title": "Di tengah",
+                "description": "Kad borang di tengah permukaan, dengan tanda jenama di atasnya."
+            },
+            "cover": {
+                "title": "Penuh",
+                "description": "Latar belakang penuh skrin dengan kad borang terapung di atasnya."
+            },
+            "card": {
+                "title": "Kad",
+                "description": "Pembahagian berada di dalam kad, di atas halaman yang tenang."
+            }
+        },
+        "backgrounds": {
+            "brand": "Jenama",
+            "solid": "Warna pejal",
+            "gradient": "Kecerunan",
+            "pattern": "Corak",
+            "image": "Imej",
+            "none": "Tiada"
+        },
+        "backgroundHelp": {
+            "brand": "Rupa hari ini. Menggunakan warna jenama tanpa gaya tambahan.",
+            "solid": "Satu warna pilihan anda. Warna teks dikira daripadanya.",
+            "gradient": "Salah satu daripada enam kecerunan terbina, diwarnakan oleh warna jenama anda.",
+            "pattern": "Corak berulang yang halus dilukis dalam warna hadapan.",
+            "image": "Gambar yang dimuat naik, sentiasa di atas warna asas dan lapisan tindih.",
+            "none": "Tiada permukaan langsung. Halaman kekal dengan latar belakang biasa."
+        },
+        "recipes": {
+            "brand-fade": "Pudar jenama",
+            "brand-mesh": "Jaringan jenama",
+            "dusk": "Senja",
+            "dawn": "Subuh",
+            "ink": "Dakwat",
+            "aurora": "Aurora",
+            "dots": "Titik",
+            "grid": "Grid",
+            "diagonal": "Pepenjuru",
+            "noise": "Bintik"
+        },
+        "scrims": {
+            "none": "Tiada",
+            "light": "Ringan",
+            "medium": "Sederhana",
+            "strong": "Kuat"
+        },
+        "contrast": {
+            "title": "Kontras rendah",
+            "label": "Kontras {ratio} berbanding 1",
+            "ok": "Teks pada latar belakang ini memenuhi sasaran kebolehbacaan.",
+            "warning": "Di bawah {minimum} berbanding 1 yang disyorkan.",
+            "advisory": "Kontras yang diukur ialah {ratio} berbanding 1, di bawah {minimum} berbanding 1 yang disyorkan. Anda masih boleh menyimpan — borang log masuk sentiasa mengekalkan kadnya sendiri yang mudah dibaca.",
+            "imageNote": "Diukur terhadap warna asas; imej berada di atasnya di bawah lapisan tindih."
+        },
+        "media": {
+            "title": "Imej latar belakang",
+            "help": "Muat naik diperiksa melalui tandatangan fail sebenar, bukan namanya. Fail vektor boleh skala ditolak. Gambar disimpan secara awam supaya halaman log masuk boleh memuatkannya sebelum sesiapa log masuk.",
+            "current": "Imej semasa",
+            "none": "Tiada imej dimuat naik",
+            "remove": "Buang imej",
+            "removeConfirm": "Buang imej latar belakang? Susun atur kembali kepada warna asasnya.",
+            "formats": "PNG, JPEG atau WebP, sehingga 4 MB dan 4096 piksel setiap sisi."
+        },
+        "preview": {
+            "openLogin": "Buka halaman log masuk",
+            "help": "Dipaparkan daripada resolusi pelayan yang sama digunakan oleh halaman log masuk, jadi apa yang anda lihat di sini itulah yang disimpan.",
+            "tagline": "Slogan jenama anda",
+            "light": "Cerah",
+            "dark": "Gelap"
+        }
     }
 }

@@ -25,6 +25,9 @@ class SafeImage implements ValidationRule
         'favicon' => ['bytes' => 262144, 'w' => 1024, 'h' => 1024],
         'mark' => ['bytes' => 1048576, 'w' => 2048, 'h' => 2048],
         'og_image' => ['bytes' => 4194304, 'w' => 4096, 'h' => 4096],
+        // >>> MYRA v2.8 [B] START
+        'surface' => ['bytes' => 4194304, 'w' => 4096, 'h' => 4096],
+        // <<< MYRA v2.8 [B] END
         'default' => ['bytes' => 2097152, 'w' => 4096, 'h' => 4096],
     ];
 

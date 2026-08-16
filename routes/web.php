@@ -315,6 +315,10 @@ Route::middleware(['auth', 'verified', 'active', '2fa'])->prefix('admin')->name(
     // <<< MYRA v2.4 [B] END
     Route::post('/demo/relation-create', [DemoController::class, 'demoRelationCreate'])->name('demo.relation-create');
     Route::get('/demo/grouping', [DemoController::class, 'grouping'])->name('demo.grouping');
+    // >>> MYRA v2.4 [D] START
+    Route::get('/demo/scale', [DemoController::class, 'scale'])->name('demo.scale');
+    Route::get('/demo/scale-cursor', [DemoController::class, 'scaleCursor'])->name('demo.scale-cursor');
+    // <<< MYRA v2.4 [D] END
     Route::get('/demo/reordering', [DemoController::class, 'reordering'])->name('demo.reordering');
     Route::post('/demo/reorder', [DemoController::class, 'demoReorder'])->name('demo.reorder');
     Route::get('/demo/widgets', [DemoController::class, 'widgets'])->name('demo.widgets');

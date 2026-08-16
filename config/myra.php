@@ -209,6 +209,30 @@ return [
         'client_max_rows' => 5000,
     ],
 
+    // >>> MYRA v2.4 [D] START
+    /*
+    |--------------------------------------------------------------------------
+    | Scale
+    |--------------------------------------------------------------------------
+    |
+    | `stable_sort` adds an id tiebreak to the LENGTH-AWARE path. It is off by
+    | default because turning it on changes the SQL of every existing admin
+    | table (the row set is unchanged; which page a tied row lands on is not).
+    | The cursor path always applies the tiebreak — it is a correctness
+    | requirement there, not a preference.
+    |
+    */
+
+    'performance' => [
+        'stable_sort'          => env('MYRA_STABLE_SORT', false),
+        'virtualize_above'     => 200,
+        'row_height'           => 44,
+        'viewport_height'      => 600,
+        'overscan'             => 8,
+        'assert_indexed_sorts' => env('MYRA_ASSERT_INDEXES', false),
+    ],
+    // <<< MYRA v2.4 [D] END
+
     /*
     |--------------------------------------------------------------------------
     | Imports

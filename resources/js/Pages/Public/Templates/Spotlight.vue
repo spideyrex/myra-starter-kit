@@ -3,6 +3,7 @@ import { Head } from '@inertiajs/vue3';
 import { useThemeColors } from '@/composables/useThemeColors';
 import SiteNavbar from './_shared/SiteNavbar.vue';
 import SiteFooter from './_shared/SiteFooter.vue';
+import SiteSurface from './_shared/SiteSurface.vue';
 import TemplateBody from './_shared/TemplateBody.vue';
 import { useSiteBrand } from './_shared/useSiteBrand';
 import type { HomepageData, PageSectionRow } from '@/types';
@@ -28,10 +29,15 @@ const { name } = useSiteBrand();
     <Head :title="name" />
 
     <!-- Spotlight: a centred hero over a brand gradient, no pricing wall. -->
-    <div class="min-h-screen bg-background text-foreground">
-        <div class="pointer-events-none fixed inset-x-0 top-0 h-[32rem] bg-gradient-to-b from-primary/15 to-transparent" aria-hidden="true" />
+    <SiteSurface v-slot="{ translucent, active }">
+        <!-- The template's own wash is dropped once a real surface is behind it. -->
+        <div
+            v-if="!active"
+            class="pointer-events-none fixed inset-x-0 top-0 h-[32rem] bg-gradient-to-b from-primary/15 to-transparent"
+            aria-hidden="true"
+        />
 
-        <SiteNavbar :settings="settings" :authenticated="authenticated" variant="plain" />
+        <SiteNavbar :settings="settings" :authenticated="authenticated" variant="plain" :translucent="translucent" />
 
         <main id="content" class="relative">
             <TemplateBody
@@ -49,5 +55,5 @@ const { name } = useSiteBrand();
         </main>
 
         <SiteFooter :settings="settings" />
-    </div>
+    </SiteSurface>
 </template>

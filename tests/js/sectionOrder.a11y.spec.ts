@@ -9,10 +9,24 @@ vi.mock('@inertiajs/vue3', () => ({
     Head: { name: 'Head', props: ['title'], template: '<span />' },
     Link: { name: 'Link', props: ['href'], template: '<a :href="href"><slot /></a>' },
     useForm: (data: Record<string, unknown>) => {
-        const form = reactive({
+        // Mirrors Inertia: transform() stores a callback, returns the form for
+        // chaining, and put() submits what the callback produced. Without it a
+        // `form.transform(...).put(...)` caller throws and records nothing.
+        let transform: ((d: Record<string, unknown>) => Record<string, unknown>) | null = null;
+
+        const form: Record<string, unknown> = reactive({
             ...data,
             processing: false,
-            put: () => submitted.push({ ...form }),
+            transform(fn: (d: Record<string, unknown>) => Record<string, unknown>) {
+                transform = fn;
+
+                return form;
+            },
+            put: () => {
+                const payload = { ...form };
+
+                submitted.push(transform ? transform(payload) : payload);
+            },
         });
 
         return form;

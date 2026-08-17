@@ -5,6 +5,7 @@ import { useI18n } from 'vue-i18n';
 import { useThemeColors } from '@/composables/useThemeColors';
 import SiteNavbar from './_shared/SiteNavbar.vue';
 import SiteFooter from './_shared/SiteFooter.vue';
+import SiteSurface from './_shared/SiteSurface.vue';
 import TemplateBody from './_shared/TemplateBody.vue';
 import { useSiteBrand } from './_shared/useSiteBrand';
 import type { HomepageData, PageSectionRow } from '@/types';
@@ -39,8 +40,8 @@ const rail = computed(() =>
 <template>
     <Head :title="name" />
 
-    <div class="min-h-screen bg-background text-foreground">
-        <SiteNavbar :settings="settings" :authenticated="authenticated" />
+    <SiteSurface v-slot="{ translucent }">
+        <SiteNavbar :settings="settings" :authenticated="authenticated" :translucent="translucent" />
 
         <div class="mx-auto flex max-w-7xl gap-8 px-4 sm:px-6 lg:px-8">
             <aside class="hidden w-56 shrink-0 py-10 lg:block">
@@ -79,5 +80,5 @@ const rail = computed(() =>
         </div>
 
         <SiteFooter :settings="settings" />
-    </div>
+    </SiteSurface>
 </template>

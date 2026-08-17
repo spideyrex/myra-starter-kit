@@ -9,8 +9,16 @@ import type { HomepageData } from '@/types';
 import { useSiteBrand } from './useSiteBrand';
 
 const props = withDefaults(
-    defineProps<{ settings: HomepageData; authenticated: boolean; variant?: 'sticky' | 'plain' }>(),
-    { variant: 'sticky' },
+    defineProps<{
+        settings: HomepageData;
+        authenticated: boolean;
+        variant?: 'sticky' | 'plain';
+        // >>> MYRA v2.8 [C] START
+        /** Let the page surface show through instead of occluding it. */
+        translucent?: boolean;
+        // <<< MYRA v2.8 [C] END
+    }>(),
+    { variant: 'sticky', translucent: false },
 );
 
 const { t } = useI18n();
@@ -27,6 +35,26 @@ const navUrl = (url: unknown): string => safeUrl(url) || '#';
 
 const ctaUrl = computed(() => safeUrl(props.settings?.navbar_cta_url) || '#');
 const brandLogo = computed(() => safeSrc(logoUrl.value));
+
+// >>> MYRA v2.8 [C] START
+/** Opaque by default; nothing about the shipped navbar changes until asked. */
+const chromeClass = computed(() =>
+    props.translucent
+        ? 'border-transparent bg-transparent'
+        : 'bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60',
+);
+
+/**
+ * Over a surface the muted/foreground token pair is measured against the THEME
+ * background, not against whatever is behind the bar — so the links inherit the
+ * surface's server-computed foreground instead.
+ */
+const linkClass = computed(() =>
+    props.translucent
+        ? 'text-current opacity-80 transition-opacity hover:opacity-100'
+        : 'text-muted-foreground transition-colors hover:text-foreground',
+);
+// <<< MYRA v2.8 [C] END
 
 function smoothScroll(url: string) {
     if (!isAnchorLink(url)) return;
@@ -52,8 +80,8 @@ function smoothScroll(url: string) {
 
     <nav
         :aria-label="t('landing.nav.label')"
-        class="z-50 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60"
-        :class="props.variant === 'sticky' ? 'sticky top-0' : 'relative'"
+        class="z-50 border-b"
+        :class="[props.variant === 'sticky' ? 'sticky top-0' : 'relative', chromeClass]"
     >
         <div class="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
             <Link href="/" class="flex items-center gap-2.5">
@@ -73,7 +101,8 @@ function smoothScroll(url: string) {
                     <a
                         v-if="isAnchorLink(link.url)"
                         :href="link.url"
-                        class="rounded-md px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+                        class="rounded-md px-3 py-2 text-sm font-medium"
+                        :class="linkClass"
                         @click.prevent="smoothScroll(link.url)"
                     >
                         {{ link.label }}
@@ -81,7 +110,8 @@ function smoothScroll(url: string) {
                     <Link
                         v-else
                         :href="navUrl(link.url)"
-                        class="rounded-md px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+                        class="rounded-md px-3 py-2 text-sm font-medium"
+                        :class="linkClass"
                     >
                         {{ link.label }}
                     </Link>
@@ -117,7 +147,8 @@ function smoothScroll(url: string) {
             </button>
         </div>
 
-        <div v-if="mobileMenuOpen" id="site-mobile-menu" class="border-t md:hidden">
+        <!-- The dropdown stays opaque chrome even over a translucent bar. -->
+        <div v-if="mobileMenuOpen" id="site-mobile-menu" class="border-t bg-background text-foreground md:hidden">
             <div class="space-y-1 px-4 py-3">
                 <template v-for="link in settings.navbar_links" :key="link.label">
                     <a

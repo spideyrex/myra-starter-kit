@@ -2999,5 +2999,47 @@
             "light": "Light",
             "dark": "Dark"
         }
+    },
+    "appearancePage": {
+        "background": {
+            "title": "Page background",
+            "description": "What sits behind the navigation bar, the sections and the footer on the public page.",
+            "type": "Background",
+            "typeHelp": "None keeps the current theme background and changes nothing.",
+            "types": {
+                "none": "None",
+                "brand": "Brand colour",
+                "solid": "Solid colour",
+                "gradient": "Gradient",
+                "pattern": "Pattern",
+                "image": "Image"
+            },
+            "recipe": "Style",
+            "recipes": {
+                "brand-fade": "Brand fade",
+                "brand-mesh": "Brand mesh",
+                "dusk": "Dusk",
+                "dawn": "Dawn",
+                "ink": "Ink",
+                "aurora": "Aurora",
+                "dots": "Dots",
+                "grid": "Grid",
+                "diagonal": "Diagonal lines",
+                "noise": "Noise"
+            },
+            "color": "Base colour",
+            "colorHelp": "The text colour is measured against this and chosen for you. It is also what shows if the gradient, pattern or image cannot load.",
+            "scrim": "Image dimming",
+            "scrimHelp": "How much the image is darkened so text over it stays readable. An image is always dimmed a little.",
+            "scrims": {
+                "none": "None",
+                "light": "Light",
+                "medium": "Medium",
+                "strong": "Strong"
+            },
+            "navbar": "Show the background through the navigation bar",
+            "navbarHelp": "The bar drops its own panel so the background runs to the top of the page.",
+            "imageNote": "Background images are uploaded in the appearance editor. Until one is uploaded this falls back to the base colour."
+        }
     }
 }

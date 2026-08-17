@@ -6,6 +6,7 @@ import { useThemeColors } from '@/composables/useThemeColors';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import SiteNavbar from './_shared/SiteNavbar.vue';
 import SiteFooter from './_shared/SiteFooter.vue';
+import SiteSurface from './_shared/SiteSurface.vue';
 import TemplateBody from './_shared/TemplateBody.vue';
 import { useSiteBrand } from './_shared/useSiteBrand';
 import type { HomepageData, PageSectionRow } from '@/types';
@@ -34,8 +35,8 @@ const faqs = computed(() => ['billing', 'trial', 'support', 'cancel']);
 <template>
     <Head :title="name" />
 
-    <div class="min-h-screen bg-background text-foreground">
-        <SiteNavbar :settings="settings" :authenticated="authenticated" />
+    <SiteSurface v-slot="{ translucent }">
+        <SiteNavbar :settings="settings" :authenticated="authenticated" :translucent="translucent" />
 
         <main id="content">
             <TemplateBody
@@ -67,5 +68,5 @@ const faqs = computed(() => ['billing', 'trial', 'support', 'cancel']);
         </main>
 
         <SiteFooter :settings="settings" />
-    </div>
+    </SiteSurface>
 </template>

@@ -2894,5 +2894,110 @@
             "title": "此构建缺少的外壳",
             "description": "这些布局已在服务端注册，但组件文件不存在，因此登录页会回退到分栏外壳。"
         }
+    },
+    "appearanceAdmin": {
+        "title": "登录页外观",
+        "description": "选择登录、注册与密码页面背后的布局和背景。默认值保持当前布局完全不变。",
+        "save": "保存外观",
+        "tabs": {
+            "layout": "布局",
+            "background": "背景",
+            "media": "图片",
+            "preview": "预览"
+        },
+        "fields": {
+            "layout": "布局",
+            "flip": "左右镜像",
+            "showTagline": "显示品牌标语",
+            "type": "背景",
+            "color": "基础颜色",
+            "recipe": "样式",
+            "scrim": "遮罩"
+        },
+        "help": {
+            "flip": "把装饰面板移到屏幕的另一侧。",
+            "flipUnsupported": "此布局没有可镜像的侧边面板。",
+            "showTagline": "隐藏标语区块，不改变布局。",
+            "type": "基础颜色总是先绘制，因此即使图片始终加载不出来，文字仍然清晰可读。",
+            "color": "六位十六进制值，例如以井号开头的 ffffff。文字颜色由它测量得出，不由人手填写。",
+            "scrim": "背景与文字之间的深色薄纱。越强越易读。",
+            "scrimFloor": "图片背景永远不会没有薄纱；页面渲染时“无”会被提升为“轻”。"
+        },
+        "layouts": {
+            "split": {
+                "title": "左右分栏",
+                "description": "当前布局。一半是品牌面板，另一半是表单。"
+            },
+            "centered": {
+                "title": "居中",
+                "description": "表单卡片居中于背景之上，品牌标记位于其上方。"
+            },
+            "cover": {
+                "title": "满屏",
+                "description": "整屏背景，表单卡片浮于其上。"
+            },
+            "card": {
+                "title": "卡片",
+                "description": "分栏收进卡片内部，页面保持素净。"
+            }
+        },
+        "backgrounds": {
+            "brand": "品牌",
+            "solid": "纯色",
+            "gradient": "渐变",
+            "pattern": "图案",
+            "image": "图片",
+            "none": "无"
+        },
+        "backgroundHelp": {
+            "brand": "当前效果。使用品牌色，不添加任何额外样式。",
+            "solid": "你选定的一种颜色。文字颜色据此计算。",
+            "gradient": "六种内置渐变之一，按品牌色着色。",
+            "pattern": "以前景色绘制的细微重复图案。",
+            "image": "上传的图片，始终位于基础颜色与遮罩之上。",
+            "none": "完全不加背景。页面保留原本的底色。"
+        },
+        "recipes": {
+            "brand-fade": "品牌渐隐",
+            "brand-mesh": "品牌网格",
+            "dusk": "黄昏",
+            "dawn": "黎明",
+            "ink": "墨色",
+            "aurora": "极光",
+            "dots": "圆点",
+            "grid": "网格",
+            "diagonal": "斜纹",
+            "noise": "噪点"
+        },
+        "scrims": {
+            "none": "无",
+            "light": "轻",
+            "medium": "中",
+            "strong": "强"
+        },
+        "contrast": {
+            "title": "对比度偏低",
+            "label": "对比度 {ratio} 比 1",
+            "ok": "该背景上的文字达到可读性目标。",
+            "warning": "低于建议的 {minimum} 比 1。",
+            "advisory": "实测对比度为 {ratio} 比 1，低于建议的 {minimum} 比 1。你仍然可以保存 —— 登录表单本身始终保留自己可读的卡片。",
+            "imageNote": "按基础颜色测量；图片位于其上、遮罩之下。"
+        },
+        "media": {
+            "title": "背景图片",
+            "help": "上传按文件真实签名校验，而非文件名。可缩放矢量文件一律拒绝。图片存放在公开位置，登录页在任何人登录前就能加载它。",
+            "current": "当前图片",
+            "none": "尚未上传图片",
+            "remove": "移除图片",
+            "removeConfirm": "移除背景图片？布局将回退到其基础颜色。",
+            "formats": "PNG、JPEG 或 WebP，最大 4 MB，边长不超过 4096 像素。"
+        },
+        "preview": {
+            "openLogin": "打开登录页",
+            "help": "由登录页所用的同一套服务端解析渲染，所见即所存。",
+            "tagline": "你的品牌标语",
+            "light": "浅色",
+            "dark": "深色"
+        }
     }
 }

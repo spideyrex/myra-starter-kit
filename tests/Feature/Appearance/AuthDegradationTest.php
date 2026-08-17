@@ -124,7 +124,7 @@ class AuthDegradationTest extends TestCase
 
         $this->assertNull($background->imageUrl());
 
-        $vars = app(AppearanceManager::class)->toInertiaProp()['auth']['surface']['css_vars'];
+        $vars = (array) app(AppearanceManager::class)->toInertiaProp()['auth']['surface']['css_vars'];
         $vars = (array) $vars;
 
         $this->assertArrayHasKey('--myra-auth-bg', $vars);

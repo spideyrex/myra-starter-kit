@@ -2825,7 +2825,8 @@
         },
         "liveEdit": {
             "toggle": "Edit langsung",
-            "hint": "Klik mana-mana teks dalam pratonton untuk menyuntingnya."
+            "hint": "Klik mana-mana teks dalam pratonton untuk menyuntingnya.",
+            "needsSections": "Pratonton ini ialah laman utama semasa anda daripada tetapan, jadi tiada apa-apa untuk disunting di sini lagi. Pilih “Convert my current homepage” untuk menjadikannya bahagian yang boleh disunting."
         }
     }
 }

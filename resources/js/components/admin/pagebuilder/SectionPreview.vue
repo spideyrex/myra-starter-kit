@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import BlockViewportBar from '@/components/admin/blocks/BlockViewportBar.vue';
-import { ExternalLink, RefreshCw } from 'lucide-vue-next';
+import { ExternalLink, Info, RefreshCw } from 'lucide-vue-next';
 import { adminPath } from '@/lib/adminPath';
 import { useLiveEditHost } from '@/composables/useLiveEditHost';
 import type { FieldKind } from '@/pagebuilder/liveEditProtocol';
@@ -55,6 +55,13 @@ const dark = ref(false);
 const frame = ref<HTMLIFrameElement | null>(null);
 
 const liveEdit = ref(true);
+
+/**
+ * With no sections the preview falls back to the settings-driven homepage,
+ * which carries no block markers — so there is nothing to write an edit back
+ * to. Saying so beats a page that silently ignores every click.
+ */
+const nothingToEdit = computed(() => liveEdit.value && props.blocks.length === 0);
 
 let timer: ReturnType<typeof setTimeout> | null = null;
 let seq = 0;
@@ -250,6 +257,14 @@ defineExpose({ refresh, highlight: host.highlight });
                 </Button>
             </div>
         </div>
+
+        <p
+            v-if="nothingToEdit"
+            class="flex items-start gap-2 rounded-md border border-amber-500/40 bg-amber-500/10 px-3 py-2 text-xs text-amber-900 dark:text-amber-200"
+        >
+            <Info class="mt-0.5 size-4 shrink-0" aria-hidden="true" />
+            <span>{{ t('pageBuilder.liveEdit.needsSections') }}</span>
+        </p>
 
         <div class="flex min-h-0 flex-1 justify-center overflow-auto rounded-lg border bg-muted/30 p-2">
             <iframe

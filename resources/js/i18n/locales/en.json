@@ -2825,7 +2825,8 @@
         },
         "liveEdit": {
             "toggle": "Live edit",
-            "hint": "Click any text in the preview to edit it."
+            "hint": "Click any text in the preview to edit it.",
+            "needsSections": "This preview is your current homepage from settings, so there is nothing to edit here yet. Choose “Convert my current homepage” to turn it into editable sections."
         }
     }
 }

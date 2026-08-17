@@ -2825,7 +2825,8 @@
         },
         "liveEdit": {
             "toggle": "实时编辑",
-            "hint": "点击预览中的任意文字即可编辑。"
+            "hint": "点击预览中的任意文字即可编辑。",
+            "needsSections": "此预览显示的是设置中的当前主页，因此这里暂时没有可编辑的内容。请选择“Convert my current homepage”将其转换为可编辑的区块。"
         }
     }
 }

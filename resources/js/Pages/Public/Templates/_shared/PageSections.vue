@@ -66,11 +66,17 @@ function keyFor(row: PageSectionRow, index: number): string {
 
 <template>
     <SectionBoundary v-for="(row, index) in rows" :key="keyFor(row, index)" :type="row.type">
+        <!--
+            data-myra-block falls through to each section's single root element,
+            which is what lets the live-edit agent map a clicked field back to
+            the row that owns it. Inert outside the builder's preview frame.
+        -->
         <component
             :is="componentFor(row)"
             :block="dataOf(row)"
             :settings="settings"
             :variant="variantFor(row)"
+            :data-myra-block="keyFor(row, index)"
         />
     </SectionBoundary>
 </template>

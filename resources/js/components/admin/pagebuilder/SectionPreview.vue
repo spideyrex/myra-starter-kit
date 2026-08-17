@@ -1,11 +1,15 @@
 <script setup lang="ts">
-import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
+import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import axios from 'axios';
 import { Button } from '@/components/ui/button';
+import { Switch } from '@/components/ui/switch';
+import { Label } from '@/components/ui/label';
 import BlockViewportBar from '@/components/admin/blocks/BlockViewportBar.vue';
 import { ExternalLink, RefreshCw } from 'lucide-vue-next';
 import { adminPath } from '@/lib/adminPath';
+import { useLiveEditHost } from '@/composables/useLiveEditHost';
+import type { FieldKind } from '@/pagebuilder/liveEditProtocol';
 
 /**
  * The page-builder preview pane.
@@ -32,6 +36,12 @@ const props = withDefaults(
     { blocks: () => [], template: '', debounceMs: 700 },
 );
 
+const emit = defineEmits<{
+    (e: 'field-change', block: string, path: string, value: string): void;
+    (e: 'select', block: string): void;
+    (e: 'activate', block: string, path: string, kind: FieldKind): void;
+}>();
+
 const { t } = useI18n();
 
 const PREVIEW_ROUTE = 'admin.landing.builder.preview';
@@ -44,8 +54,37 @@ const viewport = ref('full');
 const dark = ref(false);
 const frame = ref<HTMLIFrameElement | null>(null);
 
+const liveEdit = ref(true);
+
 let timer: ReturnType<typeof setTimeout> | null = null;
 let seq = 0;
+
+/**
+ * The blocks as they already appear INSIDE the frame.
+ *
+ * An inline edit mutates the draft, which would ordinarily trip the deep watcher
+ * and reload the iframe — destroying the caret mid-word. Recording what the frame
+ * already shows lets the republish be skipped for exactly those changes, and only
+ * those: a left-panel edit still differs from this snapshot and still republishes.
+ */
+let frameEcho = '';
+
+const host = useLiveEditHost({
+    frame,
+    onChange(block, path, value) {
+        emit('field-change', block, path, value);
+
+        void nextTick(() => {
+            frameEcho = JSON.stringify(props.blocks);
+        });
+    },
+    onSelect(block) {
+        emit('select', block);
+    },
+    onActivate(block, path, kind) {
+        emit('activate', block, path, kind);
+    },
+});
 
 /** Ziggy knows the route only once bundle C's routes file is merged. */
 function endpoint(): string {
@@ -133,6 +172,11 @@ function schedule(): void {
 
     timer = setTimeout(() => {
         timer = null;
+
+        // Reloading to show what the frame already renders would only throw the
+        // caret away mid-sentence.
+        if (JSON.stringify(props.blocks) === frameEcho) return;
+
         void publish();
     }, props.debounceMs);
 }
@@ -144,12 +188,22 @@ function refresh(): void {
         timer = null;
     }
 
+    // An explicit refresh is a request for the truth, so the echo is dropped.
+    frameEcho = '';
+
     void publish();
+}
+
+/** Re-arm the frame after every load: a reload creates a fresh, inert document. */
+function onFrameLoad(): void {
+    applyTheme();
+    host.setEnabled(liveEdit.value);
 }
 
 watch(() => props.blocks, schedule, { deep: true });
 watch(() => props.template, schedule);
 watch(dark, applyTheme);
+watch(liveEdit, on => host.setEnabled(on));
 
 onMounted(() => {
     dark.value = document.documentElement.classList.contains('dark');
@@ -161,7 +215,7 @@ onBeforeUnmount(() => {
     seq++;
 });
 
-defineExpose({ refresh });
+defineExpose({ refresh, highlight: host.highlight });
 </script>
 
 <template>
@@ -170,6 +224,13 @@ defineExpose({ refresh });
             <BlockViewportBar v-model="viewport" v-model:dark="dark" />
 
             <div class="flex items-center gap-2">
+                <div class="flex items-center gap-2 pr-1">
+                    <Switch id="live-edit" v-model="liveEdit" />
+                    <Label for="live-edit" class="cursor-pointer text-sm font-normal">
+                        {{ t('pageBuilder.liveEdit.toggle') }}
+                    </Label>
+                </div>
+
                 <Button
                     type="button"
                     variant="outline"
@@ -198,7 +259,7 @@ defineExpose({ refresh });
                 :title="t('blocks.preview.frameTitle', { name: t('landing.title') })"
                 :style="frameStyle"
                 class="h-full min-h-[36rem] max-w-full rounded-md border bg-background"
-                @load="applyTheme"
+                @load="onFrameLoad"
             />
 
             <p v-else class="flex items-center justify-center p-10 text-sm text-muted-foreground">

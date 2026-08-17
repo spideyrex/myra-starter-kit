@@ -66,7 +66,7 @@
             "failed": "Request failed"
         }
     },
-    "generated": {},
+    "generated": [],
     "common": {
         "save": "Save",
         "cancel": "Cancel",
@@ -2822,6 +2822,10 @@
             "title": "Documentation",
             "description": "The stored block shape, the degradation guarantees, how a package contributes a section type, the preview contract and the rollback procedure.",
             "link": "Read the page builder guide"
+        },
+        "liveEdit": {
+            "toggle": "Live edit",
+            "hint": "Click any text in the preview to edit it."
         }
     }
 }

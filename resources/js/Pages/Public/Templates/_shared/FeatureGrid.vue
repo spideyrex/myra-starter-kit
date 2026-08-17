@@ -25,8 +25,8 @@ function getIcon(name: string) {
     <section id="features" class="border-t py-20 sm:py-24" :class="bare ? '' : 'bg-muted/30'">
         <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <div class="mx-auto max-w-2xl text-center">
-                <h2 class="text-3xl font-bold tracking-tight sm:text-4xl">{{ settings.features_title }}</h2>
-                <p class="mt-4 text-lg text-muted-foreground">{{ settings.features_subtitle }}</p>
+                <h2 class="text-3xl font-bold tracking-tight sm:text-4xl" data-myra-field="title" data-myra-kind="text">{{ settings.features_title }}</h2>
+                <p class="mt-4 text-lg text-muted-foreground" data-myra-field="subtitle" data-myra-kind="multiline">{{ settings.features_subtitle }}</p>
             </div>
             <div
                 class="mt-16 grid gap-8 sm:grid-cols-2"
@@ -42,10 +42,10 @@ function getIcon(name: string) {
                         <div class="mb-3 flex size-12 items-center justify-center rounded-lg bg-primary/10">
                             <component :is="getIcon(feature.icon)" class="size-6 text-primary" aria-hidden="true" />
                         </div>
-                        <CardTitle class="text-lg">{{ feature.title }}</CardTitle>
+                        <CardTitle class="text-lg" :data-myra-field="`items.${i}.title`" data-myra-kind="text">{{ feature.title }}</CardTitle>
                     </CardHeader>
                     <CardContent>
-                        <p class="text-muted-foreground">{{ feature.description }}</p>
+                        <p class="text-muted-foreground" :data-myra-field="`items.${i}.description`" data-myra-kind="multiline">{{ feature.description }}</p>
                     </CardContent>
                 </Card>
             </div>

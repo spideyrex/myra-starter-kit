@@ -20,8 +20,8 @@ const planUrl = (url: unknown): string => safeUrl(url) || '#';
     <section id="pricing" class="border-t py-20 sm:py-24" :class="tinted ? 'bg-muted/30' : ''">
         <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <div class="mx-auto max-w-2xl text-center">
-                <h2 class="text-3xl font-bold tracking-tight sm:text-4xl">{{ settings.pricing_title }}</h2>
-                <p class="mt-4 text-lg text-muted-foreground">{{ settings.pricing_subtitle }}</p>
+                <h2 class="text-3xl font-bold tracking-tight sm:text-4xl" data-myra-field="title" data-myra-kind="text">{{ settings.pricing_title }}</h2>
+                <p class="mt-4 text-lg text-muted-foreground" data-myra-field="subtitle" data-myra-kind="multiline">{{ settings.pricing_subtitle }}</p>
             </div>
             <div class="mt-16 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
                 <Card
@@ -35,10 +35,10 @@ const planUrl = (url: unknown): string => safeUrl(url) || '#';
                         {{ t('landing.pricing.popular') }}
                     </Badge>
                     <CardHeader class="text-center">
-                        <CardTitle class="text-xl">{{ plan.name }}</CardTitle>
+                        <CardTitle class="text-xl" :data-myra-field="`plans.${i}.name`" data-myra-kind="text">{{ plan.name }}</CardTitle>
                         <div class="mt-4">
-                            <span class="text-4xl font-extrabold">{{ plan.price }}</span>
-                            <span class="text-muted-foreground">{{ plan.period }}</span>
+                            <span class="text-4xl font-extrabold" :data-myra-field="`plans.${i}.price`" data-myra-kind="text">{{ plan.price }}</span>
+                            <span class="text-muted-foreground" :data-myra-field="`plans.${i}.period`" data-myra-kind="text">{{ plan.period }}</span>
                         </div>
                     </CardHeader>
                     <CardContent class="flex flex-1 flex-col">
@@ -54,7 +54,7 @@ const planUrl = (url: unknown): string => safeUrl(url) || '#';
                         </ul>
                         <Link :href="planUrl(plan.cta_url)" class="mt-8 block">
                             <Button class="w-full" :variant="plan.highlighted ? 'default' : 'outline'">
-                                {{ plan.cta_text }}
+                                <span :data-myra-field="`plans.${i}.cta_text`" data-myra-kind="text">{{ plan.cta_text }}</span>
                             </Button>
                         </Link>
                     </CardContent>

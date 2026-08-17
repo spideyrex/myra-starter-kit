@@ -15,6 +15,8 @@ import { ExternalLink, Plus, Redo2, Save, Undo2 } from 'lucide-vue-next';
 import { useConfirm } from '@/composables/useConfirm';
 import { useCommandScope, type Command } from '@/composables/useCommandRegistry';
 import { useSectionList, type SectionSchema } from '@/composables/useSectionList';
+import { applyPath } from '@/composables/useLiveEditHost';
+import type { FieldKind } from '@/pagebuilder/liveEditProtocol';
 
 const props = withDefaults(defineProps<{
     blocks?: unknown;
@@ -210,6 +212,56 @@ async function convert(): Promise<void> {
 function revert(): void {
     list.load([]);
 }
+
+// ---------------------------------------------------------------- live edit
+
+/**
+ * A field edited inside the preview. `path` may address a repeater item
+ * (`items.2.title`); applyPath resolves it back to a single root field so the
+ * change still goes through update() and still lands in the undo stack.
+ */
+function onLiveChange(block: string, path: string, value: string): void {
+    const row = list.rows.value.find(candidate => candidate.id === block);
+
+    if (!row) return;
+
+    const applied = applyPath(row.data, path, value);
+
+    if (applied === null) return;
+
+    // A no-op edit (focus in, focus out) must not mark the page dirty.
+    if (JSON.stringify(row.data[applied.field] ?? null) === JSON.stringify(applied.value)) return;
+
+    list.update(block, applied.field, applied.value);
+}
+
+function onLiveSelect(block: string): void {
+    if (!list.rows.value.some(row => row.id === block)) return;
+
+    list.selectedId.value = block;
+    list.expand(block);
+}
+
+/**
+ * Images and rich text are not edited in place — a browser would invent markup,
+ * and there is nowhere in the page to put a file picker. Selecting the section
+ * and scrolling its card into view puts the real control under the cursor.
+ */
+function onLiveActivate(block: string, path: string, _kind: FieldKind): void {
+    onLiveSelect(block);
+
+    void nextTick(() => {
+        const root = path.split('.')[0] ?? '';
+        const card = document.querySelector<HTMLElement>(`[data-section-card="${CSS.escape(block)}"]`);
+
+        card?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
+        const control = card?.querySelector<HTMLElement>(`[data-field="${CSS.escape(root)}"]`);
+
+        control?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        control?.querySelector<HTMLElement>('input, textarea, button')?.focus();
+    });
+}
 </script>
 
 <template>
@@ -337,6 +389,9 @@ function revert(): void {
                         v-if="PreviewPane"
                         :blocks="list.rows.value"
                         :template="template"
+                        @field-change="onLiveChange"
+                        @select="onLiveSelect"
+                        @activate="onLiveActivate"
                     />
                     <div v-else class="flex h-full min-h-[32rem] flex-col gap-2">
                         <p class="text-xs text-muted-foreground">{{ t('pageBuilder.editor.preview.savedOnly') }}</p>
@@ -372,6 +427,9 @@ function revert(): void {
                     v-if="PreviewPane"
                     :blocks="list.rows.value"
                     :template="template"
+                    @field-change="onLiveChange"
+                    @select="onLiveSelect"
+                    @activate="onLiveActivate"
                 />
                 <div v-else class="space-y-2">
                     <p class="text-xs text-muted-foreground">{{ t('pageBuilder.editor.preview.savedOnly') }}</p>

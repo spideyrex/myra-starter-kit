@@ -43,7 +43,7 @@ const columns = computed(() => {
 <template>
     <section class="border-t py-16 sm:py-20" :class="tinted ? 'bg-muted/30' : ''">
         <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <h2 v-if="title" class="mx-auto max-w-2xl text-center text-3xl font-bold tracking-tight sm:text-4xl">
+            <h2 v-if="title" class="mx-auto max-w-2xl text-center text-3xl font-bold tracking-tight sm:text-4xl" data-myra-field="title" data-myra-kind="text">
                 {{ title }}
             </h2>
             <dl v-if="items.length" class="mt-12 grid grid-cols-1 gap-8" :class="columns">
@@ -52,8 +52,8 @@ const columns = computed(() => {
                     :key="i"
                     class="flex flex-col items-center gap-2 rounded-xl border bg-background p-6 text-center"
                 >
-                    <dt class="order-2 text-sm text-muted-foreground">{{ item.label }}</dt>
-                    <dd class="order-1 text-4xl font-bold tracking-tight text-primary">{{ item.value }}</dd>
+                    <dt class="order-2 text-sm text-muted-foreground" :data-myra-field="`items.${i}.label`" data-myra-kind="text">{{ item.label }}</dt>
+                    <dd class="order-1 text-4xl font-bold tracking-tight text-primary" :data-myra-field="`items.${i}.value`" data-myra-kind="text">{{ item.value }}</dd>
                 </div>
             </dl>
         </div>

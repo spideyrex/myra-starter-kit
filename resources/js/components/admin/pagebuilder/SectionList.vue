@@ -158,6 +158,7 @@ watch(errorsByIndex, async (map) => {
                 <SectionCard
                     v-for="(row, index) in dragList"
                     :key="row.id"
+                    :data-section-card="row.id"
                     :row="row"
                     :schema="list.schemaOf(row.type)"
                     :index="index"

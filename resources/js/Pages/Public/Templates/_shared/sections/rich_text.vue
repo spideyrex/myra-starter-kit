@@ -42,7 +42,7 @@ const tinted = computed(() => variant.value.tinted === true);
 <template>
     <section class="border-t py-16 sm:py-20" :class="tinted ? 'bg-muted/30' : ''">
         <div class="mx-auto px-4 sm:px-6 lg:px-8" :class="wide ? 'max-w-5xl' : 'max-w-3xl'">
-            <h2 v-if="heading" class="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
+            <h2 v-if="heading" class="text-3xl font-bold tracking-tight text-foreground sm:text-4xl" data-myra-field="heading" data-myra-kind="text">
                 {{ heading }}
             </h2>
             <!-- eslint-disable-next-line vue/no-v-html -->
@@ -62,6 +62,8 @@ const tinted = computed(() => variant.value.tinted === true);
                        [&_strong]:text-foreground [&_table]:w-full [&_table]:text-left
                        [&_td]:border-b [&_td]:border-border [&_td]:py-2 [&_th]:border-b [&_th]:border-border [&_th]:py-2 [&_th]:font-semibold
                        [&_ul]:my-4 [&_ul]:list-disc [&_ul]:pl-6"
+                data-myra-field="body"
+                data-myra-kind="html"
                 v-html="body"
             />
         </div>

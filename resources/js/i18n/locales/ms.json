@@ -66,7 +66,7 @@
             "failed": "Permintaan gagal"
         }
     },
-    "generated": {},
+    "generated": [],
     "common": {
         "save": "Simpan",
         "cancel": "Batal",
@@ -2822,6 +2822,10 @@
             "title": "Dokumentasi",
             "description": "Bentuk blok yang disimpan, jaminan penurunan taraf, cara pakej menyumbang jenis bahagian, kontrak pratonton dan prosedur pengembalian.",
             "link": "Baca panduan pembina halaman"
+        },
+        "liveEdit": {
+            "toggle": "Edit langsung",
+            "hint": "Klik mana-mana teks dalam pratonton untuk menyuntingnya."
         }
     }
 }

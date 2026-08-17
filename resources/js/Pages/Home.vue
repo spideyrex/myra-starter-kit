@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, defineAsyncComponent, type Component, type DefineComponent } from 'vue';
+import { computed, defineAsyncComponent, onBeforeUnmount, onMounted, type Component, type DefineComponent } from 'vue';
 import type { HomepageData, PageSectionRow } from '@/types';
 import Classic from './Public/Templates/Classic.vue';
 
@@ -46,6 +46,36 @@ const resolved = computed<Component>(() => {
     }
 
     return cache.get(key)!;
+});
+
+/**
+ * Live editing is loaded ONLY for a framed draft preview: `?preview=` present
+ * and a parent document to talk to. An anonymous visitor, and an author opening
+ * the preview in its own tab, never fetch the agent at all.
+ */
+let stopAgent: (() => void) | null = null;
+
+function framedPreview(): boolean {
+    if (typeof window === 'undefined' || window.parent === window) return false;
+
+    return new URLSearchParams(window.location.search).get('preview') !== null;
+}
+
+onMounted(async () => {
+    if (!framedPreview()) return;
+
+    try {
+        const { startLiveEditAgent } = await import('@/pagebuilder/liveEditAgent');
+
+        stopAgent = startLiveEditAgent();
+    } catch {
+        // The preview stays a correct, read-only page if the agent cannot load.
+    }
+});
+
+onBeforeUnmount(() => {
+    stopAgent?.();
+    stopAgent = null;
 });
 </script>
 

@@ -61,6 +61,8 @@ const external = computed(() => isExternalUrl(link.value));
                     class="block focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
                 >
                     <img
+                        data-myra-field="image_url"
+                        data-myra-kind="image"
                         :src="url"
                         :alt="alt"
                         loading="lazy"
@@ -69,7 +71,7 @@ const external = computed(() => isExternalUrl(link.value));
                         :class="rounded ? 'rounded-xl' : ''"
                     />
                 </component>
-                <figcaption v-if="caption" class="mt-3 text-center text-sm text-muted-foreground">
+                <figcaption v-if="caption" class="mt-3 text-center text-sm text-muted-foreground" data-myra-field="caption" data-myra-kind="text">
                     {{ caption }}
                 </figcaption>
             </figure>

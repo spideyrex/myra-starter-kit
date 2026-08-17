@@ -39,13 +39,21 @@ const tinted = computed(() => variant.value.tinted === true);
     <section class="border-t py-16 sm:py-20" :class="tinted ? 'bg-muted/30' : ''">
         <div class="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
             <div v-if="title || subtitle" class="text-center">
-                <h2 v-if="title" class="text-3xl font-bold tracking-tight sm:text-4xl">{{ title }}</h2>
-                <p v-if="subtitle" class="mt-4 text-lg text-muted-foreground">{{ subtitle }}</p>
+                <h2 v-if="title" class="text-3xl font-bold tracking-tight sm:text-4xl" data-myra-field="title" data-myra-kind="text">{{ title }}</h2>
+                <p v-if="subtitle" class="mt-4 text-lg text-muted-foreground" data-myra-field="subtitle" data-myra-kind="multiline">{{ subtitle }}</p>
             </div>
             <Accordion v-if="items.length" type="single" collapsible class="mt-10 w-full">
-                <AccordionItem v-for="item in items" :key="item.value" :value="item.value">
-                    <AccordionTrigger class="text-base">{{ item.question }}</AccordionTrigger>
-                    <AccordionContent class="text-muted-foreground">{{ item.answer }}</AccordionContent>
+                <AccordionItem v-for="(item, i) in items" :key="item.value" :value="item.value">
+                    <AccordionTrigger class="text-base">
+                        <span :data-myra-field="`items.${i}.question`" data-myra-kind="text">{{ item.question }}</span>
+                    </AccordionTrigger>
+                    <AccordionContent
+                        class="text-muted-foreground"
+                        :data-myra-field="`items.${i}.answer`"
+                        data-myra-kind="multiline"
+                    >
+                        {{ item.answer }}
+                    </AccordionContent>
                 </AccordionItem>
             </Accordion>
         </div>

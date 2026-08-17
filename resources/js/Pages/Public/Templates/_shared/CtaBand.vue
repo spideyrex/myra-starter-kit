@@ -20,19 +20,23 @@ const ctaUrl = computed(() => safeUrl(props.settings?.cta_button_url) || '#');
                     <h2
                         class="text-3xl font-bold tracking-tight sm:text-4xl"
                         :class="muted ? 'text-foreground' : 'text-primary-foreground'"
+                        data-myra-field="title"
+                        data-myra-kind="text"
                     >
                         {{ settings.cta_title }}
                     </h2>
                     <p
                         class="mt-4 text-lg"
                         :class="muted ? 'text-muted-foreground' : 'text-primary-foreground/80'"
+                        data-myra-field="subtitle"
+                        data-myra-kind="multiline"
                     >
                         {{ settings.cta_subtitle }}
                     </p>
                     <div class="mt-8">
                         <Link :href="ctaUrl">
                             <Button size="lg" :variant="muted ? 'default' : 'secondary'" class="gap-2 text-base">
-                                {{ settings.cta_button_text }}
+                                <span data-myra-field="button_text" data-myra-kind="text">{{ settings.cta_button_text }}</span>
                                 <ArrowRight class="size-4" aria-hidden="true" />
                             </Button>
                         </Link>

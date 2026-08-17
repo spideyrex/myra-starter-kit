@@ -138,6 +138,23 @@ These have each cost a sweep more than once. They are cheap to avoid and expensi
    found 8 of 9 route groups; `admin.stop-impersonate` was declared with a literal URI
    outside any group and was caught only by a test that asserted the invariant over the
    real route table. Assert the property, don't enumerate the call sites.
+9. **Never put an HTML comment at the top level of `<template>`.** It makes the component
+   MULTI-ROOT: attribute fallthrough silently dies and Vue Test Utils hands the test a
+   fragment instead of your element. Seven of `SiteSurface.vue`'s own tests failed on merge
+   for exactly this. Put the note in the `<script>` doc block.
+10. **A new required prop on an existing page is a breaking change.** `Landing/Index.vue`
+    gained a required `surface` prop and white-screened for any caller that did not send it,
+    including its own older tests. Give new props defaults.
+11. **A hand-written `useForm` mock must mirror Inertia's chainable API.** A caller that
+    starts using `form.transform(...).put(...)` throws against a mock with no `transform`,
+    and the test reports "recorded nothing" rather than the real error.
+12. **A bundle that branches before an infrastructure change will re-introduce it.** Three
+    of four v2.8 bundles hardcoded `prefix('admin')` because they forked before the prefix
+    moved. Re-grep for the invariant after every merge, and keep the guard test that proves it.
+13. **Do not compare a JSON-decoded payload against raw PHP.** `->json()` gives arrays;
+    `viewData()` gives the objects the controller built (`css_vars` is a stdClass so `{}`
+    survives encoding). Put both sides through JSON, or the test is asserting on
+    `json_decode`, not on your payload.
 
 ---
 

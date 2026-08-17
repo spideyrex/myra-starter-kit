@@ -163,6 +163,13 @@ The "easy to scale up the platform" foundation.
 
 ## Shipped
 
+- [x] v2.8 Appearance ("Surface") — four swappable guest layouts (split, centred,
+      cover, card), six background types over ten authored recipes, a scrim with a
+      floor for image-backed surfaces, and a configurable background behind the
+      public homepage. Admin editor at `/dashboard/appearance`, gallery at
+      `/dashboard/demo/auth-layouts`. Both defaults (`auth = brand`, `page = none`)
+      emit zero CSS, so an upgrade that changes nothing renders the same DOM.
+      See [appearance.md](appearance.md).
 - [x] Live editing in the page-builder preview — click any heading, subtitle,
       button label, stat, FAQ answer or testimonial in the preview and type.
       Section renderers emit `data-myra-field`/`data-myra-kind`; an in-frame agent

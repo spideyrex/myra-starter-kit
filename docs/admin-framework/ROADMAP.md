@@ -163,6 +163,13 @@ The "easy to scale up the platform" foundation.
 
 ## Shipped
 
+- [x] Live editing in the page-builder preview — click any heading, subtitle,
+      button label, stat, FAQ answer or testimonial in the preview and type.
+      Section renderers emit `data-myra-field`/`data-myra-kind`; an in-frame agent
+      turns those into contenteditable regions and posts changes over a
+      channel-tagged, origin-checked postMessage. Loaded only for a framed
+      `?preview=` page. Images and rich text select the section and scroll their
+      real control into view instead. See [live-edit.md](live-edit.md).
 - [x] Admin URL prefix — moved `/admin` → `/dashboard` and made it configuration
       (`myra.admin.prefix`, env `MYRA_ADMIN_PREFIX`). Route names stay `admin.*`, so the
       ~370 `route('admin.…')` call sites were untouched. `Myra::adminPrefix()/adminPath()`

@@ -468,6 +468,10 @@ Route::middleware(['auth', 'verified', 'active', '2fa', 'permission:demo.view'])
     });
 // <<< MYRA v2.7 [D] END
 
+// >>> MYRA v2.8 [D] START
+require __DIR__.'/myra/appearance-demo.php';
+// <<< MYRA v2.8 [D] END
+
 // >>> MYRA v2.8 [PREFIX] START
 // Old /admin/... links keep working after the prefix moved. GET only: a 302
 // turns a POST into a GET, so redirecting writes would silently drop the body.

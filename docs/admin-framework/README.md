@@ -18,6 +18,7 @@ An admin framework built on Laravel + Inertia.js + Vue 3 (TypeScript) with shadc
 | [Screen Reference](screens.md) | Every admin page, screenshotted against production |
 | [Page Builder](../page-builder.md) | Landing page sections: stored shape, degradation guarantees, packaging a section type |
 | [Live Edit](live-edit.md) | Editing the page directly in the preview: field markers, the frame bridge |
+| [Appearance](appearance.md) | Guest layouts and page surfaces: the four shells, the six background types, the contrast guarantee |
 | [Reporting](reporting.md) | Report builder, 15 chart types, drill-down, scheduled delivery, PDF |
 | [Dashboard & Realtime](dashboard.md) | Dashboard editor, live widgets, AI ask bar, PWA shell, gallery |
 | [Tenancy](tenancy.md) | Multi-tenant scoping (opt-in, off by default) |

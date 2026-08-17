@@ -2828,5 +2828,71 @@
             "hint": "Klik mana-mana teks dalam pratonton untuk menyuntingnya.",
             "needsSections": "Pratonton ini ialah laman utama semasa anda daripada tetapan, jadi tiada apa-apa untuk disunting di sini lagi. Pilih “Convert my current homepage” untuk menjadikannya bahagian yang boleh disunting."
         }
+    },
+    "appearanceDemo": {
+        "title": "Susun atur tetamu",
+        "description": "Empat cangkerang yang boleh dipakai skrin log masuk, pada skala kecil, dalam mod cerah dan gelap.",
+        "badge": "Baharu",
+        "layouts": {
+            "split": {
+                "title": "Belah",
+                "description": "Lalai hari ini: panel jenama setinggi skrin di sebelah borang, tersembunyi di bawah skrin besar."
+            },
+            "centered": {
+                "title": "Tengah",
+                "description": "Satu lajur, tiada panel media. Tiada apa-apa di sini boleh 404, jadi ia pilihan kedua paling selamat."
+            },
+            "cover": {
+                "title": "Latar penuh",
+                "description": "Latar belakang penuh merentas paparan dengan kad borang terapung di atas tirai gelap."
+            },
+            "card": {
+                "title": "Kad",
+                "description": "Belahan berada di dalam kad; separuh media tersembunyi di bawah titik henti sederhana."
+            }
+        },
+        "surfaces": {
+            "brand": "Jenama",
+            "solid": "Warna pejal",
+            "none": "Tiada",
+            "gradient-brand-fade": "Pudar jenama",
+            "gradient-brand-mesh": "Jaringan jenama",
+            "gradient-dusk": "Senja",
+            "gradient-dawn": "Fajar",
+            "gradient-ink": "Dakwat",
+            "gradient-aurora": "Aurora",
+            "pattern-dots": "Bintik",
+            "pattern-grid": "Grid",
+            "pattern-diagonal": "Pepenjuru",
+            "pattern-noise": "Bising",
+            "image-missing": "Imej dipadam"
+        },
+        "controls": {
+            "title": "Kawalan pratonton",
+            "description": "Tiada apa-apa di sini disimpan. Setiap latar belakang ialah muatan sebenar yang diselesaikan pelayan.",
+            "surface": "Latar belakang",
+            "flip": "Balikkan panel",
+            "tagline": "Tunjukkan slogan",
+            "dark": "Mod gelap"
+        },
+        "badges": {
+            "flippable": "Boleh dibalik",
+            "media": "Menyokong media"
+        },
+        "form": {
+            "title": "Selamat kembali",
+            "subtitle": "Log masuk untuk teruskan",
+            "email": "E-mel",
+            "password": "Kata laluan",
+            "submit": "Log masuk"
+        },
+        "degraded": {
+            "title": "Enjin penampilan tidak dipasang",
+            "description": "Binaan ini tiada enjin penampilan, jadi setiap pratonton kembali kepada permukaan jenama lalai."
+        },
+        "missing": {
+            "title": "Cangkerang tiada dalam binaan ini",
+            "description": "Susun atur ini didaftarkan di pelayan tetapi komponennya tiada, jadi halaman log masuk kembali kepada cangkerang belah."
+        }
     }
 }

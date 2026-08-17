@@ -2828,5 +2828,71 @@
             "hint": "点击预览中的任意文字即可编辑。",
             "needsSections": "此预览显示的是设置中的当前主页，因此这里暂时没有可编辑的内容。请选择“Convert my current homepage”将其转换为可编辑的区块。"
         }
+    },
+    "appearanceDemo": {
+        "title": "访客布局",
+        "description": "登录页面可以采用的四种外壳，按比例缩小展示，含浅色与深色两种模式。",
+        "badge": "新增",
+        "layouts": {
+            "split": {
+                "title": "分栏",
+                "description": "当前默认样式：表单旁边是整屏高的品牌面板，在大屏以下隐藏。"
+            },
+            "centered": {
+                "title": "居中",
+                "description": "单栏、无媒体面板。这里不存在任何会 404 的资源，因此是最稳妥的第二选择。"
+            },
+            "cover": {
+                "title": "全屏背景",
+                "description": "背景铺满整个视口，表单卡片浮在遮罩之上。"
+            },
+            "card": {
+                "title": "卡片",
+                "description": "分栏被收进卡片内部；媒体半幅在中等断点以下隐藏。"
+            }
+        },
+        "surfaces": {
+            "brand": "品牌色",
+            "solid": "纯色",
+            "none": "无",
+            "gradient-brand-fade": "品牌渐隐",
+            "gradient-brand-mesh": "品牌网格",
+            "gradient-dusk": "黄昏",
+            "gradient-dawn": "黎明",
+            "gradient-ink": "墨色",
+            "gradient-aurora": "极光",
+            "pattern-dots": "圆点",
+            "pattern-grid": "网格",
+            "pattern-diagonal": "斜纹",
+            "pattern-noise": "噪点",
+            "image-missing": "已删除的图片"
+        },
+        "controls": {
+            "title": "预览控件",
+            "description": "此处的调整不会被保存。每种背景都是服务端真实解析出的载荷。",
+            "surface": "背景",
+            "flip": "翻转面板",
+            "tagline": "显示标语",
+            "dark": "深色模式"
+        },
+        "badges": {
+            "flippable": "可翻转",
+            "media": "支持媒体"
+        },
+        "form": {
+            "title": "欢迎回来",
+            "subtitle": "登录以继续",
+            "email": "邮箱",
+            "password": "密码",
+            "submit": "登录"
+        },
+        "degraded": {
+            "title": "未安装外观引擎",
+            "description": "此构建不包含外观引擎，因此所有预览都会回退到默认品牌表面。"
+        },
+        "missing": {
+            "title": "此构建缺少的外壳",
+            "description": "这些布局已在服务端注册，但组件文件不存在，因此登录页会回退到分栏外壳。"
+        }
     }
 }

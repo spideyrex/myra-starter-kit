@@ -1,4 +1,5 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
+import { reactive } from 'vue';
 import { applyPath } from '@/composables/useLiveEditHost';
 import { envelope, isInlineKind, unwrap, LIVE_EDIT_CHANNEL } from '@/pagebuilder/liveEditProtocol';
 import { startLiveEditAgent } from '@/pagebuilder/liveEditAgent';
@@ -25,6 +26,24 @@ describe('applyPath — repeater items reach a single root field', () => {
             field: 'plans',
             value: [{ meta: { label: 'new' } }],
         });
+    });
+
+    /**
+     * The real caller passes Vue reactive state, never a plain object, and a
+     * reactive Proxy cannot be structured-cloned — DataCloneError. Cloning that
+     * way broke every repeater edit in the browser while scalar fields kept
+     * working, which is exactly what made it look fine. The plain-object cases
+     * above all pass with the broken clone; only this one fails.
+     */
+    it('handles reactive state, which is what the builder actually passes', () => {
+        const data = reactive({ items: [{ title: 'one' }, { title: 'two' }] });
+
+        expect(applyPath(data, 'items.1.title', 'changed')).toEqual({
+            field: 'items',
+            value: [{ title: 'one' }, { title: 'changed' }],
+        });
+
+        expect(data.items[1].title).toBe('two');
     });
 
     it('drops a path that does not resolve rather than inventing structure', () => {

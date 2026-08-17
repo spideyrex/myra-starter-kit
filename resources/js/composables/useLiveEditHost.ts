@@ -45,7 +45,11 @@ export function applyPath(
 
     if (rest.length === 0) return { field: root, value };
 
-    const clone = structuredClone(data[root] ?? null);
+    // JSON, never structuredClone: `data` arrives as Vue reactive state, and a
+    // reactive Proxy cannot be structured-cloned (DataCloneError). That mistake
+    // breaks repeater edits ONLY — scalar fields never reach this line — which
+    // is what made it look like the bridge worked.
+    const clone = JSON.parse(JSON.stringify(data[root] ?? null)) as unknown;
 
     let cursor: unknown = clone;
 

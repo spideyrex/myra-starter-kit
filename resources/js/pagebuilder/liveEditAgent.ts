@@ -23,19 +23,19 @@ const STYLE_ID = 'myra-live-edit-style';
 const COMMIT_DEBOUNCE_MS = 250;
 
 const CSS = `
-[data-myra-live] [data-myra-field] {
+[data-myra-live] [data-myra-block] [data-myra-field] {
     outline: 1px dashed color-mix(in oklch, currentColor 35%, transparent);
     outline-offset: 3px;
     border-radius: 2px;
     transition: outline-color 120ms ease, background-color 120ms ease;
 }
-[data-myra-live] [data-myra-field]:hover {
+[data-myra-live] [data-myra-block] [data-myra-field]:hover {
     outline: 2px solid var(--primary, #3b82f6);
     outline-offset: 3px;
     cursor: text;
 }
-[data-myra-live] [data-myra-field][data-myra-activatable]:hover { cursor: pointer; }
-[data-myra-live] [data-myra-field]:focus {
+[data-myra-live] [data-myra-block] [data-myra-field][data-myra-activatable]:hover { cursor: pointer; }
+[data-myra-live] [data-myra-block] [data-myra-field]:focus {
     outline: 2px solid var(--primary, #3b82f6);
     outline-offset: 3px;
     background-color: color-mix(in oklch, var(--primary, #3b82f6) 8%, transparent);
@@ -44,7 +44,7 @@ const CSS = `
     outline: 2px solid var(--primary, #3b82f6);
     outline-offset: -2px;
 }
-[data-myra-live] [data-myra-field]:empty::after {
+[data-myra-live] [data-myra-block] [data-myra-field]:empty::after {
     content: attr(data-myra-placeholder);
     opacity: 0.45;
 }

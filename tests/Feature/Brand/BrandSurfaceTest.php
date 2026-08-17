@@ -40,9 +40,19 @@ class BrandSurfaceTest extends TestCase
         $this->assertStringNotContainsString('fonts.bunny.net', $html);
     }
 
+    /**
+     * >>> MYRA v2.8 [A] — widened in the same commit as the dispatcher refactor.
+     * GuestLayout.vue is now a dispatcher and the mark lives in the shells, so
+     * the guard reads the whole guest surface rather than the one file.
+     */
     public function test_the_guest_layout_no_longer_hardcodes_a_letter_mark(): void
     {
-        $source = (string) file_get_contents(resource_path('js/Layouts/GuestLayout.vue'));
+        $files = array_merge(
+            [resource_path('js/Layouts/GuestLayout.vue')],
+            glob(resource_path('js/Layouts/Guest/*.vue')) ?: [],
+        );
+
+        $source = implode("\n", array_map(static fn (string $f) => (string) file_get_contents($f), $files));
 
         $this->assertStringNotContainsString('rounded-lg bg-primary-foreground text-primary', $source);
         $this->assertStringContainsString('BrandMark', $source);

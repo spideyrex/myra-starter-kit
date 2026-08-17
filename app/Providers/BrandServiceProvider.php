@@ -15,6 +15,10 @@ class BrandServiceProvider extends ServiceProvider
     {
         $this->app->singleton(BrandManager::class);
         $this->app->singleton(BrandAssetPipeline::class);
+
+        // >>> MYRA v2.8 [A] START — singleton so auth()/page() memoise per request.
+        $this->app->singleton(\App\Appearance\AppearanceManager::class);
+        // <<< MYRA v2.8 [A] END
     }
 
     public function boot(): void
@@ -25,6 +29,9 @@ class BrandServiceProvider extends ServiceProvider
             \App\Console\Commands\Brand\BrandClearCommand::class,
             \App\Console\Commands\Brand\BrandPublishCommand::class,
             \App\Console\Commands\Brand\BrandFixtureCommand::class,
+            // >>> MYRA v2.8 [A] START
+            \App\Console\Commands\AppearanceResetCommand::class,
+            // <<< MYRA v2.8 [A] END
         ]);
     }
 }

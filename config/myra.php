@@ -7,7 +7,7 @@ return [
     | Framework version
     |--------------------------------------------------------------------------
     */
-    'version' => '2.7.1',
+    'version' => '2.8.0',
 
     /*
     |--------------------------------------------------------------------------
@@ -492,6 +492,31 @@ return [
         'min_contrast' => 4.5,
     ],
     // <<< MYRA v2.6 [C] END
+
+    // >>> MYRA v2.8 [A] START
+    /*
+    |--------------------------------------------------------------------------
+    | Surface appearance (login + public page)
+    |--------------------------------------------------------------------------
+    |
+    | `enabled` is the KILL SWITCH. With it false the guest pages resolve to the
+    | stock split layout on the brand colour with NO settings read at all — the
+    | way back when a saved surface has locked someone out. The break-glass
+    | companion is `php artisan myra:appearance reset`.
+    |
+    */
+
+    'appearance' => [
+        'enabled' => env('MYRA_AUTH_APPEARANCE', true),
+        'auth_layouts' => [
+            \App\Appearance\Layouts\SplitLayout::class,
+            \App\Appearance\Layouts\CenteredLayout::class,
+            \App\Appearance\Layouts\CoverLayout::class,
+            \App\Appearance\Layouts\CardLayout::class,
+            // myra:auth-layout — make:myra-auth-layout inserts above this line.
+        ],
+    ],
+    // <<< MYRA v2.8 [A] END
 
     // >>> MYRA v2.3 [D] START
     /*

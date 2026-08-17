@@ -101,10 +101,11 @@ class BrandManager
             return new HtmlString('');
         }
 
+        // >>> MYRA v2.8 [A] — one sanitiser for the whole app, not two.
         $render = static function (array $vars): string {
             $out = '';
             foreach ($vars as $prop => $value) {
-                $out .= $prop.':'.preg_replace('/[^a-zA-Z0-9 ,.%()\/\'\-_]/', '', (string) $value).';';
+                $out .= $prop.':'.\App\Appearance\CssValue::safe((string) $value).';';
             }
 
             return $out;

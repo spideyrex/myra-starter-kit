@@ -387,3 +387,48 @@ export interface PageSectionSchema {
     fields: PageSectionFieldSchema[];
 }
 // <<< MYRA v2.7 [A] END
+// >>> MYRA v2.8 [A] START
+export type SurfaceBackgroundType = 'brand' | 'solid' | 'gradient' | 'pattern' | 'image' | 'none';
+
+export type SurfaceScrim = 'none' | 'light' | 'medium' | 'strong';
+
+/** The client half of App\Appearance\Background. */
+export interface SurfacePayload {
+    type: SurfaceBackgroundType;
+    recipe: string | null;
+    scrim: SurfaceScrim;
+    image_url: string | null;
+    /** Always present, every type — an oklch() string, never a hex. */
+    base: string;
+    /** Server-computed. Never authored, never client-computed. */
+    foreground: string;
+    contrast: number;
+    css_vars: Record<string, string>;
+}
+
+export interface AuthAppearancePayload {
+    layout: string;
+    component: string;
+    flip: boolean;
+    show_tagline: boolean;
+    supports_media: boolean;
+    surface: SurfacePayload;
+}
+
+export interface AppearancePayload {
+    auth: AuthAppearancePayload;
+    page: { navbar_translucent: boolean; surface: SurfacePayload };
+}
+
+/** The client half of App\Appearance\AuthLayout. Strings are i18n keys. */
+export interface AuthLayoutSchema {
+    key: string;
+    component: string;
+    titleKey: string;
+    descriptionKey: string;
+    thumbnail: string | null;
+    flippable: boolean;
+    supportsMedia: boolean;
+    since: string;
+}
+// <<< MYRA v2.8 [A] END
